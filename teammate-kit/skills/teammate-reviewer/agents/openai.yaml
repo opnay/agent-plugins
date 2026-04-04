@@ -1,0 +1,4 @@
+interface:
+  display_name: "Teammate Reviewer"
+  short_description: "Review risks and regressions for teammate workflows"
+  default_prompt: "Use $teammate-reviewer to review a teammate change for correctness, regressions, and missing verification, then report findings first."

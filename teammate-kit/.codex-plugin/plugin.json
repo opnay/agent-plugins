@@ -1,0 +1,31 @@
+{
+  "name": "teammate-kit",
+  "version": "0.1.0",
+  "description": "Teammate orchestration plugin with an event-bus workflow and reusable teammate role skills.",
+  "author": {
+    "name": "opnay"
+  },
+  "keywords": [
+    "teammate",
+    "orchestration",
+    "skills"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Teammate Kit",
+    "shortDescription": "Event-bus orchestration and teammate role skills",
+    "longDescription": "Run teammate-style orchestration with the bundled teammate-orchestrator skill, then assign bounded research, implementation, and review work with dedicated teammate role skills.",
+    "developerName": "opnay",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use $teammate-orchestrator to run a teammate workflow with checkpoints and retries.",
+      "Use $teammate-implementer to make one scoped change and report verification.",
+      "Use $teammate-reviewer to audit a teammate change for regressions."
+    ],
+    "brandColor": "#2563EB"
+  }
+}

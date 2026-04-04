@@ -1,0 +1,4 @@
+interface:
+  display_name: "Teammate Researcher"
+  short_description: "Investigate and summarize for teammate workflows"
+  default_prompt: "Use $teammate-researcher to investigate a bounded topic for a teammate workflow and return a crisp summary with evidence."

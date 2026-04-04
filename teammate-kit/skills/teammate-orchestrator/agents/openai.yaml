@@ -1,0 +1,4 @@
+interface:
+  display_name: "Teammate Orchestrator"
+  short_description: "Run non-blocking teammate orchestration with event bus"
+  default_prompt: "Use $teammate-orchestrator to run a resilient event-bus team workflow with checkpoints, retries, DLQ, and log compaction."

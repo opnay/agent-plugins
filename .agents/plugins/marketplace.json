@@ -1,0 +1,20 @@
+{
+  "name": "local-marketplace",
+  "interface": {
+    "displayName": "Local Plugins"
+  },
+  "plugins": [
+    {
+      "name": "teammate-kit",
+      "source": {
+        "source": "local",
+        "path": "./teammate-kit"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
