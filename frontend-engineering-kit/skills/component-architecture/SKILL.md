@@ -25,9 +25,10 @@ Do not use file size as the main decision signal. Use responsibility conflicts a
 5. Decide whether those concerns are naturally coupled or in conflict.
 6. Decide who should own the main responsibilities inside the current boundary.
 7. Place extracted responsibilities into the right target layer or boundary.
-8. Recommend the smallest boundary change that reduces conflict without creating abstraction theater.
-9. Define public APIs, ownership boundaries, and state placement.
-10. End with an implementation-ready boundary recommendation, including when not to split.
+8. Decide whether extraction is needed and whether a hook is actually the right extraction target.
+9. Recommend the smallest boundary change that reduces conflict without creating abstraction theater.
+10. Define public APIs, ownership boundaries, and state placement.
+11. End with an implementation-ready boundary recommendation, including when not to split.
 
 ## Decision Framework
 
@@ -314,6 +315,74 @@ After extracting and classifying a responsibility candidate, place it by meaning
 - Do not move product meaning into utility.
 - Do not hide API response handling inside view code when it is part of transport interpretation.
 
+## Hook Extraction Rules
+
+Do not treat hook extraction as default cleanup.
+Evaluate hook extraction only after the responsibility candidate is named and its target layer is understood.
+
+### Hook-Suitable Candidates
+
+A candidate is hook-suitable when it is mainly:
+
+- a state transition unit
+- an effect synchronization unit
+- a reusable interaction behavior
+- an async view-adapter behavior that is still UI-facing
+
+### Hook Decision Questions
+
+- Does this candidate depend on React state or effect lifecycle in a meaningful way?
+- Would extracting it make ownership clearer, not just move code elsewhere?
+- Would the calling component become easier to read after extraction?
+- Is the extracted API explainable in a few lines?
+- Is this still UI-facing behavior rather than domain, api, or feature flow logic?
+
+### Prefer Other Targets When
+
+- the candidate is a pure calculation:
+  - prefer utility or domain
+- the candidate is transport or server-contract handling:
+  - prefer api
+- the candidate coordinates a full user journey across several boundaries:
+  - prefer feature
+- the candidate only makes sense inside one component's render boundary:
+  - keep it component-local
+
+### Hook Smells
+
+- props go into the hook and come back out almost unchanged
+- the hook hides complexity without reducing it
+- the hook mixes domain rules, async lifecycle, and UI orchestration with no clear center
+- the hook is reusable only in theory
+- the call site becomes harder to understand
+- the hook still requires component-specific DOM or markup assumptions to make sense
+
+### Reusable Hook Rule
+
+Do not call a hook reusable because similar code exists twice.
+Treat a hook as reusable only when:
+
+- the same behavior contract repeats
+- the same reason to change applies
+- the ownership stays stable after extraction
+- the extracted inputs and outputs are explainable without the original component's full context
+
+### Hook Extraction Decision Rule
+
+Recommend hook extraction only when at least one of these is true:
+
+- the candidate is a stable UI behavior that can be isolated cleanly
+- the candidate repeats across components with the same contract
+- the candidate is tightly tied to React lifecycle but not to one render structure
+- the extraction makes testing or reasoning materially easier
+
+Do not recommend hook extraction when the main result is:
+
+- file splitting without ownership improvement
+- stronger coupling between the component and an opaque hook
+- hiding a better utility, domain, api, or feature placement
+- abstracting a one-off screen behavior too early
+
 ## Boundary Signals
 
 Signals that a split is likely justified:
@@ -354,6 +423,7 @@ A split should not be recommended when the main result is:
 - `Concern classification`
 - `Responsibility ownership decision`
 - `Layer placement decision`
+- `Hook extraction decision`
 - `Boundary problems`
 - `Split decision`
 - `Recommended split`
@@ -369,6 +439,7 @@ A split should not be recommended when the main result is:
 - Do not apply container/presentational patterns mechanically.
 - Do not widen ownership upward unless shared responsibility is real.
 - Do not store values that should be derived.
+- Do not extract a hook before naming the responsibility candidate and its target layer.
 - Prefer composition over inheritance-style abstraction.
 - Prefer existing project patterns unless they are actively causing confusion.
 - Prefer boundaries that match the current project structure unless that structure is the source of the problem.
@@ -381,3 +452,4 @@ A split should not be recommended when the main result is:
 - Read [references/concern-classification.md](references/concern-classification.md) when rendering, orchestration, domain, and async responsibilities are easy to confuse.
 - Read [references/responsibility-ownership-rules.md](references/responsibility-ownership-rules.md) when deciding where rendering, domain, async, formatting, and state responsibilities should live.
 - Read [references/layer-placement-rules.md](references/layer-placement-rules.md) when deciding between utility, api, domain, feature, and component-local placement.
+- Read [references/hook-extraction-rules.md](references/hook-extraction-rules.md) when deciding whether a candidate should stay local, become a hook, or move to another layer.
