@@ -26,9 +26,10 @@ Do not use file size as the main decision signal. Use responsibility conflicts a
 6. Decide who should own the main responsibilities inside the current boundary.
 7. Place extracted responsibilities into the right target layer or boundary.
 8. Decide whether extraction is needed and whether a hook is actually the right extraction target.
-9. Recommend the smallest boundary change that reduces conflict without creating abstraction theater.
-10. Define public APIs, ownership boundaries, and state placement.
-11. End with an implementation-ready boundary recommendation, including when not to split.
+9. Decide whether the component should be treated as library-level or product-level before evaluating its API.
+10. Recommend the smallest boundary change that reduces conflict without creating abstraction theater.
+11. Define public APIs, ownership boundaries, and state placement.
+12. End with an implementation-ready boundary recommendation, including when not to split.
 
 ## Decision Framework
 
@@ -383,6 +384,63 @@ Do not recommend hook extraction when the main result is:
 - hiding a better utility, domain, api, or feature placement
 - abstracting a one-off screen behavior too early
 
+## Component API Rules By Level
+
+Do not evaluate a component API in the abstract.
+First decide whether the component is library-level or product-level, because the right API shape depends on that level.
+
+### Component Level Detection
+
+Treat a component as library-level when most of these are true:
+
+- it has little or no domain language in its contract
+- it is intended for repeated use across many features or screens
+- its main job is structural, visual, or interaction reuse
+- its API should express constrained flexibility rather than one feature's exact workflow
+
+Treat a component as product-level when most of these are true:
+
+- it carries feature or domain language in its name or props
+- it exists mainly for one product workflow or feature slice
+- its API should express domain intent more than general flexibility
+- extracting it into shared space would weaken meaning or ownership clarity
+
+### Library-Level API Rules
+
+- prefer constrained variants over open-ended config dumping
+- use composition when the structural flexibility is real and stable
+- keep tokens, slots, and interaction contracts explicit
+- avoid leaking product or feature meaning into the API
+- prefer a small set of allowed extension points over unlimited escape hatches
+
+### Product-Level API Rules
+
+- prefer semantic prop names that reflect domain or feature meaning
+- do not generalize an API just because another feature looks similar
+- prefer explicit feature intent over reusable-looking abstraction
+- expose semantic events rather than low-level internal state changes
+- keep the API close to the current workflow unless repeated evidence justifies promotion
+
+### Cross-Level API Smells
+
+- prop explosion caused by trying to satisfy unrelated use cases
+- boolean props representing hidden state machines or domain meaning
+- generic names like `data`, `config`, `item`, or `meta` where domain language should exist
+- children or slot patterns used to avoid deciding ownership
+- callback surfaces that expose implementation details instead of meaningful events
+- variant systems that hide product-level behavioral differences
+
+### Promotion Rule
+
+Do not promote a product-level component into shared or library space unless:
+
+- the same responsibility clearly repeats across features
+- the same reason to change applies across those usages
+- the extracted API remains easy to explain
+- domain meaning is not erased by generalization
+
+If those conditions are weak, keep the component product-level and optimize for clarity instead of reuse theater.
+
 ## Boundary Signals
 
 Signals that a split is likely justified:
@@ -424,6 +482,8 @@ A split should not be recommended when the main result is:
 - `Responsibility ownership decision`
 - `Layer placement decision`
 - `Hook extraction decision`
+- `Component level detection`
+- `API surface assessment`
 - `Boundary problems`
 - `Split decision`
 - `Recommended split`
@@ -440,6 +500,7 @@ A split should not be recommended when the main result is:
 - Do not widen ownership upward unless shared responsibility is real.
 - Do not store values that should be derived.
 - Do not extract a hook before naming the responsibility candidate and its target layer.
+- Do not evaluate a component API before deciding whether the component is library-level or product-level.
 - Prefer composition over inheritance-style abstraction.
 - Prefer existing project patterns unless they are actively causing confusion.
 - Prefer boundaries that match the current project structure unless that structure is the source of the problem.
@@ -453,3 +514,4 @@ A split should not be recommended when the main result is:
 - Read [references/responsibility-ownership-rules.md](references/responsibility-ownership-rules.md) when deciding where rendering, domain, async, formatting, and state responsibilities should live.
 - Read [references/layer-placement-rules.md](references/layer-placement-rules.md) when deciding between utility, api, domain, feature, and component-local placement.
 - Read [references/hook-extraction-rules.md](references/hook-extraction-rules.md) when deciding whether a candidate should stay local, become a hook, or move to another layer.
+- Read [references/component-api-smells.md](references/component-api-smells.md) when evaluating library-level versus product-level component APIs.
