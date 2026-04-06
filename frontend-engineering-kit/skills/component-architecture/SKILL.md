@@ -15,17 +15,19 @@ Do not use file size as the main decision signal. Use responsibility conflicts a
 
 1. Identify the user task or screen responsibility the component is trying to serve.
 2. Map the current responsibilities and data flow.
-3. Classify the work inside the component by concern:
+3. Extract the responsibility candidates that are actually worth evaluating.
+4. Classify the work inside the component by concern:
    - rendering concern
    - orchestration concern
    - domain concern
    - async concern
    - styling concern
-4. Decide whether those concerns are naturally coupled or in conflict.
-5. Decide who should own the main responsibilities inside the current boundary.
-6. Recommend the smallest boundary change that reduces conflict without creating abstraction theater.
-7. Define public APIs, ownership boundaries, and state placement.
-8. End with an implementation-ready boundary recommendation, including when not to split.
+5. Decide whether those concerns are naturally coupled or in conflict.
+6. Decide who should own the main responsibilities inside the current boundary.
+7. Place extracted responsibilities into the right target layer or boundary.
+8. Recommend the smallest boundary change that reduces conflict without creating abstraction theater.
+9. Define public APIs, ownership boundaries, and state placement.
+10. End with an implementation-ready boundary recommendation, including when not to split.
 
 ## Decision Framework
 
@@ -55,6 +57,43 @@ Evaluate the component through these questions:
 
 - Would a split reduce complexity, or only move it into props, wrapper components, or hooks?
 - Prefer no split when the new boundary adds indirection without reducing reasoning cost.
+
+## Candidate Extraction Rules
+
+Do not evaluate random code fragments.
+First extract responsibility candidates: units that have one meaningful reason to change and can be placed somewhere intentionally.
+
+### What Counts As A Candidate
+
+- a behavior unit:
+  - one user-visible action or flow, such as submit, select, dismiss, navigate, confirm
+- a decision unit:
+  - one eligibility, permission, pricing, validation, or policy rule
+- a sync unit:
+  - one synchronization responsibility, such as URL sync, request lifecycle sync, effect sync, or state mirroring
+- a presentation unit:
+  - one display responsibility, such as view shaping, status mapping, or state-specific rendering
+
+### How To Extract Candidates
+
+- Start from the user task, not from file boundaries.
+- Group code by shared reason to change, not by physical proximity.
+- Pull out only the units where boundary choice matters.
+- Ignore code that is already obviously well-placed and coherent.
+
+### Candidate Extraction Questions
+
+- What user action or system response is this code supporting?
+- If requirements changed, which part of this code would change first?
+- Does this code contain more than one reason to change?
+- Can this unit be named as one behavior, one decision, one sync rule, or one presentation responsibility?
+
+### Bad Candidates
+
+- arbitrary line ranges
+- entire files with several unrelated responsibilities
+- tiny helpers with no real boundary decision
+- "whatever feels messy" without naming the responsibility
 
 ## Concern Definitions
 
@@ -237,6 +276,44 @@ Do not move a responsibility when the main result is:
 - duplicated responsibility across layers
 - a component that delegates everything but still conceptually owns the task
 
+## Layer Placement Rules
+
+After extracting and classifying a responsibility candidate, place it by meaning, not by convenience.
+
+### Layer Targets
+
+- utility:
+  - framework-agnostic, business-agnostic, transport-agnostic logic that could reasonably live as a small library helper
+- api:
+  - transport, request, response, DTO, endpoint, and server contract handling
+- domain:
+  - product meaning, business rules, calculations, permissions, validation policies, invariants
+- feature:
+  - user-facing flow orchestration that combines UI behavior, async work, and domain/application decisions for one feature or slice
+- component-local:
+  - rendering, local interaction, and tightly scoped view behavior that should stay near the component
+
+### Placement Questions
+
+- Would this still make sense in another project with no product context?
+  - if yes, it may be utility
+- Is this responsibility mainly about server contract or transport lifecycle?
+  - if yes, it may be api
+- Would this responsibility survive a complete UI redesign of the same product?
+  - if yes, it may be domain
+- Is this responsibility coordinating a real user flow for this feature?
+  - if yes, it may be feature
+- Is this responsibility only meaningful inside this component's view boundary?
+  - if yes, keep it component-local
+
+### Placement Guardrails
+
+- Do not call something reusable just because code looks similar.
+- Reusable means repeated responsibility with stable ownership and the same reason to change.
+- Do not move feature flow into domain just to make files look cleaner.
+- Do not move product meaning into utility.
+- Do not hide API response handling inside view code when it is part of transport interpretation.
+
 ## Boundary Signals
 
 Signals that a split is likely justified:
@@ -273,8 +350,10 @@ A split should not be recommended when the main result is:
 ## Output Contract
 
 - `Current responsibility map`
+- `Responsibility candidates`
 - `Concern classification`
 - `Responsibility ownership decision`
+- `Layer placement decision`
 - `Boundary problems`
 - `Split decision`
 - `Recommended split`
@@ -293,6 +372,7 @@ A split should not be recommended when the main result is:
 - Prefer composition over inheritance-style abstraction.
 - Prefer existing project patterns unless they are actively causing confusion.
 - Prefer boundaries that match the current project structure unless that structure is the source of the problem.
+- Do not choose a target layer before naming the responsibility candidate being moved.
 - Keep boundaries understandable to the next maintainer.
 
 ## References
@@ -300,3 +380,4 @@ A split should not be recommended when the main result is:
 - Read [references/boundary-checklist.md](references/boundary-checklist.md) for split criteria.
 - Read [references/concern-classification.md](references/concern-classification.md) when rendering, orchestration, domain, and async responsibilities are easy to confuse.
 - Read [references/responsibility-ownership-rules.md](references/responsibility-ownership-rules.md) when deciding where rendering, domain, async, formatting, and state responsibilities should live.
+- Read [references/layer-placement-rules.md](references/layer-placement-rules.md) when deciding between utility, api, domain, feature, and component-local placement.
