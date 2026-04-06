@@ -656,23 +656,61 @@ A split should not be recommended when the main result is:
 
 ## Output Contract
 
+Group the final answer into three parts and keep each part short and decision-oriented.
+
+### Diagnosis
+
+- `Task scope`
+  - the user task, screen, or feature responsibility being evaluated
 - `Current responsibility map`
+  - the major responsibilities currently present in the component or boundary
 - `Responsibility candidates`
+  - only the responsibility units that actually require a boundary or placement decision
 - `Concern classification`
-- `Responsibility ownership decision`
-- `Layer placement decision`
-- `Hook extraction decision`
-- `Component level detection`
-- `API surface assessment`
-- `Recommended refactor pattern`
-- `Primary anti-pattern risk`
+  - the dominant concern for each important candidate
 - `Boundary problems`
-- `Split decision`
-- `Recommended split`
+  - the clearest ownership, coupling, or change-pressure failures
+
+### Decisions
+
+- `Responsibility ownership decision`
+  - who should own the key responsibilities and why
+- `Layer placement decision`
+  - utility, api, domain, feature, or component-local placement with rationale
+- `Hook extraction decision`
+  - extract, keep local, or choose another target
+- `Component level detection`
+  - library-level or product-level, with the reason
+- `API surface assessment`
+  - whether the current public contract matches the component's level and responsibility
+- `Recommended refactor pattern`
+  - one primary pattern to apply first
+- `Primary anti-pattern risk`
+  - the main failure mode to avoid during the refactor
+
+### Execution
+
+- `Recommended boundary`
+  - what should remain the owner and what should move
 - `Public API shape`
+  - the intended external contract after the refactor
 - `State and hook placement`
+  - where state, effects, and hooks should live after the change
+- `Split decision`
+  - whether to split now, delay, or keep intact
 - `Why not split yet`
-- `Migration risk`
+  - only when a split is not currently justified
+- `Migration steps`
+  - the smallest ordered steps to make the change safely
+- `Risk to verify`
+  - the behavior or ownership risks that still need validation
+
+## Output Rules
+
+- Prefer decisions over narrative.
+- Omit a section only when it is truly not applicable.
+- Recommend one primary refactor pattern before mentioning secondary ideas.
+- Keep the handoff specific enough that another engineer can execute it without reconstructing the reasoning from scratch.
 
 ## Guardrails
 
