@@ -27,9 +27,10 @@ Do not use file size as the main decision signal. Use responsibility conflicts a
 7. Place extracted responsibilities into the right target layer or boundary.
 8. Decide whether extraction is needed and whether a hook is actually the right extraction target.
 9. Decide whether the component should be treated as library-level or product-level before evaluating its API.
-10. Recommend the smallest boundary change that reduces conflict without creating abstraction theater.
-11. Define public APIs, ownership boundaries, and state placement.
-12. End with an implementation-ready boundary recommendation, including when not to split.
+10. Choose the practical refactor pattern that best matches the problem shape.
+11. Recommend the smallest boundary change that reduces conflict without creating abstraction theater.
+12. Define public APIs, ownership boundaries, and state placement.
+13. End with an implementation-ready boundary recommendation, including when not to split.
 
 ## Decision Framework
 
@@ -441,6 +442,94 @@ Do not promote a product-level component into shared or library space unless:
 
 If those conditions are weak, keep the component product-level and optimize for clarity instead of reuse theater.
 
+## Practical Refactor Patterns
+
+Do not stop at "split" or "extract."
+Choose a refactor pattern that matches the current problem shape and preserves one clear owner.
+
+### God Component Split
+
+Use when:
+- one component owns too many responsibility candidates across several concern types
+
+Keep as owner:
+- the smallest product-level or feature-level boundary that can still explain the full user task
+
+Extract:
+- clearly separable sections
+- isolated async or effect behavior
+- domain or formatting helpers where appropriate
+
+Failure mode:
+- splitting everything so no boundary clearly owns the task anymore
+
+### Page / Section / Widget Split
+
+Use when:
+- a page or screen mixes several UI regions with different reasons to change
+
+Keep as owner:
+- page-level orchestration and cross-region flow
+
+Extract:
+- coherent visual sections
+- local widgets with their own interaction surface
+
+Failure mode:
+- dividing by layout shape alone without preserving ownership
+
+### List / Item Split
+
+Use when:
+- collection-level concerns and per-item concerns are competing inside one component
+
+Keep as owner:
+- collection semantics such as sorting, filtering, bulk behavior, and shared selection rules
+
+Extract:
+- per-item rendering
+- per-item local interaction
+
+Failure mode:
+- leaving item behavior in the list while only moving markup out
+
+### View-Model / Adapter Split
+
+Use when:
+- render code is dominated by mapping, shaping, formatting, or response interpretation
+
+Keep as owner:
+- the component or feature boundary that consumes the UI-facing shape
+
+Extract:
+- display adapters
+- feature-facing mappers
+- transformation logic that does not belong in JSX
+
+Failure mode:
+- creating a mapper layer with no stable ownership or no real reduction in render complexity
+
+### Effect Isolation
+
+Use when:
+- side effects, synchronization, subscriptions, or lifecycle coupling are obscuring the render and ownership story
+
+Keep as owner:
+- the boundary that has the real context for triggering and stopping the effect
+
+Extract:
+- reusable effect synchronization
+- local effect helpers
+- async coordination moved to a more honest layer when appropriate
+
+Failure mode:
+- moving effect code into hooks or helpers without clarifying why that new owner is correct
+
+### Pattern Selection Rule
+
+Select the pattern that removes the dominant source of confusion first.
+Do not combine several refactor patterns at once unless one pattern clearly depends on another.
+
 ## Boundary Signals
 
 Signals that a split is likely justified:
@@ -484,6 +573,7 @@ A split should not be recommended when the main result is:
 - `Hook extraction decision`
 - `Component level detection`
 - `API surface assessment`
+- `Recommended refactor pattern`
 - `Boundary problems`
 - `Split decision`
 - `Recommended split`
@@ -515,3 +605,4 @@ A split should not be recommended when the main result is:
 - Read [references/layer-placement-rules.md](references/layer-placement-rules.md) when deciding between utility, api, domain, feature, and component-local placement.
 - Read [references/hook-extraction-rules.md](references/hook-extraction-rules.md) when deciding whether a candidate should stay local, become a hook, or move to another layer.
 - Read [references/component-api-smells.md](references/component-api-smells.md) when evaluating library-level versus product-level component APIs.
+- Read [references/refactor-patterns.md](references/refactor-patterns.md) when choosing how to execute a component refactor after the architectural diagnosis is done.
