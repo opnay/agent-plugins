@@ -28,9 +28,10 @@ Do not use file size as the main decision signal. Use responsibility conflicts a
 8. Decide whether extraction is needed and whether a hook is actually the right extraction target.
 9. Decide whether the component should be treated as library-level or product-level before evaluating its API.
 10. Choose the practical refactor pattern that best matches the problem shape.
-11. Recommend the smallest boundary change that reduces conflict without creating abstraction theater.
-12. Define public APIs, ownership boundaries, and state placement.
-13. End with an implementation-ready boundary recommendation, including when not to split.
+11. Check whether the proposed move is drifting into a known anti-pattern.
+12. Recommend the smallest boundary change that reduces conflict without creating abstraction theater.
+13. Define public APIs, ownership boundaries, and state placement.
+14. End with an implementation-ready boundary recommendation, including when not to split.
 
 ## Decision Framework
 
@@ -530,6 +531,96 @@ Failure mode:
 Select the pattern that removes the dominant source of confusion first.
 Do not combine several refactor patterns at once unless one pattern clearly depends on another.
 
+## Explicit Anti-Patterns
+
+Use this section to reject changes that look organized but actually weaken ownership and clarity.
+
+### Early Abstraction
+
+Looks like:
+- extracting shared components, hooks, or utilities before repeated responsibility is proven
+
+Why it fails:
+- it generalizes too early and weakens ownership, semantics, and API clarity
+
+Do instead:
+- keep the logic closer to the current feature or product boundary until repeated responsibility and repeated change reason are real
+
+### Mechanical Presentational/Container Split
+
+Looks like:
+- splitting components by pattern habit rather than by ownership conflict
+
+Why it fails:
+- it often increases prop tunneling and file count without improving reasoning cost
+
+Do instead:
+- split only when rendering and orchestration really need different owners
+
+### Complexity Laundering Into Hooks
+
+Looks like:
+- moving handlers, effects, and state into a hook without reducing complexity or clarifying ownership
+
+Why it fails:
+- complexity moves sideways and becomes less visible, not smaller
+
+Do instead:
+- name the responsibility candidate first and verify that hook extraction is more honest than utility, domain, feature, or local placement
+
+### Shared Extraction That Erases Domain Meaning
+
+Looks like:
+- turning product-level components into generic shared primitives before semantic reuse is proven
+
+Why it fails:
+- domain clarity disappears and the API becomes broad but weak
+
+Do instead:
+- keep product-level components semantic until promotion to shared space is justified by repeated responsibility
+
+### File Split Without Responsibility Split
+
+Looks like:
+- adding more files while ownership and reasons to change remain mixed
+
+Why it fails:
+- file count rises but architectural clarity does not
+
+Do instead:
+- split only when the new files represent distinct owners or responsibilities
+
+### Generic Naming That Hides Ownership
+
+Looks like:
+- names such as `data`, `config`, `item`, `meta`, or `utils` hiding product or ownership meaning
+
+Why it fails:
+- the API and structure stop communicating what the component actually owns
+
+Do instead:
+- use domain language for product-level code and constrained generic vocabulary for true library-level code
+
+### Variant Inflation
+
+Looks like:
+- growing variant, tone, mode, kind, or boolean surfaces until the component hides several products or workflows
+
+Why it fails:
+- state space expands and the contract stops being understandable
+
+Do instead:
+- keep variants for constrained visual or interaction differences, and split when the meaning becomes product-level
+
+### Anti-Pattern Check
+
+Before recommending a refactor, ask:
+
+- Is this making ownership clearer or only making files look tidier?
+- Is this repeated responsibility real or hypothetical?
+- Is this API becoming more semantic or more generic?
+- Is this extraction honest about where the responsibility should live?
+
 ## Boundary Signals
 
 Signals that a split is likely justified:
@@ -574,6 +665,7 @@ A split should not be recommended when the main result is:
 - `Component level detection`
 - `API surface assessment`
 - `Recommended refactor pattern`
+- `Primary anti-pattern risk`
 - `Boundary problems`
 - `Split decision`
 - `Recommended split`
@@ -591,6 +683,7 @@ A split should not be recommended when the main result is:
 - Do not store values that should be derived.
 - Do not extract a hook before naming the responsibility candidate and its target layer.
 - Do not evaluate a component API before deciding whether the component is library-level or product-level.
+- Do not accept a refactor just because the file structure looks cleaner.
 - Prefer composition over inheritance-style abstraction.
 - Prefer existing project patterns unless they are actively causing confusion.
 - Prefer boundaries that match the current project structure unless that structure is the source of the problem.
@@ -606,3 +699,4 @@ A split should not be recommended when the main result is:
 - Read [references/hook-extraction-rules.md](references/hook-extraction-rules.md) when deciding whether a candidate should stay local, become a hook, or move to another layer.
 - Read [references/component-api-smells.md](references/component-api-smells.md) when evaluating library-level versus product-level component APIs.
 - Read [references/refactor-patterns.md](references/refactor-patterns.md) when choosing how to execute a component refactor after the architectural diagnosis is done.
+- Read [references/anti-patterns.md](references/anti-patterns.md) when checking whether a proposed refactor only creates the appearance of better structure.
