@@ -22,9 +22,10 @@ Do not use file size as the main decision signal. Use responsibility conflicts a
    - async concern
    - styling concern
 4. Decide whether those concerns are naturally coupled or in conflict.
-5. Recommend the smallest boundary change that reduces conflict without creating abstraction theater.
-6. Define public APIs, ownership boundaries, and state placement.
-7. End with an implementation-ready boundary recommendation, including when not to split.
+5. Decide who should own the main responsibilities inside the current boundary.
+6. Recommend the smallest boundary change that reduces conflict without creating abstraction theater.
+7. Define public APIs, ownership boundaries, and state placement.
+8. End with an implementation-ready boundary recommendation, including when not to split.
 
 ## Decision Framework
 
@@ -171,6 +172,71 @@ Ask these when code feels ambiguous:
 - Is this code mostly changing emphasis, tokens, or visual state?
   - If yes, it is likely styling.
 
+## Responsibility Ownership Rules
+
+After classifying concerns, decide where each responsibility should live.
+Do not treat state as the only ownership problem. State is one subcase of responsibility placement.
+
+### Ownership Types
+
+- rendering ownership:
+  - visible structure, local display conditions, local interaction feedback
+- orchestration ownership:
+  - coordinating child components, flows, transitions, and event sequencing
+- domain ownership:
+  - product rules, calculations, permissions, invariants, policy decisions
+- async ownership:
+  - fetch and mutation lifecycle, synchronization, invalidation, loading and error handling
+- formatting ownership:
+  - display mapping, labels, presentation-specific adapters, view-facing shaping
+- state ownership:
+  - local UI state, lifted shared state, derived state, form state, server-adjacent state
+
+### Placement Questions
+
+- Which responsibility changes when the UI changes?
+  - keep that responsibility closer to rendering or formatting
+- Which responsibility survives UI redesign?
+  - move that responsibility toward domain or async ownership
+- Which responsibility coordinates several children or view regions?
+  - keep that responsibility at the smallest boundary that actually owns the flow
+- Which responsibility is only computed from other values?
+  - prefer deriving it instead of storing it
+- Which responsibility is shared by multiple siblings?
+  - move it to the smallest common owner, not automatically to a global layer
+
+### Wrong Ownership Signals
+
+- product rules are hidden inside render branches
+- request lifecycle is managed deep inside leaf UI with no clear ownership
+- parent components own state or handlers they cannot explain
+- siblings depend on state that lives too low in the tree
+- derived values are stored and synchronized manually
+- formatting logic with product meaning is mixed directly into view code
+- one component owns orchestration, async lifecycle, and domain decisions without a clear reason
+
+### State As A Subcase
+
+Use these rules for state-specific ownership decisions:
+
+- keep local state local when only one boundary reads and writes it
+- lift state only when multiple consumers truly need shared ownership
+- derive values instead of storing them when they can be recomputed safely
+- isolate form state when validation, touched, dirty, or submit lifecycle semantics appear
+- avoid copying async results into local state unless there is a clear ownership break or editing buffer
+
+### Ownership Decision Rule
+
+Recommend a move only when ownership becomes easier to explain and future changes become safer.
+
+Do not move a responsibility when the main result is:
+
+- broader but vaguer ownership
+- extra prop tunneling
+- global or shared state without a real coordination need
+- duplicated responsibility across layers
+- a component that delegates everything but still conceptually owns the task
+
 ## Boundary Signals
 
 Signals that a split is likely justified:
@@ -208,6 +274,7 @@ A split should not be recommended when the main result is:
 
 - `Current responsibility map`
 - `Concern classification`
+- `Responsibility ownership decision`
 - `Boundary problems`
 - `Split decision`
 - `Recommended split`
@@ -221,6 +288,8 @@ A split should not be recommended when the main result is:
 - Do not split components just because they are large.
 - Do not treat a hook extraction as a successful boundary by default.
 - Do not apply container/presentational patterns mechanically.
+- Do not widen ownership upward unless shared responsibility is real.
+- Do not store values that should be derived.
 - Prefer composition over inheritance-style abstraction.
 - Prefer existing project patterns unless they are actively causing confusion.
 - Prefer boundaries that match the current project structure unless that structure is the source of the problem.
@@ -230,3 +299,4 @@ A split should not be recommended when the main result is:
 
 - Read [references/boundary-checklist.md](references/boundary-checklist.md) for split criteria.
 - Read [references/concern-classification.md](references/concern-classification.md) when rendering, orchestration, domain, and async responsibilities are easy to confuse.
+- Read [references/responsibility-ownership-rules.md](references/responsibility-ownership-rules.md) when deciding where rendering, domain, async, formatting, and state responsibilities should live.
