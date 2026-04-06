@@ -14,53 +14,86 @@ Do not use file size as the main decision signal. Use responsibility conflicts a
 ## Workflow
 
 1. Identify the user task or screen responsibility the component is trying to serve.
-2. Map the current responsibilities and data flow.
-3. Extract the responsibility candidates that are actually worth evaluating.
-4. Classify the work inside the component by concern:
+2. Read the current local project structure before proposing any new boundary, folder, or layer.
+3. Map the current responsibilities and data flow.
+4. Extract the responsibility candidates that are actually worth evaluating.
+5. Classify the work inside the component by concern:
    - rendering concern
    - orchestration concern
    - domain concern
    - async concern
    - styling concern
-5. Decide whether those concerns are naturally coupled or in conflict.
-6. Decide who should own the main responsibilities inside the current boundary.
-7. Place extracted responsibilities into the right target layer or boundary.
-8. Decide whether extraction is needed and whether a hook is actually the right extraction target.
-9. Decide whether the component should be treated as library-level or product-level before evaluating its API.
-10. Choose the practical refactor pattern that best matches the problem shape.
-11. Check whether the proposed move is drifting into a known anti-pattern.
-12. Recommend the smallest boundary change that reduces conflict without creating abstraction theater.
-13. Define public APIs, ownership boundaries, and state placement.
-14. End with an implementation-ready boundary recommendation, including when not to split.
+6. Decide whether those concerns are naturally coupled or in conflict.
+7. Decide who should own the main responsibilities inside the current boundary.
+8. Place extracted responsibilities into the right target layer or boundary.
+9. Decide whether extraction is needed and whether a hook is actually the right extraction target.
+10. Decide whether the component should be treated as library-level or product-level before evaluating its API.
+11. Choose the practical refactor pattern that best matches the problem shape.
+12. Check whether the proposed move is drifting into a known anti-pattern.
+13. Recommend the smallest boundary change that reduces conflict without creating abstraction theater.
+14. Define public APIs, ownership boundaries, and state placement.
+15. End with an implementation-ready boundary recommendation, including when not to split.
 
 ## Decision Framework
 
 Evaluate the component through these questions:
 
-### 1. Task Coherence
+### 1. Local Structure Fit
+
+- How does this repo already separate component, feature, domain, async, or shared responsibilities?
+- Which existing boundary style is closest to the problem being evaluated?
+- Would the proposed change fit the repo's current mental model or introduce a second one?
+
+### 2. Task Coherence
 
 - Does the component still serve one understandable user task?
 - Would splitting it make the task easier to reason about, or just spread it across files?
 
-### 2. Concern Coupling
+### 3. Concern Coupling
 
 - Are rendering, orchestration, domain logic, async logic, and styling working together naturally?
 - Or are they changing for different reasons and creating friction inside one component?
 
-### 3. Change Pressure
+### 4. Change Pressure
 
 - Which parts of the component are likely to change independently?
 - If one area changes often without the others, that is a boundary signal.
 
-### 4. Ownership Clarity
+### 5. Ownership Clarity
 
 - Can you explain who owns rendering, state, effects, and decision-making in a few sentences?
 - If ownership is hard to explain, the boundary is probably weak.
 
-### 5. Split Cost
+### 6. Split Cost
 
 - Would a split reduce complexity, or only move it into props, wrapper components, or hooks?
 - Prefer no split when the new boundary adds indirection without reducing reasoning cost.
+
+## Project-Structure-First Rules
+
+Do not propose architecture in a vacuum.
+Make the current repository structure the default frame for every boundary decision.
+
+### Structure Read Requirements
+
+Before recommending a new component boundary, shared extraction, or layer move:
+
+- inspect the nearest existing feature or folder structure
+- identify how similar responsibilities are already placed in the repo
+- check whether the repo already has a preferred level for shared, feature, domain, or local code
+- explain why the new proposal fits that existing pattern or why breaking it is justified
+
+### Structure Priority Rules
+
+- prefer the closest existing pattern over a cleaner but foreign abstraction
+- prefer local consistency over generic best-practice purity
+- introduce a new structural pattern only when the current one is clearly blocking clarity or correctness
+- if the repo is inconsistent, choose the nearest coherent precedent instead of inventing a brand-new rule
+
+### Escalation Rule
+
+The more a proposal changes folder structure, shared boundaries, or naming conventions, the more evidence it must provide.
+Small local fixes need little proof. New shared layers or new architectural shapes need strong proof.
 
 ## Candidate Extraction Rules
 
@@ -98,6 +131,7 @@ First extract responsibility candidates: units that have one meaningful reason t
 - entire files with several unrelated responsibilities
 - tiny helpers with no real boundary decision
 - "whatever feels messy" without naming the responsibility
+- candidates invented without reference to the current project structure
 
 ## Concern Definitions
 
@@ -662,6 +696,8 @@ Group the final answer into three parts and keep each part short and decision-or
 
 - `Task scope`
   - the user task, screen, or feature responsibility being evaluated
+- `Local structure read`
+  - the relevant existing project or folder pattern that this decision should respect
 - `Current responsibility map`
   - the major responsibilities currently present in the component or boundary
 - `Responsibility candidates`
@@ -722,6 +758,7 @@ Group the final answer into three parts and keep each part short and decision-or
 - Do not extract a hook before naming the responsibility candidate and its target layer.
 - Do not evaluate a component API before deciding whether the component is library-level or product-level.
 - Do not accept a refactor just because the file structure looks cleaner.
+- Do not introduce a second architectural pattern when the repo already has a workable one.
 - Prefer composition over inheritance-style abstraction.
 - Prefer existing project patterns unless they are actively causing confusion.
 - Prefer boundaries that match the current project structure unless that structure is the source of the problem.
