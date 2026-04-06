@@ -1,0 +1,34 @@
+{
+  "name": "frontend-engineering-kit",
+  "version": "0.1.0",
+  "description": "Frontend engineering plugin for component architecture, domain modeling, design guidance, and TDD workflow.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "frontend",
+    "architecture",
+    "design-system",
+    "tdd"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Frontend Engineering Kit",
+    "shortDescription": "Architecture, domain, design, and test workflow guidance for frontend development.",
+    "longDescription": "Helps Codex make stronger frontend decisions by guiding component boundaries, domain-driven frontend structure, UI implementation quality, and Red-Green-Refactor test workflow.",
+    "developerName": "opnay",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Analyze",
+      "Plan",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Review this component structure and propose better frontend boundaries.",
+      "Model this frontend feature with domain, application, and UI separation.",
+      "Drive this UI change with Red-Green-Refactor and the right test level."
+    ],
+    "brandColor": "#2F6B5F"
+  }
+}

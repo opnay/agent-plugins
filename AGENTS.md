@@ -15,6 +15,7 @@ Treat this file as the operating guide for both repository layout and harness-qu
 - Each local plugin lives directly under the repository root.
 - Current example:
   - `./teammate-kit`
+  - `./frontend-engineering-kit`
 - Do not create or use `./plugins/<plugin-name>` in this repository unless the repository structure is intentionally changed later.
 
 ## Required Plugin Structure
@@ -36,6 +37,7 @@ The plugin folder name and `plugin.json` `"name"` must match.
 - Every plugin added to this repository should have a matching entry in that file.
 - In this repository, marketplace `source.path` values should point to repo-root plugin folders:
   - `./teammate-kit`
+  - `./frontend-engineering-kit`
 - Do not register repo-local plugins as `./plugins/<plugin-name>` in this marketplace.
 
 ## Plugin Change Workflow
