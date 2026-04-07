@@ -50,6 +50,27 @@ The plugin folder name and `plugin.json` `"name"` must match.
 4. Keep `policy.installation`, `policy.authentication`, and `category` present on every marketplace entry.
 5. Validate edited JSON files after changes.
 
+## Plugin Entry Skill Guidance
+
+For plugins with multiple user-facing skills, prefer adding one entrypoint skill.
+
+Use an entrypoint skill when:
+
+- the plugin contains two or more skills with different roles
+- users or agents may need help choosing the right workflow or domain skill
+- the plugin benefits from task-shape classification before narrower skill selection
+
+Entrypoint skill expectations:
+
+- classify the task before deeper execution
+- guide toward the right mode, domain, or workflow without hard-coding fragile dependencies
+- remain independently usable as a first-stop skill
+- avoid requiring every plugin to have one when the plugin is intentionally single-purpose
+
+Rule of thumb:
+
+- if a plugin grows beyond one clear skill, add an entrypoint skill unless there is a strong reason not to
+
 ## Repository Editing Rules
 
 - Do not silently introduce a second layout convention.
