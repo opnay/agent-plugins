@@ -2,6 +2,20 @@
 
 Use these patterns after diagnosing the component problem shape.
 
+## Direction Rule
+
+- For page or screen refactoring, work top-down:
+  - page or feature intent
+  - section or composite boundary
+  - lower-level component split only when still needed
+- For component contract design, work bottom-up:
+  - primitive or lower-level contract
+  - composite contract
+  - page recomposition
+
+Do not start a page refactor from primitive cleanup.
+Do not leave composites as accidental page-only arrangements with no stable lower-level contract.
+
 ## God Component Split
 
 Best for:

@@ -34,6 +34,23 @@ Do not use file size as the main decision signal. Use responsibility conflicts a
 14. Define public APIs, ownership boundaries, and state placement.
 15. End with an implementation-ready boundary recommendation, including when not to split.
 
+## Refactor Direction Rule
+
+Do not use one direction for every kind of component work.
+Refactoring direction and component authoring direction are different.
+
+- `Top-down for page or screen refactoring`
+  - Start from the page, user task, section boundaries, and composite boundaries.
+  - Identify which higher-level composites should exist before breaking work into lower-level parts.
+  - Move downward only when the current composite boundary is still too mixed or unclear.
+- `Bottom-up for component contract design`
+  - Once a needed primitive or lower-level building block is known, make its API, visual contract, and interaction rules stable from the bottom up.
+  - Build composites on top of lower-level contracts instead of leaving them as accidental page-level combinations.
+- `Apply outside-in, then inside-out`
+  - Find the right boundary from the page or feature first.
+  - Then design the lower-level component contracts that make that boundary stable and reusable.
+  - Then return to the page and recompose it through the higher-level composite path.
+
 ## Decision Framework
 
 Evaluate the component through these questions:
@@ -481,6 +498,7 @@ If those conditions are weak, keep the component product-level and optimize for 
 
 Do not stop at "split" or "extract."
 Choose a refactor pattern that matches the current problem shape and preserves one clear owner.
+When refactoring a page, work top-down first. When stabilizing a component contract, work bottom-up before recomposing upward.
 
 ### God Component Split
 
