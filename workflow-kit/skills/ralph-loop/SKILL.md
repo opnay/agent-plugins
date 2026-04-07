@@ -23,10 +23,10 @@ The loop is simple: pick one problem, apply the smallest useful fix, verify imme
 - The work is mostly planning, brainstorming, or architecture exploration without immediate fix-verify loops.
 - The task needs one decisive implementation pass rather than repeated bounded refinement.
 
-## Relationship To Larger Workflows
+## Scope Boundary
 
-- Use `ralph-loop` as a bounded refinement loop when a larger task needs repeated fix-verify-reassess cycles.
-- Do not let `ralph-loop` replace broader scope management when the task really needs end-to-end orchestration.
+- Use this skill when one bounded issue can be improved through repeated fix-verify-reassess cycles.
+- Stop using this skill when the task expands into broad scope planning, multi-area coordination, or full end-to-end delivery.
 
 ## Core Loop Policy
 
@@ -35,6 +35,9 @@ The loop is simple: pick one problem, apply the smallest useful fix, verify imme
 - Verify immediately after each change.
 - Reassess after every verification result instead of queueing several speculative fixes.
 - Stop when the loop stops producing meaningful improvement.
+- A `P2` issue is eligible only when it is bounded, high-confidence, and clearly worth an iterative refinement pass.
+- Do not spend a loop on speculative or low-impact `P2` issues.
+- Do not spend a loop on `P3` issues unless the user explicitly requests polish-level work.
 
 ## Loop Workflow
 
@@ -82,6 +85,8 @@ Output:
 - Prefer issues with a clear verification path.
 - Prefer one dominant issue over several loosely related complaints.
 - If several issues are present, choose the one most likely to unblock or simplify the rest.
+- If the current target would be classified as `P2`, require strong evidence, small scope, and a clear verification path before selecting it.
+- If the current target would be `P3`, defer it by default.
 
 ## Verification Rules
 

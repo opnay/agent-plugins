@@ -9,6 +9,7 @@ description: Autonomous multi-phase delivery workflow for turning a brief produc
 
 Use this skill when the user wants full autonomous execution from idea to working code.
 The workflow runs in gated phases with explicit verification and stop conditions.
+This workflow should remain self-contained even when other skills are available for supporting tasks.
 
 ## Use When
 
