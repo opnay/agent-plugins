@@ -1,0 +1,34 @@
+{
+  "name": "workflow-kit",
+  "version": "0.1.0",
+  "description": "Workflow plugin for autonomous end-to-end execution patterns such as autopilot delivery.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "workflow",
+    "autopilot",
+    "delivery",
+    "qa"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Workflow Kit",
+    "shortDescription": "Reusable execution workflows for autonomous multi-phase delivery.",
+    "longDescription": "Provides workflow skills that help Codex execute larger tasks end-to-end with scoped phases, verification, QA loops, and delivery handoff.",
+    "developerName": "opnay",
+    "category": "Productivity",
+    "capabilities": [
+      "Analyze",
+      "Plan",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Run this feature request end-to-end with autopilot.",
+      "Take this brief from implementation through verification.",
+      "Handle this task autonomously and report the final status."
+    ],
+    "brandColor": "#3D5A80"
+  }
+}
