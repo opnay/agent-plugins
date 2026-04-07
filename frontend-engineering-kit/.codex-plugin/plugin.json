@@ -1,6 +1,6 @@
 {
   "name": "frontend-engineering-kit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Frontend engineering plugin for component architecture, domain modeling, design guidance, and TDD workflow.",
   "author": {
     "name": "opnay"
