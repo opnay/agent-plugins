@@ -50,6 +50,58 @@ The plugin folder name and `plugin.json` `"name"` must match.
 4. Keep `policy.installation`, `policy.authentication`, and `category` present on every marketplace entry.
 5. Validate edited JSON files after changes.
 
+## Plugin Entry Skill Guidance
+
+For plugins with multiple user-facing skills, prefer adding one entrypoint skill.
+
+Plugin and skill design should follow a top-down order:
+
+1. Define the plugin boundary first.
+2. Define the skills that belong inside that plugin second.
+
+Do not start from a loose collection of skills and only later invent the plugin shape around them unless the migration is explicit and intentional.
+
+## Plugin And Skill Independence
+
+- Every plugin should remain independently understandable as one coherent bundle.
+- Every skill should remain independently usable for its own bounded job.
+- A skill may belong to a plugin, but it should still have a clear responsibility and should not depend on hidden context from sibling skills.
+- A plugin should not rely on unrelated external plugin structure to explain its own purpose.
+
+## `<plugin>-guide` Skill Rule
+
+When creating a plugin, also create an entrypoint skill named `<plugin>-guide` for that plugin.
+
+This skill should:
+
+- explain how to use the plugin effectively
+- route users or agents to the right bundled skill
+- classify the task before deeper execution when the plugin has several capabilities
+
+This guide skill is plugin-scoped:
+
+- it belongs inside that plugin
+- it exists to support that plugin's usability
+- it should be maintained together with the plugin as part of the plugin's independent surface
+
+Use an entrypoint skill when:
+
+- the plugin contains two or more skills with different roles
+- users or agents may need help choosing the right workflow or domain skill
+- the plugin benefits from task-shape classification before narrower skill selection
+
+Entrypoint skill expectations:
+
+- classify the task before deeper execution
+- guide toward the right mode, domain, or workflow without hard-coding fragile dependencies
+- remain independently usable as a first-stop skill
+- use the `<plugin>-guide` naming convention for plugin entrypoint skills
+- avoid requiring every plugin to have one when the plugin is intentionally single-purpose
+
+Rule of thumb:
+
+- if a plugin grows beyond one clear skill, add an entrypoint skill unless there is a strong reason not to
+
 ## Repository Editing Rules
 
 - Do not silently introduce a second layout convention.
