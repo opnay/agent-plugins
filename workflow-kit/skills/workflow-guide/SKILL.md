@@ -1,6 +1,6 @@
 ---
 name: workflow-guide
-description: Default workflow selector for execution-heavy tasks. Use when a task needs the right execution mode chosen before work begins, such as deciding between end-to-end delivery, bounded iterative refinement, or blocking-first review handling based on scope, risk, and verification style.
+description: Default workflow selector for execution-heavy tasks. Use when a task needs the right execution mode chosen before work begins, such as deciding between end-to-end delivery, parallel independent work, bounded iterative refinement, or blocking-first review handling based on scope, risk, and verification style.
 ---
 
 # Workflow Guide
@@ -14,6 +14,7 @@ Its job is not to do the whole task by itself. Its job is to classify the task s
 
 1. Identify the task shape:
    - broad end-to-end delivery
+   - parallel independent work
    - bounded iterative refinement
    - blocking-first review handling
 2. Estimate the scope size:
@@ -41,6 +42,12 @@ Treat the task as bounded iterative refinement when:
 - repeated fix-verify-reassess cycles are more useful than one large pass
 - the user wants polish, stabilization, or gradual improvement
 
+Treat the task as parallel independent work when:
+
+- the work contains several bounded tasks that can proceed without waiting on each other
+- the main challenge is safe split and integration rather than long phased delivery
+- running the tasks sequentially would waste time more than it would reduce risk
+
 Treat the task as blocking-first review handling when:
 
 - the input is review feedback, QA findings, or self-review findings
@@ -49,14 +56,17 @@ Treat the task as blocking-first review handling when:
 ## Selection Rules
 
 - Choose a phase-driven workflow when the task is broad and end-to-end.
+- Choose a parallel workflow when the task contains several clearly independent lanes with an explicit integration path.
 - Choose a loop-driven workflow when the task is bounded and benefits from repeated fix-verify-reassess cycles.
 - Choose a blocking-first review workflow when the input is a set of findings and only material items should block progress.
+- If the work starts as parallel lanes but shared dependencies appear, collapse back to a sequential or broader workflow.
 - If the work starts as bounded refinement but expands into several coordinated areas, escalate to a broader workflow.
 - If the work starts broad but enters a short local polish cycle, temporarily use a bounded loop without losing the broader scope frame.
 
 ## Escalation Signals
 
 - The current issue can no longer be solved as one bounded unit.
+- The supposedly independent lanes now share files, decisions, or prerequisites.
 - The work begins to require explicit multi-phase planning.
 - Review findings reveal a deeper structural problem than the current mode can safely own.
 - Repeated loops stop producing meaningful improvement.
@@ -76,6 +86,7 @@ Treat the task as blocking-first review handling when:
 ## Guardrails
 
 - Do not choose a broad workflow for a narrow bounded issue just because the task sounds important.
+- Do not choose a parallel workflow unless independence and integration risk are both explicit.
 - Do not choose a bounded loop when the work clearly needs planning across several phases.
 - Do not let review handling turn into open-ended polish by default.
 - Do not keep the initial workflow mode if the task shape has obviously changed.
@@ -96,5 +107,6 @@ Use these lenses implicitly as needed:
 ## Example Triggers
 
 - "이 작업에 어떤 workflow로 들어가는 게 맞는지 먼저 판단해줘"
+- "이거 병렬로 나눠서 처리하는 게 맞는지 먼저 판단해줘"
 - "이거 끝까지 미는 게 맞아, 아니면 루프로 다듬는 게 맞아?"
 - "리뷰 반영인지, 구현 workflow인지 먼저 구분해줘"

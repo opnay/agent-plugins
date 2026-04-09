@@ -8,6 +8,7 @@
   "license": "UNLICENSED",
   "keywords": [
     "workflow",
+    "parallel",
     "autopilot",
     "delivery",
     "qa"
@@ -26,6 +27,7 @@
     ],
     "defaultPrompt": [
       "Run this feature request end-to-end with autopilot.",
+      "Split these independent tasks into safe parallel work and integrate the result.",
       "Take this brief from implementation through verification.",
       "Handle this task autonomously and report the final status."
     ],
