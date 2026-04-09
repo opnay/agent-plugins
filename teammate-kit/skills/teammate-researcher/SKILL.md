@@ -33,9 +33,9 @@ Work from evidence, keep the scope tight, and hand back a summary another teamma
 - Flag assumptions, especially when evidence is incomplete or stale.
 - Keep raw notes short enough that another teammate can scan them fast.
 
-## Role Fit
+## Example Triggers
 
-Pair this skill with `$teammate-orchestrator` when one worker should answer questions such as:
+Use this role for questions such as:
 
 - "Which files govern this behavior?"
 - "What changed recently that could explain this regression?"

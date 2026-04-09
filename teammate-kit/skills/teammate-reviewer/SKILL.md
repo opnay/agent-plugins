@@ -32,9 +32,9 @@ Center the review on findings with evidence so the next teammate can either fix 
 - Do not silently fix issues unless the task explicitly asks for a review-plus-fix pass.
 - Call out missing tests when behavior changed without matching coverage.
 
-## Role Fit
+## Example Triggers
 
-Pair this skill with `$teammate-orchestrator` when one worker should answer prompts such as:
+Use this role for prompts such as:
 
 - "Review this patch for regressions."
 - "Tell me whether this refactor is actually safe."

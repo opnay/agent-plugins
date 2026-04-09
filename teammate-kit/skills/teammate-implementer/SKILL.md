@@ -32,9 +32,9 @@ Favor momentum and correctness over elegance theatre, and leave the next teammat
 - Prefer existing project conventions over inventing a new abstraction.
 - Escalate only when blocked by permissions, missing dependencies, or conflicting requirements.
 
-## Role Fit
+## Example Triggers
 
-Pair this skill with `$teammate-orchestrator` when one worker should own prompts such as:
+Use this role for prompts such as:
 
 - "Patch this bug in one module."
 - "Update the API handler and add the missing test."
