@@ -7,7 +7,9 @@ Applies to repository structure, plugin placement, and marketplace metadata chan
 
 ## Repository Role
 
-This repository is the root for a local plugin marketplace and a working area for harness engineering.
+This repository exists to manage plugins the user creates directly.
+It is the root for a local plugin marketplace and a working area for harness engineering.
+It is not a productization repository.
 Treat this file as the operating guide for both repository layout and harness-quality expectations.
 
 ## Repository Layout
@@ -49,6 +51,13 @@ The plugin folder name and `plugin.json` `"name"` must match.
 3. Add or update the matching entry in `./.agents/plugins/marketplace.json`.
 4. Keep `policy.installation`, `policy.authentication`, and `category` present on every marketplace entry.
 5. Validate edited JSON files after changes.
+
+## Plugin Intent Notes
+
+- Treat this repository as a place to maintain plugins the user creates and manages directly.
+- `advance-codex` exists to support deeper management of Codex capabilities that the user can create and maintain directly.
+- Typical `advance-codex` surfaces include skills, plugins, and subagents.
+- Do not broaden `advance-codex` into unrelated workflow or cross-plugin utility scope unless that change is explicitly intended.
 
 ## Plugin Entry Skill Guidance
 
