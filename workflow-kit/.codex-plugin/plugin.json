@@ -1,7 +1,7 @@
 {
   "name": "workflow-kit",
   "version": "0.1.0",
-  "description": "Workflow plugin for autonomous end-to-end execution patterns such as autopilot delivery.",
+  "description": "Workflow plugin for execution workflows and commit-readiness gates.",
   "author": {
     "name": "opnay"
   },
@@ -16,8 +16,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Workflow Kit",
-    "shortDescription": "Reusable execution workflows for autonomous multi-phase delivery.",
-    "longDescription": "Provides workflow skills that help Codex execute larger tasks end-to-end with scoped phases, verification, QA loops, and delivery handoff.",
+    "shortDescription": "Execution workflows and commit-readiness gates for larger tasks.",
+    "longDescription": "Provides workflow skills that help Codex choose the right execution mode for active work and run final commit-readiness gates before a change moves toward commit.",
     "developerName": "opnay",
     "category": "Productivity",
     "capabilities": [
@@ -29,7 +29,8 @@
       "Run this feature request end-to-end with autopilot.",
       "Split these independent tasks into safe parallel work and integrate the result.",
       "Take this brief from implementation through verification.",
-      "Handle this task autonomously and report the final status."
+      "Handle this task autonomously and report the final status.",
+      "Check whether this change is commit-ready before I commit it."
     ],
     "brandColor": "#3D5A80"
   }

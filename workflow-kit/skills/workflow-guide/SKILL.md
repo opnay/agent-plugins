@@ -1,14 +1,15 @@
 ---
 name: workflow-guide
-description: Default workflow selector for execution-heavy tasks. Use when a task needs the right execution mode chosen before work begins, such as deciding between end-to-end delivery, parallel independent work, bounded iterative refinement, or blocking-first review handling based on scope, risk, and verification style.
+description: Execution workflow selector for active implementation work. Use when a task already belongs in workflow execution rather than final gating and needs the right mode chosen before work begins, such as deciding between end-to-end delivery, parallel independent work, bounded iterative refinement, or blocking-first review handling based on scope, risk, and verification style.
 ---
 
 # Workflow Guide
 
 ## Overview
 
-Use this skill as the default entrypoint for execution-heavy work in this kit.
-Its job is not to do the whole task by itself. Its job is to classify the task shape, choose the right execution mode, and make sure the work starts with the right rhythm and stop conditions.
+Use this skill when the work is still actively being executed and the main question is which execution mode fits best.
+Its job is not to do the whole task by itself. Its job is to classify the execution shape, choose the right mode, and make sure the work starts with the right rhythm and stop conditions.
+Do not use this skill as the plugin-wide entrypoint when the real question is whether the change is already ready for a commit gate.
 
 ## Workflow
 
@@ -27,6 +28,7 @@ Its job is not to do the whole task by itself. Its job is to classify the task s
    - review-driven verification against findings
 4. Select the execution mode that best matches the task shape.
 5. State what should trigger escalation or workflow switching if the initial mode stops fitting.
+6. If the work becomes nearly done and the next question is readiness rather than execution, hand off to `commit-readiness-gate`.
 
 ## Task Shape Rules
 
@@ -85,6 +87,7 @@ Treat the task as blocking-first review handling when:
 
 ## Guardrails
 
+- Do not use this skill when the task is primarily a final commit-readiness judgment.
 - Do not choose a broad workflow for a narrow bounded issue just because the task sounds important.
 - Do not choose a parallel workflow unless independence and integration risk are both explicit.
 - Do not choose a bounded loop when the work clearly needs planning across several phases.
