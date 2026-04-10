@@ -1,15 +1,16 @@
 ---
 name: component-architecture
-description: Design or review frontend component boundaries. Use when a task involves splitting large components, choosing presentational vs container responsibilities, extracting hooks, shaping component APIs, colocating state, or deciding composition, ownership, and folder structure for React or UI code.
+description: Design or review local component boundaries and refactor direction. Use when a task involves splitting a mixed component, extracting hooks, colocating state, choosing ownership inside an existing feature, or deciding whether responsibilities should stay together or move across nearby boundaries in React or UI code.
 ---
 
 # Component Architecture
 
 ## Overview
 
-Use this skill when a frontend task is primarily about component shape and responsibility.
+Use this skill when a frontend task is primarily about local component shape and responsibility.
 The goal is to decide where rendering, state, effects, domain calls, and reusable abstractions should live before implementation sprawls.
 Do not use file size as the main decision signal. Use responsibility conflicts and change pressure instead.
+Do not use this skill as the first stop for React hierarchy selection, Template/Page rules, or design-system layer policy when the main problem is architectural structure rather than a local boundary decision.
 
 ## Workflow
 
