@@ -104,14 +104,44 @@ Use it to explain why some React structures stay maintainable while others becom
 
 ### Hook Architecture
 
+- `Hook roles`
+  - `State hook`
+    - owns one local stateful behavior or interaction model
+    - should keep one coherent owner for state transitions
+  - `Synchronization hook`
+    - owns one synchronization boundary with browser APIs, subscriptions, async lifecycle, or external systems
+    - should not absorb unrelated product workflow
+  - `Orchestration hook`
+    - coordinates one feature-local interaction flow or state machine
+    - should stay bounded to one meaningful workflow instead of becoming a page dump
+  - `Adapter hook`
+    - wraps one external store, query library, or platform integration in a React-friendly contract
+    - should clarify the boundary instead of hiding several concerns behind one name
 - `Preferred patterns`
   - Extract a hook only when it owns a real reusable behavior, sync boundary, or orchestration unit.
   - Keep the hook boundary explicit: what state it owns, what it synchronizes, and what contract it exposes.
   - Prefer ordinary functions for pure computation and shaping logic when React lifecycle is not needed.
+- `When to extract`
+  - extract when one reusable lifecycle, synchronization concern, or interaction model needs an explicit owner
+  - extract when the hook contract makes the caller's responsibility easier to explain
+  - extract when several call sites truly share one behavioral boundary rather than one implementation detail
+- `When not to extract`
+  - do not extract when the logic is only pure computation or shaping that belongs in a utility
+  - do not extract when the real issue is a weak component boundary and the hook would only relocate the same mixed responsibilities
+  - do not extract when the hook would have no stable contract beyond one local component's private sequencing
+- `Contract rules`
+  - return a contract that reflects one coherent owner, not a bag of unrelated state and handlers
+  - expose user-meaningful actions and states rather than leaking internal implementation plumbing
+  - keep read values, write actions, and status signals understandable at the call site
+- `Contract smells`
+  - one hook returning many unrelated booleans, callbacks, refs, and data slices
+  - hook names that sound like page replacement rather than one boundary
+  - hook APIs that mirror a component's entire internal state shape
 - `Anti-patterns`
   - hooks used as dumping grounds for logic that has no clear ownership
   - effect-heavy hooks that hide fragile state machines
   - extracting a hook before deciding whether the responsibility should stay local
+  - hiding a component responsibility problem inside a large `useXxx` file instead of fixing the component boundary
 
 ### Context Architecture
 
