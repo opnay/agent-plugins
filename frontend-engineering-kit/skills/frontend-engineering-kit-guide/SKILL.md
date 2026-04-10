@@ -1,6 +1,6 @@
 ---
 name: frontend-engineering-kit-guide
-description: Entrypoint skill for the `frontend-engineering-kit` plugin. Use when a task involves frontend engineering work and Codex should first decide whether the job is primarily about overall frontend workflow, frontend architecture-pattern choice, React structure and rendering boundaries, local component boundaries, domain modeling, UI implementation quality, or test-driven execution.
+description: Entrypoint skill for the `frontend-engineering-kit` plugin. Use when a task involves frontend engineering work and Codex should first decide whether the job is primarily about overall frontend workflow, frontend architecture-pattern choice, React structure, hook and effect discipline, rendering boundaries, local component boundaries, domain modeling, UI implementation quality, or test-driven execution.
 ---
 
 # Frontend Engineering Kit Guide
@@ -16,7 +16,7 @@ Do not jump straight into a specialized skill when the task is broad, mixed, or 
 1. Identify the frontend task shape:
    - broad implementation, refactor, fix, or review work
    - frontend architecture-pattern decision
-   - React structure, rendering boundary, or design-system boundary decision
+   - React structure, hook/effect discipline, rendering boundary, or design-system boundary decision
    - component boundary or ownership decision
    - domain, feature, or layering decision
    - UI implementation quality or design guidance
@@ -31,7 +31,7 @@ Do not jump straight into a specialized skill when the task is broad, mixed, or 
 
 - Choose `frontend-workflow-guide` when the task is broad, mixed, or needs an initial project-structure read before deciding the dominant concern.
 - Choose `frontend-architecture-patterns` when the main problem is Atomic/FSD/custom structure fit, architecture-pattern choice, migration direction, design-system versus product-app structure, or reviewing whether the frontend needs UI taxonomy, feature slicing, or both.
-- Choose `react-architecture` when the main problem is React hierarchy inside the chosen pattern, Template/Page or widget/shared boundaries, prop contract rules, context/provider scope, or rerender spread caused by poor structure inside the accepted architecture.
+- Choose `react-architecture` when the main problem is React hierarchy inside the chosen pattern, hook API design, effect or dependency discipline, Template/Page or widget/shared boundaries, prop contract rules, context/provider scope, or rerender spread caused by poor structure inside the accepted architecture.
 - Choose `component-architecture` when the main problem is local component boundaries, ownership, extraction, composition, hook placement, or split direction inside an existing feature or screen.
 - Choose `frontend-domain-modeling` when the main problem is business concepts, feature boundaries, layering, domain rules, or where business logic should live.
 - Choose `frontend-design-guide` when the main problem is hierarchy, layout, spacing, typography, states, responsiveness, accessibility, or token-driven UI quality.
@@ -44,7 +44,7 @@ Do not jump straight into a specialized skill when the task is broad, mixed, or 
 - Route directly to a specialized skill only when the dominant concern is already clear from the request.
 - Prefer one clear starting skill plus an explicit handoff order over mixing several skill responsibilities into one ambiguous prompt.
 - Choose `frontend-architecture-patterns` before `react-architecture` when the real question is whether the repository should be Atomic, FSD, or hybrid at all.
-- Choose `react-architecture` before `component-architecture` when the real question is about React layer policy, provider scope, or rerender spread across already accepted architectural boundaries.
+- Choose `react-architecture` before `component-architecture` when the real question is about React layer policy, hook design discipline, provider scope, or rerender spread across already accepted architectural boundaries.
 - If the task changes both structure and visuals, decide structure first unless the user explicitly asked for design critique only.
 - If the task changes observable behavior and test protection is part of the risk, keep `frontend-tdd-rgb` visible even when another skill owns the first step.
 

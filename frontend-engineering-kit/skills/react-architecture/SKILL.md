@@ -1,6 +1,6 @@
 ---
 name: react-architecture
-description: React architecture guidance for hierarchy design, component levels, design-system boundaries, prop contracts, and rendering/update boundaries after the overall pattern is already chosen. Use when a task is specifically about React component layering, Template/Page boundaries, separating business logic from reusable UI logic, or reducing unnecessary re-render spread through better structure inside the selected architecture.
+description: React architecture guidance for component and hook boundaries, context scope, state ownership, effect discipline, prop contracts, and rendering/update boundaries after the overall pattern is already chosen. Use when a task is specifically about React component layering, hook API design, effect/dependency issues, separating business logic from reusable UI logic, or reducing unnecessary re-render spread through better structure inside the selected architecture.
 ---
 
 # React Architecture
@@ -14,7 +14,7 @@ Do not use this skill as the first stop for choosing between Atomic Design, FSD,
 ## What This Skill Teaches
 
 This skill teaches React architecture as a set of structural mental models rather than a folder convention.
-The focus is how components, hooks, context, external state, effects, and update propagation shape code quality.
+The focus is how components, hooks, context, utilities, external logic boundaries, state ownership, effects, and update propagation shape code quality.
 Use it to explain why some React structures stay maintainable while others become fragile even when the folder pattern looks correct.
 
 ## Core Mental Models
@@ -50,7 +50,7 @@ Use it to explain why some React structures stay maintainable while others becom
    - components
    - hooks
    - context
-    - utility categories
+   - utility categories
    - external logic boundaries
    - state ownership
    - rendering boundaries
@@ -138,6 +138,20 @@ Use it to explain why some React structures stay maintainable while others becom
   - one hook returning many unrelated booleans, callbacks, refs, and data slices
   - hook names that sound like page replacement rather than one boundary
   - hook APIs that mirror a component's entire internal state shape
+- `Implementation rules`
+  - obey Rules of Hooks and keep hook calls at stable top-level positions
+  - avoid derived state duplication; compute pure derived values in render or memo
+  - use effects only for synchronization, not for ordinary computation
+  - prefer explicit status or phase models over piles of booleans
+- `Dependency and closure rules`
+  - make dependency arrays complete and predictable
+  - treat stale closures as correctness problems, not as minor optimization details
+  - refactor ownership or logic placement before suppressing dependency issues
+  - stabilize returned references only when consumers actually depend on referential equality
+- `Async and cleanup rules`
+  - add cancellation, latest-only guards, or cleanup when the hook owns async or subscription flows
+  - always return cleanup for subscriptions, observers, or long-lived external connections
+  - keep async ownership explicit so the caller can explain what happens on rerender, restart, and unmount
 - `Anti-patterns`
   - hooks used as dumping grounds for logic that has no clear ownership
   - effect-heavy hooks that hide fragile state machines
@@ -369,7 +383,6 @@ Use it to explain why some React structures stay maintainable while others becom
 - `Context`
   - Is this provider scoped to one concern, or is it grouping unrelated consumers?
   - Is context being used because ownership is truly shared, or because prop flow feels inconvenient?
-- `External state`
 - `External logic`
   - Is this library or browser dependency isolated behind a clear boundary, or leaking into general component logic?
   - Is this really a utility, or is it a platform or library adapter with ownership implications?
