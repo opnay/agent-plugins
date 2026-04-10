@@ -50,8 +50,9 @@ Use it to explain why some React structures stay maintainable while others becom
    - components
    - hooks
    - context
-   - utility categories
-   - external state
+    - utility categories
+   - external logic boundaries
+   - state ownership
    - rendering boundaries
    - effects
 4. Separate reusable UI logic from product-specific business logic.
@@ -145,12 +146,44 @@ Use it to explain why some React structures stay maintainable while others becom
 
 ### Context Architecture
 
+- `Context roles`
+  - `Read-only context`
+    - provides stable read-mostly values such as theme, locale, or static configuration
+    - should avoid unnecessary write churn across broad trees
+  - `Coordination context`
+    - shares one interaction owner across several related consumers inside one subtree
+    - should stay scoped to the feature, panel, or section that actually coordinates the interaction
+  - `Capability context`
+    - exposes one capability surface such as analytics, feature capability, or service access
+    - should stay explicit about what consumers can do with it
+  - `Boundary context`
+    - defines one local ownership and update boundary for a feature, widget, or screen subtree
+    - should not silently expand into application-wide shared state
 - `Preferred patterns`
   - Treat each provider as one intentional ownership and update boundary.
   - Scope providers to the smallest subtree that actually needs the shared value.
   - Keep context values focused and stable enough that consumers depend on one coherent concern.
+- `When to use context`
+  - use context when several consumers inside one meaningful subtree truly need one shared owner
+  - use context when prop passing would obscure a real shared boundary rather than simply add one explicit prop hop
+  - use context when the provider itself explains one clear feature, widget, or screen-level boundary
+- `When not to use context`
+  - do not use context only because prop drilling feels inconvenient
+  - do not use context when the state is still local to one owner and can stay there cleanly
+  - do not use context to bundle unrelated concerns under one broad provider
+  - do not use context when a store, hook, service adapter, or explicit props describe the ownership boundary more clearly
+- `Contract rules`
+  - keep provider values organized around one coherent concern
+  - separate stable read values from write actions when that improves consumer clarity
+  - design provider values so consumers can explain why they subscribe in one sentence
+  - treat provider value growth as a signal to revisit the boundary rather than keep adding fields
+- `Contract smells`
+  - a provider value that keeps accumulating unrelated booleans, callbacks, and data
+  - consumers that read the same context for unrelated reasons
+  - provider updates that fan out to large areas of the tree without one shared interaction boundary
 - `Anti-patterns`
   - one broad provider for many unrelated concerns
+  - using context as a global store replacement by default
   - using context as a reflex instead of deciding real ownership
   - provider values that churn because ownership and update boundaries are vague
 
@@ -160,14 +193,10 @@ Use it to explain why some React structures stay maintainable while others becom
   - Use for pure helper logic that supports React component contracts without needing lifecycle or ownership of its own.
   - Good fits include slot interpretation, prop shaping, render-time helper decisions, and small composition helpers.
   - Keep these near the component or feature boundary they support unless they become truly shared across several UI surfaces.
-- `Library utility`
+- `Pure utility`
   - Use for framework-agnostic pure functions such as formatting, parsing, normalization, sorting, grouping, or mapping.
-  - Prefer this category when the logic is plain input-output transformation with no React or browser dependency.
+  - Prefer this category when the logic is plain input-output transformation with no React or platform dependency.
   - Shared placement is justified only when the meaning is also shared, not just the implementation shape.
-- `Browser utility`
-  - Use for helpers around URL, DOM, storage, clipboard, media queries, observers, or other web platform APIs.
-  - Treat many of these as platform adapters rather than generic utilities when they hide browser coupling.
-  - Do not blur browser integration into ordinary pure helpers.
 - `Style utility`
   - Use for variant mapping, token selection, class composition, and other appearance-focused helper logic.
   - Keep style helpers close to shared UI or design-system space.
@@ -180,7 +209,7 @@ Use it to explain why some React structures stay maintainable while others becom
 ## Utility Boundary Rules
 
 - `Utility extraction is not one thing`
-  - Distinguish React, library, browser, style, and feature-local utilities before extracting.
+  - Distinguish React, pure, style, and feature-local utilities before extracting.
   - A generic `utils` bucket weakens ownership because these categories have different coupling and placement rules.
 - `Lifecycle test`
   - If logic needs React lifecycle, subscriptions, or synchronization, it is not a plain utility.
@@ -190,21 +219,63 @@ Use it to explain why some React structures stay maintainable while others becom
   - Solve the ownership question before moving files.
 - `Platform test`
   - If logic touches browser APIs, treat it as platform-coupled first and utility-shaped second.
-  - Avoid presenting browser integration as an innocent shared helper.
+  - Move that logic to an external logic boundary instead of presenting it as an innocent shared helper.
 - `Meaning test`
   - If the logic expresses feature policy or domain meaning, keep it feature-local or move it to a more explicit boundary.
   - Do not globalize code just because it is pure.
 
-### External State Architecture
+### External Logic Boundaries
+
+- `Library integration`
+  - Treat third-party library interaction as an integration boundary with its own contract.
+  - Prefer wrapping library-specific details behind feature-local adapters, helper modules, or adapter hooks when that improves ownership clarity.
+  - Do not let raw library usage leak everywhere by default.
+- `Browser and DOM logic`
+  - Treat URL, DOM measurement, observers, storage, clipboard, focus management, media queries, and browser APIs as platform-coupled logic.
+  - Keep browser logic near the synchronization or adapter boundary that owns it.
+  - Do not disguise DOM or browser coupling as innocent shared utilities.
+- `Platform adapter mindset`
+  - When logic depends on a specific runtime capability, describe it as an adapter or integration boundary before calling it a utility.
+  - Keep the React-facing contract small and purpose-specific.
+- `Anti-patterns`
+  - scattering raw browser API usage across many components
+  - letting third-party library details shape component APIs directly
+  - hiding platform coupling inside vaguely named helpers or hooks
+
+### State Ownership
+
+- `State categories`
+  - `Local UI state`
+    - belongs to one component or one narrow subtree
+    - should stay local unless several owners truly need the same source of truth
+  - `Shared client state`
+    - belongs to several distant consumers that need one durable client-side owner
+    - should be introduced only when local state or scoped context no longer explains ownership cleanly
+  - `Server state`
+    - originates from the server and follows fetch, cache, invalidate, and refetch semantics
+    - should not be treated as ordinary client-owned state
+  - `Derived state`
+    - can be computed from existing state and inputs
+    - should not become a second source of truth without strong reason
 
 - `Preferred patterns`
-  - Keep the distinction between server state, local UI state, and shared client state explicit.
-  - Put data in an external store only when several distant owners need one durable client-side source of truth.
-  - Keep store shape focused on shared ownership, not convenience dumping.
+  - Keep the distinction between server state, local UI state, shared client state, and derived state explicit.
+  - Introduce broader client-owned state only when several owners truly need one durable source of truth.
+  - Keep state placement focused on ownership clarity rather than access convenience.
+- `When broader shared state is justified`
+  - when several distant consumers need the same client-owned source of truth across subtree boundaries
+  - when route or subtree replacement should not destroy the current client-owned value
+  - when local state or scoped context would obscure the real owner rather than clarify it
+- `When broader shared state is a mistake`
+  - when the value is still local UI state
+  - when the value is server state being mirrored unnecessarily
+  - when the value is derived from existing state and can be recomputed
+  - when broad access is the only reason for centralization
 - `Anti-patterns`
-  - putting local transient UI state into a global store by default
+  - putting local transient UI state into broader shared state by default
+  - mirroring server state into client-owned state without a true ownership reason
   - storing pure derived values that can be computed from existing state
-  - letting the external store absorb product orchestration that should stay closer to the feature boundary
+  - letting one broad owner absorb product orchestration that should stay closer to the feature boundary
 
 ### Rendering Architecture
 
@@ -299,10 +370,14 @@ Use it to explain why some React structures stay maintainable while others becom
   - Is this provider scoped to one concern, or is it grouping unrelated consumers?
   - Is context being used because ownership is truly shared, or because prop flow feels inconvenient?
 - `External state`
-  - Does this value need a shared durable owner, or is it only local UI state?
-  - Is this store holding source-of-truth state or a pile of derived convenience values?
+- `External logic`
+  - Is this library or browser dependency isolated behind a clear boundary, or leaking into general component logic?
+  - Is this really a utility, or is it a platform or library adapter with ownership implications?
+- `State ownership`
+  - Does this value need a broader durable owner, or is it only local UI state?
+  - Is this server state, shared client state, or derived state pretending to be source of truth?
 - `Utilities`
-  - Is this logic a React utility, library utility, browser utility, style utility, or feature-local utility?
+  - Is this logic a React utility, pure utility, style utility, or feature-local utility?
   - Does extraction improve clarity without erasing ownership or hiding platform coupling?
 - `Rendering`
   - Who owns this state, and why is that owner the narrowest meaningful owner?
