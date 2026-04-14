@@ -409,3 +409,7 @@ Use it to explain why some React structures stay maintainable while others becom
 - Do not treat `memo`, `useMemo`, or `useCallback` as the default fix before checking state placement, provider scope, and ownership.
 - Do not widen provider scope just to avoid prop passing if it causes avoidable rerender spread.
 - Do not use this skill when the real problem is choosing a folder or layer pattern, planning an architecture migration, or evaluating whether the repository needs Atomic, FSD, or a hybrid.
+
+## References
+
+- Read [references/react-18-19-breaking-changes.md](references/react-18-19-breaking-changes.md) when a React architecture task also involves version upgrade risk, deprecated APIs, or behavior changes between React 18 and React 19.
