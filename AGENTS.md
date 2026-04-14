@@ -1,189 +1,189 @@
 # AGENTS.md
 
 ---
-## Part 1. Repository And Marketplace Rules
-Applies to repository structure, plugin placement, and marketplace metadata changes.
+## Part 1. 저장소 및 마켓플레이스 규칙
+이 섹션은 저장소 구조, 플러그인 배치, 마켓플레이스 메타데이터 변경에 적용됩니다.
 ---
 
-## Repository Role
+## 저장소의 역할
 
-This repository exists to manage plugins the user creates directly.
-It is the root for a local plugin marketplace and a working area for harness engineering.
-It is not a productization repository.
-Treat this file as the operating guide for both repository layout and harness-quality expectations.
+이 저장소는 사용자가 직접 만드는 플러그인을 관리하기 위해 존재합니다.
+로컬 플러그인 마켓플레이스의 루트이자 하네스 엔지니어링 작업 공간으로 사용합니다.
+제품화 저장소가 아닙니다.
+이 파일은 저장소 레이아웃과 하네스 품질 기준을 함께 다루는 운영 가이드로 취급합니다.
 
-## Repository Layout
+## 저장소 레이아웃
 
-- Each local plugin lives directly under the repository root.
-- Current example:
+- 각 로컬 플러그인은 저장소 루트 바로 아래에 둡니다.
+- 현재 예시:
   - `./teammate-kit`
   - `./frontend-engineering-kit`
   - `./workflow-kit`
-- Do not create or use `./plugins/<plugin-name>` in this repository unless the repository structure is intentionally changed later.
+- 나중에 저장소 구조를 의도적으로 바꾸지 않는 한, 이 저장소에서 `./plugins/<plugin-name>` 경로를 만들거나 사용하지 않습니다.
 
-## Required Plugin Structure
+## 필수 플러그인 구조
 
-Each plugin should include:
+각 플러그인은 다음을 포함해야 합니다.
 
 - `./<plugin-name>/.codex-plugin/plugin.json`
-- Optional `./<plugin-name>/skills/`
-- Optional `./<plugin-name>/assets/`
-- Optional `./<plugin-name>/scripts/`
-- Optional `./<plugin-name>/.mcp.json`
-- Optional `./<plugin-name>/.app.json`
+- 선택 사항: `./<plugin-name>/skills/`
+- 선택 사항: `./<plugin-name>/assets/`
+- 선택 사항: `./<plugin-name>/scripts/`
+- 선택 사항: `./<plugin-name>/.mcp.json`
+- 선택 사항: `./<plugin-name>/.app.json`
 
-The plugin folder name and `plugin.json` `"name"` must match.
+플러그인 폴더 이름과 `plugin.json`의 `"name"` 값은 반드시 일치해야 합니다.
 
-## Marketplace Source Of Truth
+## 마켓플레이스 단일 진실 공급원
 
-- Marketplace file: `./.agents/plugins/marketplace.json`
-- Every plugin added to this repository should have a matching entry in that file.
-- In this repository, marketplace `source.path` values should point to repo-root plugin folders:
+- 마켓플레이스 파일: `./.agents/plugins/marketplace.json`
+- 이 저장소에 추가하는 모든 플러그인은 해당 파일에 대응되는 항목이 있어야 합니다.
+- 이 저장소에서는 마켓플레이스의 `source.path`가 저장소 루트의 플러그인 폴더를 가리켜야 합니다.
   - `./teammate-kit`
   - `./frontend-engineering-kit`
   - `./workflow-kit`
-- Do not register repo-local plugins as `./plugins/<plugin-name>` in this marketplace.
+- 이 마켓플레이스에서 저장소 로컬 플러그인을 `./plugins/<plugin-name>`로 등록하지 않습니다.
 
-## Plugin Change Workflow
+## 플러그인 변경 워크플로
 
-1. Create or move the plugin folder at the repository root.
-2. Ensure `.codex-plugin/plugin.json` exists and is valid JSON.
-3. Add or update the matching entry in `./.agents/plugins/marketplace.json`.
-4. Keep `policy.installation`, `policy.authentication`, and `category` present on every marketplace entry.
-5. Validate edited JSON files after changes.
+1. 플러그인 폴더를 저장소 루트에 생성하거나 이동합니다.
+2. `.codex-plugin/plugin.json`이 존재하고 유효한 JSON인지 확인합니다.
+3. `./.agents/plugins/marketplace.json`에 대응 항목을 추가하거나 갱신합니다.
+4. 모든 마켓플레이스 항목에 `policy.installation`, `policy.authentication`, `category`가 포함되도록 유지합니다.
+5. 변경한 JSON 파일은 수정 후 검증합니다.
 
-## Plugin Intent Notes
+## 플러그인 의도 관련 메모
 
-- Treat this repository as a place to maintain plugins the user creates and manages directly.
-- `advance-codex` exists to support deeper management of Codex capabilities that the user can create and maintain directly.
-- Typical `advance-codex` surfaces include skills, plugins, and subagents.
-- Do not broaden `advance-codex` into unrelated workflow or cross-plugin utility scope unless that change is explicitly intended.
+- 이 저장소는 사용자가 직접 만들고 직접 관리하는 플러그인을 유지보수하는 장소로 취급합니다.
+- `advance-codex`는 사용자가 직접 만들고 유지할 수 있는 Codex 기능을 더 깊게 관리하기 위해 존재합니다.
+- `advance-codex`의 대표 표면은 보통 skill, plugin, subagent입니다.
+- 명시적 의도가 없는 한, `advance-codex`를 무관한 워크플로나 cross-plugin 유틸리티 범위로 넓히지 않습니다.
 
-## Plugin Entry Skill Guidance
+## 플러그인 엔트리 스킬 가이드
 
-For plugins with multiple user-facing skills, prefer adding one entrypoint skill.
+여러 사용자 지향 skill을 가진 플러그인이라면, 엔트리포인트 skill 하나를 두는 쪽을 우선 고려합니다.
 
-Plugin and skill design should follow a top-down order:
+플러그인과 skill 설계는 위에서 아래로 진행해야 합니다.
 
-1. Define the plugin boundary first.
-2. Define the skills that belong inside that plugin second.
+1. 먼저 플러그인 경계를 정의합니다.
+2. 그다음 그 플러그인 안에 들어갈 skill을 정의합니다.
 
-Do not start from a loose collection of skills and only later invent the plugin shape around them unless the migration is explicit and intentional.
+명시적이고 의도적인 마이그레이션이 아니라면, 느슨한 skill 묶음부터 시작한 뒤 나중에 그에 맞춰 플러그인 모양을 억지로 만들지 않습니다.
 
-## Plugin And Skill Independence
+## 플러그인과 스킬의 독립성
 
-- Every plugin should remain independently understandable as one coherent bundle.
-- Every skill should remain independently usable for its own bounded job.
-- A skill may belong to a plugin, but it should still have a clear responsibility and should not depend on hidden context from sibling skills.
-- A plugin should not rely on unrelated external plugin structure to explain its own purpose.
+- 모든 플러그인은 하나의 일관된 번들로 독립적으로 이해 가능해야 합니다.
+- 모든 skill은 자기 범위의 작업을 독립적으로 수행할 수 있어야 합니다.
+- skill이 플러그인에 속할 수는 있지만, 여전히 책임이 분명해야 하며 형제 skill의 숨은 맥락에 의존하면 안 됩니다.
+- 플러그인은 자기 목적을 설명하기 위해 무관한 외부 플러그인 구조에 기대면 안 됩니다.
 
-## `<plugin>-guide` Skill Rule
+## `<plugin>-guide` 스킬 규칙
 
-When creating a plugin, also create an entrypoint skill named `<plugin>-guide` for that plugin.
+플러그인을 만들 때는 해당 플러그인의 엔트리포인트 skill로 `<plugin>-guide`도 함께 만듭니다.
 
-This skill should:
+이 skill은 다음 역할을 해야 합니다.
 
-- explain how to use the plugin effectively
-- route users or agents to the right bundled skill
-- classify the task before deeper execution when the plugin has several capabilities
+- 플러그인을 효과적으로 사용하는 방법을 설명한다
+- 사용자나 에이전트를 올바른 내장 skill로 라우팅한다
+- 플러그인에 여러 기능이 있을 경우, 더 깊은 실행 전에 작업 유형을 분류한다
 
-This guide skill is plugin-scoped:
+이 guide skill은 플러그인 범위에 속합니다.
 
-- it belongs inside that plugin
-- it exists to support that plugin's usability
-- it should be maintained together with the plugin as part of the plugin's independent surface
+- 해당 플러그인 내부에 존재해야 합니다
+- 해당 플러그인의 사용성을 지원하기 위해 존재합니다
+- 플러그인의 독립적인 표면 일부로서 함께 유지보수해야 합니다
 
-Use an entrypoint skill when:
+다음 조건이면 엔트리포인트 skill을 사용합니다.
 
-- the plugin contains two or more skills with different roles
-- users or agents may need help choosing the right workflow or domain skill
-- the plugin benefits from task-shape classification before narrower skill selection
+- 플러그인에 서로 역할이 다른 skill이 둘 이상 있다
+- 사용자나 에이전트가 적절한 워크플로나 도메인 skill을 고르는 데 도움이 필요하다
+- 더 좁은 skill 선택 전에 작업 형태를 분류하는 편이 유리하다
 
-Entrypoint skill expectations:
+엔트리포인트 skill의 기대사항:
 
-- classify the task before deeper execution
-- guide toward the right mode, domain, or workflow without hard-coding fragile dependencies
-- remain independently usable as a first-stop skill
-- use the `<plugin>-guide` naming convention for plugin entrypoint skills
-- avoid requiring every plugin to have one when the plugin is intentionally single-purpose
+- 더 깊은 실행 전에 작업을 분류할 것
+- 깨지기 쉬운 의존성을 하드코딩하지 않고 적절한 모드, 도메인, 워크플로로 안내할 것
+- 첫 진입점으로서 독립적으로 사용 가능할 것
+- 플러그인 엔트리포인트 skill에는 `<plugin>-guide` 명명 규칙을 사용할 것
+- 플러그인이 의도적으로 단일 목적이라면 모든 플러그인에 강제로 둘 필요는 없음
 
-Rule of thumb:
+실무적인 기준:
 
-- if a plugin grows beyond one clear skill, add an entrypoint skill unless there is a strong reason not to
+- 플러그인이 분명한 단일 skill 범위를 넘어선다면, 특별한 이유가 없는 한 엔트리포인트 skill을 추가합니다
 
-## Repository Editing Rules
+## 저장소 편집 규칙
 
-- Do not silently introduce a second layout convention.
-- Preserve existing marketplace ordering unless reordering is explicitly requested.
-- Prefer small, direct edits over scaffold regeneration when only metadata or paths need adjustment.
-- If a plugin is moved, update marketplace paths in the same change.
-- If a scaffold tool generates `./plugins/<plugin-name>`, move it to `./<plugin-name>` before finishing.
+- 두 번째 레이아웃 관례를 조용히 도입하지 않습니다.
+- 명시적으로 재정렬 요청이 없는 한, 기존 마켓플레이스 순서를 유지합니다.
+- 메타데이터나 경로만 손보면 되는 경우, 스캐폴드 재생성보다 작고 직접적인 수정을 선호합니다.
+- 플러그인을 이동했다면 같은 변경 안에서 마켓플레이스 경로도 함께 갱신합니다.
+- 스캐폴드 도구가 `./plugins/<plugin-name>`를 생성했다면 마무리 전에 `./<plugin-name>`로 옮깁니다.
 
 ---
-## Part 2. Harness Engineering Rules
-Applies to harness design, implementation, validation, and failure handling.
+## Part 2. 하네스 엔지니어링 규칙
+이 섹션은 하네스 설계, 구현, 검증, 실패 처리에 적용됩니다.
 ---
 
-## Harness Engineering Purpose
+## 하네스 엔지니어링의 목적
 
-Use this repository with a harness-engineering mindset.
-Optimize for reproducibility, diagnosability, explicit contracts, and safe iteration rather than clever one-off fixes.
+이 저장소는 하네스 엔지니어링 관점으로 다룹니다.
+영리한 일회성 수정이 아니라 재현 가능성, 진단 가능성, 명시적 계약, 안전한 반복 개선을 최적화합니다.
 
-## Harness Working Principles
+## 하네스 작업 원칙
 
-- Prefer deterministic fixtures over live external dependencies.
-- Make failures easier to debug, not easier to hide.
-- Keep changes narrow, attributable, and easy to verify.
-- Treat observability as part of the harness, not optional follow-up work.
-- Prefer explicit contracts for inputs, outputs, and failure modes.
+- 외부 실서비스 의존성보다 결정론적인 fixture를 우선합니다.
+- 실패를 숨기기 쉽게 만들지 말고, 디버깅하기 쉽게 만듭니다.
+- 변경은 좁고, 추적 가능하며, 검증하기 쉽게 유지합니다.
+- 관측 가능성은 선택적 후속 작업이 아니라 하네스의 일부로 취급합니다.
+- 입력, 출력, 실패 모드에는 명시적 계약을 선호합니다.
 
-## Harness Change Workflow
+## 하네스 변경 워크플로
 
-1. Identify the exact harness behavior, contract, or workflow being changed.
-2. Read the relevant scripts, configs, fixtures, docs, and tests before editing.
-3. Make the smallest complete change that resolves the target problem.
-4. Run the narrowest meaningful verification that matches the risk.
-5. Report what changed, how it was validated, and what remains uncertain.
+1. 변경하려는 정확한 하네스 동작, 계약, 워크플로를 식별합니다.
+2. 수정 전에 관련 스크립트, 설정, fixture, 문서, 테스트를 읽습니다.
+3. 목표 문제를 해결하는 가장 작은 완전한 변경을 만듭니다.
+4. 위험 수준에 맞는 가장 좁고 의미 있는 검증을 수행합니다.
+5. 무엇을 바꿨는지, 어떻게 검증했는지, 무엇이 아직 불확실한지 보고합니다.
 
-## Harness Design Rules
+## 하네스 설계 규칙
 
-- Prefer deterministic inputs, fixtures, and seeded randomness.
-- Avoid hidden state between runs.
-- Make retries, timeouts, and backoff explicit and justified.
-- Separate infra failure, harness failure, and assertion failure clearly.
-- Prefer structured logs or machine-readable outputs over ad hoc prints when the harness is expected to be replayed or triaged.
-- Keep setup and teardown explicit.
-- If a workflow cannot be made deterministic, document the unstable boundary and constrain its blast radius.
+- 결정론적인 입력, fixture, seed 기반 randomness를 선호합니다.
+- 실행 간 숨은 상태를 피합니다.
+- retry, timeout, backoff는 명시적이고 정당화된 형태로 둡니다.
+- infra failure, harness failure, assertion failure를 분명히 구분합니다.
+- 하네스를 재실행하거나 트리아지할 가능성이 있다면 ad hoc print보다 structured log 또는 machine-readable output을 선호합니다.
+- setup과 teardown을 명시적으로 유지합니다.
+- 어떤 워크플로가 결정론적으로 될 수 없다면, 불안정한 경계를 문서화하고 영향 범위를 제한합니다.
 
-## Validation Rules
+## 검증 규칙
 
-- Config-only change:
-  - Validate parsing or load behavior and run one representative path if the config affects execution.
-- Fixture or sample-data change:
-  - Re-run only the scenarios that depend on those fixtures.
-- Core harness logic change:
-  - Run targeted tests plus one representative end-to-end or integration path when available.
-- Logging or reporting change:
-  - Verify both machine-readable output shape and operator readability.
+- 설정만 바뀐 경우:
+  - 파싱 또는 로드 동작을 검증하고, 그 설정이 실행에 영향을 주면 대표 경로 하나를 실행합니다.
+- fixture 또는 sample data가 바뀐 경우:
+  - 해당 fixture에 의존하는 시나리오만 다시 실행합니다.
+- 핵심 하네스 로직이 바뀐 경우:
+  - 타깃 테스트와 함께 대표 end-to-end 또는 integration 경로 하나를 추가로 실행합니다.
+- 로깅 또는 리포팅이 바뀐 경우:
+  - machine-readable output 형태와 운영자 가독성을 모두 검증합니다.
 
-## Failure Handling
+## 실패 처리
 
-- Do not patch flaky behavior with blind retries unless the root cause is understood and the retry is part of the intended contract.
-- Do not depend on wall-clock sleeps when a state check, event, or assertion can be used instead.
-- When a failure cannot be reproduced locally, record the exact boundary of uncertainty.
-- If external systems are involved, isolate which part is nondeterministic before changing harness logic.
+- 근본 원인을 이해하지 못한 채 의도되지 않은 blind retry로 flaky 동작을 덮지 않습니다.
+- 상태 확인, 이벤트, assertion으로 해결할 수 있는데 wall-clock sleep에 의존하지 않습니다.
+- 실패를 로컬에서 재현할 수 없다면, 정확히 어디까지가 불확실한지 기록합니다.
+- 외부 시스템이 관련되어 있다면, 하네스 로직을 바꾸기 전에 어느 부분이 비결정적인지 먼저 분리합니다.
 
-## Do Not
+## 금지 사항
 
-- Do not introduce randomness without a seed or a clear reason.
-- Do not add silent fallbacks that conceal broken harness behavior.
-- Do not mix unrelated cleanup into harness-fix changes.
-- Do not weaken assertions just to get a passing run.
-- Do not change output contracts casually without updating the callers or documenting the break.
+- seed나 분명한 이유 없이 randomness를 도입하지 않습니다.
+- 깨진 하네스 동작을 숨기는 silent fallback을 추가하지 않습니다.
+- 하네스 수정 변경에 무관한 cleanup을 섞지 않습니다.
+- 테스트를 통과시키기 위해 assertion을 약화하지 않습니다.
+- 호출부를 함께 갱신하거나 break를 문서화하지 않은 채 출력 계약을 함부로 바꾸지 않습니다.
 
-## Agent Output Expectations
+## 에이전트 출력 기대사항
 
-When finishing harness-related work, include:
+하네스 관련 작업을 마칠 때는 다음을 포함합니다.
 
 - `Scope handled`
 - `Files changed`
