@@ -33,7 +33,7 @@ Do not jump straight into a specialized skill when the task is broad, mixed, or 
 - Choose `frontend-architecture-patterns` when the main problem is Atomic/FSD/custom structure fit, architecture-pattern choice, migration direction, design-system versus product-app structure, or reviewing whether the frontend needs UI taxonomy, feature slicing, or both.
 - Choose `react-architecture` when the main problem is React hierarchy inside the chosen pattern, hook API design, effect or dependency discipline, Template/Page or widget/shared boundaries, prop contract rules, context/provider scope, or rerender spread caused by poor structure inside the accepted architecture.
 - Choose `component-architecture` when the main problem is local component boundaries, ownership, extraction, composition, hook placement, or split direction inside an existing feature or screen.
-- Choose `frontend-domain-modeling` when the main problem is business concepts, feature boundaries, layering, domain rules, or where business logic should live.
+- Choose `frontend-domain-modeling` when the main problem is how much frontend modeling is actually needed: keeping server contracts close, separating view shaping from domain logic, extracting repeated policy rules, deciding whether value or entity-like models are justified, or drawing capability-shaped feature boundaries.
 - Choose `frontend-design-guide` when the main problem is hierarchy, layout, spacing, typography, states, responsiveness, accessibility, or token-driven UI quality.
 - Choose `frontend-tdd-rgb` when the main problem is how to drive the change through the right failing test, test level, and Red-Green-Refactor loop.
 - If the task clearly crosses several of these concerns, start with `frontend-workflow-guide` and let it choose the first deeper path.
@@ -45,6 +45,7 @@ Do not jump straight into a specialized skill when the task is broad, mixed, or 
 - Prefer one clear starting skill plus an explicit handoff order over mixing several skill responsibilities into one ambiguous prompt.
 - Choose `frontend-architecture-patterns` before `react-architecture` when the real question is whether the repository should be Atomic, FSD, or hybrid at all.
 - Choose `react-architecture` before `component-architecture` when the real question is about React layer policy, hook design discipline, provider scope, or rerender spread across already accepted architectural boundaries.
+- Choose `frontend-domain-modeling` before `react-architecture` or `component-architecture` when the real question is still whether the code should stay thin, become a view model, or grow into explicit policy, value, or entity-like modeling at all.
 - If the task changes both structure and visuals, decide structure first unless the user explicitly asked for design critique only.
 - If the task changes observable behavior and test protection is part of the risk, keep `frontend-tdd-rgb` visible even when another skill owns the first step.
 

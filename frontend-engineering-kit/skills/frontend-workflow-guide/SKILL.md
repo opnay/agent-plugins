@@ -32,7 +32,7 @@ When the task is frontend-facing, do not jump straight into code. First decide h
 ## Decision Rules
 
 - If the task changes ownership of rendering, state, effects, hooks, reusable APIs, or refactor direction, reason about component boundaries before implementation.
-- If the task changes business concepts, feature slices, view models, or where business rules live, reason about domain and layering before implementation.
+- If the task changes business concepts, feature slices, view models, or where business rules live, first decide whether the frontend should keep raw server contracts, use thin mapping, or introduce explicit policy or domain modeling before implementation.
 - If the task changes hierarchy, layout, spacing, states, responsiveness, accessibility, or tokens, reason about UI implementation quality before implementation.
 - If the task changes observable behavior and can be protected by tests, choose a test level and use Red-Green-Refactor before widening production changes.
 - If the task looks like a component problem, extract the responsibility candidate before deciding whether it belongs in component-local code, utility, api, domain, or feature space.
@@ -74,7 +74,7 @@ Use these lenses implicitly as needed:
 - Boundary lens:
   - who owns rendering, state, effects, reusable APIs, and refactor direction
 - Domain lens:
-  - what is business logic, what is orchestration, what is presentation, and what belongs to a feature boundary
+  - what should stay raw, what is only view shaping, what is real business logic, what is orchestration, and what belongs to a feature boundary
 - UI lens:
   - what improves hierarchy, state clarity, responsiveness, accessibility, token consistency, and component level fit
 - Test lens:
