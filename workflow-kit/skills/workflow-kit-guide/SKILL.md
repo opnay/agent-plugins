@@ -1,6 +1,6 @@
 ---
 name: workflow-kit-guide
-description: Entrypoint skill for the `workflow-kit` plugin. Use when a task needs the right workflow or gate chosen first, such as deciding between active execution modes and a commit-readiness gate for near-finished changes.
+description: Entrypoint skill for the `workflow-kit` plugin. Use when a task needs the right clarification workflow, execution mode, or final gate chosen first, such as deciding whether work should begin with deep intent alignment, active execution, or a commit-readiness pass.
 ---
 
 # Workflow Kit Guide
@@ -8,12 +8,13 @@ description: Entrypoint skill for the `workflow-kit` plugin. Use when a task nee
 ## Overview
 
 Use this skill as the default entrypoint for `workflow-kit`.
-Its job is to classify whether the task is primarily about doing the work or deciding whether the work is ready to move to commit.
-Do not jump straight into an execution workflow when the real need is a commit-readiness decision, and do not run the commit gate when the work is still clearly in progress.
+Its job is to classify whether the task is primarily about clarifying implementation intent, doing the work, or deciding whether the work is ready to move to commit.
+Do not jump straight into execution when the real need is a deep alignment pass, and do not run the commit gate when the work is still clearly in progress.
 
 ## Workflow
 
 1. Identify the task shape:
+   - pre-execution alignment and intent clarification
    - broad end-to-end delivery
    - parallel independent execution
    - bounded iterative refinement
@@ -27,6 +28,7 @@ Do not jump straight into an execution workflow when the real need is a commit-r
 
 ## Routing Rules
 
+- Choose `deep-interview` when the user already wants implementation, but the main risk is misreading intent, boundaries, tradeoffs, or approval lines before execution begins.
 - Choose `workflow-guide` when the task is active implementation work and the main question is which execution mode should run first.
 - Choose `autopilot` when the user wants broad end-to-end delivery from brief to verified result.
 - Choose `parallel-work` when the work contains several bounded lanes with a clear integration path.
@@ -37,16 +39,17 @@ Do not jump straight into an execution workflow when the real need is a commit-r
 
 ## Decision Rules
 
+- Choose `deep-interview` when alignment quality is the main blocker and implementation should follow a locked brief.
 - Treat `workflow-guide` as the execution-mode selector, not as the whole plugin entrypoint.
 - Choose a gate only when the main uncertainty is readiness, not implementation approach.
 - Choose an execution workflow when meaningful implementation, refinement, or findings work still remains.
 - Do not use `commit-readiness-gate` as a substitute for actual review handling or incomplete implementation.
-- Prefer one clear starting skill plus an explicit handoff over mixing execution and gate responsibilities into one prompt.
+- Prefer one clear starting skill plus an explicit handoff over mixing clarification, execution, and gate responsibilities into one prompt.
 
 ## Output Contract
 
 - `Task shape`
-- `Execution vs gate decision`
+- `Clarification vs execution vs gate decision`
 - `Chosen skill`
 - `Why this route fits`
 - `Planned handoff`
@@ -55,7 +58,8 @@ Do not jump straight into an execution workflow when the real need is a commit-r
 
 ## Guardrails
 
+- Do not skip an obvious alignment pass when the user's intent is still materially underspecified.
 - Do not send in-progress implementation work straight to the commit gate.
 - Do not use execution workflows when the real need is a final readiness decision.
 - Do not bury plugin-level routing guidance inside sibling skills.
-- Do not blend execution and gate responsibilities without naming which one starts and when the handoff happens.
+- Do not blend clarification, execution, and gate responsibilities without naming which one starts and when the handoff happens.

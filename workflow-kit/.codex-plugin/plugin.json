@@ -1,13 +1,15 @@
 {
   "name": "workflow-kit",
   "version": "0.1.0",
-  "description": "Workflow plugin for execution workflows and commit-readiness gates.",
+  "description": "Workflow plugin for alignment-first clarification, execution workflows, and commit-readiness gates.",
   "author": {
     "name": "opnay"
   },
   "license": "UNLICENSED",
   "keywords": [
     "workflow",
+    "alignment",
+    "interview",
     "parallel",
     "autopilot",
     "delivery",
@@ -16,8 +18,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Workflow Kit",
-    "shortDescription": "Execution workflows and commit-readiness gates for larger tasks.",
-    "longDescription": "Provides workflow skills that help Codex choose the right execution mode for active work and run final commit-readiness gates before a change moves toward commit.",
+    "shortDescription": "Alignment, execution workflows, and commit-readiness gates for larger tasks.",
+    "longDescription": "Provides workflow skills that help Codex clarify implementation intent, choose the right execution mode for active work, and run final commit-readiness gates before a change moves toward commit.",
     "developerName": "opnay",
     "category": "Productivity",
     "capabilities": [
@@ -27,6 +29,7 @@
     ],
     "defaultPrompt": [
       "Run this feature request end-to-end with autopilot.",
+      "Interview me first so the implementation aligns tightly with what I actually mean.",
       "Split these independent tasks into safe parallel work and integrate the result.",
       "Take this brief from implementation through verification.",
       "Handle this task autonomously and report the final status.",

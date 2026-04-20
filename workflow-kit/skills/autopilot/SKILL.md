@@ -23,6 +23,7 @@ This workflow should remain self-contained even when other skills are available 
 - The user requests explanation or planning only.
 - The task is a single small fix that does not require orchestration.
 - The user explicitly asks for manual, step-by-step approval at each change.
+- The main blocker is still aligning on what the user actually wants built; use `deep-interview` first when intent, boundaries, or tradeoffs are still materially unclear.
 
 ## Core Policy
 
@@ -44,6 +45,7 @@ This workflow should remain self-contained even when other skills are available 
 4. If several blocking ambiguities are narrow and concrete, batch them into a short clarification set instead of serial back-and-forth.
 5. When the decision can be framed as a few realistic alternatives, prefer selection-style clarification prompts with a recommended default.
 6. Ask only the minimum blocking questions, then resume execution immediately once the answers are available.
+7. If the ambiguity is not narrow but about intent alignment, scope edge, or decision boundaries, stop and hand off to `deep-interview` instead of letting Autopilot absorb a full alignment interview.
 
 Output:
 

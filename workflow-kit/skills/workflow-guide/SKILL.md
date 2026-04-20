@@ -9,7 +9,7 @@ description: Execution workflow selector for active implementation work. Use whe
 
 Use this skill when the work is still actively being executed and the main question is which execution mode fits best.
 Its job is not to do the whole task by itself. Its job is to classify the execution shape, choose the right mode, and make sure the work starts with the right rhythm and stop conditions.
-Do not use this skill as the plugin-wide entrypoint when the real question is whether the change is already ready for a commit gate.
+Do not use this skill as the plugin-wide entrypoint when the real question is whether the change first needs a deep alignment pass or is already ready for a commit gate.
 
 ## Workflow
 
@@ -26,9 +26,11 @@ Do not use this skill as the plugin-wide entrypoint when the real question is wh
    - immediate narrow verification after each fix
    - broader phased verification
    - review-driven verification against findings
-4. Select the execution mode that best matches the task shape.
-5. State what should trigger escalation or workflow switching if the initial mode stops fitting.
-6. If the work becomes nearly done and the next question is readiness rather than execution, hand off to `commit-readiness-gate`.
+4. Decide whether execution mode selection is actually ready, or whether the work first needs a locked execution brief.
+5. If user intent, boundaries, or tradeoffs are still unclear, hand off to `deep-interview` before choosing an execution mode.
+6. Otherwise, select the execution mode that best matches the task shape.
+7. State what should trigger escalation or workflow switching if the initial mode stops fitting.
+8. If the work becomes nearly done and the next question is readiness rather than execution, hand off to `commit-readiness-gate`.
 
 ## Task Shape Rules
 
@@ -57,6 +59,7 @@ Treat the task as blocking-first review handling when:
 
 ## Selection Rules
 
+- Hand off to `deep-interview` when execution mode selection is premature because the implementation brief is still materially misaligned or underspecified.
 - Choose a phase-driven workflow when the task is broad and end-to-end.
 - Choose a parallel workflow when the task contains several clearly independent lanes with an explicit integration path.
 - Choose a loop-driven workflow when the task is bounded and benefits from repeated fix-verify-reassess cycles.
@@ -68,6 +71,7 @@ Treat the task as blocking-first review handling when:
 ## Escalation Signals
 
 - The current issue can no longer be solved as one bounded unit.
+- The work keeps collapsing back into requirement clarification rather than execution decisions.
 - The supposedly independent lanes now share files, decisions, or prerequisites.
 - The work begins to require explicit multi-phase planning.
 - Review findings reveal a deeper structural problem than the current mode can safely own.
@@ -88,6 +92,7 @@ Treat the task as blocking-first review handling when:
 ## Guardrails
 
 - Do not use this skill when the task is primarily a final commit-readiness judgment.
+- Do not stay in execution-mode selection when the real blocker is unclear user intent or an unlocked scope boundary.
 - Do not choose a broad workflow for a narrow bounded issue just because the task sounds important.
 - Do not choose a parallel workflow unless independence and integration risk are both explicit.
 - Do not choose a bounded loop when the work clearly needs planning across several phases.
