@@ -1,6 +1,6 @@
 ---
 name: skill-creator
-description: Extension for the canonical system `skill-creator`. Use whenever Codex would use `skill-creator`; read the base system skill and this plugin skill together so the base workflow is paired with tighter skill boundaries, stronger scope control, and conditional guidance for skills that ship inside plugins.
+description: Extension for the canonical system `skill-creator`. Use whenever you would use `skill-creator`; read the base system skill and this plugin skill together so the base workflow is paired with tighter skill boundaries, stronger scope control, and conditional guidance for skills that ship inside plugins.
 ---
 
 # Skill Creator
@@ -27,6 +27,7 @@ Use this extension to enforce four things the base workflow does not cover stron
 3. Do not let one skill rely on hidden behavioral context from sibling skills or nearby artifacts.
 4. Keep companion skills lean. Add only the extra rules, references, or assets that materially improve behavior over the base system skill.
 5. If the main problem is reusable tool-selection or tool-escalation policy, prefer a dedicated tool-use artifact over stuffing runtime-specific rules into a domain skill.
+6. Write behavioral guidance from the point of view of the skill reader. Prefer `you` and `your`; do not describe the acting subject as `Codex`, `the agent`, or another third-person runtime label unless you are naming the product, file path, or external documentation.
 
 ## Skills Inside Plugins
 
@@ -47,6 +48,7 @@ Before considering a skill done, check:
 - what the skill owns and what it does not own
 - whether the skill can be invoked independently without hidden context
 - whether the skill is repeating general-purpose system guidance instead of adding new value
+- whether behavioral instructions are written from the point of view of the skill reader instead of a third-person runtime label
 
 If the skill ships inside a plugin, also check:
 
@@ -71,3 +73,4 @@ If the skill ships inside a plugin, also check:
 - Do not let one skill absorb responsibilities that should become a separate skill.
 - Do not hide cross-skill usage guidance inside a bounded skill when it belongs in a `<plugin>-guide`.
 - Do not mix domain workflow guidance with reusable runtime tool policy when those can be separated cleanly.
+- Do not write execution guidance around third-person labels such as `Codex` or `the agent` when the instruction should be addressed directly to the skill reader.

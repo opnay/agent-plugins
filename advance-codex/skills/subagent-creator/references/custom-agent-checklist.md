@@ -39,5 +39,5 @@ Use this checklist before finalizing a custom agent file.
 
 ## 6. Invocation
 
-- The agent can be called clearly by name from Codex workflows.
+- The agent can be called clearly by name from normal work.
 - If nickname candidates are used, they are unique and readable.

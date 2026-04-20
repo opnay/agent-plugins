@@ -1,6 +1,6 @@
 ---
 name: git-committer
-description: Draft and review git commit messages and commit workflows with colon-separated type, detailed subject/body, 120-character limit, and manual CI (typecheck/prettier/etc.) before commit. Use when Codex needs to finalize its change into a task-scoped commit with strong commit preparation and quality checks.
+description: Draft and review git commit messages and commit workflows with colon-separated type, detailed subject/body, 120-character limit, and manual CI (typecheck/prettier/etc.) before commit. Use when you need to finalize changes you made into a task-scoped commit with strong commit preparation and quality checks.
 ---
 
 # Commit workflow

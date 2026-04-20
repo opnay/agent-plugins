@@ -1,19 +1,19 @@
 ---
 name: subagent-creator
-description: Create or revise custom Codex agents. Use when Codex needs to define `.codex/agents/*.toml` files, choose personal or project scope for a custom agent, write `name`, `description`, and `developer_instructions`, set optional inherited defaults such as model or sandbox, or document how that custom agent should be used from normal Codex workflows.
+description: Create or revise custom agents. Use when you need to define `.codex/agents/*.toml` files, choose personal or project scope for a custom agent, write `name`, `description`, and `developer_instructions`, set optional inherited defaults such as model or sandbox, or document how you should use that custom agent from normal work.
 ---
 
 # Subagent Creator
 
 ## Overview
 
-Use this skill to design reusable custom Codex agents.
+Use this skill to design reusable custom agents.
 The output can be:
 
 - a custom agent spec under `.codex/agents/*.toml`
 - a custom-agent template or starter file
 - a custom-agent review checklist
-- guidance for how that custom agent should be invoked from normal Codex work
+- guidance for how that custom agent should be invoked from normal work
 
 Reference basis:
 
@@ -46,7 +46,7 @@ Reference basis:
    - output expectations
    - escalation or stop conditions
 8. Review the instructions for naming clarity, role overlap, and unnecessary config overrides.
-9. Document how the custom agent should be used from normal Codex work, including the name that will be passed when spawning it.
+9. Document how you should use that custom agent from normal work, including the name that will be passed when spawning it.
 
 Read [references/custom-agent-template.md](references/custom-agent-template.md) while drafting the custom agent file.
 
@@ -60,7 +60,7 @@ Read [references/custom-agent-template.md](references/custom-agent-template.md) 
   - `developer_instructions`
 - Optional fields such as `nickname_candidates`, `model`, `model_reasoning_effort`, `sandbox_mode`, `mcp_servers`, and `skills.config` inherit from the parent session when omitted.
 - Child agents inherit the current sandbox and approval state from the parent run, even when the custom agent file sets defaults.
-- A custom agent is used by name when spawning it from normal Codex workflows.
+- A custom agent is used by name when spawning it from normal work.
 
 ## Design Rules
 
@@ -108,7 +108,7 @@ Common outputs include:
 - a custom agent TOML spec
 - a custom-agent starter template
 - a custom-agent review checklist
-- usage notes for how to call the custom agent from Codex workflows
+- usage notes for how to call the custom agent from normal work
 
 ## Validation
 
@@ -116,7 +116,7 @@ Common outputs include:
 - Verify that the role is narrower than a general-purpose fallback.
 - Verify that optional config fields are justified rather than copied by habit.
 - Verify that the selected scope, personal or project, matches the intended reuse pattern.
-- Verify that the agent can be named and invoked clearly from Codex workflows.
+- Verify that the agent can be named and invoked clearly from normal work.
 - Verify that `developer_instructions` contain enough operational detail to distinguish the agent from a vague prompt wrapper.
 - Verify that `developer_instructions` define both what the agent should do and what it should stay away from.
 

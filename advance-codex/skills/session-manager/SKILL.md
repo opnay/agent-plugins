@@ -1,6 +1,6 @@
 ---
 name: session-manager
-description: Manage repository-local session artifacts under .agents/sessions/session-id/, including session_record.md for task context, change_record.md for change-delivery notes, and retrospective_record.md for end-of-session retrospectives. Use when Codex needs to create, ensure, inspect, validate, update, or list session-scoped records.
+description: Manage repository-local session artifacts under .agents/sessions/session-id/, including session_record.md for task context, change_record.md for change-delivery notes, and retrospective_record.md for end-of-session retrospectives. Use when you need to create, ensure, inspect, validate, update, or list session-scoped records.
 ---
 
 # Session Manager
