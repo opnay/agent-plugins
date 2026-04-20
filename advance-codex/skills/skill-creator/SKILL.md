@@ -26,6 +26,7 @@ Use this extension to enforce four things the base workflow does not cover stron
 2. Keep the skill boundary explicit: what the skill owns, what it does not own, and what should stay outside it.
 3. Do not let one skill rely on hidden behavioral context from sibling skills or nearby artifacts.
 4. Keep companion skills lean. Add only the extra rules, references, or assets that materially improve behavior over the base system skill.
+5. If the main problem is reusable tool-selection or tool-escalation policy, prefer a dedicated tool-use artifact over stuffing runtime-specific rules into a domain skill.
 
 ## Skills Inside Plugins
 
@@ -52,6 +53,7 @@ If the skill ships inside a plugin, also check:
 - whether the plugin boundary was defined before the skill boundary
 - whether any guidance belongs in a `<plugin>-guide` entrypoint instead of this skill
 - whether the skill is leaking plugin-level concerns into a bounded skill
+- whether tool-use policy should live in a dedicated tool-use artifact instead of this skill
 
 ## Output Contract
 
@@ -68,3 +70,4 @@ If the skill ships inside a plugin, also check:
 - Do not use plugin membership as an excuse for a weak or coupled skill boundary.
 - Do not let one skill absorb responsibilities that should become a separate skill.
 - Do not hide cross-skill usage guidance inside a bounded skill when it belongs in a `<plugin>-guide`.
+- Do not mix domain workflow guidance with reusable runtime tool policy when those can be separated cleanly.
