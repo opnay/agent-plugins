@@ -1,6 +1,6 @@
 ---
 name: session-manager
-description: Manage repository-local session artifacts under .agents/sessions/session-id/, including session_record.md for task context and change_record.md for change-delivery notes. Use when Codex needs to create, ensure, inspect, validate, update, or list session-scoped records.
+description: Manage repository-local session artifacts under .agents/sessions/session-id/, including session_record.md for task context, change_record.md for change-delivery notes, and retrospective_record.md for end-of-session retrospectives. Use when Codex needs to create, ensure, inspect, validate, update, or list session-scoped records.
 ---
 
 # Session Manager
@@ -9,10 +9,11 @@ description: Manage repository-local session artifacts under .agents/sessions/se
 
 Use this skill to manage session-scoped records in `.agents/sessions/<uuid>/`.
 
-The skill supports two artifacts:
+The skill supports three artifacts:
 
-- `session_record.md` for task context, runbook, verification, retrospective notes, and recurrence-prevention guardrails when relevant
+- `session_record.md` for task context, runbook, verification evidence, active mistake notes, and residual risks while work is in progress
 - `change_record.md` for change-delivery purpose, key changes, verification, review gates, reviewer notes, and residual risks
+- `retrospective_record.md` for end-of-session reflection, lessons, and follow-up guardrails after the work is done or paused
 
 Read [references/record-formats.md](references/record-formats.md) when you need the exact section layouts or CLI behavior details.
 
@@ -23,6 +24,7 @@ Read [references/record-formats.md](references/record-formats.md) when you need 
 - you need to inspect, validate, or list session artifacts under `.agents/sessions`
 - you need to write multiline record content safely via `--value-file`
 - you are in change-delivery flow and need to maintain `change_record.md`
+- you want a separate retrospective artifact without overloading `session_record.md`
 
 ## Do Not Use When
 
@@ -35,8 +37,10 @@ Read [references/record-formats.md](references/record-formats.md) when you need 
 ```bash
 python3 scripts/controller.py init --artifact session-record
 python3 scripts/controller.py ensure --artifact change-record
+python3 scripts/controller.py ensure --artifact retrospective-record
 python3 scripts/controller.py validate --artifact session-record
 python3 scripts/controller.py write --artifact change-record --field purpose --value-file ./purpose.txt
+python3 scripts/controller.py write --artifact retrospective-record --field lessons --value-file ./lessons.txt
 python3 scripts/controller.py list --artifact session-record --include-schema
 ```
 
@@ -46,7 +50,9 @@ python3 scripts/controller.py list --artifact session-record --include-schema
 2. Use `write`, `show`, and `validate` to keep the session record current while working.
 3. When change-delivery starts, run `python3 scripts/controller.py ensure --artifact change-record`.
 4. Update `change_record.md` with purpose, verification, and review-gate notes as work progresses.
-5. Use `list` to inspect existing session artifacts and their detected schemas.
+5. When the session is ending or pausing, run `python3 scripts/controller.py ensure --artifact retrospective-record`.
+6. Update `retrospective_record.md` with lessons and follow-up guardrails.
+7. Use `list` to inspect existing session artifacts and their detected schemas.
 
 ## Artifact Contract
 
@@ -61,6 +67,12 @@ python3 scripts/controller.py list --artifact session-record --include-schema
 - format: markdown heading sections in English
 - purpose: PR-style session change record and review-gate notes for change delivery
 
+### `retrospective_record.md`
+
+- schema: `retrospective-record`
+- format: markdown heading sections in English
+- purpose: session-close retrospective record for lessons, follow-up guardrails, and open questions
+
 ## Script Contract
 
 `scripts/controller.py` supports:
@@ -74,7 +86,7 @@ python3 scripts/controller.py list --artifact session-record --include-schema
 
 Key flags:
 
-- `--artifact`: `session-record` or `change-record`
+- `--artifact`: `session-record`, `change-record`, or `retrospective-record`
 - `--record-path`: operate on an explicit file path
 - `--value-file`: read multiline content from a UTF-8 file, or `-` for stdin
 - `--include-schema`: include the detected schema column in `list` output
@@ -84,6 +96,7 @@ Key flags:
 - Keep generated record content in English.
 - Keep `session_record.md` numbered sections stable for machine and human scanning.
 - Keep `change_record.md` heading order stable for reviewer readability.
+- Keep `retrospective_record.md` heading order stable for retrospective review and guardrail extraction.
 - Prefer `--value-file` for multiline content instead of shell-quoted inline text.
 - Treat `show`, `validate`, and `list` as read-only commands.
 
@@ -91,6 +104,8 @@ Key flags:
 
 - "Start a session record for this task."
 - "Ensure the current session has `change_record.md`."
+- "Create a retrospective record for this session."
 - "Validate the current session artifacts."
 - "Write reviewer notes into `change_record.md`."
+- "Write lessons learned into `retrospective_record.md`."
 - "List session records and show which ones are available."

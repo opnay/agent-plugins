@@ -36,6 +36,27 @@ Markdown sections:
 - `<!-- session-manager:residual_risks -->`
 - `# Residual Risks`
 
+## retrospective_record.md
+
+Schema: `retrospective-record`
+
+Markdown sections:
+
+- `<!-- session-manager:goal_recap -->`
+- `# Goal Recap`
+- `<!-- session-manager:outcome_summary -->`
+- `# Outcome Summary`
+- `<!-- session-manager:what_went_well -->`
+- `# What Went Well`
+- `<!-- session-manager:what_went_poorly -->`
+- `# What Went Poorly`
+- `<!-- session-manager:lessons -->`
+- `# Lessons`
+- `<!-- session-manager:follow_up_guardrails -->`
+- `# Follow-Up Guardrails`
+- `<!-- session-manager:open_questions -->`
+- `# Open Questions`
+
 The hidden marker comment before each visible heading is part of the format contract and is what the parser uses to delimit sections safely.
 
 ## CLI Notes

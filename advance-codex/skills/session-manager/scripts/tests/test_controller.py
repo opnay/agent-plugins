@@ -158,6 +158,21 @@ class SessionManagerControllerTests(unittest.TestCase):
         self.assertIn("# Purpose", text)
         self.assertIn("# Review Gates", text)
 
+    def test_init_retrospective_record_creates_markdown_sections(self) -> None:
+        _, record_path = self.init_artifact_with_thread_id(
+            thread_id="retrospective-target",
+            artifact="retrospective-record",
+            goal=None,
+            scope=None,
+            constraints=None,
+            force=False,
+        )
+
+        self.assertEqual(record_path.name, "retrospective_record.md")
+        text = record_path.read_text(encoding="utf-8")
+        self.assertIn("# Goal Recap", text)
+        self.assertIn("# Follow-Up Guardrails", text)
+
     def test_ensure_returns_existing_record_without_rewriting(self) -> None:
         _, record_path = self.init_artifact_with_thread_id(
             thread_id="ensure-target",
@@ -248,6 +263,53 @@ class SessionManagerControllerTests(unittest.TestCase):
         self.assertEqual(
             controller.show_record(record_path=record_path, field="reviewer_notes", artifact="change-record"),
             "Line one\n# Review Gates\nLine two\n",
+        )
+
+    def test_write_updates_retrospective_record_from_value_file(self) -> None:
+        _, record_path = self.init_artifact_with_thread_id(
+            thread_id="retrospective-write-target",
+            artifact="retrospective-record",
+            goal=None,
+            scope=None,
+            constraints=None,
+            force=False,
+        )
+        value_path = self.base / "lessons.txt"
+        value_path.write_text("Prefer deterministic fixtures\nfor harness work.", encoding="utf-8")
+
+        updated_path = controller.update_record_field(
+            record_path=record_path,
+            field="lessons",
+            value=value_path.read_text(encoding="utf-8"),
+            artifact="retrospective-record",
+        )
+
+        text = updated_path.read_text(encoding="utf-8")
+        self.assertIn("Prefer deterministic fixtures", text)
+        self.assertIn("for harness work.", text)
+
+    def test_retrospective_record_allows_nested_markdown_headings_in_section_body(self) -> None:
+        _, record_path = self.init_artifact_with_thread_id(
+            thread_id="retrospective-nested-heading",
+            artifact="retrospective-record",
+            goal=None,
+            scope=None,
+            constraints=None,
+            force=False,
+        )
+
+        controller.update_record_field(
+            record_path=record_path,
+            field="lessons",
+            value="Line one\n# Outcome Summary\nLine two",
+            artifact="retrospective-record",
+        )
+
+        validation = controller.validate_record(record_path=record_path, artifact="retrospective-record")
+        self.assertTrue(validation.valid)
+        self.assertEqual(
+            controller.show_record(record_path=record_path, field="lessons", artifact="retrospective-record"),
+            "Line one\n# Outcome Summary\nLine two\n",
         )
 
     def test_write_requires_resolvable_record_target(self) -> None:

@@ -84,13 +84,35 @@ CHANGE_RECORD = RecordSchema(
     ),
 )
 
+RETROSPECTIVE_RECORD = RecordSchema(
+    name="retrospective-record",
+    artifact="retrospective-record",
+    filename="retrospective_record.md",
+    style="markdown",
+    sections=(
+        SectionSpec("goal_recap", "Goal Recap", "[TODO: Restate the intended session goal.]"),
+        SectionSpec("outcome_summary", "Outcome Summary", "[TODO: Summarize the actual result.]"),
+        SectionSpec("what_went_well", "What Went Well", "[TODO: Capture what helped the session succeed.]"),
+        SectionSpec("what_went_poorly", "What Went Poorly", "[TODO: Capture friction, misses, or weak spots.]"),
+        SectionSpec("lessons", "Lessons", "[TODO: Record the main lessons from the session.]"),
+        SectionSpec(
+            "follow_up_guardrails",
+            "Follow-Up Guardrails",
+            "[TODO: Add concrete guardrails or follow-up actions.]",
+        ),
+        SectionSpec("open_questions", "Open Questions", "[TODO: Capture unresolved questions or leave none.]"),
+    ),
+)
+
 SCHEMAS_BY_ARTIFACT = {
     "session-record": SESSION_RECORD,
     "change-record": CHANGE_RECORD,
+    "retrospective-record": RETROSPECTIVE_RECORD,
 }
 SCHEMAS_BY_FILENAME = {
     SESSION_RECORD.filename: SESSION_RECORD,
     CHANGE_RECORD.filename: CHANGE_RECORD,
+    RETROSPECTIVE_RECORD.filename: RETROSPECTIVE_RECORD,
 }
 
 
