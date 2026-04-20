@@ -1,15 +1,15 @@
 ---
 name: skill-creator
-description: Independent extension of the canonical system `skill-creator`. Use when Codex needs skill creation or revision guidance and should combine the base system workflow with the additional design rules here for tighter skill boundaries, stronger scope control, and conditional guidance for skills that ship inside plugins.
+description: Extension for the canonical system `skill-creator`. Use whenever Codex would use `skill-creator`; read the base system skill and this plugin skill together so the base workflow is paired with tighter skill boundaries, stronger scope control, and conditional guidance for skills that ship inside plugins.
 ---
 
 # Skill Creator
 
 ## Overview
 
-This skill is an independent extension over the canonical system `skill-creator`.
-Read the system skill first and treat it as the base workflow.
-Then use this skill to make stronger design decisions about skill boundary, scope, and packaging.
+This skill is an extension over the canonical system `skill-creator`.
+Whenever the canonical `skill-creator` applies, use this skill alongside it.
+Read the system skill first and treat it as the base workflow, then use this skill to make stronger design decisions about skill boundary, scope, and packaging.
 
 ## Extension Goals
 

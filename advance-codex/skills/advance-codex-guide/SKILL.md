@@ -34,7 +34,7 @@ If the task spans several surface types, choose the sequence explicitly instead 
 ## Routing Rules
 
 - Choose `skill-creator` when the main output is a reusable skill folder with `SKILL.md` and optional references, scripts, or assets.
-- Treat the local `skill-creator` as an independent extension over the canonical system `skill-creator`.
+- When `skill-creator` applies, pair the canonical system `skill-creator` with the local `advance-codex:skill-creator` extension.
 - Choose `tool-use-guide` when the main output is reusable guidance for how an artifact should choose, sequence, constrain, or escalate tools without burying tool policy inside a domain workflow.
 - Choose `plugin-creator` when the main output is an installable plugin bundle with `.codex-plugin/plugin.json` and optional bundled skills.
 - Treat the local `plugin-creator` as an independent extension over the canonical system `plugin-creator`.
