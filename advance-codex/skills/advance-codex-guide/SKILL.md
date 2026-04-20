@@ -37,7 +37,7 @@ If the task spans several surface types, choose the sequence explicitly instead 
 - When `skill-creator` applies, pair the canonical system `skill-creator` with the local `advance-codex:skill-creator` extension.
 - Choose `tool-use-guide` when the main output is reusable guidance for how an artifact should choose, sequence, constrain, or escalate tools without burying tool policy inside a domain workflow.
 - Choose `plugin-creator` when the main output is an installable plugin bundle with `.codex-plugin/plugin.json` and optional bundled skills.
-- Treat the local `plugin-creator` as an independent extension over the canonical system `plugin-creator`.
+- When `plugin-creator` applies, pair the canonical system `plugin-creator` with the local `advance-codex:plugin-creator` extension.
 - Choose `session-manager` when the main output is repository-local session continuity through `.agents/sessions/<uuid>/` session, change, or retrospective records rather than a new artifact shape.
 - Choose `git-committer` when the main output is a disciplined task-scoped commit workflow for Codex-created changes rather than a new artifact shape.
 - Choose `subagent-creator` when the main output is a custom Codex agent definition: how to define `.codex/agents/*.toml`, shape the agent's role, and document how that custom agent should be used from Codex workflows.

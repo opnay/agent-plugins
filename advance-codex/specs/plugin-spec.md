@@ -29,7 +29,7 @@
 - `advance-codex-guide`: Codex 표면의 형태를 분류하고 적절한 내장 skill로 라우팅한다
 - `skill-creator`: canonical `skill-creator`와 함께 읽는 확장으로서 bounded skill 설계와 plugin 내부 skill packaging 규칙을 강화한다
 - `tool-use-guide`: 도메인 skill 바깥으로 재사용 가능한 tool selection, sequencing, ask-vs-infer, escalation policy를 분리한다
-- `plugin-creator`: top-down plugin 설계, bundled skill coherence, `<plugin>-guide` 기대사항을 강화한다
+- `plugin-creator`: canonical `plugin-creator`와 함께 읽는 확장으로서 top-down plugin 설계, bundled skill coherence, `<plugin>-guide` 기대사항을 강화한다
 - `subagent-creator`: reusable custom agent role, TOML 형태, usage guidance를 정의한다
 - `session-manager`: `.agents/sessions/<uuid>/` 아래의 session record, change record, retrospective record를 통해 Codex 세션 연속성과 전달 기록을 관리한다
 - `git-committer`: Codex가 만든 변경을 검토, 분리, 검증하고 task-scoped commit으로 확정하는 규율을 제공한다

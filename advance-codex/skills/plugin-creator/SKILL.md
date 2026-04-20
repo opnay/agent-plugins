@@ -1,15 +1,15 @@
 ---
 name: plugin-creator
-description: Independent extension of the canonical system `plugin-creator`. Use when Codex needs plugin creation or revision guidance and should combine the base system workflow with the additional design rules here for top-down plugin design, plugin and skill independence, and mandatory `<plugin>-guide` entrypoint handling.
+description: Extension for the canonical system `plugin-creator`. Use whenever Codex would use `plugin-creator`; read the base system skill and this plugin skill together so the base workflow is paired with top-down plugin design, plugin and skill independence, and mandatory `<plugin>-guide` entrypoint handling.
 ---
 
 # Plugin Creator
 
 ## Overview
 
-This skill is an independent extension over the canonical system `plugin-creator`.
-Read the system skill first and treat it as the base workflow.
-Then use this skill to enforce stronger plugin-architecture rules for how a plugin should be shaped and how its bundled skills should relate to it.
+This skill is an extension over the canonical system `plugin-creator`.
+Whenever the canonical `plugin-creator` applies, use this skill alongside it.
+Read the system skill first and treat it as the base workflow, then use this skill to enforce stronger plugin-architecture rules for how a plugin should be shaped and how its bundled skills should relate to it.
 
 ## Extension Goals
 
