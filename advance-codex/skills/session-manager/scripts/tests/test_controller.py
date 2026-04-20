@@ -20,7 +20,7 @@ class SessionManagerControllerTests(unittest.TestCase):
     def setUp(self) -> None:
         self.temp_dir = tempfile.TemporaryDirectory()
         self.base = Path(self.temp_dir.name)
-        self.root = self.base / ".sessions"
+        self.root = self.base / ".agents" / "sessions"
         self.controller_path = SCRIPTS_DIR / "controller.py"
 
     def tearDown(self) -> None:

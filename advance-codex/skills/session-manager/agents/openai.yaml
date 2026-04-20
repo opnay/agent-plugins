@@ -1,4 +1,4 @@
 interface:
   display_name: "Session Manager"
   short_description: "Manage session records and change records"
-  default_prompt: "Use $session-manager to manage session_record.md or change_record.md under .sessions/session-id, using `.tmp` only for scratch artifacts."
+  default_prompt: "Use $session-manager to manage session_record.md or change_record.md under .agents/sessions/session-id, using `.tmp` only for scratch artifacts."

@@ -1,13 +1,13 @@
 ---
 name: session-manager
-description: Manage repository-local session artifacts under .sessions/session-id/, including session_record.md for task context and change_record.md for change-delivery notes. Use when Codex needs to create, ensure, inspect, validate, update, or list session-scoped records.
+description: Manage repository-local session artifacts under .agents/sessions/session-id/, including session_record.md for task context and change_record.md for change-delivery notes. Use when Codex needs to create, ensure, inspect, validate, update, or list session-scoped records.
 ---
 
 # Session Manager
 
 ## Overview
 
-Use this skill to manage session-scoped records in `.sessions/<uuid>/`.
+Use this skill to manage session-scoped records in `.agents/sessions/<uuid>/`.
 
 The skill supports two artifacts:
 
@@ -20,14 +20,14 @@ Read [references/record-formats.md](references/record-formats.md) when you need 
 
 - you are starting or resuming a task and need a deterministic session record
 - you need to ensure a session-scoped artifact exists before writing to it
-- you need to inspect, validate, or list session artifacts under `.sessions`
+- you need to inspect, validate, or list session artifacts under `.agents/sessions`
 - you need to write multiline record content safely via `--value-file`
 - you are in change-delivery flow and need to maintain `change_record.md`
 
 ## Do Not Use When
 
 - the task only needs a normal answer and no working record
-- the repository uses a different artifact layout than `.sessions/<uuid>/`
+- the repository uses a different artifact layout than `.agents/sessions/<uuid>/`
 - you need a full skill scaffold rather than a session artifact workflow
 
 ## Quick Start
@@ -70,7 +70,7 @@ python3 scripts/controller.py list --artifact session-record --include-schema
 - `write`: update one logical field with `--value` or `--value-file`
 - `show`: print the full artifact or one field value
 - `validate`: report `valid` and `detected_schema`, and exit nonzero for malformed records
-- `list`: list artifact files under `.sessions`
+- `list`: list artifact files under `.agents/sessions`
 
 Key flags:
 

@@ -113,7 +113,7 @@ def resolve_existing_artifact_path(session_dir: Path, artifact: str) -> Path | N
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Manage session artifacts under .sessions/<uuid>/.")
+    parser = argparse.ArgumentParser(description="Manage session artifacts under .agents/sessions/<uuid>/.")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     def add_target_args(target_parser: argparse.ArgumentParser) -> None:
@@ -127,8 +127,8 @@ def build_parser() -> argparse.ArgumentParser:
         target_parser.add_argument(
             "--root",
             type=Path,
-            default=Path(".sessions"),
-            help="Base directory for session folders when resolving by UUID (default: .sessions)",
+            default=Path(".agents/sessions"),
+            help="Base directory for session folders when resolving by UUID (default: .agents/sessions)",
         )
 
     init_parser = subparsers.add_parser("init", help="Create a new artifact template")
@@ -138,7 +138,7 @@ def build_parser() -> argparse.ArgumentParser:
         default="session-record",
         help="Artifact kind to initialize (default: session-record)",
     )
-    init_parser.add_argument("--root", type=Path, default=Path(".sessions"), help="Base directory for generated session folders (default: .sessions)")
+    init_parser.add_argument("--root", type=Path, default=Path(".agents/sessions"), help="Base directory for generated session folders (default: .agents/sessions)")
     init_parser.add_argument("--goal", help="Optional session-record goal text")
     init_parser.add_argument("--scope", help="Optional session-record scope text")
     init_parser.add_argument("--constraints", help="Optional session-record constraints text")
@@ -151,7 +151,7 @@ def build_parser() -> argparse.ArgumentParser:
         default="session-record",
         help="Artifact kind to ensure (default: session-record)",
     )
-    ensure_parser.add_argument("--root", type=Path, default=Path(".sessions"), help="Base directory for generated session folders (default: .sessions)")
+    ensure_parser.add_argument("--root", type=Path, default=Path(".agents/sessions"), help="Base directory for generated session folders (default: .agents/sessions)")
     ensure_parser.add_argument("--goal", help="Optional session-record goal text")
     ensure_parser.add_argument("--scope", help="Optional session-record scope text")
     ensure_parser.add_argument("--constraints", help="Optional session-record constraints text")
@@ -177,7 +177,7 @@ def build_parser() -> argparse.ArgumentParser:
         default="session-record",
         help="Artifact kind to list (default: session-record)",
     )
-    list_parser.add_argument("--root", type=Path, default=Path(".sessions"), help="Base directory for session folders (default: .sessions)")
+    list_parser.add_argument("--root", type=Path, default=Path(".agents/sessions"), help="Base directory for session folders (default: .agents/sessions)")
     list_parser.add_argument("--include-schema", action="store_true", help="Include schema information in the list output")
 
     return parser
