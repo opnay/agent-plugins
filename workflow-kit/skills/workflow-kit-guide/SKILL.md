@@ -1,6 +1,6 @@
 ---
 name: workflow-kit-guide
-description: Entrypoint skill for the `workflow-kit` plugin. Use when a task needs the right workflow stage chosen first, such as deciding whether the work should begin with definition and alignment, active execution, review-driven correction, or a final readiness gate.
+description: Entrypoint skill for the `workflow-kit` plugin. Use when a task needs the right workflow stage chosen first, such as deciding whether the work should begin with framing, definition and alignment, planning, active execution, review-driven correction, or a final readiness gate.
 ---
 
 # Workflow Kit Guide
@@ -8,14 +8,16 @@ description: Entrypoint skill for the `workflow-kit` plugin. Use when a task nee
 ## Overview
 
 Use this skill as the default entrypoint for `workflow-kit`.
-Its job is to classify whether the task is primarily about defining the work correctly, executing it, iterating on issues, reviewing material findings, or deciding whether the work is ready to move to commit.
-Do not jump straight into execution when the real need is a deep alignment pass, and do not run the commit gate when the work is still clearly in progress.
+Its job is to classify whether the task is primarily about stabilizing an ambiguous task shape, defining the work correctly, producing a read-only plan, executing it, iterating on issues, reviewing material findings, or deciding whether the work is ready to move to commit.
+Do not jump straight into execution when the real need is a framing pass, a deep alignment pass, or a planning pass, and do not run the commit gate when the work is still clearly in progress.
 When execution is the right branch, this guide should also choose the concrete execution mode instead of delegating that choice to another sibling guide.
 
 ## Workflow
 
 1. Identify the task shape:
+   - pre-workflow framing and stabilization
    - pre-execution alignment and intent clarification
+   - read-only planning before execution
    - broad end-to-end delivery
    - parallel independent execution
    - bounded iterative refinement
@@ -33,7 +35,9 @@ When execution is the right branch, this guide should also choose the concrete e
 
 ## Routing Rules
 
+- Choose `structured-thinking` when the task is still too unstable to choose the next workflow safely and the first job is to isolate ambiguity, assumptions, and the most plausible next path.
 - Choose `deep-interview` when the main risk is misreading intent, boundaries, tradeoffs, or approval lines before the next concrete work step begins.
+- Choose `planner` when implementation should stay deferred until a read-only investigation, tradeoff analysis, verification path, and execution-ready plan are complete.
 - Choose `autopilot` when the user wants broad end-to-end delivery from brief to verified result.
 - Choose `parallel-work` when the work contains several bounded lanes with a clear integration path.
 - Choose `ralph-loop` when the work is best handled as repeated bounded fix-verify-reassess cycles.
@@ -43,7 +47,9 @@ When execution is the right branch, this guide should also choose the concrete e
 
 ## Decision Rules
 
+- Choose `structured-thinking` when workflow selection itself is still unsafe because the task shape, assumptions, or likely next path are unstable.
 - Choose `deep-interview` when alignment quality is the main blocker and the task should follow a locked brief before planning or execution.
+- Choose `planner` when the task shape is stable enough to plan, but execution should still be deferred until scope, risks, verification, and approval are explicit.
 - Choose a gate only when the main uncertainty is readiness, not implementation approach.
 - Choose an execution workflow when meaningful implementation, refinement, or findings work still remains.
 - Do not use `commit-readiness-gate` as a substitute for actual review handling or incomplete implementation.
@@ -51,7 +57,7 @@ When execution is the right branch, this guide should also choose the concrete e
 
 ## Execution Mode Rules
 
-Use these rules when the task already belongs in execution rather than a clarification pass or a final gate.
+Use these rules when the task already belongs in execution rather than a framing pass, clarification pass, planning pass, or final gate.
 
 Estimate scope size as:
 
@@ -120,6 +126,8 @@ Execution-shape heuristics:
 ## Guardrails
 
 - Do not skip an obvious alignment pass when the user's intent is still materially underspecified.
+- Do not skip a framing pass when workflow selection itself is still unstable.
+- Do not skip a planning pass when execution should remain deferred until read-only investigation and handoff are complete.
 - Do not treat a work-defining prompt as a simple opinion request when the likely next step is real task execution.
 - Do not stay in execution-mode selection when the real blocker is unclear user intent or an unlocked scope boundary.
 - Do not send in-progress implementation work straight to the commit gate.
@@ -134,6 +142,8 @@ Execution-shape heuristics:
 
 ## Example Triggers
 
+- "이 요구사항이 아직 애매한데 어떤 workflow로 들어가야 할지부터 정리해줘"
+- "바로 구현하지 말고 먼저 계획만 완성해줘"
 - "이 작업에 어떤 workflow로 들어가는 게 맞는지 먼저 판단해줘"
 - "이거 병렬로 나눠서 처리하는 게 맞는지 먼저 판단해줘"
 - "이거 끝까지 미는 게 맞아, 아니면 루프로 다듬는 게 맞아?"
