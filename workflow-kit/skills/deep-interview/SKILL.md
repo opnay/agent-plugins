@@ -1,6 +1,6 @@
 ---
 name: deep-interview
-description: Alignment-first clarification workflow for extracting the user's intended implementation shape before execution. Use when the user already wants something built, but intent, boundaries, tradeoffs, or approval lines still need to be made explicit so implementation stays maximally aligned with what they actually mean.
+description: Use when the next work step would be planning or execution, but Codex should first clarify intent, scope edges, tradeoffs, and approval boundaries so the task is defined correctly before moving forward.
 ---
 
 # Deep Interview
@@ -10,12 +10,17 @@ description: Alignment-first clarification workflow for extracting the user's in
 Use this skill when implementation quality depends on understanding what the user really means, not just what they first said.
 Its job is to surface intent, hidden constraints, non-goals, tradeoffs, and decision boundaries before execution starts or before a tentative implementation plan hardens around the wrong assumptions.
 This skill does not replace execution. It sharpens the execution brief so the downstream workflow can implement with higher fidelity.
+Use it whenever the task still needs a correct definition stage first, whether the work is a new project, a feature, a refactor, a bug fix, or even a small edit whose success boundary is still ambiguous.
 
 ## Use When
 
 - the user wants something implemented, but the request is still underspecified
 - the user has a mental picture of the result and wants the implementation to align closely with it
 - the user explicitly asks for a deep interview, alignment pass, or "don't assume" style clarification
+- the next useful step would normally be planning or execution, but the task definition is still too loose
+- the user asks for feedback on a direction, fix, or approach, but the real risk is hidden assumptions and premature solutioning
+- the request sounds lightweight on the surface, yet the likely next step is real work and major scope or success decisions remain unlocked
+- even a small task such as a bug fix, behavior tweak, or typo-level change still needs intent, scope, or acceptance boundaries clarified first
 - a premature implementation pass would likely cause misalignment, churn, or rework
 - a tentative implementation plan exists, but its assumptions still need to be pressure-tested against user intent
 
@@ -23,6 +28,8 @@ This skill does not replace execution. It sharpens the execution brief so the do
 
 - the user already gave clear targets, boundaries, and acceptance criteria
 - the user explicitly wants fast execution with reasonable assumptions
+- the user is only asking for lightweight opinion, inspiration, or taste-level feedback with no implied implementation commitment
+- the user explicitly wants rough idea generation and is comfortable with broad assumptions
 - the task is only about choosing a workflow mode
 - the task is already implemented and only needs final verification or commit-readiness judgment
 
@@ -102,6 +109,10 @@ Output:
    - unclear approval boundary
 3. Keep probing until the answer becomes operationally useful.
 
+First-question rule:
+
+- Default the first question toward success criteria, intended scope, or what must be true for the user to consider the task correctly done before discussing solution details.
+
 Pressure patterns:
 
 - ask for an example
@@ -176,6 +187,8 @@ Output:
 - Do not over-question once intent and boundaries are operationally clear.
 - Do not treat vague user phrasing as permission to fill in major product decisions silently.
 - Do not overwrite the user's intent with a cleaner but different implementation idea.
+- Do not mistake a work-defining prompt for a simple opinion request when the user is implicitly trying to define what should happen next.
+- Before recommending solution details, first clarify success criteria, scope edges, and non-goals when they are still materially ambiguous.
 
 ## Example Triggers
 
@@ -183,3 +196,7 @@ Output:
 - "내가 생각하는 범위를 질문으로 먼저 잠가줘"
 - "이 계획을 바로 코드로 옮기지 말고 alignment부터 맞추자"
 - "어디까지 구현하고 어디서 멈출지 먼저 깊게 정리해줘"
+- "이 버그 수정, 진짜 뭘 고치면 끝난 건지 먼저 맞춰보자"
+- "이 오타 수정도 범위랑 기준을 먼저 잠그고 가자"
+- "신규 프로젝트 시작하려는데 어때?"
+- "이 방향으로 가려는데 뭐부터 정해야 해?"
