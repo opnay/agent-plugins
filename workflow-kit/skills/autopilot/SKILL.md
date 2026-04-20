@@ -23,7 +23,7 @@ This workflow should remain self-contained even when other skills are available 
 - The user requests explanation or planning only.
 - The task is a single small fix that does not require orchestration.
 - The user explicitly asks for manual, step-by-step approval at each change.
-- The main blocker is still aligning on what the user actually wants built; use `deep-interview` first when intent, boundaries, or tradeoffs are still materially unclear.
+- The main blocker is still aligning on what the user actually wants built because intent, boundaries, or tradeoffs are still materially unclear.
 
 ## Core Policy
 
@@ -45,7 +45,7 @@ This workflow should remain self-contained even when other skills are available 
 4. If several blocking ambiguities are narrow and concrete, batch them into a short clarification set instead of serial back-and-forth.
 5. When the decision can be framed as a few realistic alternatives, prefer selection-style clarification prompts with a recommended default.
 6. Ask only the minimum blocking questions, then resume execution immediately once the answers are available.
-7. If the ambiguity is not narrow but about intent alignment, scope edge, or decision boundaries, stop and hand off to `deep-interview` instead of letting Autopilot absorb a full alignment interview.
+7. If the ambiguity is not narrow but about intent alignment, scope edge, or decision boundaries, stop and switch out of Autopilot instead of absorbing a full alignment interview into this workflow.
 
 Output:
 
@@ -55,7 +55,7 @@ Output:
 
 1. Inspect repository structure and relevant files.
 2. Identify affected modules and risk points.
-3. Choose applicable supporting skills or focused subagents for the domains involved (for example frontend architecture, backend architecture, or QA support).
+3. Choose applicable supporting skills or domain guidance for the areas involved (for example frontend architecture, backend architecture, or QA support).
 
 Output:
 
@@ -74,7 +74,7 @@ Output:
 ### Phase 3: Implementation
 
 1. Implement minimum viable changes first.
-2. For separable work, delegate scoped tasks only when multi-agent tooling is available (for example `spawn_agent` with `worker`/`explorer`); otherwise keep execution in the main agent with explicit task boundaries.
+2. Keep execution scope explicit and stable while implementing separable work.
 3. Integrate outputs and resolve conflicts safely.
 
 Execution rules:

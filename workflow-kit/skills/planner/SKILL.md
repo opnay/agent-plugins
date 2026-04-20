@@ -33,7 +33,7 @@ description: Planning workflow guidance for producing decision-complete, executi
 - Break work into small steps, each executable as a single task.
 - For each step, include `Action`, `Expected Output`, and `Verification Method`.
 - List dependencies, sequencing constraints, and risks.
-- Before implementation, define which focused subagents should be called for each relevant domain (development, design, planning, testing, etc.).
+- Before implementation, define which domain skills, guidance layers, or verification aids are relevant to the work.
 
 ### 4. Tradeoffs and Questions
 
