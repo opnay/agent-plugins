@@ -1,7 +1,7 @@
 {
   "name": "advance-codex",
   "version": "0.1.0",
-  "description": "Creator plugin for advanced Codex capability design across skills, plugins, tool-use guidance, and subagent systems.",
+  "description": "Capability plugin for strengthening Codex surfaces across skills, sessions, plugins, tool-use guidance, and subagent systems.",
   "author": {
     "name": "opnay"
   },
@@ -9,6 +9,7 @@
   "keywords": [
     "codex",
     "skills",
+    "sessions",
     "plugins",
     "tools",
     "subagents",
@@ -17,8 +18,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Advance Codex",
-    "shortDescription": "Design stronger skills, tool-use guidance, plugins, and Codex subagent systems.",
-    "longDescription": "Provides creator skills for authoring reusable Codex capabilities: shaping skills, isolating tool-use policy, packaging plugins, and designing reliable subagent workflows and custom agents.",
+    "shortDescription": "Strengthen skills, sessions, tool-use guidance, plugins, and Codex subagent systems.",
+    "longDescription": "Provides skills for strengthening Codex surfaces: shaping reusable skills, managing session continuity, isolating tool-use policy, packaging plugins, and designing reliable subagent workflows and custom agents.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": [
@@ -27,9 +28,10 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Use $advance-codex-guide to decide whether this should become a skill, tool-use guidance layer, plugin, or subagent workflow.",
+      "Use $advance-codex-guide to decide whether this should become a skill, tool-use guidance layer, plugin, session surface, or subagent workflow.",
       "Use $plugin-creator to package a plugin and define the right bundled surfaces.",
       "Use $skill-creator to design a reusable Codex skill with the right references and guardrails.",
+      "Use $session-manager to manage session_record.md or change_record.md under .sessions/<session-id>/ when Codex session continuity needs a stable record.",
       "Use $tool-use-guide to design reusable guidance for selecting and sequencing tools without burying tool policy inside a domain skill.",
       "Use $subagent-creator to design a Codex subagent workflow, custom agent spec, and runtime control plan."
     ],
