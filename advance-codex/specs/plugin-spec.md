@@ -3,7 +3,7 @@
 ## 목적
 
 `advance-codex`는 Codex의 기본 표면을 설계, 보강, 정리하기 위한 플러그인입니다.
-핵심 역할은 먼저 지금 다루는 Codex 표면이 무엇인지 분류하고, 그다음 더 명확한 경계, 패키징 규칙, tool-use policy 분리, custom agent 가이드, session continuity 관리를 붙여 안정적인 형태로 정리하는 것입니다.
+핵심 역할은 먼저 지금 다루는 Codex 표면이 무엇인지 분류하고, 그다음 더 명확한 경계, 패키징 규칙, tool-use policy 분리, custom agent 가이드, session continuity 관리, change finalization 규율을 붙여 안정적인 형태로 정리하는 것입니다.
 
 ## 경계
 
@@ -13,6 +13,7 @@
   - plugin bundle 설계 및 패키징 가이드
   - custom subagent 설계 및 사용 가이드
   - session-scoped record 관리와 session continuity 보강
+  - Codex가 만든 변경을 task-scoped commit으로 정리하는 change finalization 보강
 - 제외:
   - 일반적인 제품 구현 workflow
   - Codex 표면 보강과 무관한 도메인 실행 가이드
@@ -21,7 +22,7 @@
 ## 진입 표면
 
 - 대표 엔트리포인트: `advance-codex-guide`
-- 핵심 분기: 지금 다루는 대상이 skill, tool-use guidance, plugin, subagent, session surface 중 무엇인지 먼저 분류한다
+- 핵심 분기: 지금 다루는 대상이 skill, tool-use guidance, plugin, subagent, session surface, commit surface 중 무엇인지 먼저 분류한다
 
 ## 스킬 구성
 
@@ -31,6 +32,7 @@
 - `plugin-creator`: top-down plugin 설계, bundled skill coherence, `<plugin>-guide` 기대사항을 강화한다
 - `subagent-creator`: reusable custom agent role, TOML 형태, usage guidance를 정의한다
 - `session-manager`: `.sessions/<uuid>/` 아래의 session record와 change record를 통해 Codex 세션 연속성과 전달 기록을 관리한다
+- `git-committer`: Codex가 만든 변경을 검토, 분리, 검증하고 task-scoped commit으로 확정하는 규율을 제공한다
 
 ## 확장 원칙
 
@@ -38,6 +40,7 @@
 - plugin-level routing은 `advance-codex-guide`에 두고 creator skill들에 흩뿌리지 않는다.
 - 한 번 안정적인 관심사로 분리된 tool policy를 다시 도메인 skill 안으로 밀어넣지 않는다.
 - 세션처럼 Codex의 기본 동작을 안정화하는 표면은 이 플러그인 안에서 다룰 수 있다.
+- commit처럼 Codex 출력의 최종 확정을 안정화하는 표면도 이 플러그인 안에서 다룰 수 있다.
 - 이 플러그인은 execution workflow보다 Codex surface augmentation에 집중한다.
 
 ## 현재 의도 점검
