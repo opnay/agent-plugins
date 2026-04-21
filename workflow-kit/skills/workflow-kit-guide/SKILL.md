@@ -1,6 +1,6 @@
 ---
 name: workflow-kit-guide
-description: Entrypoint skill for the `workflow-kit` plugin. Use when a task needs the right workflow stage chosen first, such as deciding whether the work should begin with framing, definition and alignment, planning, active execution, review-driven correction, or a final readiness gate.
+description: Default first-read skill for incoming requests. Use to choose which `workflow-kit` skill should own the current workflow and what handoff order should follow.
 ---
 
 # Workflow Kit Guide
@@ -8,35 +8,38 @@ description: Entrypoint skill for the `workflow-kit` plugin. Use when a task nee
 ## Overview
 
 Use this skill as the default entrypoint for `workflow-kit`.
-Its job is to classify whether the task is primarily about stabilizing an ambiguous task shape, defining the work correctly, producing a read-only plan, executing it, iterating on issues, reviewing material findings, or deciding whether the work is ready to move to commit.
-Do not jump straight into execution when the real need is a framing pass, a deep alignment pass, or a planning pass, and do not run the commit gate when the work is still clearly in progress.
-When execution is the right branch, this guide should also choose the concrete execution mode instead of delegating that choice to another sibling guide.
+Treat this skill as the normal first routing layer for incoming requests.
+Choose the starting skill in this plugin that most directly advances the user's result.
+Prefer one clear starting skill plus an explicit handoff.
+Do not route to a specialist plugin first from the global layer; pick the workflow first.
+Skip this guide only when a narrower `workflow-kit` skill is already clearly the right starting point.
 
 ## Workflow
 
-1. Identify the task shape:
-   - pre-workflow framing and stabilization
-   - pre-execution alignment and intent clarification
-   - read-only planning before execution
-   - broad end-to-end delivery
-   - parallel independent execution
-   - bounded iterative refinement
-   - blocking-first review handling
-   - commit-readiness decision before review or commit
-2. Decide whether the change is:
-   - still actively being implemented
-   - nearly done and ready for final gate checks
+1. Identify which bundled skill is the best starting point:
+   - `structured-thinking`
+   - `deep-interview`
+   - `planner`
+   - `autopilot`
+   - `parallel-work`
+   - `ralph-loop`
+   - `review-loop`
+   - `commit-readiness-gate`
+2. Decide whether the work is:
+   - still active execution
+   - review-driven correction
+   - final readiness checking
 3. If the work belongs in execution, estimate:
    - scope size
    - verification style
-   - whether the execution brief is actually locked yet
-4. Route to the narrowest bundled skill that owns the main concern.
-5. If the task spans clarification, execution, and gate concerns, pick the starting skill and explicit handoff point.
+   - whether the brief is actually locked yet
+4. Route to the narrowest bundled skill that owns the current bottleneck.
+5. If the task spans several bundled skills, choose the starting skill and handoff point explicitly.
 
 ## Routing Rules
 
 - Choose `structured-thinking` when the task is still too unstable to choose the next workflow safely and the first job is to isolate ambiguity, assumptions, and the most plausible next path.
-- Choose `deep-interview` when the main risk is misreading intent, boundaries, tradeoffs, or approval lines before the next concrete work step begins.
+- Choose `deep-interview` when the main job is to understand the user's real intent, boundaries, tradeoffs, approval lines, or success criteria through questions, pressure-testing, or direction evaluation.
 - Choose `planner` when implementation should stay deferred until a read-only investigation, tradeoff analysis, verification path, and execution-ready plan are complete.
 - Choose `autopilot` when the user wants broad end-to-end delivery from brief to verified result.
 - Choose `parallel-work` when the work contains several bounded lanes with a clear integration path.
@@ -47,17 +50,20 @@ When execution is the right branch, this guide should also choose the concrete e
 
 ## Decision Rules
 
-- Choose `structured-thinking` when workflow selection itself is still unsafe because the task shape, assumptions, or likely next path are unstable.
-- Choose `deep-interview` when alignment quality is the main blocker and the task should follow a locked brief before planning or execution.
-- Choose `planner` when the task shape is stable enough to plan, but execution should still be deferred until scope, risks, verification, and approval are explicit.
-- Choose a gate only when the main uncertainty is readiness, not implementation approach.
-- Choose an execution workflow when meaningful implementation, refinement, or findings work still remains.
-- Do not use `commit-readiness-gate` as a substitute for actual review handling or incomplete implementation.
-- Prefer one clear starting skill plus an explicit handoff over mixing clarification, execution, and gate responsibilities into one prompt.
+- Treat this guide as the default first stop for routing.
+- Pick the skill that best addresses the current bottleneck.
+- Choose `deep-interview` over `structured-thinking` when the request is a proposal, direction check, greenfield setup, or "괜찮을까?" style evaluation and the missing information is about what the user really wants, what constraints matter most, or what success should mean.
+- Keep `structured-thinking` for workflow ambiguity, not for requirement discovery that should continue as an actual interview.
+- Use `deep-interview` when the blocker is still understanding what the user actually wants, where the scope should stop, or how to evaluate a direction before committing to a plan or implementation.
+- Use clarification skills when intent, scope, tradeoff, or approval boundaries are still the blocker.
+- Use planning when execution should remain deferred.
+- Use execution workflows when meaningful implementation or refinement still remains.
+- Use `commit-readiness-gate` only when the main question is readiness.
+- Prefer one clear starting skill plus an explicit handoff.
 
 ## Execution Mode Rules
 
-Use these rules when the task already belongs in execution rather than a framing pass, clarification pass, planning pass, or final gate.
+Use these rules when the task already belongs in execution.
 
 Estimate scope size as:
 
@@ -82,7 +88,7 @@ Choose execution mode with these rules:
 - If the work starts as bounded refinement but expands into several coordinated areas, escalate to a broader workflow.
 - If the work starts broad but enters a short local polish cycle, temporarily use a bounded loop without losing the broader scope frame.
 
-Execution-shape heuristics:
+Execution heuristics:
 
 - Treat the task as broad end-to-end delivery when:
   - the user wants a brief idea taken all the way to working code
@@ -112,19 +118,17 @@ Execution-shape heuristics:
 
 ## Output Contract
 
-- `Task shape`
+- `Current bottleneck`
 - `Scope size` when execution is selected
 - `Verification style` when execution is selected
-- `Clarification vs execution vs gate decision`
 - `Chosen skill`
-- `Why this route fits`
-- `Escalation signal`
 - `Planned handoff`
 - `Main risk`
 - `Residual risk`
 
 ## Guardrails
 
+- Do not treat another plugin as the default global entrypoint.
 - Do not skip an obvious alignment pass when the user's intent is still materially underspecified.
 - Do not skip a framing pass when workflow selection itself is still unstable.
 - Do not skip a planning pass when execution should remain deferred until read-only investigation and handoff are complete.
@@ -139,12 +143,3 @@ Execution-shape heuristics:
 - Do not choose a bounded loop when the work clearly needs planning across several phases.
 - Do not let review handling turn into open-ended polish by default.
 - Do not keep the initial execution mode if the task shape has obviously changed.
-
-## Example Triggers
-
-- "이 요구사항이 아직 애매한데 어떤 workflow로 들어가야 할지부터 정리해줘"
-- "바로 구현하지 말고 먼저 계획만 완성해줘"
-- "이 작업에 어떤 workflow로 들어가는 게 맞는지 먼저 판단해줘"
-- "이거 병렬로 나눠서 처리하는 게 맞는지 먼저 판단해줘"
-- "이거 끝까지 미는 게 맞아, 아니면 루프로 다듬는 게 맞아?"
-- "리뷰 반영인지, 구현 workflow인지 먼저 구분해줘"

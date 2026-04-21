@@ -21,6 +21,7 @@ Apply it only while the task shape is still unstable.
 - Stabilize the task shape by identifying missing questions, risky assumptions, and the most plausible next path.
 - Restate the task in simpler terms before proposing any downstream workflow or execution path.
 - Ask only the smallest set of questions that would materially change the next workflow choice.
+- If the ambiguity is really about user intent, scope, constraints, or evaluation criteria rather than workflow choice, exit to `deep-interview` instead of continuing here.
 - If questions are not required, make the working assumptions explicit.
 - Stop once the next path can be chosen safely.
 
@@ -28,6 +29,7 @@ Apply it only while the task shape is still unstable.
 
 - Do not enter this gate when the next workflow is already clear.
 - Do not skip this gate when workflow selection is still uncertain.
+- Do not stay in this workflow when the right next step is an actual user interview.
 - Do not ask questions that do not materially change workflow choice, scope, or risk.
 - Do not answer as if assumptions were facts.
 - Do not expand the task into unnecessary branches once the key ambiguity is isolated.
@@ -60,6 +62,7 @@ Apply it only while the task shape is still unstable.
 ### Execution
 
 - State the clarified task shape, key assumptions, and recommended next path.
+- If the next path is `deep-interview`, hand off immediately instead of ending with a broad advisory answer.
 - Exit immediately after the next workflow or execution path is clear.
 
 ### Boundaries

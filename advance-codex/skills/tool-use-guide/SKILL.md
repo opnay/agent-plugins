@@ -7,11 +7,8 @@ description: Design or revise reusable tool-usage guidance for skills, plugins, 
 
 ## Overview
 
-Use this skill when the main deliverable is reusable guidance for tool choice and tool behavior.
-Its job is to make tool-use policy explicit: what tool should be preferred, what should be avoided, when the agent should stay local, when it should ask the user, and when runtime-specific tool rules should live outside a product or domain skill.
-
-This skill is not for designing the domain workflow itself.
-It is for designing the tool layer that supports that workflow without coupling the domain artifact to accidental runtime behavior.
+Use this skill when the main deliverable is reusable guidance for how Codex should use tools.
+Keep tool policy explicit, reusable, and separate from domain rules when those two concerns would otherwise get mixed together.
 
 ## Use When
 
@@ -76,7 +73,7 @@ Clarify these before drafting guidance:
 
 ## Workflow
 
-### Phase 0: Identify The Real Surface
+### Phase 0: Identify The Current Owner
 
 1. Identify the artifact that currently owns or is about to own the guidance:
    - skill
@@ -97,7 +94,7 @@ Clarify these before drafting guidance:
 
 Output:
 
-- `Tool-use surface`
+- `Current owner`
 
 ### Phase 1: Define The Decision Rules
 
@@ -163,7 +160,7 @@ Output:
 
 ## Output Contract
 
-- `Tool-use surface`
+- `Current owner`
 - `Decision points`
 - `Preferred tool behaviors`
 - `Fallback and escalation rules`

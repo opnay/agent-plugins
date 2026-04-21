@@ -3,13 +3,15 @@
 ## 목적
 
 `workflow-kit`은 작업 lifecycle 전반을 다루는 재사용 가능한 workflow 플러그인입니다.
-핵심 역할은 작업을 시작하기 전에 먼저 task shape를 안정화하고, 올바르게 정의하고, read-only planning을 통해 실행 준비를 끝내고, 적절한 실행 모드를 고르고, 안전하게 반복 개선하고, material finding을 scope drift 없이 처리하고, 마지막으로 commit 쪽으로 넘겨도 되는 상태인지 판단하는 것입니다.
+핵심 역할은 요구사항을 질문으로 파악하고, 방향과 경계를 점검하고, 올바르게 정의하고, read-only planning을 통해 실행 준비를 끝내고, 적절한 실행 모드를 고르고, 안전하게 반복 개선하고, material finding을 scope drift 없이 처리하고, 마지막으로 commit 쪽으로 넘겨도 되는 상태인지 판단하는 것입니다.
+또한 이 플러그인은 들어온 요청의 기본 routing layer로서 먼저 어떤 workflow skill이 현재 시작점이 될지 정합니다.
 
 ## 경계
 
 - 포함:
   - pre-workflow framing
   - work-definition 및 alignment workflow
+  - question-led requirement discovery 및 direction evaluation
   - read-only planning workflow
   - end-to-end execution workflow
   - bounded refinement loop
@@ -20,16 +22,17 @@
   - frontend, backend, design specialist 조언
   - teammate runtime orchestration
 
-## 진입 표면
+## 진입점
 
 - 대표 엔트리포인트: `workflow-kit-guide`
-- 핵심 분기: 지금 필요한 것이 framing, definition, planning, execution, review-loop handling, readiness gate 중 무엇인지 먼저 분류한다
+- 기본 규칙: 들어온 요청은 먼저 `workflow-kit-guide`를 거친다
+- 핵심 분기: 지금 필요한 것이 requirement discovery, framing, definition, planning, execution, review-loop handling, readiness gate 중 무엇인지 분류한다
 
 ## 스킬 구성
 
-- `workflow-kit-guide`: 작업을 올바른 workflow stage와 starting mode로 라우팅한다
-- `structured-thinking`: 아직 어떤 workflow로 들어가야 할지 불안정한 작업을 안정화하고 다음 경로를 고를 수 있게 만든다
-- `deep-interview`: planning이나 execution 전에 intent, scope, tradeoff, approval boundary를 명확히 해서 작업을 제대로 정의한다
+- `workflow-kit-guide`: 기본 first-read router로서 작업의 현재 병목에 맞는 starting skill과 handoff를 정한다
+- `structured-thinking`: 아직 어떤 workflow로 들어가야 할지 불안정한 작업을 안정화하고 다음 경로를 고른 뒤 즉시 handoff한다
+- `deep-interview`: 질문과 압력 테스트를 통해 intent, scope, tradeoff, approval boundary, success criteria를 명확히 하고 필요하면 structured user-input tool로 요구사항이나 방향을 잠근다
 - `planner`: 실행 전에 read-only investigation과 tradeoff 분석으로 decision-complete plan을 만든다
 - `autopilot`: brief부터 implementation, verification까지 broad end-to-end delivery를 수행한다
 - `parallel-work`: 소수의 명확히 독립적인 lane으로 분리하고 결과를 통합한다
@@ -43,8 +46,9 @@
 - 도메인 중립적인 workflow logic만 이 플러그인에 둔다.
 - 새 skill이 stage model을 바꾸면 `workflow-kit-guide`를 같은 변경에서 함께 갱신한다.
 - 편하다는 이유로 하나의 workflow가 여러 stage를 흡수하게 두지 않는다.
+- global routing을 우회하는 별도 first-stop 구조를 다른 plugin에 두지 않는다.
 
 ## 현재 의도 점검
 
-- 현재 플러그인 표면은 framing, definition, planning, execution, review, gate lifecycle을 중심으로 일관적이어야 한다.
+- 현재 플러그인 구성은 framing, definition, planning, execution, review, gate lifecycle을 중심으로 일관적이어야 한다.
 - 현재의 주요 리스크는 stage가 빠지거나 서로 흡수되면서 lifecycle이 다시 execution 중심으로 축소되는 것이다.

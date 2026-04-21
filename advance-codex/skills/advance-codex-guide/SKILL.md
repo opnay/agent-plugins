@@ -1,6 +1,6 @@
 ---
 name: advance-codex-guide
-description: Entrypoint skill for the `advance-codex` plugin. Use when a task involves strengthening a Codex surface and you should first classify whether the primary deliverable is a skill, empirical prompt-evaluation workflow, tool-use guidance layer, plugin bundle, session management surface, commit surface, or subagent workflow or custom agent definition.
+description: Entrypoint skill for the `advance-codex` plugin. Use when a task is about improving how Codex is used and you should first classify whether the primary deliverable is a skill, empirical prompt-evaluation workflow, tool-use guidance layer, plugin bundle, session management workflow, commit workflow, or subagent/custom agent definition.
 ---
 
 # Advance Codex Guide
@@ -8,8 +8,8 @@ description: Entrypoint skill for the `advance-codex` plugin. Use when a task in
 ## Overview
 
 Use this skill as the default entrypoint for the `advance-codex` plugin.
-Its job is to classify the surface being strengthened before implementation starts and route to the right built-in skill.
-If the task spans several surface types, choose the sequence explicitly instead of mixing them together.
+Its job is to classify what part of Codex usage is being improved before implementation starts and route to the right built-in skill.
+If the task spans several deliverable types, choose the sequence explicitly instead of mixing them together.
 
 ## Workflow
 
@@ -18,14 +18,14 @@ If the task spans several surface types, choose the sequence explicitly instead 
    - an empirical prompt-evaluation workflow
    - a tool-use guidance layer
    - a plugin
-   - a session management surface
-   - a commit surface
+   - a session management workflow
+   - a commit workflow
    - a subagent workflow or custom agent
 2. Identify whether the task is:
    - new creation
    - revision of an existing artifact
    - packaging several artifacts into one bundle
-3. Decide the ownership surface:
+3. Decide the ownership boundary:
    - skill-only under a skill folder
    - plugin-level bundle under a plugin directory
    - custom-agent definition or usage guidance
@@ -78,7 +78,7 @@ If the task spans several surface types, choose the sequence explicitly instead 
 - Do not bury "when to use" logic in the body of a skill; keep it in the description.
 - Do not bury reusable tool policy inside a domain skill when that policy should be isolated.
 - Do not treat self-rereading as empirical validation when the real requirement is fresh-executor evidence.
-- Do not treat session continuity as generic repository hygiene when the real surface is session-scoped records.
-- Do not treat change finalization as generic git hygiene when the real surface is commit-scoped output finalization.
+- Do not treat session continuity as generic repository hygiene when the real concern is session-scoped records.
+- Do not treat change finalization as generic git hygiene when the real concern is commit-scoped output finalization.
 - Do not widen custom-agent work into unrelated orchestration design.
 - Do not create a multi-skill plugin without deciding whether it needs an entrypoint skill.
