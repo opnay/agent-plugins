@@ -1,6 +1,6 @@
 ---
 name: advance-codex-guide
-description: Entrypoint skill for the `advance-codex` plugin. Use when a task involves strengthening a Codex surface and you should first classify whether the primary deliverable is a skill, tool-use guidance layer, plugin bundle, session management surface, commit surface, or subagent workflow or custom agent definition.
+description: Entrypoint skill for the `advance-codex` plugin. Use when a task involves strengthening a Codex surface and you should first classify whether the primary deliverable is a skill, empirical prompt-evaluation workflow, tool-use guidance layer, plugin bundle, session management surface, commit surface, or subagent workflow or custom agent definition.
 ---
 
 # Advance Codex Guide
@@ -15,6 +15,7 @@ If the task spans several surface types, choose the sequence explicitly instead 
 
 1. Identify the primary reusable artifact:
    - a skill
+   - an empirical prompt-evaluation workflow
    - a tool-use guidance layer
    - a plugin
    - a session management surface
@@ -35,6 +36,7 @@ If the task spans several surface types, choose the sequence explicitly instead 
 
 - Choose `skill-creator` when the main output is a reusable skill folder with `SKILL.md` and optional references, scripts, or assets.
 - When `skill-creator` applies, pair the canonical system `skill-creator` with the local `advance-codex:skill-creator` extension.
+- Choose `empirical-prompt-tuning` when the main output is evidence-based evaluation and revision of a reusable instruction, skill, AGENTS section, or prompt using fresh subagents, fixed scenarios, and caller-side metrics.
 - Choose `tool-use-guide` when the main output is reusable guidance for how an artifact should choose, sequence, constrain, or escalate tools without burying tool policy inside a domain workflow.
 - Choose `plugin-creator` when the main output is an installable plugin bundle with `.codex-plugin/plugin.json` and optional bundled skills.
 - When `plugin-creator` applies, pair the canonical system `plugin-creator` with the local `advance-codex:plugin-creator` extension.
@@ -53,6 +55,7 @@ If the task spans several surface types, choose the sequence explicitly instead 
 
 - Treat plugin packaging as the top-level concern when the user wants discoverability, installable packaging, or several bundled skills.
 - Treat skill design as the top-level concern when the user wants a reusable workflow but no plugin packaging.
+- Treat empirical prompt tuning as the top-level concern when the hard part is validating or improving instruction quality through repeatable fresh-executor evidence rather than author intuition.
 - Treat tool-use design as the top-level concern when the hard part is not the domain workflow itself, but how artifacts should select and use tools consistently.
 - Treat session management as the top-level concern when the hard part is how you should persist, inspect, validate, or update session-scoped records across work.
 - Treat commit finalization as the top-level concern when the hard part is how you should review, verify, message, and split your changes into stable commits.
@@ -74,6 +77,7 @@ If the task spans several surface types, choose the sequence explicitly instead 
 - Do not start by writing files before classifying the artifact.
 - Do not bury "when to use" logic in the body of a skill; keep it in the description.
 - Do not bury reusable tool policy inside a domain skill when that policy should be isolated.
+- Do not treat self-rereading as empirical validation when the real requirement is fresh-executor evidence.
 - Do not treat session continuity as generic repository hygiene when the real surface is session-scoped records.
 - Do not treat change finalization as generic git hygiene when the real surface is commit-scoped output finalization.
 - Do not widen custom-agent work into unrelated orchestration design.
