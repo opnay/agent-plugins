@@ -120,6 +120,8 @@ Output:
 First-question rule:
 
 - Default the first question toward success criteria, intended scope, or what must be true for the user to consider the task correctly done before discussing solution details.
+- When the first question uses the structured user-input tool for a proposal, direction check, or greenfield setup, make the answer choices represent success criteria, scope priorities, or decision boundaries.
+- Do not use the first structured question only to triage what kind of help the user wants if the deeper blocker is still success criteria, intended scope, or approval boundary.
 
 Pressure patterns:
 
