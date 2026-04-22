@@ -139,6 +139,6 @@ Output:
 
 - Do not replace a phase-specific workflow with vague meta commentary.
 - Do not keep the loop open when the work can end cleanly.
-- Do not ask a next-flow question when the next phase is already obvious and can be started directly.
+- Do not skip the next-flow question merely because the next phase seems obvious when the repository or working agreement requires explicit loop re-entry.
 - Do not let this skill absorb domain execution, planning, or review detail.
 - Do not confuse turn continuity with endless conversation.
