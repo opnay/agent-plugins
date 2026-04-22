@@ -20,6 +20,7 @@ Skip this guide only when a narrower `workflow-kit` skill is already clearly the
    - `structured-thinking`
    - `deep-interview`
    - `planner`
+   - `turn-gate`
    - `autopilot`
    - `parallel-work`
    - `ralph-loop`
@@ -33,14 +34,16 @@ Skip this guide only when a narrower `workflow-kit` skill is already clearly the
    - scope size
    - verification style
    - whether the brief is actually locked yet
-4. Route to the narrowest bundled skill that owns the current bottleneck.
-5. If the task spans several bundled skills, choose the starting skill and handoff point explicitly.
+4. Decide whether a meta-flow continuity owner is needed in addition to the phase owner.
+5. Route to the narrowest bundled skill that owns the current bottleneck.
+6. If the task spans several bundled skills, choose the starting skill and handoff point explicitly.
 
 ## Routing Rules
 
 - Choose `structured-thinking` when the task is still too unstable to choose the next workflow safely and the first job is to isolate ambiguity, assumptions, and the most plausible next path.
 - Choose `deep-interview` when the main job is to understand the user's real intent, boundaries, tradeoffs, approval lines, or success criteria through questions, pressure-testing, or direction evaluation.
 - Choose `planner` when implementation should stay deferred until a read-only investigation, tradeoff analysis, verification path, and execution-ready plan are complete.
+- Choose `turn-gate` when the repository or task requires explicit phase-loop continuity across question/plan/command analysis, execution, result reporting, and next-flow prompting, and the main job is to keep that loop alive rather than finish in one isolated phase.
 - Choose `autopilot` when the user wants broad end-to-end delivery from brief to verified result.
 - Choose `parallel-work` when the work contains several bounded lanes with a clear integration path.
 - Choose `ralph-loop` when the work is best handled as repeated bounded fix-verify-reassess cycles.
@@ -57,6 +60,7 @@ Skip this guide only when a narrower `workflow-kit` skill is already clearly the
 - Use `deep-interview` when the blocker is still understanding what the user actually wants, where the scope should stop, or how to evaluate a direction before committing to a plan or implementation.
 - Use clarification skills when intent, scope, tradeoff, or approval boundaries are still the blocker.
 - Use planning when execution should remain deferred.
+- Use `turn-gate` when the main bottleneck is not a single phase, but managing the turn-level loop across several phases without prematurely ending the interaction.
 - Use execution workflows when meaningful implementation or refinement still remains.
 - Use `commit-readiness-gate` only when the main question is readiness.
 - Prefer one clear starting skill plus an explicit handoff.
@@ -80,6 +84,7 @@ Estimate verification style as:
 Choose execution mode with these rules:
 
 - Hand off to `deep-interview` when execution mode selection is premature because the implementation brief is still materially misaligned or underspecified.
+- Hand off to `turn-gate` when the work must keep reopening the next flow explicitly after each phase because local operating policy or task shape requires an ongoing gated loop.
 - Choose `autopilot` for broad end-to-end delivery that spans requirements, implementation, testing, and validation.
 - Choose `parallel-work` when the work contains several clearly independent lanes with an explicit integration path.
 - Choose `ralph-loop` when the task is bounded and benefits from repeated fix-verify-reassess cycles.
@@ -105,6 +110,11 @@ Execution heuristics:
 - Treat the task as blocking-first review handling when:
   - the input is review feedback, QA findings, or self-review findings
   - the goal is to fix only material issues without stalling delivery for low-value polish
+
+Meta-flow heuristic:
+
+- Treat `turn-gate` as a continuity owner layered over phases, not as an execution mode parallel to `autopilot`, `parallel-work`, `ralph-loop`, or `review-loop`.
+- Choose it when the loop between phase result and next explicit flow is itself the bottleneck.
 
 ## Escalation Signals
 

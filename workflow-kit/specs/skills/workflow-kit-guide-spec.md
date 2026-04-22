@@ -10,14 +10,16 @@
   - current bottleneck 분류
   - starting workflow와 handoff 결정
   - execution mode 선택 기준 제시
+  - meta-flow continuity가 필요한지 판단
 - 제외:
   - 각 workflow의 상세 실행
   - specialist plugin의 세부 판단
 
 ## 처리하려는 작업 형태
 
-- 요청을 framing, interview, planning, execution, review, gate 중 어디서 시작해야 하는지 모르는 경우
+- 요청을 framing, interview, planning, execution, review, gate, turn-level meta flow 중 어디서 시작해야 하는지 모르는 경우
 - execution mode를 autopilot, parallel-work, ralph-loop, review-loop 중에서 골라야 하는 경우
+- execution mode와 별도로 meta-flow continuity owner가 필요한지 판단해야 하는 경우
 
 ## 엔트리포인트 / 대표 표면
 
@@ -28,6 +30,8 @@
 - current bottleneck을 먼저 하나로 좁힌다.
 - starting skill과 planned handoff를 함께 제시한다.
 - specialist plugin은 workflow 이후 handoff 대상으로만 둔다.
+- phase continuity가 핵심 병목이면 `turn-gate`를 명시적으로 고른다.
+- `turn-gate`는 execution mode가 아니라 meta-flow owner로 분류한다.
 
 ## 독립성 원칙
 
@@ -37,4 +41,3 @@
 ## 확장 원칙
 
 - stage model이나 execution mode map이 바뀌면 plugin spec과 함께 갱신한다.
-
