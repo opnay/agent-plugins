@@ -24,13 +24,15 @@
 ## 엔트리포인트 / 대표 표면
 
 - 대표 표면: `workflow-kit/skills/commit-readiness-gate/SKILL.md`
-- 관련 하위/후속: `advance-codex/git-committer`
+- 관련 하위/후속: `advance-codex:git-committer`
 
 ## 핵심 처리 계약
 
 - intended change unit을 기준으로 self-review와 scoped verification을 수행한다.
 - readiness checklist와 residual risk를 함께 보고한다.
-- commit message 작성이나 git finalization은 후속 skill로 넘긴다.
+- gate가 통과되고 실제 commit execution이 다음 단계라면 `advance-codex:git-committer`로 명시적으로 handoff한다.
+- commit message 작성이나 git finalization은 이 gate 안에 머물지 않고 후속 skill로 넘긴다.
+- user-facing wording에서 `commit-ready`는 gate 통과 상태를 가리킬 때만 쓰고, pre-gate action label과 혼용하지 않는다.
 
 ## 독립성 원칙
 
@@ -40,4 +42,3 @@
 ## 확장 원칙
 
 - 새 gate rule은 readiness 판단의 신뢰도를 높일 때만 추가한다.
-

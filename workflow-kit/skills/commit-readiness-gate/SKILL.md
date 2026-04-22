@@ -1,6 +1,6 @@
 ---
 name: commit-readiness-gate
-description: Final readiness gate for deciding whether an intended change unit is ready to move toward commit. Use when implementation is nearly done and Codex needs to finish self-review, scoped verification, risk classification, and the minimum necessary review recommendation before telling the user the change is commit-ready.
+description: Final readiness gate for deciding whether an intended change unit is ready to move toward commit. Use when implementation is nearly done and Codex needs to finish self-review, scoped verification, risk classification, and the minimum necessary review recommendation before saying the change is commit-ready. Do not use for actual commit execution; hand that step to `advance-codex:git-committer` after the gate passes.
 ---
 
 # Commit Readiness Gate
@@ -10,6 +10,7 @@ description: Final readiness gate for deciding whether an intended change unit i
 Use this skill to decide whether an intended change unit has reached commit-ready status.
 The goal is not to ask for a commit by itself. The goal is to finish the final self-review, verification, and risk classification needed to tell the user whether it is reasonable to commit now.
 Use this skill after the main implementation work is complete or nearly complete.
+If the gate passes and the next step is actual commit execution, hand off that finalization step to `advance-codex:git-committer` instead of collapsing it into this gate.
 
 ## Use When
 
@@ -81,8 +82,16 @@ Use this skill after the main implementation work is complete or nearly complete
 ### 7. Gate Outcome
 
 - If the change unit is isolated, verified, and risk-classified, say it is commit-ready.
+- If the gate passes and the user wants to actually commit now, explicitly hand off to `advance-codex:git-committer` for message drafting, final staged verification, commit execution, and post-commit confirmation.
 - If not, say exactly what blocks commit-readiness and what must be fixed first.
 - Do not blur the result; the output should clearly pass or fail the gate.
+
+### 8. User-Facing Wording Rule
+
+- Do not use `commit-ready` as the label for a pre-gate action.
+- Before this gate runs, describe the next step as `run the commit-readiness gate` or equivalent.
+- Reserve `commit-ready` for the pass result of this gate.
+- If the gate has already passed and the next step is actual commit execution, name that next step separately as handoff to `advance-codex:git-committer`.
 
 ## Commit-Readiness Checklist
 
@@ -110,3 +119,5 @@ Use this skill after the main implementation work is complete or nearly complete
 - Do not declare commit-readiness when the change unit still mixes concerns.
 - Do not recommend broad review sets without a risk reason.
 - Do not hide failed or skipped verification behind a soft-ready answer.
+- Do not execute the actual commit inside this gate when the next step should be owned by `advance-codex:git-committer`.
+- Do not use `commit-ready` to mean both `run the gate now` and `the gate already passed`.
