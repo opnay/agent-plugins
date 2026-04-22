@@ -1,52 +1,67 @@
 # Advance Codex 플러그인 스펙
 
-## 목적
+## 플러그인 목적
 
-`advance-codex`는 Codex에서 할 수 있는 일을 더 깊고 안정적으로 활용하도록 돕는 플러그인입니다.
-핵심 역할은 지금 다루는 Codex 활용 대상이 무엇인지 분류하고, 그다음 더 명확한 경계, 패키징 규칙, tool-use policy 분리, custom agent 가이드, session continuity 관리, change finalization 규율을 붙여 안정적인 형태로 정리하는 것입니다.
+`advance-codex`는 Codex 활용 방식을 더 명시적이고 재사용 가능하게 설계하는 플러그인입니다.
+핵심 책임은 지금 다루는 산출물이 skill인지, reusable tool policy인지, plugin bundle인지, custom agent인지, empirical instruction evaluation인지, session continuity인지, change finalization인지를 먼저 분류하고 그에 맞는 좁은 surface로 연결하는 것입니다.
 
-## 경계
+## 플러그인 경계와 비목표
 
 - 포함:
-  - skill 설계 및 수정
-  - 재사용 가능한 instruction 또는 skill의 empirical evaluation workflow
-  - tool-use guidance 설계 및 분리
-  - plugin bundle 설계 및 패키징 가이드
-  - custom subagent 설계 및 사용 가이드
-  - session-scoped record 관리와 session continuity 보강
-  - 직접 만든 변경을 task-scoped commit으로 정리하는 change finalization 보강
+  - skill 설계와 개편을 위한 creator-oriented guidance
+  - reusable instruction을 fresh executor evidence로 검증하는 empirical workflow
+  - tool selection, sequencing, ask-vs-infer, escalation policy 분리
+  - installable plugin boundary와 bundled skill coherence 설계
+  - custom agent 정의와 usage guidance
+  - `.agents/sessions/<uuid>/` 기반 session artifact 운영
+  - task-scoped commit finalization discipline
 - 제외:
-  - 일반적인 제품 구현 workflow
-  - Codex 활용 체계 보강과 무관한 도메인 실행 가이드
-  - `advance-codex` 맥락 없이 공용 유틸리티를 쌓는 일
+  - 일반 제품 구현 workflow
+  - 특정 도메인 기능 구현 가이드
+  - `advance-codex` 목적과 무관한 generic utility accumulation
 
-## 진입점
+## 처리하려는 작업 형태
+
+- 새 skill, plugin, custom agent를 만들거나 기존 것을 재설계하는 작업
+- reusable instruction 품질을 경험적 평가로 끌어올리는 작업
+- domain workflow와 분리된 tool-use policy를 설계하는 작업
+- session artifact나 commit workflow처럼 Codex 사용 자체의 운영 품질을 안정화하는 작업
+
+## 엔트리포인트 / 대표 표면
 
 - 대표 엔트리포인트: `advance-codex-guide`
-- 핵심 분기: 지금 다루는 대상이 skill, tool-use guidance, plugin, subagent, session continuity, commit finalization 중 무엇인지 먼저 분류한다
+- 대표 스펙: `advance-codex/specs/plugin-spec.md`
+- skill 상세 스펙 위치: `advance-codex/specs/skills/*.md`
+- 핵심 라우팅 질문: 지금 개선하려는 주된 reusable artifact가 무엇인가
 
-## 스킬 구성
+## 내장 skill 체계
 
-- `advance-codex-guide`: 주요 활용 대상의 형태를 분류하고 적절한 내장 skill로 라우팅한다
-- `skill-creator`: canonical `skill-creator`와 함께 읽는 확장으로서 bounded skill 설계와 plugin 내부 skill packaging 규칙을 강화한다
-- `empirical-prompt-tuning`: reusable instruction, skill, AGENTS section, task prompt를 fresh subagent와 fixed scenarios로 반복 평가하고 개선하는 empirical tuning workflow를 제공한다
-- `tool-use-guide`: 도메인 skill 바깥으로 재사용 가능한 tool selection, sequencing, ask-vs-infer, escalation policy를 분리한다
-- `plugin-creator`: canonical `plugin-creator`와 함께 읽는 확장으로서 top-down plugin 설계, bundled skill coherence, `<plugin>-guide` 기대사항을 강화한다
-- `subagent-creator`: reusable custom agent role, TOML 형태, usage guidance를 정의한다
-- `session-manager`: `.agents/sessions/<uuid>/` 아래의 session record, change record, retrospective record를 통해 Codex 세션 연속성과 전달 기록을 관리한다
-- `git-committer`: 직접 만든 변경을 검토, 분리, 검증하고 task-scoped commit으로 확정하는 규율을 제공한다
+- `advance-codex-guide`: artifact type을 분류하고 실행 순서를 정한다.
+  - spec: `advance-codex/specs/skills/advance-codex-guide-spec.md`
+- `skill-creator`: canonical `skill-creator` 위에 bounded skill 설계와 plugin-owned skill 규칙을 덧붙인다.
+  - spec: `advance-codex/specs/skills/skill-creator-spec.md`
+- `empirical-prompt-tuning`: reusable instruction을 fresh subagent와 고정 시나리오로 검증하고 반복 개선한다.
+  - spec: `advance-codex/specs/skills/empirical-prompt-tuning-spec.md`
+- `tool-use-guide`: domain artifact에서 분리되어야 하는 reusable tool policy를 설계한다.
+  - spec: `advance-codex/specs/skills/tool-use-guide-spec.md`
+- `plugin-creator`: top-down plugin boundary와 `<plugin>-guide` 중심 packaging 규칙을 강화한다.
+  - spec: `advance-codex/specs/skills/plugin-creator-spec.md`
+- `subagent-creator`: `.codex/agents/*.toml`과 custom agent usage guidance를 정의한다.
+  - spec: `advance-codex/specs/skills/subagent-creator-spec.md`
+- `session-manager`: session, change, retrospective record를 생성·갱신·검증한다.
+  - spec: `advance-codex/specs/skills/session-manager-spec.md`
+- `git-committer`: 검증 가능한 task-scoped commit finalization 규율을 제공한다.
+  - spec: `advance-codex/specs/skills/git-committer-spec.md`
 
-## 확장 원칙
+## SDD 운영 원칙
 
-- 새 skill은 기존 구성과 분명히 다른 Codex 활용 대상이나 보강 관심사가 있을 때만 추가한다.
-- plugin-level routing은 `advance-codex-guide`에 두고 creator skill들에 흩뿌리지 않는다.
-- 한 번 안정적인 관심사로 분리된 tool policy를 다시 도메인 skill 안으로 밀어넣지 않는다.
-- empirical evaluation workflow는 author intuition이 아니라 fresh-executor evidence를 요구하는 별도 관심사일 때만 추가한다.
-- 세션처럼 Codex의 기본 사용 흐름을 안정화하는 대상은 이 플러그인 안에서 다룰 수 있다.
-- commit처럼 Codex 출력의 최종 확정을 안정화하는 대상도 이 플러그인 안에서 다룰 수 있다.
-- 이 플러그인은 execution workflow보다 Codex 활용 심화에 집중한다.
+- plugin spec은 bundle 목적, 경계, routing surface, skill composition만 소유한다.
+- 각 skill의 목적, 처리 계약, 독립성 원칙은 반드시 별도 `specs/skills/<skill>-spec.md`에 둔다.
+- skill 책임이 바뀌면 해당 skill spec과 `plugin-spec.md`를 같은 변경 단위로 갱신한다.
+- routing 기준이 바뀌면 `advance-codex-guide`와 관련 creator skill spec을 함께 점검한다.
+- empirical workflow나 tool-use policy처럼 독립 관심사로 분리된 계약은 다시 sibling skill 안으로 흡수하지 않는다.
 
-## 현재 의도 점검
+## 현재 구조 메모
 
-- 현재 플러그인 구성은 일관적이어야 한다. 포함된 skill은 모두 제품 실행이 아니라 Codex 활용 심화에 관한 것이어야 한다.
-- 현재의 주요 리스크는 일반 workflow 설계나 무관한 편의 기능 쪽으로 범위가 흐려지는 것이다.
+- normative skill spec은 모두 `specs/skills/` 아래에 둔다.
+- 이 플러그인의 주요 리스크는 일반 workflow guidance나 unrelated convenience feature로 범위가 흐려지는 것이다.

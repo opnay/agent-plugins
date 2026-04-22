@@ -1,54 +1,67 @@
 # Workflow Kit 플러그인 스펙
 
-## 목적
+## 플러그인 목적
 
-`workflow-kit`은 작업 lifecycle 전반을 다루는 재사용 가능한 workflow 플러그인입니다.
-핵심 역할은 요구사항을 질문으로 파악하고, 방향과 경계를 점검하고, 올바르게 정의하고, read-only planning을 통해 실행 준비를 끝내고, 적절한 실행 모드를 고르고, 안전하게 반복 개선하고, material finding을 scope drift 없이 처리하고, 마지막으로 commit 쪽으로 넘겨도 되는 상태인지 판단하는 것입니다.
-또한 이 플러그인은 들어온 요청의 기본 routing layer로서 먼저 어떤 workflow skill이 현재 시작점이 될지 정합니다.
+`workflow-kit`은 작업 lifecycle 전반을 다루는 workflow 플러그인입니다.
+핵심 책임은 들어온 요청에 대해 requirement discovery, framing, planning, execution, refinement, review, final gating 중 현재 병목이 무엇인지 판단하고, 가장 맞는 workflow skill로 연결하는 것입니다.
 
-## 경계
+## 플러그인 경계와 비목표
 
 - 포함:
   - pre-workflow framing
-  - work-definition 및 alignment workflow
-  - question-led requirement discovery 및 direction evaluation
-  - read-only planning workflow
-  - end-to-end execution workflow
+  - requirement discovery와 direction evaluation
+  - read-only planning
+  - broad execution workflow
   - bounded refinement loop
-  - review-driven fix loop
+  - review-driven correction
   - final readiness gate
 - 제외:
   - 도메인 특화 architecture guidance
-  - frontend, backend, design specialist 조언
-  - teammate runtime orchestration
+  - frontend, design, teammate specialist advice
+  - runtime-specific teammate orchestration
 
-## 진입점
+## 처리하려는 작업 형태
+
+- 요청을 어떤 workflow로 먼저 처리해야 하는지 결정하는 작업
+- 구현 전에 alignment나 planning이 필요한 작업
+- broad execution부터 review와 final gate까지 이어지는 lifecycle 작업
+
+## 엔트리포인트 / 대표 표면
 
 - 대표 엔트리포인트: `workflow-kit-guide`
-- 기본 규칙: 들어온 요청은 먼저 `workflow-kit-guide`를 거친다
-- 핵심 분기: 지금 필요한 것이 requirement discovery, framing, definition, planning, execution, review-loop handling, readiness gate 중 무엇인지 분류한다
+- 대표 스펙: `workflow-kit/specs/plugin-spec.md`
+- skill 상세 스펙 위치: `workflow-kit/specs/skills/*.md`
+- 보조 적응 문서: `workflow-kit/specs/deep-interview-adaptation-spec.md`
 
-## 스킬 구성
+## 내장 skill 체계
 
-- `workflow-kit-guide`: 기본 first-read router로서 작업의 현재 병목에 맞는 starting skill과 handoff를 정한다
-- `structured-thinking`: 아직 어떤 workflow로 들어가야 할지 불안정한 작업을 안정화하고 다음 경로를 고른 뒤 즉시 handoff한다
-- `deep-interview`: 질문과 압력 테스트를 통해 intent, scope, tradeoff, approval boundary, success criteria를 명확히 하고 필요하면 structured user-input tool로 요구사항이나 방향을 잠근다
-- `planner`: 실행 전에 read-only investigation과 tradeoff 분석으로 decision-complete plan을 만든다
-- `autopilot`: brief부터 implementation, verification까지 broad end-to-end delivery를 수행한다
-- `parallel-work`: 소수의 명확히 독립적인 lane으로 분리하고 결과를 통합한다
-- `ralph-loop`: 하나의 bounded issue를 fix-verify-reassess cycle로 반복 개선한다
-- `review-loop`: blocking-first 기준으로 review finding을 처리하고 bounded fix loop를 돈다
-- `commit-readiness-gate`: commit-ready 판단 전에 최종 self-review, scoped verification, risk classification을 수행한다
+- `workflow-kit-guide`: current bottleneck에 맞는 starting workflow와 handoff를 정한다.
+  - spec: `workflow-kit/specs/skills/workflow-kit-guide-spec.md`
+- `structured-thinking`: workflow 선택이 아직 불안정한 task를 안정화한다.
+  - spec: `workflow-kit/specs/skills/structured-thinking-spec.md`
+- `deep-interview`: intent, scope, tradeoff, approval boundary를 질문으로 잠근다.
+  - spec: `workflow-kit/specs/skills/deep-interview-spec.md`
+- `planner`: read-only investigation을 통해 decision-complete plan을 만든다.
+  - spec: `workflow-kit/specs/skills/planner-spec.md`
+- `autopilot`: brief부터 implementation, verification까지 broad end-to-end delivery를 수행한다.
+  - spec: `workflow-kit/specs/skills/autopilot-spec.md`
+- `parallel-work`: 소수의 독립 lane으로 분리하고 결과를 통합한다.
+  - spec: `workflow-kit/specs/skills/parallel-work-spec.md`
+- `ralph-loop`: 하나의 bounded issue를 iterative fix-verify-reassess loop로 개선한다.
+  - spec: `workflow-kit/specs/skills/ralph-loop-spec.md`
+- `review-loop`: blocking-first 기준으로 review finding을 처리한다.
+  - spec: `workflow-kit/specs/skills/review-loop-spec.md`
+- `commit-readiness-gate`: final self-review와 scoped verification으로 commit-ready 여부를 판단한다.
+  - spec: `workflow-kit/specs/skills/commit-readiness-gate-spec.md`
 
-## 확장 원칙
+## SDD 운영 원칙
 
-- 새 workflow skill은 framing, definition, planning, end-to-end delivery, bounded refinement, review handling, final gating과 분명히 다른 work mode일 때만 추가한다.
-- 도메인 중립적인 workflow logic만 이 플러그인에 둔다.
-- 새 skill이 stage model을 바꾸면 `workflow-kit-guide`를 같은 변경에서 함께 갱신한다.
-- 편하다는 이유로 하나의 workflow가 여러 stage를 흡수하게 두지 않는다.
-- global routing을 우회하는 별도 first-stop 구조를 다른 plugin에 두지 않는다.
+- plugin spec은 lifecycle stage model과 routing surface만 소유한다.
+- 각 workflow의 처리 계약은 `specs/skills/` 아래 독립 문서로 분리한다.
+- stage model이나 handoff 규칙이 바뀌면 `workflow-kit-guide`와 해당 skill spec, `plugin-spec.md`를 같은 변경에서 갱신한다.
+- specialist plugin이 first stop이 되지 않도록 global routing boundary를 유지한다.
 
-## 현재 의도 점검
+## 현재 구조 메모
 
-- 현재 플러그인 구성은 framing, definition, planning, execution, review, gate lifecycle을 중심으로 일관적이어야 한다.
-- 현재의 주요 리스크는 stage가 빠지거나 서로 흡수되면서 lifecycle이 다시 execution 중심으로 축소되는 것이다.
+- `deep-interview-adaptation-spec.md`는 적응 배경 문서로 유지하되 normative skill contract는 `specs/skills/deep-interview-spec.md`가 소유한다.
+- 이 플러그인의 주요 리스크는 lifecycle stage가 빠지거나 서로 흡수되면서 workflow가 execution 중심으로 납작해지는 것이다.

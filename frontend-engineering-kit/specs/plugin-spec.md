@@ -1,49 +1,63 @@
 # Frontend Engineering Kit 플러그인 스펙
 
-## 목적
+## 플러그인 목적
 
-`frontend-engineering-kit`은 프론트엔드 작업을 올바른 decision layer에서 다루도록 안내하는 플러그인입니다.
-핵심 역할은 어떤 frontend task가 overall workflow, architecture-pattern choice, React structure, local component boundary, domain modeling, UI implementation quality, test-driven execution 중 무엇이 중심인지 분류하는 것입니다.
+`frontend-engineering-kit`은 프론트엔드 문제를 올바른 decision layer에서 다루도록 돕는 specialist 플러그인입니다.
+핵심 책임은 현재 병목이 frontend workflow인지, architecture pattern인지, React structure인지, local component boundary인지, domain modeling인지, UI implementation quality인지, test-driven execution인지 먼저 분류하는 것입니다.
 
-## 경계
+## 플러그인 경계와 비목표
 
 - 포함:
-  - frontend workflow selection
-  - Atomic, FSD, hybrid 같은 architecture-pattern decision
+  - frontend workflow selection과 execution framing
+  - architecture pattern choice
   - React layering, hook, effect, rendering boundary
-  - local component boundary 및 ownership decision
-  - frontend domain-modeling threshold decision
-  - UI implementation quality와 designer-level frontend guidance
+  - local component boundary와 ownership decision
+  - frontend domain-modeling threshold
+  - UI implementation quality와 design-to-code guidance
   - frontend TDD workflow
 - 제외:
   - backend architecture
   - design-only pre-code planning
-  - frontend 특화가 아닌 general workflow orchestration
+  - frontend 특화가 아닌 generic workflow orchestration
 
-## 진입 표면
+## 처리하려는 작업 형태
+
+- 구조 개편이나 feature 작업에서 어떤 frontend concern이 먼저 풀려야 하는지 정하는 작업
+- architecture pattern과 React/component 구조를 분리해서 판단해야 하는 작업
+- UI 품질과 테스트 전략까지 포함한 frontend 구현 개선 작업
+
+## 엔트리포인트 / 대표 표면
 
 - 대표 엔트리포인트: `frontend-engineering-kit-guide`
-- 핵심 분기: dominant frontend concern을 분류하고 첫 specialist skill을 고른다
+- 대표 스펙: `frontend-engineering-kit/specs/plugin-spec.md`
+- skill 상세 스펙 위치: `frontend-engineering-kit/specs/skills/*.md`
 
-## 스킬 구성
+## 내장 skill 체계
 
-- `frontend-engineering-kit-guide`: broad하거나 mixed된 frontend task를 적절한 specialist path로 라우팅한다
-- `frontend-workflow-guide`: project structure를 읽고 deeper concern의 순서를 정하는 기본 frontend execution workflow다
-- `frontend-architecture-patterns`: Atomic, FSD, hybrid 구조 적합성을 결정하거나 리뷰한다
-- `react-architecture`: React-specific layering, hook, context, effect, rerender 구조 문제를 다룬다
-- `component-architecture`: local component boundary, ownership, extraction, refactor direction을 다룬다
-- `frontend-domain-modeling`: 프론트엔드에 어느 정도 modeling이 필요한지와 business meaning의 위치를 결정한다
-- `frontend-design-guide`: design intent를 concrete frontend UI implementation guidance로 바꾼다
-- `frontend-tdd-rgb`: 적절한 failing test와 Red-Green-Refactor loop로 frontend work를 이끈다
+- `frontend-engineering-kit-guide`: dominant frontend concern을 분류하고 첫 specialist path를 고른다.
+  - spec: `frontend-engineering-kit/specs/skills/frontend-engineering-kit-guide-spec.md`
+- `frontend-workflow-guide`: project structure를 읽고 deeper concern의 순서와 실행 흐름을 정한다.
+  - spec: `frontend-engineering-kit/specs/skills/frontend-workflow-guide-spec.md`
+- `frontend-architecture-patterns`: Atomic, FSD, hybrid 같은 구조 패턴 적합성을 판단한다.
+  - spec: `frontend-engineering-kit/specs/skills/frontend-architecture-patterns-spec.md`
+- `react-architecture`: React-specific layering, hook, context, effect, rerender 문제를 다룬다.
+  - spec: `frontend-engineering-kit/specs/skills/react-architecture-spec.md`
+- `component-architecture`: local component boundary, extraction, ownership, refactor direction을 다룬다.
+  - spec: `frontend-engineering-kit/specs/skills/component-architecture-spec.md`
+- `frontend-domain-modeling`: 프론트엔드에 필요한 domain model의 깊이와 위치를 정한다.
+  - spec: `frontend-engineering-kit/specs/skills/frontend-domain-modeling-spec.md`
+- `frontend-design-guide`: design intent를 구현 가능한 UI guidance로 전환한다.
+  - spec: `frontend-engineering-kit/specs/skills/frontend-design-guide-spec.md`
+- `frontend-tdd-rgb`: frontend change를 failing test와 Red-Green-Refactor 루프로 이끈다.
+  - spec: `frontend-engineering-kit/specs/skills/frontend-tdd-rgb-spec.md`
 
-## 확장 원칙
+## SDD 운영 원칙
 
-- 새 skill은 workflow, pattern, React, component, domain, design, TDD 어느 곳에서도 깔끔하게 소유되지 않는 concern일 때만 추가한다.
-- plugin-level routing은 `frontend-engineering-kit-guide`에 두고 specialist skill에 흩뿌리지 않는다.
-- design-only planning이나 backend architecture를 이 플러그인에 섞지 않는다.
-- 새 skill이 concern boundary를 바꾸면 guide skill과 이 spec을 같은 변경에서 함께 갱신한다.
+- plugin spec은 concern map과 routing surface만 소유한다.
+- 각 skill의 처리 계약은 별도 `specs/skills/` 문서로 분리한다.
+- concern boundary가 바뀌면 `frontend-engineering-kit-guide`와 관련 skill spec, `plugin-spec.md`를 같은 변경에서 갱신한다.
+- React, component, domain-modeling 경계는 서로 대체 관계가 아니라 다른 decision layer임을 유지한다.
 
-## 현재 의도 점검
+## 현재 구조 메모
 
-- 현재 플러그인 표면은 frontend decision layer를 기준으로 일관적이다.
-- 현재의 주요 리스크는 React architecture, component architecture, domain-modeling 경계가 충분히 날카롭지 않으면 겹침이 생기는 것이다.
+- 이 플러그인의 주요 리스크는 React architecture, component architecture, domain modeling 경계가 흐려지면서 같은 문제를 여러 skill이 동시에 소유하게 되는 것이다.
