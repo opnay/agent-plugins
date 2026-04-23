@@ -93,7 +93,7 @@
 - slug는 영어 소문자와 `-`만 사용한다.
 - flow 기본 템플릿은 `.agents/sessions/_turn-gate-flow-template.md`를 사용한다.
 - `000-plan.md` 기본 템플릿은 `.agents/sessions/_turn-gate-plan-template.md`를 사용한다.
-- 최소 flow 기록 항목은 task, flow scope, current mode, analysis, plan, work, verification, result report, next-flow options, residual risk다.
+- 최소 flow 기록 항목은 user request message, task, flow scope, current mode, analysis, plan, work, verification, result report, next-flow options, residual risk다.
 - `000-plan.md`는 장기 증분 계획 artifact로, `001+`는 flow 단위 운영 artifact로 취급한다.
 
 ## SSOT 동기화 규칙

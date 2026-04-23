@@ -83,6 +83,7 @@ This skill does not own:
 - Use `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` for flow records.
 - Keep `count-pad3` zero-padded like `001`, `002`, `003`.
 - Keep the slug English lower-case and `-` delimited.
+- Record at least: user request message, task, flow scope, current mode, analysis, plan, work, verification, result report, next-flow options, residual risk.
 - Update the flow record after each completed flow.
 - Prefer `.agents/sessions/_turn-gate-flow-template.md` as the default flow-record layout.
 - Prefer `.agents/sessions/_turn-gate-plan-template.md` as the default `000-plan.md` layout.

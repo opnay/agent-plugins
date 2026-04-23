@@ -84,6 +84,7 @@
 - cross-flow task에서는 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 상위 계획 artifact로 유지되어야 한다.
 - `000-plan.md`는 사용자 요청 종료 이후에도 더 큰 작업이 이어지면 계속 증분되어야 한다.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record는 completed flow마다 갱신되어야 한다.
+- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record의 최소 항목에는 user request message가 포함되어야 한다.
 - current phase의 downstream workflow 선택에는 최소한 `deep-interview`, `review-loop`, `ralph-loop`, `commit-readiness-gate` 구분 신호가 드러나야 한다.
 - 분석 단계와 계획 단계에서는 필요하면 사용자에게 질문을 열 수 있다.
 - 다음 플로우 진행을 위한 사용자 응답도 같은 턴의 다음 `현재 메시지`로 받아들인다.

@@ -78,7 +78,7 @@ Those references absorb the operational loop contracts into this skill while sta
 - Keep the slug in English lower-case words joined by `-`.
 - Use `.agents/sessions/_turn-gate-flow-template.md` as the default flow-record template.
 - Use `.agents/sessions/_turn-gate-plan-template.md` as the default `000-plan.md` template.
-- Record at least: task, flow scope, current mode, analysis, plan, work, verification, result report, next-flow options, residual risk.
+- Record at least: user request message, task, flow scope, current mode, analysis, plan, work, verification, result report, next-flow options, residual risk.
 - Treat `000-plan.md` as a long-lived incremental plan artifact, not a single-turn note.
 - Treat each `001+` file as one flow record, not one phase record.
 
