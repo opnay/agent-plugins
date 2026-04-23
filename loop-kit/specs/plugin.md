@@ -3,7 +3,7 @@
 ## 플러그인 목적
 
 `loop-kit`은 `turn-gate`를 메인 표면으로 삼는 loop-oriented workflow 플러그인입니다.
-핵심 책임은 하나의 턴을 사용자가 명시적으로 끝낼 때까지 닫지 않고 유지하면서, 현재 phase의 메인 작업에 맞는 내부 loop mode를 `turn-gate` 안에서 선택해 실행하는 것입니다.
+핵심 책임은 하나의 턴을 사용자가 턴을 종료하자고 요청할때까지 닫지 않고 유지하면서, 현재 phase의 메인 작업에 맞는 내부 loop mode를 `turn-gate` 안에서 선택해 실행하는 것입니다.
 이 플러그인은 `workflow-kit`이 정의한 broader workflow taxonomy와 canonical loop-mode contract를 runtime-oriented surface로 묶어 제공합니다.
 
 ## 플러그인 경계와 비목표
@@ -13,7 +13,7 @@
   - `analysis -> plan -> work -> result reporting -> next-flow user response` 구조 유지
   - `turn-gate` 내부의 loop mode 선택
   - `turn-gate/references/` 아래 local absorbed loop contract 유지
-  - refinement, review, readiness 성격의 current-phase work를 loop 안에서 처리
+  - discovery, refinement, review, readiness 성격의 current-phase work를 loop 안에서 처리
 - 제외:
   - broad workflow taxonomy 자체의 소유
   - 사용자에게 여러 loop skill을 직접 노출하는 구조
@@ -23,7 +23,7 @@
 ## 처리하려는 작업 형태
 
 - 결과 보고 뒤에도 같은 턴에서 다음 플로우를 계속 이어가야 하는 작업
-- 현재 phase의 작업이 refinement, review handling, readiness pass 중 하나로 좁혀지는 작업
+- 현재 phase의 작업이 requirement discovery, refinement, review handling, readiness pass 중 하나로 좁혀지는 작업
 - loop continuity가 top-level governing contract인 작업
 
 ## 엔트리포인트 / 대표 표면
@@ -56,4 +56,4 @@
 
 - 이 플러그인은 intentionally narrow한 operational package다.
 - `turn-gate`가 메인 실행 표면이고, `loop-kit-guide`는 진입 분류만 담당한다.
-- 내부 loop mode의 canonical 의미는 `workflow-kit/specs/skills/ralph-loop.md`, `workflow-kit/specs/skills/review-loop.md`, `workflow-kit/specs/skills/commit-readiness-gate.md`를 기준으로 보고, `turn-gate/references/`에는 그 실행용 absorbed contract를 둔다.
+- 내부 loop mode의 canonical 의미는 `workflow-kit/specs/skills/deep-interview.md`, `workflow-kit/specs/skills/ralph-loop.md`, `workflow-kit/specs/skills/review-loop.md`, `workflow-kit/specs/skills/commit-readiness-gate.md`를 기준으로 보고, `turn-gate/references/`에는 그 실행용 absorbed contract를 둔다.

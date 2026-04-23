@@ -1,13 +1,13 @@
 ---
 name: turn-gate
-description: Loop gate for repositories where one turn must continue until the user explicitly ends the work. Keep analysis, plan, work, result reporting, and user-response-based next-flow selection explicit inside the same turn.
+description: Loop gate for repositories where one turn must continue until the user asks to end the turn. Keep analysis, plan, work, result reporting, and user-response-based next-flow selection explicit inside the same turn.
 ---
 
 # Turn Gate
 
 ## Overview
 
-Use this skill when the repository or working agreement requires one user turn to continue until the user explicitly ends the work.
+Use this skill when the repository or working agreement requires one user turn to continue until the user asks to end the turn.
 Its job is not to replace downstream workflow skills.
 Its job is to keep the turn loop explicit:
 
@@ -16,14 +16,14 @@ Its job is to keep the turn loop explicit:
 3. do the work
 4. report the result or commit-ready state
 5. open the next flow through a user response with explicit choices
-6. continue unless the user explicitly ends the work
+6. continue unless the user asks to end the turn
 
 This skill is a loop gate.
 It owns turn continuity and next-flow reopening, not the domain work inside each phase.
 
 ## Use When
 
-- the repository requires one turn to stay open until the user explicitly ends the work
+- the repository requires one turn to stay open until the user asks to end the turn
 - the repository requires `analysis -> plan -> work -> result reporting / commit-ready -> user response` style progression
 - result reporting must be followed by a next-flow choice surface instead of a soft closing
 - the user should be given explicit choices for the next flow
@@ -32,7 +32,7 @@ It owns turn continuity and next-flow reopening, not the domain work inside each
 ## Do Not Use When
 
 - the task is a normal single-phase request that can end cleanly after one answer
-- the repository does not require turn continuity until explicit user stop
+- the repository does not require turn continuity until the user asks to end the turn
 - the main blocker is still choosing between clarification, planning, or execution rather than managing turn continuity itself
 
 ## Scope Boundary
@@ -42,7 +42,7 @@ This skill owns:
 - turn-level phase classification
 - downstream workflow selection for the current phase work
 - explicit analysis / plan / work / result reporting structure
-- next-flow reopening after every phase result unless the user explicitly ends the work
+- next-flow reopening after every phase result unless the user asks to end the turn
 - choice-granting user-response surface for the next flow
 
 This skill does not own:
@@ -68,7 +68,7 @@ This skill does not own:
 - Reopen the next flow through a question tool that gives the user explicit choices.
 - Allow questions during `analysis` and `plan` when clarifying intent, criteria, or scope is necessary.
 - Treat termination judgment as the user's choice, not the assistant's shortcut.
-- Treat "no next flow" as an exception that must be justified by explicit user stop or confirmed closure.
+- Treat "no next flow" as an exception that must be justified by the user asking to end the turn or by confirmed closure.
 - Prefer the structured user-input tool for the next-flow step.
 - Keep the loop moving; do not reopen broad framing once the next phase is already clear.
 
@@ -187,7 +187,7 @@ Good turn-flow example:
 ## Guardrails
 
 - Do not replace a phase-specific workflow with vague meta commentary.
-- Do not emit a terminal summary unless the user explicitly ends the work.
+- Do not emit a terminal summary unless the user asks to end the turn.
 - Do not decide on behalf of the user that the turn should terminate.
 - Do not skip the user-response step merely because the next phase seems obvious.
 - Do not ask the next-flow question without giving the user explicit choices.

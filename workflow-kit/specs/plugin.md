@@ -3,7 +3,7 @@
 ## 플러그인 목적
 
 `workflow-kit`은 작업 lifecycle 전반을 다루는 workflow 플러그인입니다.
-핵심 책임은 들어온 요청에 대해 requirement discovery, framing, planning, execution, refinement, review, final gating, 그리고 사용자가 명시적으로 끝낼 때까지 턴을 닫지 않는 loop-gated continuity 중 현재 병목이 무엇인지 판단하고, 가장 맞는 workflow skill로 연결하는 것입니다.
+핵심 책임은 들어온 요청에 대해 requirement discovery, framing, planning, execution, refinement, review, final gating, 그리고 사용자가 턴을 종료하자고 요청할때까지 턴을 닫지 않는 loop-gated continuity 중 현재 병목이 무엇인지 판단하고, 가장 맞는 workflow skill로 연결하는 것입니다.
 repository-local operating rule이 non-terminal turn을 요구하면, `turn-gate`를 turn-level loop gate로 유지한 채 현재 phase owner를 선택합니다.
 이 플러그인은 `loop-kit`이 사용하는 broader workflow taxonomy와 canonical loop contract의 SSOT이기도 합니다.
 
@@ -47,7 +47,7 @@ repository-local operating rule이 non-terminal turn을 요구하면, `turn-gate
   - spec: `workflow-kit/specs/skills/deep-interview.md`
 - `planner`: read-only investigation을 통해 decision-complete plan을 만든다.
   - spec: `workflow-kit/specs/skills/planner.md`
-- `turn-gate`: `분석 -> 계획 -> 작업 -> 결과 보고 / commit-ready -> 다음 플로우 진행을 위한 사용자 응답` 구조를 유지하고, repository rule이 요구하면 사용자가 명시적으로 끝낼 때까지 턴을 닫지 않는 loop gate를 관리한다.
+- `turn-gate`: `분석 -> 계획 -> 작업 -> 결과 보고 / commit-ready -> 다음 플로우 진행을 위한 사용자 응답` 구조를 유지하고, repository rule이 요구하면 사용자가 턴을 종료하자고 요청할때까지 턴을 닫지 않는 loop gate를 관리한다.
   - spec: `workflow-kit/specs/skills/turn-gate.md`
 - `autopilot`: brief부터 implementation, verification까지 broad end-to-end delivery를 수행한다.
   - spec: `workflow-kit/specs/skills/autopilot.md`

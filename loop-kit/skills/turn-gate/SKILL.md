@@ -1,6 +1,6 @@
 ---
 name: turn-gate
-description: Main loop controller for `loop-kit`. Keep one turn alive until explicit user stop and select the right internal loop mode for the current phase of work.
+description: Main loop controller for `loop-kit`. Keep one turn alive until the user asks to end the turn and select the right internal loop mode for the current phase of work.
 ---
 
 # Turn Gate
@@ -8,7 +8,7 @@ description: Main loop controller for `loop-kit`. Keep one turn alive until expl
 ## Overview
 
 Use this skill as the main operational surface of `loop-kit`.
-Keep one turn alive until the user explicitly ends the work.
+Keep one turn alive until the user asks to end the turn.
 Keep the turn shape explicit:
 
 1. analyze the user's message
@@ -16,7 +16,7 @@ Keep the turn shape explicit:
 3. do the work
 4. report the result or readiness state
 5. reopen the next flow with explicit choices
-6. continue unless the user explicitly stops
+6. continue unless the user asks to end the turn
 
 In this plugin, users do not call `ralph-loop`, `review-loop`, or readiness loops directly.
 Instead, this skill selects the right internal loop mode for the current phase.
@@ -25,7 +25,8 @@ Those references absorb the operational loop contracts into this skill while sta
 
 ## Use When
 
-- the repository or working agreement requires non-terminal turns until explicit user stop
+- the repository or working agreement requires non-terminal turns until the user asks to end the turn
+- the active work may need a discovery round before execution or refinement can safely continue
 - the active work mode may shift between refinement, review handling, and readiness inside the same turn
 - the main risk is losing turn continuity or exposing too many direct loop entrypoints
 
@@ -43,11 +44,12 @@ Those references absorb the operational loop contracts into this skill while sta
 - Always use the plan tool `update_plan` once meaningful work begins and keep the active step current as the turn progresses.
 - Before `work`, choose one internal loop mode that best owns the current phase.
 - Use `request_user_input` whenever mode selection, criteria, or scope is still unclear.
-- Reopen the next flow with explicit choices after each result unless the user explicitly stops.
+- Reopen the next flow with explicit choices after each result unless the user asks to end the turn.
 - Do not expose direct loop entrypoints from this plugin surface.
 
 ## Internal Loop Modes
 
+- Read `references/deep-interview.md` and use that contract when the current phase is still requirement discovery and the next step depends on an actual question round.
 - Read `references/ralph-loop.md` and use that contract when the work is a bounded issue that benefits from small fix-verify-reassess cycles.
 - Read `references/review-loop.md` and use that contract when the work is driven by review findings and only material issues should be fixed.
 - Read `references/commit-readiness-gate.md` and use that contract when implementation is largely done and the current question is readiness for commit.

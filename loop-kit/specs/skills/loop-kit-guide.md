@@ -2,6 +2,7 @@
 
 - `loop-kit`이 현재 작업의 시작점이 맞는지 빠르게 판단하고 싶다.
 - loop continuity가 핵심 계약이면 바로 `turn-gate`로 들어가고 싶다.
+- requirement discovery가 필요해도 turn continuity가 top-level contract면 `turn-gate` 안에서 처리하고 싶다.
 - `ralph-loop`, `review-loop` 같은 loop mode를 직접 고르기보다 `turn-gate`가 내부적으로 선택하게 하고 싶다.
 
 ---
@@ -25,8 +26,9 @@
 
 ## 처리하려는 작업 형태
 
-- explicit user stop 전까지 turn continuity가 요구되는 작업
+- 사용자가 턴을 종료하자고 요청하기 전까지 turn continuity가 요구되는 작업
 - current-phase work를 `turn-gate` 안의 internal mode로 처리해야 하는 작업
+- requirement discovery도 같은 turn loop 안에서 이어가야 하는 작업
 - `workflow-kit`의 broader workflow 대신 narrow loop package로 바로 들어가야 하는 작업
 
 ## 엔트리포인트 / 대표 표면
@@ -44,7 +46,7 @@
 ## 라우팅 규칙
 
 - repository-local rule이나 task shape가 non-terminal turn을 요구하면 `turn-gate`로 시작한다.
-- current-phase work가 refinement, review handling, readiness pass 중 하나로 좁혀질 수 있으면 `turn-gate`로 보낸다.
+- current-phase work가 requirement discovery, refinement, review handling, readiness pass 중 하나로 좁혀질 수 있으면 `turn-gate`로 보낸다.
 - broad workflow selection 자체가 먼저 필요하면 `workflow-kit` 쪽 시작점을 우선 검토한다.
 
 ## 검토 질문

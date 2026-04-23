@@ -44,7 +44,7 @@ If the repository requires non-terminal turns, keep `turn-gate` active as the lo
 - Choose `structured-thinking` when the task is still too unstable to choose the next workflow safely and the first job is to isolate ambiguity, assumptions, and the most plausible next path.
 - Choose `deep-interview` when the main job is to understand the user's real intent, boundaries, tradeoffs, approval lines, or success criteria through questions, pressure-testing, or direction evaluation.
 - Choose `planner` when implementation should stay deferred until a read-only investigation, tradeoff analysis, verification path, and execution-ready plan are complete.
-- Activate or keep `turn-gate` when the repository or task requires one turn to remain open until the user explicitly ends the work.
+- Activate or keep `turn-gate` when the repository or task requires one turn to remain open until the user asks to end the turn.
 - In repositories that forbid terminal result turns by default, treat `turn-gate` as the turn-level loop gate rather than an optional starting skill.
 - Choose `autopilot` when the user wants broad end-to-end delivery from brief to verified result.
 - Choose `parallel-work` when the work contains several bounded lanes with a clear integration path.
@@ -118,8 +118,8 @@ Execution heuristics:
 Meta-flow heuristic:
 
 - Treat `turn-gate` as the turn-level loop gate, not as an execution mode parallel to `autopilot`, `parallel-work`, `ralph-loop`, or `review-loop`.
-- Choose it when keeping the turn open until explicit user stop is itself the governing contract.
-- In repositories with mandatory loop-gate rules, assume `turn-gate` is already active unless the user explicitly ends the work.
+- Choose it when keeping the turn open until the user asks to end the turn is itself the governing contract.
+- In repositories with mandatory loop-gate rules, assume `turn-gate` is already active unless the user asks to end the turn.
 
 ## Escalation Signals
 
@@ -158,4 +158,4 @@ Meta-flow heuristic:
 - Do not choose a bounded loop when the work clearly needs planning across several phases.
 - Do not let review handling turn into open-ended polish by default.
 - Do not keep the initial execution mode if the task shape has obviously changed.
-- Do not treat `turn-gate` as optional when repository-local policy says the turn must stay open until explicit user stop.
+- Do not treat `turn-gate` as optional when repository-local policy says the turn must stay open until the user asks to end the turn.

@@ -1,7 +1,8 @@
 ## 사용자 스펙 의도
 
-- 하나의 턴을 사용자가 명시적으로 끝낼 때까지 닫지 않고 유지하고 싶다.
+- 하나의 턴을 사용자가 턴을 종료하자고 요청할때까지 닫지 않고 유지하고 싶다.
 - `turn-gate`가 현재 phase의 메인 작업을 보고 적절한 내부 loop mode를 고르길 원한다.
+- 필요한 경우 requirement discovery 성격의 `deep-interview`도 `turn-gate` 안의 internal mode로 흘러가길 원한다.
 - `ralph-loop`, `review-loop`, readiness gate 같은 loop는 사용자가 직접 고르지 않고 `turn-gate` 안에서 흘러가길 원한다.
 - 내부 loop mode의 canonical contract는 `workflow-kit`이 SSOT로 계속 소유하길 원한다.
 - 내부 loop mode는 `turn-gate` 스킬의 local `references/` 아래로 흡수돼야 하고, 실행 시 그 reference를 읽는 구조이길 원한다.
@@ -29,8 +30,8 @@
 
 ## 처리하려는 작업 형태
 
-- explicit user stop 전까지 한 턴 안에서 여러 phase를 이어가야 하는 작업
-- refinement, review-driven correction, readiness checking 같은 current-phase work가 번갈아 나타나는 작업
+- 사용자가 턴을 종료하자고 요청하기 전까지 한 턴 안에서 여러 phase를 이어가야 하는 작업
+- requirement discovery, refinement, review-driven correction, readiness checking 같은 current-phase work가 번갈아 나타나는 작업
 - 결과 보고 뒤 clean stop이 아니라 다음 플로우 선택이 기본이어야 하는 작업
 
 ## 엔트리포인트 / 대표 표면
@@ -50,10 +51,11 @@
 - `turn-gate`는 선택된 internal mode에 대응하는 local `references/` 문서를 먼저 읽고 그 계약을 적용한다.
 - local `references/`는 `workflow-kit` upstream spec과 동기화된 absorbed operational contract로 유지한다.
 - 결과 보고 뒤에는 explicit choice를 주는 질문 도구로 다음 플로우를 다시 연다.
-- user explicit stop이 없으면 clean stop을 기본 경로로 두지 않는다.
+- 사용자가 턴을 종료하자고 요청하지 않으면 clean stop을 기본 경로로 두지 않는다.
 
 ## 내부 loop mode 선택 규칙
 
+- 실제 requirement discovery가 병목이면 `references/deep-interview.md`를 따른다.
 - bounded issue를 작은 fix-verify-reassess cycle로 다루는 경우 `references/ralph-loop.md`를 따른다.
 - review feedback이나 material finding 처리인 경우 `references/review-loop.md`를 따른다.
 - 현재 변경 단위가 거의 끝났고 readiness 판단이 핵심이면 `references/commit-readiness-gate.md`를 따른다.
