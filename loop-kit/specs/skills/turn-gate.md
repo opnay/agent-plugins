@@ -69,6 +69,12 @@
 - 현재 변경 단위가 거의 끝났고 readiness 판단이 핵심이면 `references/commit-readiness-gate.md`를 따른다.
 - 아직 어떤 internal mode가 맞는지 확정되지 않았다면 질문 도구나 좁은 분석으로 먼저 mode selection을 잠근다.
 
+## deep-interview 원본 관계
+
+- 원본 skill source는 `https://github.com/Yeachan-Heo/oh-my-codex/blob/main/skills/deep-interview/SKILL.md`다.
+- 원본은 ambiguity gating, OMX tooling, artifact handoff까지 포함한 더 큰 workflow다.
+- `loop-kit`의 `references/deep-interview.md`는 그 full workflow를 그대로 복제한 것이 아니라, `turn-gate`가 requirement-discovery phase에서 필요한 boundary만 흡수한 derived reference다.
+
 ## mode selection matrix
 
 - blocker가 requirement discovery, intent ambiguity, scope boundary, approval line이라면 `deep-interview`를 고른다.

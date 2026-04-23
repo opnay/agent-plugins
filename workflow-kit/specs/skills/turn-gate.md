@@ -97,6 +97,12 @@
 - 메타 플로우는 유지하되 phase-specific detail은 sibling skill에 남긴다.
 - summary-only closing과 generic follow-up phrase를 정상 종료 형태로 취급하지 않는다.
 
+## deep-interview 원본 관계
+
+- 참고한 원본 skill source는 `https://github.com/Yeachan-Heo/oh-my-codex/blob/main/skills/deep-interview/SKILL.md`다.
+- 원본은 requirement discovery를 ambiguity gating, OMX tooling, artifact handoff까지 포함한 큰 workflow로 다룬다.
+- 여기서 `deep-interview`는 그 full workflow 전체가 아니라 requirement-discovery lane을 가리키는 workflow 신호이며, turn-gate 라우팅에 필요한 해석만 소유한다.
+
 ## 검토 질문
 
 - 이번 응답이 `분석 -> 계획 -> 작업 -> 검증 -> 결과 보고`를 visible shape로 유지하고 있는가?
