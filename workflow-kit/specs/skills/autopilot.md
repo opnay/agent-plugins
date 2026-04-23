@@ -1,3 +1,11 @@
+## 사용자 스펙 의도
+
+- broad end-to-end delivery를 하나의 execution workflow로 밀고 가고 싶다.
+- 분석, 구현, QA, review, verification을 끊기지 않게 운영하고 싶다.
+- planning-only나 final-gate를 이 스킬 안으로 흡수하지 않고 분리하고 싶다.
+
+---
+
 # autopilot 스킬 스펙
 
 ## 목적
@@ -31,12 +39,17 @@
 - 분석, 구현, QA, review를 분절되지 않은 흐름으로 관리한다.
 - stop condition과 final checklist를 명시적으로 점검한다.
 
+## 검토 질문
+
+- 지금 작업이 정말 broad end-to-end execution이 필요한 범위인가?
+- 단계별 진행과 검증이 끊기지 않게 설계돼 있는가?
+- planning-only, narrow-loop, final-gate 역할을 이 스킬이 과도하게 흡수하고 있지 않은가?
+
 ## 독립성 원칙
 
-- 이 스킬은 planning-only, narrow-loop, final-gate 역할을 대체하지 않는다.
-- end-to-end execution workflow만 읽어도 적용 가능해야 한다.
+- 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 예.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: broad execution workflow는 hidden sibling context 없이도 적용 가능해야 하며, planning이나 final gate는 후속/인접 skill로만 넘겨야 한다.
 
 ## 확장 원칙
 
 - 새 규칙은 broad execution lifecycle을 더 안정적으로 운영할 때만 추가한다.
-

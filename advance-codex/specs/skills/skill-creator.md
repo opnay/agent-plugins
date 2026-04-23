@@ -1,3 +1,11 @@
+## 사용자 스펙 의도
+
+- skill boundary와 비책임을 더 엄격하게 잠그고 싶다.
+- plugin-owned skill이 hidden sibling context에 기대지 않게 만들고 싶다.
+- tool policy와 domain workflow가 섞일 때 이를 분리할 기준이 필요하다.
+
+---
+
 # skill-creator 스킬 스펙
 
 ## 목적
@@ -35,13 +43,18 @@
 - main bottleneck이 tool policy면 domain skill 안에 넣지 않고 별도 artifact를 고려한다.
 - behavioral guidance는 skill reader 관점에서 작성한다.
 
+## 검토 질문
+
+- 이 skill이 hidden sibling context 없이도 이해 가능한 경계를 갖고 있는가?
+- cross-skill usage guidance가 개별 skill 안으로 잘못 들어오지 않았는가?
+- tool policy를 domain skill 안에 묻어 두고 있지 않은가?
+
 ## 독립성 원칙
 
-- 이 스킬은 skill boundary 설계 extension만 소유하며 plugin packaging 전체를 소유하지 않는다.
-- sibling skill 없이도 skill authoring guardrail을 이해할 수 있어야 한다.
+- 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 예.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: 이 스킬 자체가 hidden sibling context 제거를 다루므로, skill boundary guardrail은 독립적으로 읽히게 강제하는 편이 맞다.
 
 ## 확장 원칙
 
 - skill packaging 규칙이 바뀌면 `plugin-creator`와 해당 plugin guide spec도 함께 점검한다.
 - 새 규칙은 reusable skill quality를 높이는 경우에만 추가한다.
-

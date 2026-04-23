@@ -32,41 +32,41 @@ repository-local operating rule이 non-terminal turn을 요구하면, `turn-gate
 ## 엔트리포인트 / 대표 표면
 
 - 대표 엔트리포인트: `workflow-kit-guide`
-- 대표 스펙: `workflow-kit/specs/plugin-spec.md`
+- 대표 스펙: `workflow-kit/specs/plugin.md`
 - skill 상세 스펙 위치: `workflow-kit/specs/skills/*.md`
-- 보조 적응 문서: `workflow-kit/specs/deep-interview-adaptation-spec.md`
+- 보조 적응 문서: `workflow-kit/specs/deep-interview-adaptation.md`
 
 ## 내장 skill 체계
 
 - `workflow-kit-guide`: current bottleneck에 맞는 starting workflow와 handoff를 정한다.
-  - spec: `workflow-kit/specs/skills/workflow-kit-guide-spec.md`
+  - spec: `workflow-kit/specs/skills/workflow-kit-guide.md`
 - `structured-thinking`: workflow 선택이 아직 불안정한 task를 안정화한다.
-  - spec: `workflow-kit/specs/skills/structured-thinking-spec.md`
+  - spec: `workflow-kit/specs/skills/structured-thinking.md`
 - `deep-interview`: intent, scope, tradeoff, approval boundary를 질문으로 잠근다.
-  - spec: `workflow-kit/specs/skills/deep-interview-spec.md`
+  - spec: `workflow-kit/specs/skills/deep-interview.md`
 - `planner`: read-only investigation을 통해 decision-complete plan을 만든다.
-  - spec: `workflow-kit/specs/skills/planner-spec.md`
+  - spec: `workflow-kit/specs/skills/planner.md`
 - `turn-gate`: `분석 -> 계획 -> 작업 -> 결과 보고 / commit-ready -> 다음 플로우 진행을 위한 사용자 응답` 구조를 유지하고, repository rule이 요구하면 사용자가 명시적으로 끝낼 때까지 턴을 닫지 않는 loop gate를 관리한다.
-  - spec: `workflow-kit/specs/skills/turn-gate-spec.md`
+  - spec: `workflow-kit/specs/skills/turn-gate.md`
 - `autopilot`: brief부터 implementation, verification까지 broad end-to-end delivery를 수행한다.
-  - spec: `workflow-kit/specs/skills/autopilot-spec.md`
+  - spec: `workflow-kit/specs/skills/autopilot.md`
 - `parallel-work`: 소수의 독립 lane으로 분리하고 결과를 통합한다.
-  - spec: `workflow-kit/specs/skills/parallel-work-spec.md`
+  - spec: `workflow-kit/specs/skills/parallel-work.md`
 - `ralph-loop`: 하나의 bounded issue를 iterative fix-verify-reassess loop로 개선한다.
-  - spec: `workflow-kit/specs/skills/ralph-loop-spec.md`
+  - spec: `workflow-kit/specs/skills/ralph-loop.md`
 - `review-loop`: blocking-first 기준으로 review finding을 처리한다.
-  - spec: `workflow-kit/specs/skills/review-loop-spec.md`
+  - spec: `workflow-kit/specs/skills/review-loop.md`
 - `commit-readiness-gate`: final self-review와 scoped verification으로 commit-ready 여부를 판단한다.
-  - spec: `workflow-kit/specs/skills/commit-readiness-gate-spec.md`
+  - spec: `workflow-kit/specs/skills/commit-readiness-gate.md`
 
 ## SDD 운영 원칙
 
 - plugin spec은 lifecycle stage model과 routing surface만 소유한다.
 - 각 workflow의 처리 계약은 `specs/skills/` 아래 독립 문서로 분리한다.
-- stage model이나 handoff 규칙이 바뀌면 `workflow-kit-guide`와 해당 skill spec, `plugin-spec.md`를 같은 변경에서 갱신한다.
+- stage model이나 handoff 규칙이 바뀌면 `workflow-kit-guide`와 해당 skill spec, `plugin.md`를 같은 변경에서 갱신한다.
 - specialist plugin이 first stop이 되지 않도록 global routing boundary를 유지한다.
 
 ## 현재 구조 메모
 
-- `deep-interview-adaptation-spec.md`는 적응 배경 문서로 유지하되 normative skill contract는 `specs/skills/deep-interview-spec.md`가 소유한다.
+- `deep-interview-adaptation.md`는 적응 배경 문서로 유지하되 normative skill contract는 `specs/skills/deep-interview.md`가 소유한다.
 - 이 플러그인의 주요 리스크는 lifecycle stage와 turn-level loop gate가 서로 흡수되면서 workflow가 execution 중심으로 납작해지거나, 반대로 loop gate 규칙이 phase skill을 과도하게 오염시키는 것이다.

@@ -1,3 +1,11 @@
+## 사용자 스펙 의도
+
+- 구현이 거의 끝난 change unit이 commit-ready 상태인지 판단하고 싶다.
+- final self-review와 scoped verification을 하나의 gate로 묶고 싶다.
+- 실제 commit execution은 별도 후속 단계로 넘기고 싶다.
+
+---
+
 # commit-readiness-gate 스킬 스펙
 
 ## 목적
@@ -34,10 +42,16 @@
 - commit message 작성이나 git finalization은 이 gate 안에 머물지 않고 후속 skill로 넘긴다.
 - user-facing wording에서 `commit-ready`는 gate 통과 상태를 가리킬 때만 쓰고, pre-gate action label과 혼용하지 않는다.
 
+## 검토 질문
+
+- intended change unit이 지금 충분히 잠겨 있는가?
+- scoped verification과 residual risk가 readiness 판단에 충분한가?
+- gate 판단과 실제 commit execution을 명확히 분리하고 있는가?
+
 ## 독립성 원칙
 
-- 이 스킬은 implementation이나 commit finalization을 소유하지 않는다.
-- gate 결과만 읽어도 commit-ready 여부를 판단할 수 있어야 한다.
+- 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 예.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: final gate 판단은 hidden sibling context 없이 읽혀야 하며, implementation이나 commit execution은 후속 skill로만 handoff해야 한다.
 
 ## 확장 원칙
 

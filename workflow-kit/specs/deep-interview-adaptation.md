@@ -237,7 +237,7 @@
 - `workflow-kit/skills/workflow-kit-guide/SKILL.md`
 - `workflow-kit/skills/structured-thinking/SKILL.md`
 - `workflow-kit/skills/deep-interview/SKILL.md`
-- `workflow-kit/specs/plugin-spec.md`
+- `workflow-kit/specs/plugin.md`
 - 필요 시 `advance-codex/skills/tool-use-guide/SKILL.md`
 
 ## 현재 구조에서 우선 고쳐야 하는 것

@@ -1,3 +1,11 @@
+## 사용자 스펙 의도
+
+- 들어온 요청에서 현재 bottleneck이 무엇인지 먼저 분류하고 싶다.
+- 어떤 workflow skill이 시작점이어야 하는지와 handoff 순서를 같이 알고 싶다.
+- `turn-gate`가 execution mode가 아니라 turn-level loop gate인지 함께 판단하고 싶다.
+
+---
+
 # workflow-kit-guide 스킬 스펙
 
 ## 목적
@@ -35,10 +43,16 @@
 - `turn-gate`는 execution mode가 아니라 turn-level gate contract로 분류한다.
 - `turn-gate`가 활성화된 상태의 사용자 응답은 같은 턴의 다음 메시지로 이어지는 것으로 취급한다.
 
+## 검토 질문
+
+- current bottleneck을 정말 하나로 좁혔는가?
+- starting skill과 planned handoff가 함께 제시돼 있는가?
+- `turn-gate`를 execution mode가 아니라 turn-level gate contract로 분리해서 판단했는가?
+
 ## 독립성 원칙
 
-- 이 스킬은 lifecycle routing만 소유한다.
-- guide output만 읽어도 왜 그 workflow가 시작점인지 이해 가능해야 한다.
+- 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 아니오.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: 이 스킬은 sibling workflow map을 전제로 하는 guide이므로 그 문맥은 허용하지만, 라우팅 기준과 handoff 판단 근거는 이 스펙만 읽어도 이해 가능해야 한다.
 
 ## 확장 원칙
 

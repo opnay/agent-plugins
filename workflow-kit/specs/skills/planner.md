@@ -1,3 +1,11 @@
+## 사용자 스펙 의도
+
+- 구현 전에 decision-complete plan을 먼저 만들고 싶다.
+- read-only 조사와 tradeoff analysis를 선행하고 싶다.
+- open question과 working assumption을 섞지 않고 정리하고 싶다.
+
+---
+
 # planner 스킬 스펙
 
 ## 목적
@@ -32,12 +40,17 @@
 - 각 step은 `Action`, `Expected Output`, `Verification Method`를 포함해야 한다.
 - open question과 working assumption을 명확히 구분한다.
 
+## 검토 질문
+
+- 이번 작업이 구현이 아니라 read-only planning 단계로 유지되고 있는가?
+- 각 step이 `Action`, `Expected Output`, `Verification Method`를 포함하는가?
+- open question과 working assumption이 구분돼 있는가?
+
 ## 독립성 원칙
 
-- 이 스킬은 execution이나 refinement loop를 소유하지 않는다.
-- plan artifact만 읽어도 실행 준비 상태를 판단할 수 있어야 한다.
+- 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 예.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: planning artifact는 hidden sibling context 없이 실행 준비 상태를 설명해야 하며, execution이나 refinement는 별도 skill로 넘겨야 한다.
 
 ## 확장 원칙
 
 - 새 규칙은 decision-complete planning의 품질을 높일 때만 추가한다.
-

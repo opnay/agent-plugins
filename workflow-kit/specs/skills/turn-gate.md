@@ -1,9 +1,3 @@
-# turn-gate 스킬 스펙
-
-## 목적
-
-`turn-gate`는 하나의 사용자 턴 안에서 `분석 -> 계획 -> 작업 -> 결과 보고 / commit-ready -> 다음 플로우 진행을 위한 사용자 응답`을 명시적으로 이어가고, 사용자가 작업을 명시적으로 끝낼 때까지 턴을 종료하지 않도록 유지하는 loop gate 스킬입니다.
-
 ## 사용자 스펙 의도
 
 - `turn-gate`는 하나의 턴에서 사용자가 작업을 명시적으로 끝낼 때까지 턴을 종료하지 않고 연속성을 가지도록 하는 루프 게이트입니다.
@@ -39,6 +33,14 @@
   - 1. 플러그인 관점
   - 2. `AGENTS.md` 관점
   - 3. 스킬 관점
+
+---
+
+# turn-gate 스킬 스펙
+
+## 목적
+
+`turn-gate`는 하나의 사용자 턴 안에서 `분석 -> 계획 -> 작업 -> 결과 보고 / commit-ready -> 다음 플로우 진행을 위한 사용자 응답`을 명시적으로 이어가고, 사용자가 작업을 명시적으로 끝낼 때까지 턴을 종료하지 않도록 유지하는 loop gate 스킬입니다.
 
 ## 경계
 
@@ -81,12 +83,18 @@
 - 메타 플로우는 유지하되 phase-specific detail은 sibling skill에 남긴다.
 - summary-only closing과 generic follow-up phrase를 정상 종료 형태로 취급하지 않는다.
 
+## 검토 질문
+
+- 이번 응답이 `분석 -> 계획 -> 작업 -> 결과 보고`를 visible shape로 유지하고 있는가?
+- 결과 보고 뒤에 explicit choice가 있는 다음 플로우 질문을 실제로 열었는가?
+- clean stop, summary-only closing, generic follow-up phrase로 턴을 닫고 있지 않은가?
+
 ## 독립성 원칙
 
-- 이 스킬은 turn-level loop gate만 소유한다.
-- phase-specific workflow를 hidden sibling context 없이 호출 가능한 상태로 유지해야 한다.
+- 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 예.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: turn-level loop gate contract는 hidden sibling context 없이 읽혀야 하며, phase-specific workflow는 위임 대상일 뿐 메타 플로우 규칙 자체는 이 스펙이 닫아야 한다.
 
 ## 확장 원칙
 
 - 새로운 rule은 turn continuity와 next-flow user-response gating을 더 명확하게 만들 때만 추가한다.
-- stage routing이나 default loop-gate rule이 바뀌면 `workflow-kit-guide`와 `plugin-spec.md`를 함께 갱신한다.
+- stage routing이나 default loop-gate rule이 바뀌면 `workflow-kit-guide`와 `plugin.md`를 함께 갱신한다.

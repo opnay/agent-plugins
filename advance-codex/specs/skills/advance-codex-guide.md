@@ -1,3 +1,11 @@
+## 사용자 스펙 의도
+
+- 먼저 지금 다루는 산출물이 무엇인지 분류하고 싶다.
+- artifact type이 섞여 있을 때 가장 좁은 creator skill과 실행 순서를 정하고 싶다.
+- guide가 직접 상세 설계를 흡수하지 않고 적절한 sibling skill로 보내길 원한다.
+
+---
+
 # advance-codex-guide 스킬 스펙
 
 ## 목적
@@ -34,13 +42,18 @@
 - multi-artifact 작업이면 실행 순서를 명시하고 섞지 않는다.
 - 출력은 artifact 분류, 선택된 creator skill, 실행 순서, 주요 리스크를 포함해야 한다.
 
+## 검토 질문
+
+- 지금의 main artifact가 skill, plugin, tool policy, session, commit, custom agent 중 무엇인가?
+- plugin-level concern을 먼저 잠가야 하는데 하위 skill로 성급히 내려가고 있지 않은가?
+- 선택한 실행 순서가 여러 artifact를 한 단계에 섞지 않도록 유지하는가?
+
 ## 독립성 원칙
 
-- 이 스킬은 creator artifact의 상세 설계를 소유하지 않는다.
-- sibling skill의 구현 규칙을 복제하지 않고 routing 기준만 소유한다.
+- 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 아니오.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: 이 스킬은 guide이므로 sibling creator skill map을 전제로 해도 되지만, 라우팅 기준 자체는 이 스펙만 읽어도 이해 가능해야 한다.
 
 ## 확장 원칙
 
 - 새 artifact type이 plugin boundary 안에서 독립 concern이 될 때만 라우팅 분기를 추가한다.
 - routing 분기가 바뀌면 plugin spec과 관련 skill spec을 함께 갱신한다.
-

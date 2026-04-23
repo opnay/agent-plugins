@@ -30,34 +30,34 @@
 ## 엔트리포인트 / 대표 표면
 
 - 대표 엔트리포인트: `advance-codex-guide`
-- 대표 스펙: `advance-codex/specs/plugin-spec.md`
+- 대표 스펙: `advance-codex/specs/plugin.md`
 - skill 상세 스펙 위치: `advance-codex/specs/skills/*.md`
 - 핵심 라우팅 질문: 지금 개선하려는 주된 reusable artifact가 무엇인가
 
 ## 내장 skill 체계
 
 - `advance-codex-guide`: artifact type을 분류하고 실행 순서를 정한다.
-  - spec: `advance-codex/specs/skills/advance-codex-guide-spec.md`
+  - spec: `advance-codex/specs/skills/advance-codex-guide.md`
 - `skill-creator`: canonical `skill-creator` 위에 bounded skill 설계와 plugin-owned skill 규칙을 덧붙인다.
-  - spec: `advance-codex/specs/skills/skill-creator-spec.md`
+  - spec: `advance-codex/specs/skills/skill-creator.md`
 - `empirical-prompt-tuning`: reusable instruction을 fresh subagent와 고정 시나리오로 검증하고 반복 개선한다.
-  - spec: `advance-codex/specs/skills/empirical-prompt-tuning-spec.md`
+  - spec: `advance-codex/specs/skills/empirical-prompt-tuning.md`
 - `tool-use-guide`: domain artifact에서 분리되어야 하는 reusable tool policy를 설계한다.
-  - spec: `advance-codex/specs/skills/tool-use-guide-spec.md`
+  - spec: `advance-codex/specs/skills/tool-use-guide.md`
 - `plugin-creator`: top-down plugin boundary와 `<plugin>-guide` 중심 packaging 규칙을 강화한다.
-  - spec: `advance-codex/specs/skills/plugin-creator-spec.md`
+  - spec: `advance-codex/specs/skills/plugin-creator.md`
 - `subagent-creator`: `.codex/agents/*.toml`과 custom agent usage guidance를 정의한다.
-  - spec: `advance-codex/specs/skills/subagent-creator-spec.md`
+  - spec: `advance-codex/specs/skills/subagent-creator.md`
 - `session-manager`: session, change, retrospective record를 생성·갱신·검증한다.
-  - spec: `advance-codex/specs/skills/session-manager-spec.md`
+  - spec: `advance-codex/specs/skills/session-manager.md`
 - `git-committer`: 검증 가능한 task-scoped commit finalization 규율을 제공한다.
-  - spec: `advance-codex/specs/skills/git-committer-spec.md`
+  - spec: `advance-codex/specs/skills/git-committer.md`
 
 ## SDD 운영 원칙
 
 - plugin spec은 bundle 목적, 경계, routing surface, skill composition만 소유한다.
 - 각 skill의 목적, 처리 계약, 독립성 원칙은 반드시 별도 `specs/skills/<skill>-spec.md`에 둔다.
-- skill 책임이 바뀌면 해당 skill spec과 `plugin-spec.md`를 같은 변경 단위로 갱신한다.
+- skill 책임이 바뀌면 해당 skill spec과 `plugin.md`를 같은 변경 단위로 갱신한다.
 - routing 기준이 바뀌면 `advance-codex-guide`와 관련 creator skill spec을 함께 점검한다.
 - empirical workflow나 tool-use policy처럼 독립 관심사로 분리된 계약은 다시 sibling skill 안으로 흡수하지 않는다.
 

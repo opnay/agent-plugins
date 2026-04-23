@@ -1,3 +1,11 @@
+## 사용자 스펙 의도
+
+- 재사용되는 instruction을 작성자 감이 아니라 fresh executor evidence로 검증하고 싶다.
+- 시나리오와 checklist를 먼저 잠그고 작은 iteration 단위로 개선하고 싶다.
+- empirical evaluation이 불가능한 상황과 구조 리뷰만 가능한 상황을 구분하고 싶다.
+
+---
+
 # empirical-prompt-tuning 스킬 스펙
 
 ## 목적
@@ -43,13 +51,18 @@
 - fresh subagent dispatch가 불가능하면 결과를 empirical evaluation로 부르지 않는다.
 - 이 경우 허용되는 산출물은 `structural review only` 또는 `evaluation skipped`다.
 
+## 검토 질문
+
+- 시나리오와 checklist를 수정 전에 먼저 고정했는가?
+- empirical run마다 fresh subagent를 실제로 사용했는가?
+- 이번 iteration이 하나의 개선 theme만 다루고 있는가?
+
 ## 독립성 원칙
 
-- 이 스킬은 skill 생성법, plugin packaging, broad tool-use policy를 소유하지 않는다.
-- instruction evaluation workflow만 단독으로 이해 가능해야 한다.
+- 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 예.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: empirical evaluation 절차는 hidden plugin context 없이 재사용 가능해야 하며, sibling skill은 라우팅이나 후속 설계만 맡고 평가 절차 자체는 이 스펙에서 닫혀 있어야 한다.
 
 ## 확장 원칙
 
 - scenario template이나 report template이 반복되면 reference 문서로 분리할 수 있다.
-- plugin-level routing 변경은 이 스킬 스펙이 아니라 `advance-codex-guide`와 `plugin-spec.md`에서 먼저 반영한다.
-
+- plugin-level routing 변경은 이 스킬 스펙이 아니라 `advance-codex-guide`와 `plugin.md`에서 먼저 반영한다.

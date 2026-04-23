@@ -29,7 +29,7 @@
 
 - `./<plugin-name>/.codex-plugin/plugin.json`
 - `./<plugin-name>/README.md`
-- `./<plugin-name>/specs/plugin-spec.md`
+- `./<plugin-name>/specs/plugin.md`
 - 선택 사항: `./<plugin-name>/specs/skills/`
 - 선택 사항: `./<plugin-name>/skills/`
 - 선택 사항: `./<plugin-name>/assets/`
@@ -44,7 +44,7 @@
 이 저장소에서는 플러그인 설계와 변경을 spec driven development로 다룹니다.
 
 - `README.md`는 플러그인의 전반적인 목적, 왜 이 플러그인이 존재하는지, 어떤 작업을 다루는지를 설명해야 합니다.
-- `specs/plugin-spec.md`는 최소한 다음을 현재 기준으로 고정해야 합니다.
+- `specs/plugin.md`는 최소한 다음을 현재 기준으로 고정해야 합니다.
   - 플러그인 목적
   - 플러그인 경계와 비목표
   - 어떤 작업 형태를 처리하려는지
@@ -52,10 +52,10 @@
   - 내장 skill 체계와 각 skill의 역할 요약
   - 새 skill을 추가하거나 기존 skill 책임을 바꿀 때 유지해야 할 확장 원칙
 - 플러그인 스펙은 기본적으로 플러그인 경계, 라우팅 표면, 내장 skill 체계를 소유하고, 개별 skill의 상세 처리 계약은 가능한 한 분리해서 다룹니다.
-- 개별 skill의 입력 형태, 판단 기준, 출력 계약, 가드레일처럼 skill 자체의 처리 계약이 중요해지면 `specs/skills/<skill-name>-spec.md`로 분리하는 방식을 우선 검토합니다.
+- 개별 skill의 입력 형태, 판단 기준, 출력 계약, 가드레일처럼 skill 자체의 처리 계약이 중요해지면 `specs/skills/<skill-name>.md`로 분리하는 방식을 우선 검토합니다.
 - 플러그인 스펙에서 각 skill을 언급할 때는 목적과 관계를 요약하고, 상세 기준은 대응되는 skill spec 위치로 연결하는 방식을 기본으로 합니다.
 - 플러그인 작업은 spec이 먼저 있고, skill/manifest 변경은 그 spec과 일치해야 합니다.
-- 플러그인 표면이 바뀌면 `README.md`, `specs/plugin-spec.md`, 관련 skill spec, 관련 guide skill, `plugin.json`을 같은 변경 단위에서 함께 점검합니다.
+- 플러그인 표면이 바뀌면 `README.md`, `specs/plugin.md`, 관련 skill spec, 관련 guide skill, `plugin.json`을 같은 변경 단위에서 함께 점검합니다.
 - spec 없는 skill 추가를 기본 경로로 두지 않습니다.
 - spec은 구현 세부보다 의도, 경계, 라우팅, 책임 배치를 먼저 고정해야 합니다.
 - 파일 종류나 구현 관성을 적더라도, spec의 핵심 판단 기준은 change pressure, ownership, routing 이유를 먼저 설명하는 쪽을 우선합니다.
@@ -74,6 +74,7 @@
 - skill spec의 `사용자 스펙 의도`에는 사용자가 기대한 판단, 규칙, 예시를 정규 스펙 본문으로 옮기기 전의 입력 관점으로 적습니다.
 - skill spec에는 해당 skill이 실제로 무엇을 판단하고 어떤 계약으로 동작하는지 적습니다.
 - skill spec이 실제 판단을 수행하는 종류라면 `핵심 처리 계약` 뒤에 실제 문서에서 쓰는 규칙 섹션 이름을 그대로 두고, 필요할 때만 섹션 수를 줄이거나 늘립니다.
+- skill spec의 `독립성 원칙`에는 독립 실행 가능성을 항상 강제하지 말고, 그 skill에서 독립성을 spec으로 강제해야 하는지 여부와 이유를 적습니다.
 - guide skill은 라우팅을, narrow skill은 자기 처리 계약을 소유하게 써서 서로의 책임이 섞이지 않게 유지합니다.
 - 반복되는 검토 질문, 예시, decision rule이 생기면 skill spec 안에서 소유할지 별도 reference 문서로 뺄지 의도적으로 결정합니다.
 
@@ -89,7 +90,7 @@
 
 1. 플러그인 폴더를 저장소 루트에 생성하거나 이동합니다.
 2. `.codex-plugin/plugin.json`이 존재하고 유효한 JSON인지 확인합니다.
-3. `README.md`, `specs/plugin-spec.md`, 필요 시 `specs/skills/*.md`를 만들거나 현재 표면에 맞게 갱신합니다.
+3. `README.md`, `specs/plugin.md`, 필요 시 `specs/skills/*.md`를 만들거나 현재 표면에 맞게 갱신합니다.
 4. `./.agents/plugins/marketplace.json`에 대응 항목을 추가하거나 갱신합니다.
 5. 모든 마켓플레이스 항목에 `policy.installation`, `policy.authentication`, `category`가 포함되도록 유지합니다.
 6. 변경한 JSON 파일은 수정 후 검증합니다.
@@ -112,11 +113,12 @@
 
 명시적이고 의도적인 마이그레이션이 아니라면, 느슨한 skill 묶음부터 시작한 뒤 나중에 그에 맞춰 플러그인 모양을 억지로 만들지 않습니다.
 
-## 플러그인과 스킬의 독립성
+## 플러그인과 스킬의 독립성 판단
 
 - 모든 플러그인은 하나의 일관된 번들로 독립적으로 이해 가능해야 합니다.
-- 모든 skill은 자기 범위의 작업을 독립적으로 수행할 수 있어야 합니다.
-- skill이 플러그인에 속할 수는 있지만, 여전히 책임이 분명해야 하며 형제 skill의 숨은 맥락에 의존하면 안 됩니다.
+- 모든 skill에 독립 실행 가능성을 일괄 강제하지 않습니다.
+- 대신 각 skill spec에서 그 skill이 독립성을 강제해야 하는지, sibling context를 허용하는지, 왜 그런지를 명시합니다.
+- skill이 플러그인에 속하더라도 책임은 분명해야 하며, sibling skill이나 guide가 소유해야 할 문맥을 숨은 전제로 끌어오지 않도록 spec에서 경계를 설명합니다.
 - 플러그인은 자기 목적을 설명하기 위해 무관한 외부 플러그인 구조에 기대면 안 됩니다.
 
 ## 플러그인 설치 스킬 식별자

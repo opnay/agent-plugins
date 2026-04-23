@@ -1,3 +1,11 @@
+## 사용자 스펙 의도
+
+- skill 묶음이 아니라 coherent plugin boundary를 먼저 정의하고 싶다.
+- multi-skill plugin이면 `<plugin>-guide`와 packaging contract를 같이 설계하고 싶다.
+- canonical scaffold 위에 plugin-level 설계 규칙을 덧붙이고 싶다.
+
+---
+
 # plugin-creator 스킬 스펙
 
 ## 목적
@@ -35,13 +43,18 @@
 - multi-skill plugin이면 `<plugin>-guide`를 두고 cross-skill usage guidance를 그 안에 모은다.
 - manifest는 실제 shipped surface와 정확히 맞아야 한다.
 
+## 검토 질문
+
+- plugin boundary를 skill 목록보다 먼저 잠갔는가?
+- bundled skill들이 왜 같은 plugin에 속하는지 설명 가능한가?
+- `<plugin>-guide`가 필요한 구조인데 빠뜨리고 있지 않은가?
+
 ## 독립성 원칙
 
-- 이 스킬은 plugin-level architecture extension을 소유하며 canonical scaffold 전체를 대체하지 않는다.
-- sibling creator skill의 숨은 맥락 없이도 plugin 설계 원칙을 이해할 수 있어야 한다.
+- 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 아니오.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: canonical system `plugin-creator`를 바탕으로 쓰는 확장 스킬이므로 base workflow 전제는 허용하지만, plugin boundary와 packaging 판단 기준은 이 스펙에서 명시해야 한다.
 
 ## 확장 원칙
 
-- plugin packaging 규칙이 바뀌면 `plugin-spec.md`, guide skill, manifest 검토 규칙을 함께 갱신한다.
+- plugin packaging 규칙이 바뀌면 `plugin.md`, guide skill, manifest 검토 규칙을 함께 갱신한다.
 - plugin boundary와 무관한 skill-level detail은 별도 skill spec으로 분리한다.
-
