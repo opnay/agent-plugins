@@ -1,7 +1,7 @@
 # Loop Kit
 
 `loop-kit` is a narrow loop plugin built around `turn-gate`.
-Its main job is to keep one turn alive until the user asks to end the turn while keeping `analysis -> plan -> work -> result reporting -> next user response` explicit.
+Its main job is to keep one turn alive until the user asks to end the turn while keeping `analysis -> plan -> work -> verification -> result reporting -> next user response` explicit.
 
 The default entrypoint is `loop-kit-guide`, but the main operational surface is `turn-gate`.
 Inside `loop-kit`, users do not call `ralph-loop`, `review-loop`, or readiness loops directly.

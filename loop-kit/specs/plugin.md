@@ -10,7 +10,7 @@
 
 - 포함:
   - turn-level loop gate contract
-  - `analysis -> plan -> work -> result reporting -> next-flow user response` 구조 유지
+  - `analysis -> plan -> work -> verification -> result reporting -> next-flow user response` 구조 유지
   - `turn-gate` 내부의 loop mode 선택
   - `turn-gate/references/` 아래 local absorbed loop contract 유지
   - discovery, refinement, review, readiness 성격의 current-phase work를 loop 안에서 처리

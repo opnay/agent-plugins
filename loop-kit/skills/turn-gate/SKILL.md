@@ -14,9 +14,10 @@ Keep the turn shape explicit:
 1. analyze the user's message
 2. state the plan
 3. do the work
-4. report the result or readiness state
-5. reopen the next flow with explicit choices
-6. continue unless the user asks to end the turn
+4. verify the work
+5. report the result or readiness state
+6. reopen the next flow with explicit choices
+7. continue unless the user asks to end the turn
 
 In this plugin, users do not call `ralph-loop`, `review-loop`, or readiness loops directly.
 Instead, this skill selects the right internal loop mode for the current phase.
@@ -39,11 +40,12 @@ Those references absorb the operational loop contracts into this skill while sta
 ## Core Policy
 
 - Treat each incoming message as the current state of the same loop-gated turn.
-- Keep `analysis`, `plan`, `work`, `result reporting`, and next-flow reopening visible.
+- Keep `analysis`, `plan`, `work`, `verification`, `result reporting`, and next-flow reopening visible.
 - Always use the question tool `request_user_input` when opening user choices, scope locks, or next-flow decisions.
 - Always use the plan tool `update_plan` once meaningful work begins and keep the active step current as the turn progresses.
 - Before `work`, choose one internal loop mode that best owns the current phase.
 - Use `request_user_input` whenever mode selection, criteria, or scope is still unclear.
+- After `work`, run an explicit verification step before result reporting.
 - Reopen the next flow with explicit choices after each result unless the user asks to end the turn.
 - Do not expose direct loop entrypoints from this plugin surface.
 
@@ -61,6 +63,7 @@ Those references absorb the operational loop contracts into this skill while sta
 - `Plan`
 - `Chosen internal mode`
 - `Work`
+- `Verification`
 - `Result report`
 - `User-response question`
 - `Next-flow choices`
@@ -72,6 +75,7 @@ Those references absorb the operational loop contracts into this skill while sta
 - Do not end the turn by default.
 - Do not ask freeform textual choice questions when `request_user_input` can carry the decision.
 - Do not skip `update_plan` after moving past initial orientation into real work.
+- Do not skip explicit verification between work and result reporting.
 - Do not skip the next-flow question after reporting a result.
 - Do not let result reporting collapse into a soft closing.
 - Do not expose direct user entrypoints for internal loop modes in this plugin.

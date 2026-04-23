@@ -1,6 +1,6 @@
 ---
 name: turn-gate
-description: Loop gate for repositories where one turn must continue until the user asks to end the turn. Keep analysis, plan, work, result reporting, and user-response-based next-flow selection explicit inside the same turn.
+description: Loop gate for repositories where one turn must continue until the user asks to end the turn. Keep analysis, plan, work, verification, result reporting, and user-response-based next-flow selection explicit inside the same turn.
 ---
 
 # Turn Gate
@@ -14,9 +14,10 @@ Its job is to keep the turn loop explicit:
 1. analyze the user's message
 2. state the plan
 3. do the work
-4. report the result or commit-ready state
-5. open the next flow through a user response with explicit choices
-6. continue unless the user asks to end the turn
+4. verify the work
+5. report the result or commit-ready state
+6. open the next flow through a user response with explicit choices
+7. continue unless the user asks to end the turn
 
 This skill is a loop gate.
 It owns turn continuity and next-flow reopening, not the domain work inside each phase.
@@ -41,7 +42,7 @@ This skill owns:
 
 - turn-level phase classification
 - downstream workflow selection for the current phase work
-- explicit analysis / plan / work / result reporting structure
+- explicit analysis / plan / work / verification / result reporting structure
 - next-flow reopening after every phase result unless the user asks to end the turn
 - choice-granting user-response surface for the next flow
 
@@ -58,10 +59,11 @@ This skill does not own:
 - Treat each incoming message as the start or continuation of one loop-gated turn.
 - Treat the user's next-flow response as the next user message inside the same turn.
 - Choose the narrowest downstream workflow that owns the current phase work.
-- Make `analysis`, `plan`, `work`, and `result reporting` visible in the response shape.
+- Make `analysis`, `plan`, `work`, `verification`, and `result reporting` visible in the response shape.
 - Use `analysis` to structure the user's message into requested intent and requested action.
 - Use `plan` to prepare the detailed next steps needed to fulfill the analyzed request.
 - Use `work` to execute the prepared plan.
+- Use `verification` to confirm the work outcome before result reporting.
 - Use `result reporting` to report the completed work outcome.
 - Do not let result reporting become a soft stop.
 - Report results as prior explanation for the user's response into the next flow, not as a terminal message.
@@ -123,7 +125,17 @@ Output:
 - `Work`
 - `Phase result`
 
-### Phase 3: Report Result Or Commit-Ready State
+### Phase 3: Verification
+
+1. Run the narrowest meaningful verification for the work just performed.
+2. State what was verified, what passed, and what remains uncertain.
+3. Treat missing verification as an explicit residual risk, not an implicit omission.
+
+Output:
+
+- `Verification`
+
+### Phase 4: Report Result Or Commit-Ready State
 
 1. Report what changed, what was decided, or what remains blocked.
 2. If the work reached a readiness boundary, report that state explicitly.
@@ -135,7 +147,7 @@ Output:
 - `Result report`
 - `Commit-ready state` when relevant
 
-### Phase 4: Open The Next Flow Through User Response
+### Phase 5: Open The Next Flow Through User Response
 
 1. Ask what next flow the user wants to proceed with.
 2. Use a question tool that grants explicit choices.
@@ -156,6 +168,7 @@ Output:
 - `Chosen downstream owner`
 - `Plan`
 - `Work`
+- `Verification`
 - `Phase result`
 - `Result report`
 - `User-response question`
@@ -170,8 +183,9 @@ Preferred turn shape:
 1. analyze the user's message
 2. state the plan
 3. describe the work
-4. report the result briefly
-5. ask for the user's next-flow response through explicit choices
+4. state the verification briefly
+5. report the result briefly
+6. ask for the user's next-flow response through explicit choices
 
 Bad ending shape:
 
@@ -189,6 +203,7 @@ Good turn-flow example:
 - Do not replace a phase-specific workflow with vague meta commentary.
 - Do not emit a terminal summary unless the user asks to end the turn.
 - Do not decide on behalf of the user that the turn should terminate.
+- Do not skip explicit verification between work and result reporting.
 - Do not skip the user-response step merely because the next phase seems obvious.
 - Do not ask the next-flow question without giving the user explicit choices.
 - Do not treat the user's next-flow response as a new independent turn when the loop gate is still active.

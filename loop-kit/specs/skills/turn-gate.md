@@ -20,7 +20,7 @@
 
 - 포함:
   - turn-level continuity 유지
-  - `analysis -> plan -> work -> result reporting -> next-flow user response` 구조 유지
+  - `analysis -> plan -> work -> verification -> result reporting -> next-flow user response` 구조 유지
   - current-phase work의 internal mode selection
   - 결과 보고 뒤 explicit choice 기반 next-flow reopening
 - 제외:
@@ -43,13 +43,14 @@
 ## 핵심 처리 계약
 
 - 각 incoming message를 같은 loop-gated turn의 현재 입력으로 취급한다.
-- `analysis`, `plan`, `work`, `result reporting`, `user-response reopening`을 응답 shape에 계속 드러낸다.
+- `analysis`, `plan`, `work`, `verification`, `result reporting`, `user-response reopening`을 응답 shape에 계속 드러낸다.
 - 질문, 선택지 제시, scope lock, next-flow reopening에는 질문 도구 `request_user_input`를 필수로 사용한다.
 - 실질적인 작업이 시작되면 계획 도구 `update_plan`을 필수로 사용하고 현재 active step 상태를 유지한다.
 - `work`에 들어가기 전 current-phase work의 internal mode를 하나 선택한다.
 - `loop-kit`에서는 사용자가 internal mode를 직접 호출하는 대신 `turn-gate`가 이를 선택한다.
 - `turn-gate`는 선택된 internal mode에 대응하는 local `references/` 문서를 먼저 읽고 그 계약을 적용한다.
 - local `references/`는 `workflow-kit` upstream spec과 동기화된 absorbed operational contract로 유지한다.
+- `work` 뒤에는 결과 보고 전에 명시적 검증 단계를 둔다.
 - 결과 보고 뒤에는 explicit choice를 주는 질문 도구로 다음 플로우를 다시 연다.
 - 사용자가 턴을 종료하자고 요청하지 않으면 clean stop을 기본 경로로 두지 않는다.
 
@@ -78,6 +79,7 @@
 - 이번 응답이 turn continuity를 실제로 유지하고 있는가?
 - current-phase work에 맞는 internal mode를 하나로 좁혔는가?
 - 질문 도구 `request_user_input`와 계획 도구 `update_plan`를 필수 단계에서 실제로 사용했는가?
+- `work -> verification -> result reporting` 순서를 실제로 유지했는가?
 - direct loop entrypoint를 사용자 표면으로 다시 열지 않았는가?
 - 결과 보고 뒤 explicit next-flow choice를 실제로 열었는가?
 
