@@ -91,8 +91,8 @@
 
 ## 독립성 원칙
 
-- 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 예.
-- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: turn-level loop gate contract는 hidden sibling context 없이 읽혀야 하며, phase-specific workflow는 위임 대상일 뿐 메타 플로우 규칙 자체는 이 스펙이 닫아야 한다.
+- 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 아니오.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: 이 skill은 `workflow-kit-guide` 또는 repository-local operating rule이 이미 turn continuity를 활성화한 문맥을 허용한다. 다만 turn-level loop gate contract 자체와 phase-specific workflow에 무엇을 위임하는지는 이 스펙에서 계속 명시적으로 읽혀야 한다.
 
 ## 확장 원칙
 
