@@ -56,11 +56,13 @@ This skill does not own:
 ## Core Policy
 
 - Treat each incoming message as the start or continuation of one loop-gated turn.
+- Treat the user's next-flow response as the next user message inside the same turn.
 - Choose the narrowest downstream workflow that owns the current phase work.
 - Make `analysis`, `plan`, `work`, and `result reporting` visible in the response shape.
 - Do not let result reporting become a soft stop.
 - Report results as prior explanation for the user's response into the next flow, not as a terminal message.
 - Reopen the next flow through a question tool that gives the user explicit choices.
+- Treat termination judgment as the user's choice, not the assistant's shortcut.
 - Treat "no next flow" as an exception that must be justified by explicit user stop or confirmed closure.
 - Prefer the structured user-input tool for the next-flow step.
 - Keep the loop moving; do not reopen broad framing once the next phase is already clear.
@@ -128,7 +130,7 @@ Output:
 1. Ask what next flow the user wants to proceed with.
 2. Use a question tool that grants explicit choices.
 3. Offer the narrowest next-flow options that fit the current result.
-4. Route the user's choice back into Phase 0 instead of ending the turn.
+4. Treat the user's response as the next user message and route it back into Phase 0 instead of ending the turn.
 
 Output:
 
@@ -165,17 +167,19 @@ Bad ending shape:
 - freeform next-step prompting without giving the user explicit choices
 - blocked-state closing such as "여기까지 확인했습니다" without a next-flow response surface
 
-Good ending shape:
+Good turn-flow example:
 
-- "분석: 현재 레포지토리의 프론트엔드 프레임워크를 확인해달라는 요청입니다. 계획: `package.json`을 먼저 보고, 없으면 `deno.json` 계열을 확인합니다. 작업: `package.json`을 읽고 프레임워크 패키지를 확인했습니다. 결과 보고: 현재 프레임워크는 `Next.js v16`입니다. 다음 플로우는 어떤걸 진행하시나요?"
-- "1. `Next.js` 패키지 업데이트 2. `Next.js` 프레임워크 단위 점검 3. `Next.js` 프레임워크 설명"
+- "`workflow-kit`의 기본 시작점을 확인하는 요청으로 보고, `README.md`와 `plugin-spec.md`를 확인했습니다. 현재 저장소 기준 기본 시작점은 `workflow-kit-guide`입니다. 다음 플로우는 어떤걸 진행하시나요?"
+- "1. `workflow-kit-guide` 역할 점검 2. `turn-gate` 동작 점검 3. `plugin-spec` 라우팅 규칙 확인"
 
 ## Guardrails
 
 - Do not replace a phase-specific workflow with vague meta commentary.
 - Do not emit a terminal summary unless the user explicitly ends the work.
+- Do not decide on behalf of the user that the turn should terminate.
 - Do not skip the user-response step merely because the next phase seems obvious.
 - Do not ask the next-flow question without giving the user explicit choices.
+- Do not treat the user's next-flow response as a new independent turn when the loop gate is still active.
 - Do not treat temporary blocking states as permission to close the turn.
 - Do not let this skill absorb domain execution, planning, or review detail.
 - Do not confuse turn continuity with endless conversation.

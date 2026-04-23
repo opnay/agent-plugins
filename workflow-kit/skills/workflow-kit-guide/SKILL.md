@@ -64,6 +64,7 @@ If the repository requires non-terminal turns, keep `turn-gate` active as the lo
 - Use planning when execution should remain deferred.
 - Use `turn-gate` when the main bottleneck is not a single phase, but keeping the whole turn open through analysis, plan, work, result report, and user-response-based next-flow continuation.
 - If the repository requires every result report to reopen the next flow, keep `turn-gate` active even when another workflow owns the current phase detail.
+- When `turn-gate` is active, treat the user's next-flow response as the next user message inside the same turn rather than as a brand-new independent turn.
 - Use execution workflows when meaningful implementation or refinement still remains.
 - Use `commit-readiness-gate` only when the main question is readiness.
 - Prefer one clear starting skill plus an explicit handoff.
