@@ -60,6 +60,9 @@ This skill does not own:
 - Treat the user's next-flow response as the next user message inside the same turn.
 - Choose the narrowest downstream workflow that owns the current phase work.
 - Make `analysis`, `plan`, `work`, `verification`, and `result reporting` visible in the response shape.
+- Maintain running turn-gate records under `.agents/sessions/{YYYYMMDD}/`.
+- Use `000-plan.md` for the higher-level multi-flow plan and `001+` files for per-flow records.
+- Keep `000-plan.md` incrementally updated beyond one user request when the larger task continues.
 - Use `analysis` to structure the user's message into requested intent and requested action.
 - Use `plan` to prepare the detailed next steps needed to fulfill the analyzed request.
 - Use `work` to execute the prepared plan.
@@ -73,6 +76,16 @@ This skill does not own:
 - Treat "no next flow" as an exception that must be justified by the user asking to end the turn or by confirmed closure.
 - Prefer the structured user-input tool for the next-flow step.
 - Keep the loop moving; do not reopen broad framing once the next phase is already clear.
+
+## Session Record
+
+- Use `.agents/sessions/{YYYYMMDD}/000-plan.md` for the higher-level plan when the task spans several flows.
+- Use `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` for flow records.
+- Keep `count-pad3` zero-padded like `001`, `002`, `003`.
+- Keep the slug English lower-case and `-` delimited.
+- Update the flow record after each completed flow.
+- Prefer `.agents/sessions/_turn-gate-flow-template.md` as the default flow-record layout.
+- Prefer `.agents/sessions/_turn-gate-plan-template.md` as the default `000-plan.md` layout.
 
 ## Phase Loop
 
@@ -210,6 +223,8 @@ Good turn-flow example:
 - Do not replace a phase-specific workflow with vague meta commentary.
 - Do not emit a terminal summary unless the user asks to end the turn.
 - Do not decide on behalf of the user that the turn should terminate.
+- Do not skip the `000-plan.md` update when the higher-level plan changes across flows.
+- Do not skip the flow-record update at `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` for a completed flow.
 - Do not skip explicit verification between work and result reporting.
 - Do not skip the user-response step merely because the next phase seems obvious.
 - Do not ask the next-flow question without giving the user explicit choices.

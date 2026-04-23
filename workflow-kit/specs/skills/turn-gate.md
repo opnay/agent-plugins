@@ -16,6 +16,10 @@
 - 분석 단계와 계획 단계에서는 사용자에게 질문하는 과정이 필요할 수 있습니다.
 - `다음 플로우 진행을 위한 사용자 응답` 자체는 다시 `사용자 메시지`로 취급되어야 하며, 같은 턴 안에서 다음 루프의 입력으로 즉시 이어져야 합니다.
 - 따라서 사용자가 턴을 종료하자고 요청하지 않는 한, `turn-gate`는 한 플로우가 끝날 때마다 다음 플로우로 반복 진입하는 구조를 유지해야 합니다.
+- `turn-gate`로 진행한 작업은 `.agents/sessions` 아래에 기록이 남아야 합니다.
+- 여러 플로우를 거치는 작업의 상위 계획은 `.agents/sessions/{YYYYMMDD}/000-plan.md` 경로에 증분되어야 합니다.
+- 개별 플로우 기록은 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 형식으로 남아야 합니다.
+- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`는 phase 메모가 아니라 flow 기록으로 남아야 합니다.
 
 예시:
 
@@ -77,6 +81,9 @@
 - 작업 단계에서는 준비한 계획을 실행한다.
 - 검증 단계에서는 작업 결과를 확인하고 남은 불확실성을 드러낸다.
 - 결과 보고 단계에서는 완료된 작업의 결과를 보고한다.
+- cross-flow task에서는 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 상위 계획 artifact로 유지되어야 한다.
+- `000-plan.md`는 사용자 요청 종료 이후에도 더 큰 작업이 이어지면 계속 증분되어야 한다.
+- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record는 completed flow마다 갱신되어야 한다.
 - current phase의 downstream workflow 선택에는 최소한 `deep-interview`, `review-loop`, `ralph-loop`, `commit-readiness-gate` 구분 신호가 드러나야 한다.
 - 분석 단계와 계획 단계에서는 필요하면 사용자에게 질문을 열 수 있다.
 - 다음 플로우 진행을 위한 사용자 응답도 같은 턴의 다음 `현재 메시지`로 받아들인다.
@@ -89,6 +96,8 @@
 ## 검토 질문
 
 - 이번 응답이 `분석 -> 계획 -> 작업 -> 검증 -> 결과 보고`를 visible shape로 유지하고 있는가?
+- cross-flow task라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 최신 상태인가?
+- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record가 현재 flow까지 갱신됐는가?
 - 결과 보고 뒤에 explicit choice가 있는 다음 플로우 질문을 실제로 열었는가?
 - clean stop, summary-only closing, generic follow-up phrase로 턴을 닫고 있지 않은가?
 

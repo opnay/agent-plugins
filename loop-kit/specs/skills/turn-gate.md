@@ -7,6 +7,10 @@
 - 내부 loop mode의 canonical contract는 `workflow-kit`이 SSOT로 계속 소유하길 원한다.
 - 내부 loop mode는 `turn-gate` 스킬의 local `references/` 아래로 흡수돼야 하고, 실행 시 그 reference를 읽는 구조이길 원한다.
 - `turn-gate`는 질문 도구와 계획 도구를 선택 사항이 아니라 필수 도구로 사용해야 한다.
+- `turn-gate`로 진행한 작업은 `.agents/sessions` 아래에 기록이 남아야 한다.
+- 여러 플로우를 거치는 작업의 상위 계획은 `.agents/sessions/{YYYYMMDD}/000-plan.md` 경로에 누적되길 원한다.
+- 개별 플로우 기록은 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 형식으로 남고 싶다.
+- `001+` 문서는 phase 메모가 아니라 flow 기록으로 남고 싶다.
 
 ---
 
@@ -44,6 +48,9 @@
 
 - 각 incoming message를 같은 loop-gated turn의 현재 입력으로 취급한다.
 - `analysis`, `plan`, `work`, `verification`, `result reporting`, `user-response reopening`을 응답 shape에 계속 드러낸다.
+- active turn-gated task마다 `.agents/sessions/{YYYYMMDD}/000-plan.md` 상위 계획과 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record 체계를 유지한다.
+- `000-plan.md`는 사용자 요청 종료 이후에도 더 큰 작업이 이어지면 계속 증분 갱신한다.
+- completed flow가 끝날 때마다 해당 `001+` record를 갱신한다.
 - 질문, 선택지 제시, scope lock, next-flow reopening에는 질문 도구 `request_user_input`를 필수로 사용한다.
 - 실질적인 작업이 시작되면 계획 도구 `update_plan`을 필수로 사용하고 현재 active step 상태를 유지한다.
 - `work`에 들어가기 전 current-phase work의 internal mode를 하나 선택한다.
@@ -77,6 +84,18 @@
 - generic follow-up phrase나 자유형 마무리 질문으로 턴을 닫지 않는다.
 - 사용자 응답은 같은 턴의 다음 메시지로 즉시 이어진다.
 
+## session record 규칙
+
+- 여러 플로우를 거치는 작업이면 `.agents/sessions/{YYYYMMDD}/000-plan.md`를 먼저 둔다.
+- `000-plan.md`는 상위 multi-flow plan artifact로 유지하고, 요청 종료 뒤에도 같은 큰 작업이 이어지면 계속 증분한다.
+- flow 기록 파일은 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 형식을 사용한다.
+- `count-pad3`는 `001`, `002`, `003`처럼 3자리 zero-padded 숫자를 사용한다.
+- slug는 영어 소문자와 `-`만 사용한다.
+- flow 기본 템플릿은 `.agents/sessions/_turn-gate-flow-template.md`를 사용한다.
+- `000-plan.md` 기본 템플릿은 `.agents/sessions/_turn-gate-plan-template.md`를 사용한다.
+- 최소 flow 기록 항목은 task, flow scope, current mode, analysis, plan, work, verification, result report, next-flow options, residual risk다.
+- `000-plan.md`는 장기 증분 계획 artifact로, `001+`는 flow 단위 운영 artifact로 취급한다.
+
 ## SSOT 동기화 규칙
 
 - internal mode contract 변경은 먼저 `workflow-kit` upstream spec에서 정리한다.
@@ -88,6 +107,8 @@
 - 이번 응답이 turn continuity를 실제로 유지하고 있는가?
 - current-phase work에 맞는 internal mode를 하나로 좁혔는가?
 - 질문 도구 `request_user_input`와 계획 도구 `update_plan`를 필수 단계에서 실제로 사용했는가?
+- cross-flow 작업이라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 최신 상태인가?
+- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`가 현재 flow까지 갱신됐는가?
 - `work -> verification -> result reporting` 순서를 실제로 유지했는가?
 - direct loop entrypoint를 사용자 표면으로 다시 열지 않았는가?
 - 결과 보고 뒤 explicit next-flow choice를 실제로 열었는가?
