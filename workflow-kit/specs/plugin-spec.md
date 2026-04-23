@@ -3,7 +3,8 @@
 ## 플러그인 목적
 
 `workflow-kit`은 작업 lifecycle 전반을 다루는 workflow 플러그인입니다.
-핵심 책임은 들어온 요청에 대해 requirement discovery, framing, planning, execution, refinement, review, final gating, phase-loop continuity 중 현재 병목이 무엇인지 판단하고, 가장 맞는 workflow skill로 연결하는 것입니다.
+핵심 책임은 들어온 요청에 대해 requirement discovery, framing, planning, execution, refinement, review, final gating, 그리고 사용자가 명시적으로 끝낼 때까지 턴을 닫지 않는 loop-gated continuity 중 현재 병목이 무엇인지 판단하고, 가장 맞는 workflow skill로 연결하는 것입니다.
+repository-local operating rule이 non-terminal turn을 요구하면, `turn-gate`를 turn-level loop gate로 유지한 채 현재 phase owner를 선택합니다.
 
 ## 플러그인 경계와 비목표
 
@@ -12,7 +13,7 @@
   - requirement discovery와 direction evaluation
   - read-only planning
   - broad execution workflow
-  - phase-loop continuity를 관리하는 meta workflow
+  - turn-level loop gate contract
   - bounded refinement loop
   - review-driven correction
   - final readiness gate
@@ -26,7 +27,7 @@
 - 요청을 어떤 workflow로 먼저 처리해야 하는지 결정하는 작업
 - 구현 전에 alignment나 planning이 필요한 작업
 - broad execution부터 review와 final gate까지 이어지는 lifecycle 작업
-- 결과 보고 뒤 다음 플로우를 명시적으로 열어야 하는 지속적 turn workflow
+- 결과 보고 뒤 다음 플로우 진행을 위한 사용자 응답을 열어야 하는 지속적 turn workflow
 
 ## 엔트리포인트 / 대표 표면
 
@@ -45,7 +46,7 @@
   - spec: `workflow-kit/specs/skills/deep-interview-spec.md`
 - `planner`: read-only investigation을 통해 decision-complete plan을 만든다.
   - spec: `workflow-kit/specs/skills/planner-spec.md`
-- `turn-gate`: 질문/계획/명령 -> 작업 -> 결과 보고 -> 다음 플로우 질문을 루프로 이어가는 meta workflow를 관리한다.
+- `turn-gate`: `분석 -> 계획 -> 작업 -> 결과 보고 / commit-ready -> 다음 플로우 진행을 위한 사용자 응답` 구조를 유지하고, repository rule이 요구하면 사용자가 명시적으로 끝낼 때까지 턴을 닫지 않는 loop gate를 관리한다.
   - spec: `workflow-kit/specs/skills/turn-gate-spec.md`
 - `autopilot`: brief부터 implementation, verification까지 broad end-to-end delivery를 수행한다.
   - spec: `workflow-kit/specs/skills/autopilot-spec.md`
@@ -68,4 +69,4 @@
 ## 현재 구조 메모
 
 - `deep-interview-adaptation-spec.md`는 적응 배경 문서로 유지하되 normative skill contract는 `specs/skills/deep-interview-spec.md`가 소유한다.
-- 이 플러그인의 주요 리스크는 lifecycle stage와 meta-flow가 서로 흡수되면서 workflow가 execution 중심으로 납작해지거나, 반대로 메타 운영 규칙이 phase skill을 과도하게 오염시키는 것이다.
+- 이 플러그인의 주요 리스크는 lifecycle stage와 turn-level loop gate가 서로 흡수되면서 workflow가 execution 중심으로 납작해지거나, 반대로 loop gate 규칙이 phase skill을 과도하게 오염시키는 것이다.

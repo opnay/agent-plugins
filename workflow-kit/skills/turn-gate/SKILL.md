@@ -1,37 +1,38 @@
 ---
 name: turn-gate
-description: Meta workflow for repositories that require explicit turn continuity across question, plan, command, execution, result reporting, and next-flow prompting. Use when the main job is to keep the phase loop alive instead of ending after a single answer or execution pass.
+description: Loop gate for repositories where one turn must continue until the user explicitly ends the work. Keep analysis, plan, work, result reporting, and user-response-based next-flow selection explicit inside the same turn.
 ---
 
 # Turn Gate
 
 ## Overview
 
-Use this skill when the repository or working agreement requires one user turn to continue across several internal phases.
+Use this skill when the repository or working agreement requires one user turn to continue until the user explicitly ends the work.
 Its job is not to replace downstream workflow skills.
-Its job is to keep the loop explicit:
+Its job is to keep the turn loop explicit:
 
-1. classify the current message
-2. choose the right downstream owner for this phase
-3. execute that phase
-4. report the result
-5. decide whether another flow should start immediately
-6. if so, ask for the narrowest next-step input and continue
+1. analyze the user's message
+2. state the plan
+3. do the work
+4. report the result or commit-ready state
+5. open the next flow through a user response with explicit choices
+6. continue unless the user explicitly ends the work
 
-This skill is a meta workflow.
-It owns turn continuity, not the domain work inside each phase.
+This skill is a loop gate.
+It owns turn continuity and next-flow reopening, not the domain work inside each phase.
 
 ## Use When
 
-- the repository requires question / plan / command style phase separation inside one ongoing turn
-- the task should not naturally stop after one answer because another explicit flow is expected right away
-- result reporting must be followed by an explicit next-flow decision instead of a soft closing
+- the repository requires one turn to stay open until the user explicitly ends the work
+- the repository requires `analysis -> plan -> work -> result reporting / commit-ready -> user response` style progression
+- result reporting must be followed by a next-flow choice surface instead of a soft closing
+- the user should be given explicit choices for the next flow
 - the main risk is premature turn termination rather than lack of a phase-specific workflow
 
 ## Do Not Use When
 
 - the task is a normal single-phase request that can end cleanly after one answer
-- a narrower workflow already fully owns the problem and no explicit next-flow loop is needed
+- the repository does not require turn continuity until explicit user stop
 - the main blocker is still choosing between clarification, planning, or execution rather than managing turn continuity itself
 
 ## Scope Boundary
@@ -39,9 +40,10 @@ It owns turn continuity, not the domain work inside each phase.
 This skill owns:
 
 - turn-level phase classification
-- downstream workflow selection for the current phase
-- result reporting with explicit loop assessment
-- next-flow prompting when another phase should begin immediately
+- downstream workflow selection for the current phase work
+- explicit analysis / plan / work / result reporting structure
+- next-flow reopening after every phase result unless the user explicitly ends the work
+- choice-granting user-response surface for the next flow
 
 This skill does not own:
 
@@ -53,22 +55,36 @@ This skill does not own:
 
 ## Core Policy
 
-- Treat each incoming message as at least one of: question, plan, command.
-- Choose the narrowest downstream workflow that owns the current phase.
-- Do not let result reporting become a soft stop when the work obviously expects another phase.
-- Ask for the next flow only when another phase is genuinely needed.
-- Prefer the structured user-input tool when the next-flow decision fits 1-3 bounded choices.
+- Treat each incoming message as the start or continuation of one loop-gated turn.
+- Choose the narrowest downstream workflow that owns the current phase work.
+- Make `analysis`, `plan`, `work`, and `result reporting` visible in the response shape.
+- Do not let result reporting become a soft stop.
+- Report results as prior explanation for the user's response into the next flow, not as a terminal message.
+- Reopen the next flow through a question tool that gives the user explicit choices.
+- Treat "no next flow" as an exception that must be justified by explicit user stop or confirmed closure.
+- Prefer the structured user-input tool for the next-flow step.
 - Keep the loop moving; do not reopen broad framing once the next phase is already clear.
 
 ## Phase Loop
 
-### Phase 0: Analyze The Current Message
+### Phase 0: Analyze
 
-1. Separate the message into question, plan, command, or mixed concerns.
-2. Decide which concern is blocking the next useful action.
-3. Choose the downstream workflow for that concern.
+1. State what the user is asking for in direct terms.
+2. Decide what the current phase work actually is.
+3. Choose the downstream workflow that owns that work.
 
-Typical downstream choices:
+Output:
+
+- `Analysis`
+- `Chosen downstream owner`
+
+### Phase 1: Plan
+
+1. State the smallest useful plan for the current phase.
+2. Include fallback or verification steps when they matter.
+3. Keep the plan narrow enough to finish before reopening the next flow.
+
+Typical downstream owners:
 
 - `structured-thinking`
 - `deep-interview`
@@ -82,63 +98,84 @@ Typical downstream choices:
 
 Output:
 
-- `Current phase type`
-- `Chosen downstream owner`
+- `Plan`
 
-### Phase 1: Run The Current Phase
+### Phase 2: Work
 
 1. Hand off to the selected downstream workflow.
-2. Keep the current phase bounded.
-3. Do not mix the next phase into the current one unless the downstream workflow itself requires it.
+2. Keep the current work bounded.
+3. Do not replace work with meta commentary.
 
 Output:
 
+- `Work`
 - `Phase result`
-- `Phase residual risk`
 
-### Phase 2: Report And Assess Continuation
+### Phase 3: Report Result Or Commit-Ready State
 
 1. Report what changed, what was decided, or what remains blocked.
-2. Decide whether another explicit flow is expected immediately.
-3. If not, stop cleanly.
-4. If yes, define the narrowest next-flow choice.
-
-Continuation signals:
-
-- the current phase completed but naturally hands off to another workflow
-- the user-local operating rule requires explicit next-flow choice instead of soft closure
-- the result is actionable only if a next phase starts right away
+2. If the work reached a readiness boundary, report that state explicitly.
+3. Treat the report as prior explanation for the user's next response.
+4. Do not treat the report as the end of the turn.
 
 Output:
 
-- `Current result`
-- `Next-flow need`
+- `Result report`
+- `Commit-ready state` when relevant
 
-### Phase 3: Open The Next Flow
+### Phase 4: Open The Next Flow Through User Response
 
-1. If another flow is needed, ask for it explicitly.
-2. Prefer `request_user_input` when the next step fits bounded choices.
-3. Route the answer back into Phase 0 instead of ending the turn conceptually.
+1. Ask what next flow the user wants to proceed with.
+2. Use a question tool that grants explicit choices.
+3. Offer the narrowest next-flow options that fit the current result.
+4. Route the user's choice back into Phase 0 instead of ending the turn.
 
 Output:
 
-- `Next-flow question`
-- `Planned loop re-entry`
+- `User-response question`
+- `Next-flow choices`
+- `Planned next-flow continuation`
 
 ## Output Contract
 
-- `Current phase type`
+- `Analysis`
 - `Chosen downstream owner`
+- `Plan`
+- `Work`
 - `Phase result`
-- `Current result`
-- `Next-flow need`
-- `Next-flow question`
+- `Result report`
+- `User-response question`
+- `Next-flow choices`
+- `Loop state`
 - `Residual risk`
+
+## Response Pattern
+
+Preferred turn shape:
+
+1. analyze the user's message
+2. state the plan
+3. describe the work
+4. report the result briefly
+5. ask for the user's next-flow response through explicit choices
+
+Bad ending shape:
+
+- summary-only closing such as "완료했습니다", "필요하면 더 말씀해주세요", or option lists without a concrete next-flow response surface
+- freeform next-step prompting without giving the user explicit choices
+- blocked-state closing such as "여기까지 확인했습니다" without a next-flow response surface
+
+Good ending shape:
+
+- "분석: 현재 레포지토리의 프론트엔드 프레임워크를 확인해달라는 요청입니다. 계획: `package.json`을 먼저 보고, 없으면 `deno.json` 계열을 확인합니다. 작업: `package.json`을 읽고 프레임워크 패키지를 확인했습니다. 결과 보고: 현재 프레임워크는 `Next.js v16`입니다. 다음 플로우는 어떤걸 진행하시나요?"
+- "1. `Next.js` 패키지 업데이트 2. `Next.js` 프레임워크 단위 점검 3. `Next.js` 프레임워크 설명"
 
 ## Guardrails
 
 - Do not replace a phase-specific workflow with vague meta commentary.
-- Do not keep the loop open when the work can end cleanly.
-- Do not skip the next-flow question merely because the next phase seems obvious when the repository or working agreement requires explicit loop re-entry.
+- Do not emit a terminal summary unless the user explicitly ends the work.
+- Do not skip the user-response step merely because the next phase seems obvious.
+- Do not ask the next-flow question without giving the user explicit choices.
+- Do not treat temporary blocking states as permission to close the turn.
 - Do not let this skill absorb domain execution, planning, or review detail.
 - Do not confuse turn continuity with endless conversation.

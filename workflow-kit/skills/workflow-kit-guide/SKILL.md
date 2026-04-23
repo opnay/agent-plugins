@@ -13,6 +13,7 @@ Choose the starting skill in this plugin that most directly advances the user's 
 Prefer one clear starting skill plus an explicit handoff.
 Do not route to a specialist plugin first from the global layer; pick the workflow first.
 Skip this guide only when a narrower `workflow-kit` skill is already clearly the right starting point.
+If the repository requires non-terminal turns, keep `turn-gate` active as the loop gate for the whole turn before choosing the current phase owner.
 
 ## Workflow
 
@@ -34,7 +35,7 @@ Skip this guide only when a narrower `workflow-kit` skill is already clearly the
    - scope size
    - verification style
    - whether the brief is actually locked yet
-4. Decide whether a meta-flow continuity owner is needed in addition to the phase owner.
+4. Decide whether `turn-gate` must stay active as the turn-level loop gate while another skill owns the current phase work.
 5. Route to the narrowest bundled skill that owns the current bottleneck.
 6. If the task spans several bundled skills, choose the starting skill and handoff point explicitly.
 
@@ -43,7 +44,8 @@ Skip this guide only when a narrower `workflow-kit` skill is already clearly the
 - Choose `structured-thinking` when the task is still too unstable to choose the next workflow safely and the first job is to isolate ambiguity, assumptions, and the most plausible next path.
 - Choose `deep-interview` when the main job is to understand the user's real intent, boundaries, tradeoffs, approval lines, or success criteria through questions, pressure-testing, or direction evaluation.
 - Choose `planner` when implementation should stay deferred until a read-only investigation, tradeoff analysis, verification path, and execution-ready plan are complete.
-- Choose `turn-gate` when the repository or task requires explicit phase-loop continuity across question/plan/command analysis, execution, result reporting, and next-flow prompting, and the main job is to keep that loop alive rather than finish in one isolated phase.
+- Choose `turn-gate` when the repository or task requires one turn to remain open until the user explicitly ends the work.
+- In repositories that forbid terminal result turns by default, treat `turn-gate` as the turn-level loop gate rather than an optional starting skill.
 - Choose `autopilot` when the user wants broad end-to-end delivery from brief to verified result.
 - Choose `parallel-work` when the work contains several bounded lanes with a clear integration path.
 - Choose `ralph-loop` when the work is best handled as repeated bounded fix-verify-reassess cycles.
@@ -60,7 +62,8 @@ Skip this guide only when a narrower `workflow-kit` skill is already clearly the
 - Use `deep-interview` when the blocker is still understanding what the user actually wants, where the scope should stop, or how to evaluate a direction before committing to a plan or implementation.
 - Use clarification skills when intent, scope, tradeoff, or approval boundaries are still the blocker.
 - Use planning when execution should remain deferred.
-- Use `turn-gate` when the main bottleneck is not a single phase, but managing the turn-level loop across several phases without prematurely ending the interaction.
+- Use `turn-gate` when the main bottleneck is not a single phase, but keeping the whole turn open through analysis, plan, work, result report, and user-response-based next-flow continuation.
+- If the repository requires every result report to reopen the next flow, keep `turn-gate` active even when another workflow owns the current phase detail.
 - Use execution workflows when meaningful implementation or refinement still remains.
 - Use `commit-readiness-gate` only when the main question is readiness.
 - Prefer one clear starting skill plus an explicit handoff.
@@ -84,7 +87,7 @@ Estimate verification style as:
 Choose execution mode with these rules:
 
 - Hand off to `deep-interview` when execution mode selection is premature because the implementation brief is still materially misaligned or underspecified.
-- Hand off to `turn-gate` when the work must keep reopening the next flow explicitly after each phase because local operating policy or task shape requires an ongoing gated loop.
+- Hand off to `turn-gate` when the work must keep reopening the next flow through explicit user choices after each phase because local operating policy or task shape requires an ongoing gated turn.
 - Choose `autopilot` for broad end-to-end delivery that spans requirements, implementation, testing, and validation.
 - Choose `parallel-work` when the work contains several clearly independent lanes with an explicit integration path.
 - Choose `ralph-loop` when the task is bounded and benefits from repeated fix-verify-reassess cycles.
@@ -113,8 +116,9 @@ Execution heuristics:
 
 Meta-flow heuristic:
 
-- Treat `turn-gate` as a continuity owner layered over phases, not as an execution mode parallel to `autopilot`, `parallel-work`, `ralph-loop`, or `review-loop`.
-- Choose it when the loop between phase result and next explicit flow is itself the bottleneck.
+- Treat `turn-gate` as the turn-level loop gate, not as an execution mode parallel to `autopilot`, `parallel-work`, `ralph-loop`, or `review-loop`.
+- Choose it when keeping the turn open until explicit user stop is itself the governing contract.
+- In repositories with mandatory loop-gate rules, assume `turn-gate` is already active unless the user explicitly ends the work.
 
 ## Escalation Signals
 
@@ -153,3 +157,4 @@ Meta-flow heuristic:
 - Do not choose a bounded loop when the work clearly needs planning across several phases.
 - Do not let review handling turn into open-ended polish by default.
 - Do not keep the initial execution mode if the task shape has obviously changed.
+- Do not treat `turn-gate` as optional when repository-local policy says the turn must stay open until explicit user stop.
