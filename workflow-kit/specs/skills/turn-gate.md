@@ -77,6 +77,7 @@
 - 작업 단계에서는 준비한 계획을 실행한다.
 - 검증 단계에서는 작업 결과를 확인하고 남은 불확실성을 드러낸다.
 - 결과 보고 단계에서는 완료된 작업의 결과를 보고한다.
+- current phase의 downstream workflow 선택에는 최소한 `deep-interview`, `review-loop`, `ralph-loop`, `commit-readiness-gate` 구분 신호가 드러나야 한다.
 - 분석 단계와 계획 단계에서는 필요하면 사용자에게 질문을 열 수 있다.
 - 다음 플로우 진행을 위한 사용자 응답도 같은 턴의 다음 `현재 메시지`로 받아들인다.
 - 각 phase는 가장 좁은 downstream workflow에 위임한다.

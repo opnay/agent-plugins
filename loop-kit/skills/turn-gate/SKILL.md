@@ -57,6 +57,15 @@ Those references absorb the operational loop contracts into this skill while sta
 - Read `references/commit-readiness-gate.md` and use that contract when implementation is largely done and the current question is readiness for commit.
 - If none of those modes is clearly selected yet, narrow the choice before continuing the work phase.
 
+## Mode Selection Matrix
+
+- Choose `deep-interview` when the current blocker is requirement discovery, unclear intent, missing scope boundaries, or unresolved approval lines.
+- Choose `review-loop` when the input is review feedback, QA findings, or self-review findings and the work should stay bounded to one material issue at a time.
+- Choose `ralph-loop` when the work is one bounded improvement cycle and the best next move is a small fix followed by immediate verification.
+- Choose `commit-readiness-gate` when implementation is largely done and the current question is whether the intended change unit is ready to move toward commit.
+- If more than one mode seems plausible, prefer the earliest blocker in this order: `deep-interview` -> `review-loop` -> `ralph-loop` -> `commit-readiness-gate`.
+- If the blocker is still broader than any one internal mode, use `request_user_input` to narrow the mode choice before continuing.
+
 ## Output
 
 - `Analysis`

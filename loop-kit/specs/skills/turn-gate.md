@@ -62,6 +62,15 @@
 - 현재 변경 단위가 거의 끝났고 readiness 판단이 핵심이면 `references/commit-readiness-gate.md`를 따른다.
 - 아직 어떤 internal mode가 맞는지 확정되지 않았다면 질문 도구나 좁은 분석으로 먼저 mode selection을 잠근다.
 
+## mode selection matrix
+
+- blocker가 requirement discovery, intent ambiguity, scope boundary, approval line이라면 `deep-interview`를 고른다.
+- input이 review feedback, QA finding, self-review finding이고 한 번에 하나의 material issue만 처리해야 한다면 `review-loop`를 고른다.
+- blocker가 하나의 bounded improvement cycle이고 작은 fix 뒤 즉시 검증하는 흐름이 맞다면 `ralph-loop`를 고른다.
+- 구현이 거의 끝났고 intended change unit의 commit readiness 판단이 핵심이면 `commit-readiness-gate`를 고른다.
+- 여러 mode가 겹쳐 보이면 `deep-interview -> review-loop -> ralph-loop -> commit-readiness-gate` 순으로 더 이른 병목을 우선한다.
+- 그래도 mode를 못 잠그면 질문 도구로 선택지를 좁힌 뒤 work phase로 들어간다.
+
 ## next-flow reopening 규칙
 
 - 다음 플로우 질문은 현재 결과에 직접 연결된 좁은 선택지여야 한다.

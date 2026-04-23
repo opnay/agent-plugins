@@ -110,6 +110,13 @@ Typical downstream owners:
 - `commit-readiness-gate`
 - a specialist plugin after the workflow phase is clear
 
+Selection signals:
+
+- `deep-interview` when the blocker is real requirement discovery
+- `review-loop` when the input is review findings and only material issues should be fixed
+- `ralph-loop` when one bounded fix-verify-reassess cycle is the best next step
+- `commit-readiness-gate` when implementation is largely done and the current question is readiness for commit
+
 Output:
 
 - `Plan`
