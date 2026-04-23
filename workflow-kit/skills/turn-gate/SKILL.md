@@ -59,9 +59,14 @@ This skill does not own:
 - Treat the user's next-flow response as the next user message inside the same turn.
 - Choose the narrowest downstream workflow that owns the current phase work.
 - Make `analysis`, `plan`, `work`, and `result reporting` visible in the response shape.
+- Use `analysis` to structure the user's message into requested intent and requested action.
+- Use `plan` to prepare the detailed next steps needed to fulfill the analyzed request.
+- Use `work` to execute the prepared plan.
+- Use `result reporting` to report the completed work outcome.
 - Do not let result reporting become a soft stop.
 - Report results as prior explanation for the user's response into the next flow, not as a terminal message.
 - Reopen the next flow through a question tool that gives the user explicit choices.
+- Allow questions during `analysis` and `plan` when clarifying intent, criteria, or scope is necessary.
 - Treat termination judgment as the user's choice, not the assistant's shortcut.
 - Treat "no next flow" as an exception that must be justified by explicit user stop or confirmed closure.
 - Prefer the structured user-input tool for the next-flow step.
@@ -71,20 +76,25 @@ This skill does not own:
 
 ### Phase 0: Analyze
 
-1. State what the user is asking for in direct terms.
-2. Decide what the current phase work actually is.
-3. Choose the downstream workflow that owns that work.
+1. Structure the user's message into requested intent and requested action.
+2. State what is already clear and what still needs clarification.
+3. Decide what the current phase work actually is.
+4. Ask the user a question when clarification is necessary before safe planning.
+5. Choose the downstream workflow that owns that work.
 
 Output:
 
 - `Analysis`
+- `Requested intent`
+- `Requested action`
 - `Chosen downstream owner`
 
 ### Phase 1: Plan
 
-1. State the smallest useful plan for the current phase.
-2. Include fallback or verification steps when they matter.
-3. Keep the plan narrow enough to finish before reopening the next flow.
+1. Prepare the detailed plan needed to fulfill the analyzed request.
+2. Ask the user a question when planning is blocked by missing criteria, scope, or approval.
+3. Include fallback or verification steps when they matter.
+4. Keep the plan narrow enough to finish before reopening the next flow.
 
 Typical downstream owners:
 
@@ -104,7 +114,7 @@ Output:
 
 ### Phase 2: Work
 
-1. Hand off to the selected downstream workflow.
+1. Execute the prepared plan through the selected downstream workflow.
 2. Keep the current work bounded.
 3. Do not replace work with meta commentary.
 
@@ -141,6 +151,8 @@ Output:
 ## Output Contract
 
 - `Analysis`
+- `Requested intent`
+- `Requested action`
 - `Chosen downstream owner`
 - `Plan`
 - `Work`
@@ -169,8 +181,8 @@ Bad ending shape:
 
 Good turn-flow example:
 
-- "`workflow-kit`의 기본 시작점을 확인하는 요청으로 보고, `README.md`와 `plugin-spec.md`를 확인했습니다. 현재 저장소 기준 기본 시작점은 `workflow-kit-guide`입니다. 다음 플로우는 어떤걸 진행하시나요?"
-- "1. `workflow-kit-guide` 역할 점검 2. `turn-gate` 동작 점검 3. `plugin-spec` 라우팅 규칙 확인"
+- "`workflow-kit`의 기본 시작점을 찾아달라는 요청이지만, 시작점을 어떤 기준으로 볼지 먼저 맞춰야 한다고 판단했습니다. 지금은 기준 선택이 먼저 필요합니다. 시작점을 어떤 기준으로 볼까요?"
+- "1. 플러그인 관점 2. `AGENTS.md` 관점 3. 스킬 관점"
 
 ## Guardrails
 
