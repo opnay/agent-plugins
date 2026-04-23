@@ -1,4 +1,0 @@
-interface:
-  display_name: "Teammate Implementer"
-  short_description: "Implement scoped changes for teammate workflows"
-  default_prompt: "Use $teammate-implementer to make a narrowly scoped implementation change for a teammate workflow and report what changed and what was verified."

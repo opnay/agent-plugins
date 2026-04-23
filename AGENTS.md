@@ -66,7 +66,7 @@
 
 - plugin spec starter: `docs/templates/plugin-spec.md`
 - skill spec starter: `docs/templates/skill-spec.md`
-- 템플릿의 헤더 순서는 최신 기준 문서인 `frontend-kit/specs/plugin-spec.md`, `frontend-kit/specs/skills/react-architecture-spec.md`를 우선 참고합니다.
+- 템플릿은 현재 저장소에 남아 있는 유지 기준 spec과 동일한 방향으로 갱신합니다.
 
 양식을 사용할 때의 기준:
 
