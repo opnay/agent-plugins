@@ -50,7 +50,7 @@
 - `analysis`, `plan`, `work`, `verification`, `result reporting`, `user-response reopening`을 응답 shape에 계속 드러낸다.
 - active turn-gated task마다 `.agents/sessions/{YYYYMMDD}/000-plan.md` 상위 계획과 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record 체계를 유지한다.
 - `000-plan.md`는 사용자 요청 종료 이후에도 더 큰 작업이 이어지면 계속 증분 갱신한다.
-- completed flow가 끝날 때마다 해당 `001+` record를 갱신한다.
+- 해당 `001+` record는 completed flow를 기다리지 말고 각 phase가 끝날 때마다 증분 갱신한다.
 - 질문, 선택지 제시, scope lock, next-flow reopening에는 질문 도구 `request_user_input`를 필수로 사용한다.
 - 실질적인 작업이 시작되면 계획 도구 `update_plan`을 필수로 사용하고 현재 active step 상태를 유지한다.
 - `work`에 들어가기 전 current-phase work의 internal mode를 하나 선택한다.
@@ -91,10 +91,11 @@
 - flow 기록 파일은 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 형식을 사용한다.
 - `count-pad3`는 `001`, `002`, `003`처럼 3자리 zero-padded 숫자를 사용한다.
 - slug는 영어 소문자와 `-`만 사용한다.
-- flow 기본 템플릿은 `.agents/sessions/_turn-gate-flow-template.md`를 사용한다.
-- `000-plan.md` 기본 템플릿은 `.agents/sessions/_turn-gate-plan-template.md`를 사용한다.
+- flow 기본 템플릿은 `skills/turn-gate/templates/flow-record-template.md`를 사용한다.
+- `000-plan.md` 기본 템플릿은 `skills/turn-gate/templates/plan-template.md`를 사용한다.
 - 최소 flow 기록 항목은 user request message, task, flow scope, current mode, analysis, plan, work, verification, result report, next-flow options, residual risk다.
 - `000-plan.md`는 장기 증분 계획 artifact로, `001+`는 flow 단위 운영 artifact로 취급한다.
+- flow record는 phase 메모가 아니지만, `analysis`, `plan`, `work`, `verification`, `result reporting` 각 phase가 끝날 때마다 현재 상태로 갱신해야 한다.
 
 ## SSOT 동기화 규칙
 
@@ -108,7 +109,7 @@
 - current-phase work에 맞는 internal mode를 하나로 좁혔는가?
 - 질문 도구 `request_user_input`와 계획 도구 `update_plan`를 필수 단계에서 실제로 사용했는가?
 - cross-flow 작업이라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 최신 상태인가?
-- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`가 현재 flow까지 갱신됐는가?
+- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`가 현재 phase까지 증분 갱신됐는가?
 - `work -> verification -> result reporting` 순서를 실제로 유지했는가?
 - direct loop entrypoint를 사용자 표면으로 다시 열지 않았는가?
 - 결과 보고 뒤 explicit next-flow choice를 실제로 열었는가?

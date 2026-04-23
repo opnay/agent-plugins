@@ -1,0 +1,52 @@
+# Turn-Gate Flow Template
+
+Update this record incrementally after each completed phase. Do not wait until the end of the flow.
+
+## Metadata
+
+- Date: YYYY-MM-DD
+- Record path: .agents/sessions/YYYYMMDD/001-english-lower-slug.md
+- Slug: english-lower-slug
+- User request message: <original user message for this flow>
+- Task: <short task statement>
+- Flow scope: <what this flow owns>
+- Current mode: deep-interview | review-loop | ralph-loop | commit-readiness-gate | undecided
+
+## Analysis
+
+- User request:
+- Current blocker:
+- Why this flow:
+- Why this mode:
+
+## Plan
+
+- Step 1:
+- Step 2:
+- Step 3:
+
+## Work
+
+- Change or action:
+- Files or surfaces touched:
+
+## Verification
+
+- What was checked:
+- Result:
+- Remaining uncertainty:
+
+## Result Report
+
+- Outcome:
+- Commit-ready state:
+
+## Next Flow Options
+
+- Option 1:
+- Option 2:
+- Option 3:
+
+## Residual Risk
+
+- Risk 1:

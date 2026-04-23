@@ -44,7 +44,7 @@ Those references absorb the operational loop contracts into this skill while sta
 - Maintain turn-gate records under `.agents/sessions/{YYYYMMDD}/`.
 - Use `000-plan.md` for the higher-level plan when the task spans several flows.
 - Keep `000-plan.md` incrementally updated even if one user request ends and later follow-up flows continue the same larger task.
-- Update `001+` flow records after each completed flow instead of waiting until the end of the turn.
+- Update `001+` flow records incrementally at each completed phase instead of batching them at the end of the flow.
 - Always use the question tool `request_user_input` when opening user choices, scope locks, or next-flow decisions.
 - Always use the plan tool `update_plan` once meaningful work begins and keep the active step current as the turn progresses.
 - Before `work`, choose one internal loop mode that best owns the current phase.
@@ -76,11 +76,12 @@ Those references absorb the operational loop contracts into this skill while sta
 - Use the filename shape `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` for flow records.
 - Keep `count-pad3` zero-padded like `001`, `002`, `003`.
 - Keep the slug in English lower-case words joined by `-`.
-- Use `.agents/sessions/_turn-gate-flow-template.md` as the default flow-record template.
-- Use `.agents/sessions/_turn-gate-plan-template.md` as the default `000-plan.md` template.
+- Use `templates/flow-record-template.md` as the default flow-record template.
+- Use `templates/plan-template.md` as the default `000-plan.md` template.
 - Record at least: user request message, task, flow scope, current mode, analysis, plan, work, verification, result report, next-flow options, residual risk.
 - Treat `000-plan.md` as a long-lived incremental plan artifact, not a single-turn note.
 - Treat each `001+` file as one flow record, not one phase record.
+- Keep the current flow record current after `analysis`, `plan`, `work`, `verification`, and `result reporting`.
 
 ## Output
 
@@ -101,7 +102,7 @@ Those references absorb the operational loop contracts into this skill while sta
 - Do not ask freeform textual choice questions when `request_user_input` can carry the decision.
 - Do not skip `update_plan` after moving past initial orientation into real work.
 - Do not skip the `000-plan.md` update when the higher-level plan changes across flows.
-- Do not skip the `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` flow-record update for a completed flow.
+- Do not defer `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` updates until the end of the flow; write them at each completed phase boundary.
 - Do not skip explicit verification between work and result reporting.
 - Do not skip the next-flow question after reporting a result.
 - Do not let result reporting collapse into a soft closing.

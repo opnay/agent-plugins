@@ -83,8 +83,11 @@
 - 결과 보고 단계에서는 완료된 작업의 결과를 보고한다.
 - cross-flow task에서는 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 상위 계획 artifact로 유지되어야 한다.
 - `000-plan.md`는 사용자 요청 종료 이후에도 더 큰 작업이 이어지면 계속 증분되어야 한다.
-- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record는 completed flow마다 갱신되어야 한다.
+- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record는 completed flow를 기다리지 말고 각 phase가 끝날 때마다 증분 갱신되어야 한다.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record의 최소 항목에는 user request message가 포함되어야 한다.
+- default flow-record template는 `skills/turn-gate/templates/flow-record-template.md`여야 한다.
+- default `000-plan.md` template는 `skills/turn-gate/templates/plan-template.md`여야 한다.
+- flow record는 phase 메모가 아니지만 각 phase 종료 시점의 현재 상태를 증분 반영해야 한다.
 - current phase의 downstream workflow 선택에는 최소한 `deep-interview`, `review-loop`, `ralph-loop`, `commit-readiness-gate` 구분 신호가 드러나야 한다.
 - 분석 단계와 계획 단계에서는 필요하면 사용자에게 질문을 열 수 있다.
 - 다음 플로우 진행을 위한 사용자 응답도 같은 턴의 다음 `현재 메시지`로 받아들인다.
@@ -98,7 +101,7 @@
 
 - 이번 응답이 `분석 -> 계획 -> 작업 -> 검증 -> 결과 보고`를 visible shape로 유지하고 있는가?
 - cross-flow task라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 최신 상태인가?
-- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record가 현재 flow까지 갱신됐는가?
+- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record가 현재 phase까지 증분 갱신됐는가?
 - 결과 보고 뒤에 explicit choice가 있는 다음 플로우 질문을 실제로 열었는가?
 - clean stop, summary-only closing, generic follow-up phrase로 턴을 닫고 있지 않은가?
 

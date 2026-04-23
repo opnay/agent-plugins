@@ -84,9 +84,10 @@ This skill does not own:
 - Keep `count-pad3` zero-padded like `001`, `002`, `003`.
 - Keep the slug English lower-case and `-` delimited.
 - Record at least: user request message, task, flow scope, current mode, analysis, plan, work, verification, result report, next-flow options, residual risk.
-- Update the flow record after each completed flow.
-- Prefer `.agents/sessions/_turn-gate-flow-template.md` as the default flow-record layout.
-- Prefer `.agents/sessions/_turn-gate-plan-template.md` as the default `000-plan.md` layout.
+- Keep the current flow record current after `analysis`, `plan`, `work`, `verification`, and `result reporting`.
+- Update the flow record incrementally after each completed phase.
+- Prefer `templates/flow-record-template.md` as the default flow-record layout.
+- Prefer `templates/plan-template.md` as the default `000-plan.md` layout.
 
 ## Phase Loop
 
@@ -225,7 +226,7 @@ Good turn-flow example:
 - Do not emit a terminal summary unless the user asks to end the turn.
 - Do not decide on behalf of the user that the turn should terminate.
 - Do not skip the `000-plan.md` update when the higher-level plan changes across flows.
-- Do not skip the flow-record update at `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` for a completed flow.
+- Do not defer the flow-record update at `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` until the end of the flow; write it at each completed phase boundary.
 - Do not skip explicit verification between work and result reporting.
 - Do not skip the user-response step merely because the next phase seems obvious.
 - Do not ask the next-flow question without giving the user explicit choices.
