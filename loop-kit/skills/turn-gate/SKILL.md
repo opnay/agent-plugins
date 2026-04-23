@@ -44,12 +44,14 @@ Those references absorb the operational loop contracts into this skill while sta
 - Maintain turn-gate records under `.agents/sessions/{YYYYMMDD}/`.
 - Use `000-plan.md` for the higher-level plan when the task spans several flows.
 - Keep `000-plan.md` incrementally updated even if one user request ends and later follow-up flows continue the same larger task.
+- Use `analysis` and `plan` to design not only the current flow but also likely next flows or phases when forward design is useful.
+- Treat that forward flow/phase design as provisional and revise it in a later `analysis` or `plan` step only when new evidence, changed intent, or a revealed blocker makes redesign necessary.
 - Update `001+` flow records incrementally at each completed phase instead of batching them at the end of the flow.
 - Always use the question tool `request_user_input` when opening user choices, scope locks, or next-flow decisions.
 - Always use the plan tool `update_plan` once meaningful work begins and keep the active step current as the turn progresses.
 - Before `work`, choose one internal loop mode that best owns the current phase.
 - Use `request_user_input` whenever mode selection, criteria, or scope is still unclear.
-- After `work`, run an explicit verification step before result reporting.
+- After `work`, run an explicit verification step before result reporting, and use that verification to surface whether later flow/phase redesign is needed.
 - Reopen the next flow with explicit choices after each result unless the user asks to end the turn.
 - Do not expose direct loop entrypoints from this plugin surface.
 

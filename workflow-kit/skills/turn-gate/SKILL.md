@@ -63,10 +63,10 @@ This skill does not own:
 - Maintain running turn-gate records under `.agents/sessions/{YYYYMMDD}/`.
 - Use `000-plan.md` for the higher-level multi-flow plan and `001+` files for per-flow records.
 - Keep `000-plan.md` incrementally updated beyond one user request when the larger task continues.
-- Use `analysis` to structure the user's message into requested intent and requested action.
-- Use `plan` to prepare the detailed next steps needed to fulfill the analyzed request.
+- Use `analysis` to structure the user's message into requested intent and requested action, and to decide whether future flows or phases need forward design or redesign.
+- Use `plan` to prepare the detailed next steps needed to fulfill the analyzed request and, when useful, a provisional design for later flows or phases.
 - Use `work` to execute the prepared plan.
-- Use `verification` to confirm the work outcome before result reporting.
+- Use `verification` to confirm the work outcome before result reporting and to surface whether later flow/phase redesign is needed.
 - Use `result reporting` to report the completed work outcome.
 - Do not let result reporting become a soft stop.
 - Report results as prior explanation for the user's response into the next flow, not as a terminal message.
@@ -74,6 +74,7 @@ This skill does not own:
 - Allow questions during `analysis` and `plan` when clarifying intent, criteria, or scope is necessary.
 - Treat termination judgment as the user's choice, not the assistant's shortcut.
 - Treat "no next flow" as an exception that must be justified by the user asking to end the turn or by confirmed closure.
+- When later loops return to `analysis` or `plan`, revise future flow/phase design only when new evidence, changed intent, or a revealed blocker makes redesign necessary.
 - Prefer the structured user-input tool for the next-flow step.
 - Keep the loop moving; do not reopen broad framing once the next phase is already clear.
 
