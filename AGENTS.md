@@ -30,6 +30,7 @@
 - `./<plugin-name>/.codex-plugin/plugin.json`
 - `./<plugin-name>/README.md`
 - `./<plugin-name>/specs/plugin-spec.md`
+- 선택 사항: `./<plugin-name>/specs/skills/`
 - 선택 사항: `./<plugin-name>/skills/`
 - 선택 사항: `./<plugin-name>/assets/`
 - 선택 사항: `./<plugin-name>/scripts/`
@@ -48,12 +49,33 @@
   - 플러그인 경계와 비목표
   - 어떤 작업 형태를 처리하려는지
   - 엔트리포인트 또는 대표 표면
-  - 포함된 skill 목록과 각 skill의 목적
+  - 내장 skill 체계와 각 skill의 역할 요약
   - 새 skill을 추가하거나 기존 skill 책임을 바꿀 때 유지해야 할 확장 원칙
+- 플러그인 스펙은 기본적으로 플러그인 경계, 라우팅 표면, 내장 skill 체계를 소유하고, 개별 skill의 상세 처리 계약은 가능한 한 분리해서 다룹니다.
+- 개별 skill의 입력 형태, 판단 기준, 출력 계약, 가드레일처럼 skill 자체의 처리 계약이 중요해지면 `specs/skills/<skill-name>-spec.md`로 분리하는 방식을 우선 검토합니다.
+- 플러그인 스펙에서 각 skill을 언급할 때는 목적과 관계를 요약하고, 상세 기준은 대응되는 skill spec 위치로 연결하는 방식을 기본으로 합니다.
 - 플러그인 작업은 spec이 먼저 있고, skill/manifest 변경은 그 spec과 일치해야 합니다.
-- 플러그인 표면이 바뀌면 `README.md`, `specs/plugin-spec.md`, 관련 guide skill, `plugin.json`을 같은 변경 단위에서 함께 점검합니다.
+- 플러그인 표면이 바뀌면 `README.md`, `specs/plugin-spec.md`, 관련 skill spec, 관련 guide skill, `plugin.json`을 같은 변경 단위에서 함께 점검합니다.
 - spec 없는 skill 추가를 기본 경로로 두지 않습니다.
 - spec은 구현 세부보다 의도, 경계, 라우팅, 책임 배치를 먼저 고정해야 합니다.
+- 파일 종류나 구현 관성을 적더라도, spec의 핵심 판단 기준은 change pressure, ownership, routing 이유를 먼저 설명하는 쪽을 우선합니다.
+
+## 권장 스펙 양식
+
+새 플러그인이나 skill spec을 시작할 때는 아래 템플릿을 기본 시작점으로 사용합니다.
+
+- plugin spec starter: `docs/templates/plugin-spec.md`
+- skill spec starter: `docs/templates/skill-spec.md`
+- 템플릿의 헤더 순서는 최신 기준 문서인 `frontend-kit/specs/plugin-spec.md`, `frontend-kit/specs/skills/react-architecture-spec.md`를 우선 참고합니다.
+
+양식을 사용할 때의 기준:
+
+- plugin spec에는 bundle 목적, 경계, 라우팅 표면, skill composition만 남기고 세부 처리 계약은 가능한 한 skill spec으로 내립니다.
+- skill spec의 `사용자 스펙 의도`에는 사용자가 기대한 판단, 규칙, 예시를 정규 스펙 본문으로 옮기기 전의 입력 관점으로 적습니다.
+- skill spec에는 해당 skill이 실제로 무엇을 판단하고 어떤 계약으로 동작하는지 적습니다.
+- skill spec이 실제 판단을 수행하는 종류라면 `핵심 처리 계약` 뒤에 실제 문서에서 쓰는 규칙 섹션 이름을 그대로 두고, 필요할 때만 섹션 수를 줄이거나 늘립니다.
+- guide skill은 라우팅을, narrow skill은 자기 처리 계약을 소유하게 써서 서로의 책임이 섞이지 않게 유지합니다.
+- 반복되는 검토 질문, 예시, decision rule이 생기면 skill spec 안에서 소유할지 별도 reference 문서로 뺄지 의도적으로 결정합니다.
 
 ## 마켓플레이스 단일 진실 공급원
 
@@ -67,7 +89,7 @@
 
 1. 플러그인 폴더를 저장소 루트에 생성하거나 이동합니다.
 2. `.codex-plugin/plugin.json`이 존재하고 유효한 JSON인지 확인합니다.
-3. `README.md`와 `specs/plugin-spec.md`를 만들거나 현재 표면에 맞게 갱신합니다.
+3. `README.md`, `specs/plugin-spec.md`, 필요 시 `specs/skills/*.md`를 만들거나 현재 표면에 맞게 갱신합니다.
 4. `./.agents/plugins/marketplace.json`에 대응 항목을 추가하거나 갱신합니다.
 5. 모든 마켓플레이스 항목에 `policy.installation`, `policy.authentication`, `category`가 포함되도록 유지합니다.
 6. 변경한 JSON 파일은 수정 후 검증합니다.
@@ -106,7 +128,7 @@
 
 - 플러그인에 속한 skill을 수정할 때는 해당 skill만 고립해서 보지 않습니다.
 - 먼저 그 skill이 플러그인 안에서 맡는 역할과 sibling skill, `<plugin>-guide`와의 관계를 확인합니다.
-- skill의 책임, 의미, 라우팅 기준이 바뀌면 관련 guide skill과 인접 skill의 문구도 같은 변경 단위에서 함께 점검하고 필요하면 갱신합니다.
+- skill의 책임, 의미, 라우팅 기준이 바뀌면 관련 skill spec, guide skill, 인접 skill의 문구도 같은 변경 단위에서 함께 점검하고 필요하면 갱신합니다.
 - plugin-scoped skill 변경은 개별 skill 수정이면서 동시에 plugin surface 수정일 수 있음을 전제로 작업합니다.
 - 플러그인 관점의 영향이 있는데도 이를 skill 단독 수정으로 축소하지 않습니다.
 
