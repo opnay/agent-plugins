@@ -12,32 +12,29 @@
 제품화 저장소가 아닙니다.
 이 파일은 저장소 레이아웃과 하네스 품질 기준을 함께 다루는 운영 가이드로 취급합니다.
 
-## `AGENTS.global.md`의 역할
-
-- `AGENTS.global.md`는 이 레포지토리의 플러그인을 사용하려고 등록한 사용자의 전역 `AGENTS.md`에 연결될 문서입니다.
-- `AGENTS.global.md`는 이 저장소의 플러그인을 현재 세션에서 어떻게 사용해야 하는지 정하는 전역 운영 가이드입니다.
-- `AGENTS.global.md`에는 문서 자기소개 성격의 문구를 넣지 않습니다.
-
 ## 저장소 레이아웃
 
-- 각 로컬 플러그인은 저장소 루트 바로 아래에 둡니다.
+- 공개 설치용 release 플러그인은 저장소 루트 바로 아래에 둡니다.
+- 개발 원본 플러그인은 `./src/<plugin-name>-dev` 아래에 둡니다.
+- specs는 개발 원본인 `./src/<plugin-name>-dev/specs/` 안에서만 관리합니다.
 - 나중에 저장소 구조를 의도적으로 바꾸지 않는 한, 이 저장소에서 `./plugins/<plugin-name>` 경로를 만들거나 사용하지 않습니다.
 
 ## 필수 플러그인 구조
 
-각 플러그인은 다음을 포함해야 합니다.
+각 개발 원본 플러그인은 다음을 포함해야 합니다.
 
-- `./<plugin-name>/.codex-plugin/plugin.json`
-- `./<plugin-name>/README.md`
-- `./<plugin-name>/specs/plugin.md`
-- 선택 사항: `./<plugin-name>/specs/skills/`
-- 선택 사항: `./<plugin-name>/skills/`
-- 선택 사항: `./<plugin-name>/assets/`
-- 선택 사항: `./<plugin-name>/scripts/`
-- 선택 사항: `./<plugin-name>/.mcp.json`
-- 선택 사항: `./<plugin-name>/.app.json`
+- `./src/<plugin-name>-dev/.codex-plugin/plugin.json`
+- `./src/<plugin-name>-dev/README.md`
+- `./src/<plugin-name>-dev/specs/plugin.md`
+- 선택 사항: `./src/<plugin-name>-dev/specs/skills/`
+- 선택 사항: `./src/<plugin-name>-dev/skills/`
+- 선택 사항: `./src/<plugin-name>-dev/assets/`
+- 선택 사항: `./src/<plugin-name>-dev/scripts/`
+- 선택 사항: `./src/<plugin-name>-dev/.mcp.json`
+- 선택 사항: `./src/<plugin-name>-dev/.app.json`
 
 플러그인 폴더 이름과 `plugin.json`의 `"name"` 값은 반드시 일치해야 합니다.
+공개 release 플러그인은 `<plugin-name>`을 사용하고, 개발 원본 플러그인은 `<plugin-name>-dev`를 사용합니다.
 
 ## Spec-Driven Plugin Development
 
@@ -81,19 +78,20 @@
 ## 마켓플레이스 단일 진실 공급원
 
 - 마켓플레이스 파일: `./.agents/plugins/marketplace.json`
-- 이 저장소에 추가하는 모든 플러그인은 해당 파일에 대응되는 항목이 있어야 합니다.
+- 이 저장소에 추가하는 모든 공개 release 플러그인은 해당 파일에 대응되는 항목이 있어야 합니다.
 - 이 저장소에서는 마켓플레이스의 `source.path`가 항상 저장소 루트의 플러그인 폴더를 가리켜야 합니다.
 - 개별 플러그인 경로와 등록 순서는 `./.agents/plugins/marketplace.json`의 `plugins` 배열을 기준으로 확인합니다.
 - 이 마켓플레이스에서 저장소 로컬 플러그인을 `./plugins/<plugin-name>`로 등록하지 않습니다.
 
 ## 플러그인 변경 워크플로
 
-1. 플러그인 폴더를 저장소 루트에 생성하거나 이동합니다.
-2. `.codex-plugin/plugin.json`이 존재하고 유효한 JSON인지 확인합니다.
-3. `README.md`, `specs/plugin.md`, 필요 시 `specs/skills/*.md`를 만들거나 현재 표면에 맞게 갱신합니다.
-4. `./.agents/plugins/marketplace.json`에 대응 항목을 추가하거나 갱신합니다.
-5. 모든 마켓플레이스 항목에 `policy.installation`, `policy.authentication`, `category`가 포함되도록 유지합니다.
-6. 변경한 JSON 파일은 수정 후 검증합니다.
+1. 개발 원본 플러그인은 `./src/<plugin-name>-dev`에 생성하거나 이동합니다.
+2. 공개 release 플러그인은 저장소 루트 `./<plugin-name>`에 생성하거나 갱신합니다.
+3. `.codex-plugin/plugin.json`이 존재하고 유효한 JSON인지 확인합니다.
+4. specs는 `./src/<plugin-name>-dev/specs/`에서 만들거나 현재 표면에 맞게 갱신합니다.
+5. `./.agents/plugins/marketplace.json`에 공개 release 항목을 추가하거나 갱신합니다.
+6. 모든 마켓플레이스 항목에 `policy.installation`, `policy.authentication`, `category`가 포함되도록 유지합니다.
+7. 변경한 JSON 파일은 수정 후 검증합니다.
 
 ## 플러그인 의도 관련 메모
 

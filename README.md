@@ -1,7 +1,8 @@
 # OPNay Agent Plugins
 
 OPNay가 직접 관리하는 Codex 플러그인 마켓플레이스 저장소입니다.
-플러그인들은 저장소 루트 바로 아래에 배치되며, `.agents/plugins/marketplace.json`이 설치 가능한 플러그인 목록의 단일 진실 공급원입니다.
+공개 설치용 release surface는 저장소 루트 바로 아래에 배치되며, 개발 원본은 `src/` 아래에서 관리합니다.
+`.agents/plugins/marketplace.json`은 공개 설치 가능한 release 플러그인 목록의 단일 진실 공급원입니다.
 
 ## 준비
 
@@ -13,7 +14,7 @@ codex features enable default_mode_request_user_input
 
 ## 마켓플레이스 등록
 
-이 저장소를 Codex 플러그인 마켓플레이스 source로 추가합니다.
+공개 설치용 마켓플레이스는 GitHub source를 사용합니다.
 
 ```sh
 codex plugin marketplace add opnay/agent-plugins
@@ -28,6 +29,15 @@ codex plugin marketplace upgrade
 ```
 
 현재 마켓플레이스 표시명은 `OPNay Plugins`이고, 내부 id는 `opnay-plugins`입니다.
+
+## 로컬 개발 마켓플레이스
+
+공개 설치용 플러그인과 로컬 개발용 플러그인을 동시에 쓰려면 plugin name 충돌을 피해야 합니다.
+로컬 개발용 플러그인은 `src/` 아래에서 관리하고, plugin name에 `-dev` suffix를 붙입니다.
+
+예를 들어 공개 플러그인은 `$rpg-kit:subagent-role`, 개발 플러그인은 `$rpg-kit-dev:subagent-role`로 분리됩니다.
+
+자세한 릴리즈/개발 분리 규칙은 `docs/release-pattern.md`를 봅니다.
 
 ## 플러그인
 
@@ -74,13 +84,14 @@ skill 작성, plugin 작성, empirical prompt tuning, session 관리, commit wor
 ├── advance-codex/
 ├── loop-kit/
 ├── rpg-kit/
+├── src/
 └── workflow-kit/
 ```
 
-각 플러그인은 최소한 다음 구조를 유지합니다.
+개발 원본 플러그인은 `src/` 아래에서 최소한 다음 구조를 유지합니다.
 
 ```text
-<plugin-name>/
+src/<plugin-name>-dev/
   .codex-plugin/plugin.json
   README.md
   specs/plugin.md
@@ -91,7 +102,10 @@ skill 작성, plugin 작성, empirical prompt tuning, session 관리, commit wor
 ## 개발 원칙
 
 - 플러그인은 루트 바로 아래에 둡니다. `./plugins/<plugin-name>` 경로는 사용하지 않습니다.
+- 개발 원본은 `src/<plugin-name>-dev`에 둡니다.
+- specs는 `src/` 안에서만 관리합니다.
 - 플러그인 변경은 spec-driven으로 다룹니다.
-- plugin surface가 바뀌면 `README.md`, `specs/plugin.md`, 관련 skill spec, 관련 guide skill, `plugin.json`, marketplace entry를 함께 점검합니다.
+- plugin surface가 바뀌면 `src/<plugin-name>-dev/README.md`, `src/<plugin-name>-dev/specs/plugin.md`, 관련 skill spec, 관련 guide skill, `plugin.json`, marketplace entry를 함께 점검합니다.
+- 플러그인별 release version은 각 `.codex-plugin/plugin.json`의 `version`이 소유합니다.
 - 새 skill을 추가할 때는 먼저 plugin boundary와 sibling skill 관계를 확인합니다.
 - 하네스나 평가 설계는 결정론적인 fixture, 고정 시나리오, 명시적인 pass/fail 기준을 우선합니다.
