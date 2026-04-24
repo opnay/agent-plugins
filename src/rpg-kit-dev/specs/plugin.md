@@ -48,6 +48,7 @@
 - 먼저 plugin boundary를 정의하고, 그 다음 role-oriented skill 책임을 정의한다.
 - subagent spawn은 runtime/tool policy와 user intent를 넘어서지 않는다.
 - role packet은 role specialty, task ownership, write scope, expected output, integration rule, stop condition을 분리해서 적는다.
+- 기본 역할별 관심 축과 packet default는 `skills/subagent-role/roles/`에서 template reference로 관리하고, 고정 persona로 취급하지 않는다.
 - subagent 결과는 caller가 검증하고 통합해야 하는 evidence로 취급한다.
 - 새 role pattern이 반복되면 `subagent-role` spec 또는 reference로 승격할지 검토한다.
 

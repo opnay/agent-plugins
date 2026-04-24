@@ -47,6 +47,8 @@
 
 - role fit을 먼저 판단하고, subagent가 필요하지 않으면 caller가 직접 처리하도록 권한다.
 - role은 loose persona가 아니라 role specialty 조합으로 정의한다.
+- 반복적으로 쓰이는 기본 역할 관점은 `skills/subagent-role/roles/`의 role template reference에서 고른다.
+- roles reference는 고정 persona catalog가 아니라 role packet을 만들 때 참고하는 관심 축과 packet default 모음이다.
 - spawn이 적절하면 role packet을 먼저 작성한다.
 - role packet에는 role name, role specialty, objective, context, ownership, non-goals, expected output, verification signal, integration rule, stop condition을 포함한다.
 - coding work를 맡길 때는 write scope를 분리하고, 다른 작업자가 있을 수 있음을 명시한다.
@@ -63,6 +65,7 @@
   - `decision_style`: product sense, technical critique, verification처럼 답변에서 우선할 판단 방식
 - 좋은 role specialty는 서로 다른 축을 조합해 관점을 선명하게 만든다.
 - 같은 축을 반복하는 표현은 피한다.
+- 공통 역할이 task에 맞으면 `skills/subagent-role/roles/`의 template을 참고해 관심 축과 packet default를 선택하되, 실제 task에 영향을 주는 항목만 사용한다.
 - 예시:
   - `PM 역할의 게임 시나리오 담당자`: `functional_role=PM`, `responsibility_domain=game scenario`
   - `엔지니어 역할의 프론트엔드 개발자`: `functional_role=engineer`, `responsibility_domain=frontend implementation`
@@ -93,6 +96,13 @@
 - `QA 역할의 회귀 테스트 설계자`
   - 사용 시점: 변경 후 어떤 사용자 경로와 edge case를 검증해야 하는지 정해야 할 때
   - 기대 출력: test matrix, high-risk flows, regression cases, pass/fail signal
+
+## Role Attention Axes Reference
+
+- 위치: `skills/subagent-role/roles/`
+- 목적: PM, PO, frontend engineer, UX reviewer, QA/regression designer, researcher/explorer 같은 기본 역할이 기본적으로 봐야 할 관심 축과 packet default를 제공한다.
+- 사용 방식: role packet을 작성할 때 필요한 축만 선택하고, task-specific objective, ownership, expected output으로 좁힌다.
+- 비목표: persona를 고정하거나, 모든 역할에 모든 축을 강제하거나, caller의 검증 책임을 대체하지 않는다.
 
 ## Spawn Boundary
 
@@ -131,3 +141,4 @@
 
 - 새 role pattern은 반복적으로 유용성이 확인될 때만 spec 또는 reference로 승격한다.
 - role 종류를 늘릴 때도 핵심 계약은 specialty, packet, boundary, answer, learning 다섯 축으로 유지한다.
+- 기본 역할별 관심 축이 반복되면 `roles/` template에 먼저 추가하고, 실제 spawn pattern으로 검증된 뒤 skill 본문이나 spec catalog로 승격한다.
