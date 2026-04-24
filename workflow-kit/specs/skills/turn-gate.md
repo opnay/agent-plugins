@@ -5,17 +5,18 @@
 - `turn-gate`는 연속성을 가지는 루프 게이트이면서, `종료`라는 판단을 사용자에게 넘기는 루프 게이트입니다.
 - 이 의도는 결과 보고를 종결로 닫지 않고, 다음 플로우 선택권을 계속 열어두는 방향으로 해석되어야 합니다.
 - 다음 플로우 선택지는 현재 결과 보고와 직접 연결된 좁은 옵션이어야 하며, 불필요하게 넓은 재프레이밍으로 흐르지 않아야 합니다.
-- 기본 턴 흐름은 `사용자 메시지 -> 분석 -> 계획 -> 작업 -> 검증 -> 결과 보고 / commit-ready -> 다음 플로우 진행을 위한 사용자 응답`으로 이어집니다.
+- 기본 턴 흐름은 `사용자 메시지 -> 분석 -> 계획 -> 작업 -> 검증 -> 결과 보고 / commit-ready -> 다음 플로우 진행을 위한 question-routing 응답`으로 이어집니다.
 - 분석 단계에서는 사용자 메시지를 구조 분해하여, 사용자의 요청 의도와 요청 행동을 정리해야 합니다.
 - 계획 단계에서는 분석 단계에서 정리한 요청을 작업하기 위한 상세 계획을 준비해야 합니다.
 - 작업 단계에서는 준비한 계획을 실행해야 합니다.
 - 검증 단계에서는 작업 결과를 확인하고 남은 불확실성을 드러내야 합니다.
 - 결과 보고 단계에서는 완료된 작업에 대한 결과를 보고해야 합니다.
 - `turn-gate`는 각 단계가 드러나도록 유지하고, 결과 보고 뒤에는 사용자가 다음 플로우를 고를 수 있게 응답 표면을 열어야 합니다.
-- 결과 보고는 종결 멘트가 아니라 다음 플로우 진입을 위한 사용자 응답에 대한 사전 설명 형태로 보고합니다.
-- 사용자에게 질문하는 방식은 사용자에게 선택권을 주는 질문 도구를 강제해야 합니다.
+- 결과 보고는 종결 멘트가 아니라 다음 플로우 진입을 위한 question-routing 응답에 대한 사전 설명 형태로 보고합니다.
+- 기본 `user-gated` mode에서 사용자에게 질문하는 방식은 사용자에게 선택권을 주는 질문 도구를 강제해야 합니다.
+- `self-drive` mode에서는 사용자에게 질문하는 단계가 subagent에게 질문하는 단계로 바뀌어야 합니다.
 - 분석 단계와 계획 단계에서는 사용자에게 질문하는 과정이 필요할 수 있습니다.
-- `다음 플로우 진행을 위한 사용자 응답` 자체는 다시 `사용자 메시지`로 취급되어야 하며, 같은 턴 안에서 다음 루프의 입력으로 즉시 이어져야 합니다.
+- `다음 플로우 진행을 위한 question-routing 응답` 자체는 다시 현재 메시지로 취급되어야 하며, 같은 턴 안에서 다음 루프의 입력으로 즉시 이어져야 합니다.
 - 따라서 사용자가 턴을 종료하자고 요청하지 않는 한, `turn-gate`는 한 플로우가 끝날 때마다 다음 플로우로 반복 진입하는 구조를 유지해야 합니다.
 - `turn-gate`로 진행한 작업은 `.agents/sessions` 아래에 기록이 남아야 합니다.
 - 여러 플로우를 거치는 작업의 상위 계획은 `.agents/sessions/{YYYYMMDD}/000-plan.md` 경로에 증분되어야 합니다.
@@ -49,15 +50,16 @@
 
 ## 목적
 
-`turn-gate`는 하나의 사용자 턴 안에서 `분석 -> 계획 -> 작업 -> 검증 -> 결과 보고 / commit-ready -> 다음 플로우 진행을 위한 사용자 응답`을 명시적으로 이어가고, 사용자가 턴을 종료하자고 요청할때까지 턴을 종료하지 않도록 유지하는 loop gate 스킬입니다.
+`turn-gate`는 하나의 사용자 턴 안에서 `분석 -> 계획 -> 작업 -> 검증 -> 결과 보고 / commit-ready -> 다음 플로우 진행을 위한 question-routing 응답`을 명시적으로 이어가고, 사용자가 턴을 종료하자고 요청할때까지 턴을 종료하지 않도록 유지하는 loop gate 스킬입니다.
 
 ## 경계
 
 - 포함:
   - turn-level phase classification
   - current phase의 downstream workflow 선택
-  - 결과 보고 뒤 다음 플로우 진행을 위한 사용자 응답 개방
-  - 선택권을 주는 질문 도구를 통한 loop 유지
+  - 결과 보고 뒤 다음 플로우 진행을 위한 question-routing 응답 개방
+  - 선택권을 주는 active question-routing mode를 통한 loop 유지
+  - user-gated 또는 self-drive question-routing mode 선택
 - 제외:
   - deep-interview 자체
   - planner 자체
@@ -90,16 +92,21 @@
 - cross-flow task에서는 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 상위 계획 artifact로 유지되어야 한다.
 - `000-plan.md`는 사용자 요청 종료 이후에도 더 큰 작업이 이어지면 계속 증분되어야 한다.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record는 completed flow를 기다리지 말고 각 phase가 끝날 때마다 증분 갱신되어야 한다.
-- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record의 최소 항목에는 user request message가 포함되어야 한다.
+- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record의 최소 항목에는 user request message와 question-routing mode가 포함되어야 한다.
 - default flow-record template는 `skills/turn-gate/templates/flow-record-template.md`여야 한다.
 - default `000-plan.md` template는 `skills/turn-gate/templates/plan-template.md`여야 한다.
 - flow record는 phase 메모가 아니지만 각 phase 종료 시점의 현재 상태를 증분 반영해야 한다.
 - current phase의 downstream workflow 선택에는 최소한 `deep-interview`, `autopilot`, `review-loop`, `ralph-loop`, `commit-readiness-gate` 구분 신호가 드러나야 한다.
-- 분석 단계와 계획 단계에서는 필요하면 사용자에게 질문을 열 수 있다.
+- current phase mode와 별도로 question-routing mode를 선택한다.
+- 기본 question-routing mode는 `user-gated`이고, 사용자 선택지, scope lock, next-flow decision은 질문 도구로 묻는다.
+- `self-drive` question-routing mode가 활성화되면 사용자에게 묻던 phase 질문을 subagent에게 물어 그 답을 다음 결정 입력으로 사용한다.
+- `self-drive`는 mode selection, criteria, scope assumption, verification choice, next-flow decision을 subagent 질문으로 처리할 수 있다.
+- runtime, tool, safety policy가 명시적 사용자 승인을 요구하는 경계는 `self-drive`가 대신 동의한 것으로 처리하지 않는다.
+- 분석 단계와 계획 단계에서는 필요하면 active question-routing mode로 질문을 열 수 있다.
 - future flow/phase 설계는 고정값이 아니며, 이후 loop에서 새 증거, changed intent, 새 blocker가 생겼을 때만 다시 설계한다.
-- 다음 플로우 진행을 위한 사용자 응답도 같은 턴의 다음 `현재 메시지`로 받아들인다.
+- 다음 플로우 진행을 위한 `user-gated` 사용자 응답 또는 `self-drive` subagent 답변도 같은 턴의 다음 `현재 메시지`로 받아들인다.
 - 각 phase는 가장 좁은 downstream workflow에 위임한다.
-- 결과 보고 후에는 기본적으로 다음 플로우 진행을 위한 사용자 응답 표면을 연다.
+- 결과 보고 후에는 기본적으로 다음 플로우 진행을 위한 question-routing 응답 표면을 연다.
 - user explicit stop이 없는 한 clean stop을 기본 경로로 두지 않는다.
 - 메타 플로우는 유지하되 phase-specific detail은 sibling skill에 남긴다.
 - summary-only closing과 generic follow-up phrase를 정상 종료 형태로 취급하지 않는다.
@@ -117,6 +124,7 @@
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record가 현재 phase까지 증분 갱신됐는가?
 - 결과 보고 뒤에 explicit choice가 있는 다음 플로우 질문을 실제로 열었는가?
 - clean stop, summary-only closing, generic follow-up phrase로 턴을 닫고 있지 않은가?
+- `self-drive`가 활성화된 경우 사용자 질문 대신 subagent 질문으로 다음 결정 입력을 얻었는가?
 
 ## 독립성 원칙
 
@@ -125,5 +133,5 @@
 
 ## 확장 원칙
 
-- 새로운 rule은 turn continuity와 next-flow user-response gating을 더 명확하게 만들 때만 추가한다.
+- 새로운 rule은 turn continuity와 next-flow question-routing gating을 더 명확하게 만들 때만 추가한다.
 - stage routing이나 default loop-gate rule이 바뀌면 `workflow-kit-guide`와 `plugin.md`를 함께 갱신한다.

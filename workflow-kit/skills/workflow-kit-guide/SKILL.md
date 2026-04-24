@@ -62,7 +62,8 @@ If the repository requires non-terminal turns, keep `turn-gate` active as the lo
 - Use `deep-interview` when the blocker is still understanding what the user actually wants, where the scope should stop, or how to evaluate a direction before committing to a plan or implementation.
 - Use clarification skills when intent, scope, tradeoff, or approval boundaries are still the blocker.
 - Use planning when execution should remain deferred.
-- Use `turn-gate` when the main bottleneck is not a single phase, but keeping the whole turn open through analysis, plan, work, result report, and user-response-based next-flow continuation.
+- Use `turn-gate` when the main bottleneck is not a single phase, but keeping the whole turn open through analysis, plan, work, result report, and question-routing-based next-flow continuation.
+- Use `turn-gate` with `self-drive` when the user wants blocked questions answered by subagents instead of by the user so the turn can keep moving automatically.
 - If the repository requires every result report to reopen the next flow, keep `turn-gate` active even when another workflow owns the current phase detail.
 - When this guide activates `turn-gate`, treat that activation as a session-level first-class loop gate rule.
 - When `turn-gate` is active, treat the user's next-flow response as the next user message inside the same turn rather than as a brand-new independent turn.
@@ -120,6 +121,7 @@ Meta-flow heuristic:
 
 - Treat `turn-gate` as the turn-level loop gate, not as an execution mode parallel to `autopilot`, `parallel-work`, `ralph-loop`, or `review-loop`.
 - Choose it when keeping the turn open until the user asks to end the turn is itself the governing contract.
+- Choose `self-drive` as the question-routing mode when the governing contract is autonomous continuation without user intervention.
 - Once chosen, keep `turn-gate` as a first-class rule for the rest of the current session unless the user ends the turn.
 - In repositories with mandatory loop-gate rules, assume `turn-gate` is already active unless the user asks to end the turn.
 

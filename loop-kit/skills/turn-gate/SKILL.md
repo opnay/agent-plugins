@@ -22,6 +22,7 @@ Keep the turn shape explicit:
 
 In this plugin, users do not call `ralph-loop`, `review-loop`, or readiness loops directly.
 Instead, this skill selects the right internal loop mode for the current phase.
+It also selects the question-routing mode for how blocked decisions are answered.
 Read the needed local reference under `references/` before running a mode.
 Those references absorb the operational loop contracts into this skill while staying aligned with `workflow-kit` as upstream SSOT.
 
@@ -49,12 +50,15 @@ Those references absorb the operational loop contracts into this skill while sta
 - Use `analysis` and `plan` to design not only the current flow but also likely next flows or phases when forward design is useful.
 - Treat that forward flow/phase design as provisional and revise it in a later `analysis` or `plan` step only when new evidence, changed intent, or a revealed blocker makes redesign necessary.
 - Update `001+` flow records incrementally at each completed phase instead of batching them at the end of the flow.
-- Always use the question tool `request_user_input` when opening user choices, scope locks, or next-flow decisions.
+- Use the question-routing axis when opening choices, scope locks, or next-flow decisions.
+- In the default user-gated mode, use `request_user_input` for those questions.
+- In `self-drive` mode, ask subagents instead of the user and continue from their answer.
 - Always use the plan tool `update_plan` once meaningful work begins and keep the active step current as the turn progresses.
 - Before `work`, choose one internal loop mode that best owns the current phase.
-- Use `request_user_input` whenever mode selection, criteria, or scope is still unclear.
+- Also choose one question-routing mode: default `user-gated` or `self-drive`.
+- Use the active question-routing mode whenever mode selection, criteria, scope, or next-flow choice is still unclear.
 - After `work`, run an explicit verification step before result reporting, and use that verification to surface whether later flow/phase redesign is needed.
-- Reopen the next flow with explicit choices after each result unless the user asks to end the turn.
+- Reopen the next flow with explicit choices after each result unless the user asks to end the turn; in `self-drive`, route that choice to a subagent and continue automatically.
 - Do not expose direct loop entrypoints from this plugin surface.
 
 ## Internal Loop Modes
@@ -74,7 +78,15 @@ Those references absorb the operational loop contracts into this skill while sta
 - Choose `autopilot` when the work is broad end-to-end delivery that spans scope assumptions, implementation, QA, validation, and delivery.
 - Choose `commit-readiness-gate` when implementation is largely done and the current question is whether the intended change unit is ready to move toward commit.
 - If more than one mode seems plausible, prefer the earliest blocker in this order: `deep-interview` -> `review-loop` -> `ralph-loop` -> `autopilot` -> `commit-readiness-gate`.
-- If the blocker is still broader than any one internal mode, use `request_user_input` to narrow the mode choice before continuing.
+- If the blocker is still broader than any one internal mode, use the active question-routing mode to narrow the mode choice before continuing.
+
+## Question Routing Axis
+
+- Use `user-gated` by default: ask the user through `request_user_input` for choices, scope locks, and next-flow decisions.
+- Use `self-drive` when the user wants the loop to continue without user intervention.
+- In `self-drive`, read `references/self-drive.md`, ask subagents the questions that would otherwise go to the user, record their answers and assumptions, then continue the loop from that answer.
+- `self-drive` may answer mode selection, criteria, scope assumptions, verification choices, and next-flow decisions through subagents.
+- `self-drive` does not override platform, tool, or safety policies that require explicit user approval.
 
 ## Session Record
 
@@ -84,7 +96,7 @@ Those references absorb the operational loop contracts into this skill while sta
 - Keep the slug in English lower-case words joined by `-`.
 - Use `templates/flow-record-template.md` as the default flow-record template.
 - Use `templates/plan-template.md` as the default `000-plan.md` template.
-- Record at least: user request message, task, flow scope, current mode, analysis, plan, work, verification, result report, next-flow options, residual risk.
+- Record at least: user request message, task, flow scope, current mode, question-routing mode, analysis, plan, work, verification, result report, next-flow options, residual risk.
 - Treat `000-plan.md` as a long-lived incremental plan artifact, not a single-turn note.
 - Treat each `001+` file as one flow record, not one phase record.
 - Keep the current flow record current after `analysis`, `plan`, `work`, `verification`, and `result reporting`.
@@ -94,10 +106,11 @@ Those references absorb the operational loop contracts into this skill while sta
 - `Analysis`
 - `Plan`
 - `Chosen internal mode`
+- `Question-routing mode`
 - `Work`
 - `Verification`
 - `Result report`
-- `User-response question`
+- `Question-routing prompt`
 - `Next-flow choices`
 - `Loop state`
 - `Residual risk`
@@ -105,7 +118,9 @@ Those references absorb the operational loop contracts into this skill while sta
 ## Guardrails
 
 - Do not end the turn by default.
-- Do not ask freeform textual choice questions when `request_user_input` can carry the decision.
+- Do not ask freeform textual choice questions when the active question-routing mode can carry the decision.
+- Do not route user questions to subagents unless `self-drive` is active.
+- Do not let `self-drive` simulate user approval where the runtime or tool policy requires explicit approval.
 - Do not skip `update_plan` after moving past initial orientation into real work.
 - Do not skip the `000-plan.md` update when the higher-level plan changes across flows.
 - Do not defer `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` updates until the end of the flow; write them at each completed phase boundary.

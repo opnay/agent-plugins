@@ -10,7 +10,8 @@ Update this record incrementally after each completed phase. Do not wait until t
 - User request message: <original user message for this flow>
 - Task: <short task statement>
 - Flow scope: <what this flow owns>
-- Current mode: deep-interview | review-loop | ralph-loop | commit-readiness-gate | undecided
+- Current mode: deep-interview | autopilot | review-loop | ralph-loop | commit-readiness-gate | undecided
+- Question-routing mode: user-gated | self-drive | undecided
 
 ## Analysis
 
@@ -18,6 +19,7 @@ Update this record incrementally after each completed phase. Do not wait until t
 - Current blocker:
 - Why this flow:
 - Why this mode:
+- Why this question-routing mode:
 
 ## Plan
 

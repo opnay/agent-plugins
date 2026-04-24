@@ -3,6 +3,7 @@
 - 들어온 요청에서 현재 bottleneck이 무엇인지 먼저 분류하고 싶다.
 - 어떤 workflow skill이 시작점이어야 하는지와 handoff 순서를 같이 알고 싶다.
 - `turn-gate`가 execution mode가 아니라 turn-level loop gate인지 함께 판단하고 싶다.
+- 사용자 질문을 subagent 질문으로 바꾸는 `self-drive` question-routing이 필요한지도 함께 판단하고 싶다.
 
 ---
 
@@ -19,6 +20,7 @@
   - starting workflow와 handoff 결정
   - execution mode 선택 기준 제시
   - `turn-gate`가 turn-level loop gate로 유지되어야 하는지 판단
+  - `self-drive` question-routing 필요 여부 판단
 - 제외:
   - 각 workflow의 상세 실행
   - specialist plugin의 세부 판단
@@ -28,6 +30,7 @@
 - 요청을 framing, interview, planning, execution, review, gate, turn-level meta flow 중 어디서 시작해야 하는지 모르는 경우
 - execution mode를 autopilot, parallel-work, ralph-loop, review-loop 중에서 골라야 하는 경우
 - execution mode와 별도로 `turn-gate`가 turn-level loop gate로 유지되어야 하는지 판단해야 하는 경우
+- 사용자 개입 없이 계속 진행해야 해서 질문 대상이 user가 아니라 subagent여야 하는 경우
 
 ## 엔트리포인트 / 대표 표면
 
@@ -41,8 +44,9 @@
 - phase continuity가 핵심 병목이면 `turn-gate`를 명시적으로 활성화하거나 유지한다.
 - repository-local rule이 non-terminal turn을 요구하면 `turn-gate`를 기본 loop gate로 유지한다.
 - `turn-gate`를 활성화한다는 것은 현재 세션 동안 이를 first-class loop gate rule로 유지한다는 의미로 취급한다.
+- 사용자 질문을 subagent 질문으로 바꿔야 하면 `turn-gate`의 `self-drive` question-routing mode를 선택한다.
 - `turn-gate`는 execution mode가 아니라 turn-level gate contract로 분류한다.
-- `turn-gate`가 활성화된 상태의 사용자 응답은 같은 턴의 다음 메시지로 이어지는 것으로 취급한다.
+- `turn-gate`가 활성화된 상태의 사용자 응답 또는 `self-drive` subagent 답변은 같은 턴의 다음 메시지로 이어지는 것으로 취급한다.
 
 ## 검토 질문
 

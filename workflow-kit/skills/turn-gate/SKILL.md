@@ -1,6 +1,6 @@
 ---
 name: turn-gate
-description: Loop gate for repositories where one turn must continue until the user asks to end the turn. Keep analysis, plan, work, verification, result reporting, and user-response-based next-flow selection explicit inside the same turn.
+description: Loop gate for repositories where one turn must continue until the user asks to end the turn. Keep analysis, plan, work, verification, result reporting, and question-routing-based next-flow selection explicit inside the same turn.
 ---
 
 # Turn Gate
@@ -17,11 +17,12 @@ Its job is to keep the turn loop explicit:
 3. do the work
 4. verify the work
 5. report the result or commit-ready state
-6. open the next flow through a user response with explicit choices
+6. open the next flow through a question-routing response with explicit choices
 7. continue unless the user asks to end the turn
 
 This skill is a loop gate.
 It owns turn continuity and next-flow reopening, not the domain work inside each phase.
+It also owns the question-routing axis: `user-gated` by default, or `self-drive` when questions should go to subagents so the loop can continue without user intervention.
 
 ## Use When
 
@@ -45,7 +46,7 @@ This skill owns:
 - downstream workflow selection for the current phase work
 - explicit analysis / plan / work / verification / result reporting structure
 - next-flow reopening after every phase result unless the user asks to end the turn
-- choice-granting user-response surface for the next flow
+- choice-granting question-routing surface for the next flow
 
 This skill does not own:
 
@@ -59,7 +60,7 @@ This skill does not own:
 
 - Treat invocation of this skill as activation of a session-level first-class loop gate.
 - Treat each incoming message as the start or continuation of one loop-gated turn.
-- Treat the user's next-flow response as the next user message inside the same turn.
+- Treat the user's next-flow response or the `self-drive` subagent answer as the next message inside the same turn.
 - Choose the narrowest downstream workflow that owns the current phase work.
 - Make `analysis`, `plan`, `work`, `verification`, and `result reporting` visible in the response shape.
 - Maintain running turn-gate records under `.agents/sessions/{YYYYMMDD}/`.
@@ -72,12 +73,13 @@ This skill does not own:
 - Use `result reporting` to report the completed work outcome.
 - Do not let result reporting become a soft stop.
 - Report results as prior explanation for the user's response into the next flow, not as a terminal message.
-- Reopen the next flow through a question tool that gives the user explicit choices.
+- Reopen the next flow through the active question-routing mode with explicit choices.
+- In `self-drive`, replace phase questions that would normally go to the user with subagent questions and continue from the subagent answer.
 - Allow questions during `analysis` and `plan` when clarifying intent, criteria, or scope is necessary.
 - Treat termination judgment as the user's choice, not the assistant's shortcut.
 - Treat "no next flow" as an exception that must be justified by the user asking to end the turn or by confirmed closure.
 - When later loops return to `analysis` or `plan`, revise future flow/phase design only when new evidence, changed intent, or a revealed blocker makes redesign necessary.
-- Prefer the structured user-input tool for the next-flow step.
+- Prefer the structured user-input tool for the next-flow step unless `self-drive` is active.
 - Keep the loop moving; do not reopen broad framing once the next phase is already clear.
 
 ## Session Record
@@ -86,7 +88,7 @@ This skill does not own:
 - Use `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` for flow records.
 - Keep `count-pad3` zero-padded like `001`, `002`, `003`.
 - Keep the slug English lower-case and `-` delimited.
-- Record at least: user request message, task, flow scope, current mode, analysis, plan, work, verification, result report, next-flow options, residual risk.
+- Record at least: user request message, task, flow scope, current mode, question-routing mode, analysis, plan, work, verification, result report, next-flow options, residual risk.
 - Keep the current flow record current after `analysis`, `plan`, `work`, `verification`, and `result reporting`.
 - Update the flow record incrementally after each completed phase.
 - Prefer `templates/flow-record-template.md` as the default flow-record layout.
@@ -99,7 +101,7 @@ This skill does not own:
 1. Structure the user's message into requested intent and requested action.
 2. State what is already clear and what still needs clarification.
 3. Decide what the current phase work actually is.
-4. Ask the user a question when clarification is necessary before safe planning.
+4. Ask through the active question-routing mode when clarification is necessary before safe planning.
 5. Choose the downstream workflow that owns that work.
 
 Output:
@@ -112,7 +114,7 @@ Output:
 ### Phase 1: Plan
 
 1. Prepare the detailed plan needed to fulfill the analyzed request.
-2. Ask the user a question when planning is blocked by missing criteria, scope, or approval.
+2. Ask through the active question-routing mode when planning is blocked by missing criteria, scope, or approval.
 3. Include fallback or verification steps when they matter.
 4. Keep the plan narrow enough to finish before reopening the next flow.
 
@@ -135,6 +137,13 @@ Selection signals:
 - `ralph-loop` when one bounded fix-verify-reassess cycle is the best next step
 - `autopilot` when the current phase is broad end-to-end delivery from a brief request through implementation, QA, and validation
 - `commit-readiness-gate` when implementation is largely done and the current question is readiness for commit
+
+Question-routing signals:
+
+- `user-gated` by default, using the user-input question tool for choices, scope locks, and next-flow decisions
+- `self-drive` when the user wants questions answered by subagents so work can continue without user intervention
+- `self-drive` can answer mode selection, criteria, scope assumptions, verification choices, and next-flow decisions through subagents
+- `self-drive` must still stop at explicit user-approval boundaries required by platform, tool, or safety policy
 
 Output:
 
@@ -173,16 +182,17 @@ Output:
 - `Result report`
 - `Commit-ready state` when relevant
 
-### Phase 5: Open The Next Flow Through User Response
+### Phase 5: Open The Next Flow Through Question Routing
 
-1. Ask what next flow the user wants to proceed with.
-2. Use a question tool that grants explicit choices.
+1. Ask what next flow should proceed.
+2. Use the active question-routing mode with explicit choices.
 3. Offer the narrowest next-flow options that fit the current result.
-4. Treat the user's response as the next user message and route it back into Phase 0 instead of ending the turn.
+4. In `user-gated`, treat the user's response as the next user message and route it back into Phase 0 instead of ending the turn.
+5. In `self-drive`, ask a subagent to choose the next flow from the explicit choices, record its answer, and route that answer back into Phase 0 instead of ending the turn.
 
 Output:
 
-- `User-response question`
+- `Question-routing prompt`
 - `Next-flow choices`
 - `Planned next-flow continuation`
 
@@ -192,12 +202,13 @@ Output:
 - `Requested intent`
 - `Requested action`
 - `Chosen downstream owner`
+- `Question-routing mode`
 - `Plan`
 - `Work`
 - `Verification`
 - `Phase result`
 - `Result report`
-- `User-response question`
+- `Question-routing prompt`
 - `Next-flow choices`
 - `Loop state`
 - `Residual risk`
@@ -211,7 +222,7 @@ Preferred turn shape:
 3. describe the work
 4. state the verification briefly
 5. report the result briefly
-6. ask for the user's next-flow response through explicit choices
+6. ask for the next-flow response through the active question-routing mode
 
 Bad ending shape:
 
@@ -232,8 +243,10 @@ Good turn-flow example:
 - Do not skip the `000-plan.md` update when the higher-level plan changes across flows.
 - Do not defer the flow-record update at `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` until the end of the flow; write it at each completed phase boundary.
 - Do not skip explicit verification between work and result reporting.
-- Do not skip the user-response step merely because the next phase seems obvious.
+- Do not skip the next-flow response step merely because the next phase seems obvious.
 - Do not ask the next-flow question without giving the user explicit choices.
+- Do not use `self-drive` unless that question-routing mode is active.
+- Do not let `self-drive` simulate user approval where the runtime or tool policy requires explicit approval.
 - Do not treat the user's next-flow response as a new independent turn when the loop gate is still active.
 - Do not treat temporary blocking states as permission to close the turn.
 - Do not let this skill absorb domain execution, planning, or review detail.

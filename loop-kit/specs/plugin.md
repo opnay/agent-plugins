@@ -10,8 +10,9 @@
 
 - 포함:
   - turn-level loop gate contract
-  - `analysis -> plan -> work -> verification -> result reporting -> next-flow user response` 구조 유지
+  - `analysis -> plan -> work -> verification -> result reporting -> next-flow question-routing response` 구조 유지
   - `turn-gate` 내부의 loop mode 선택
+  - user-gated 또는 self-drive question-routing mode 선택
   - `turn-gate/references/` 아래 local absorbed loop contract 유지
   - discovery, autonomous execution, refinement, review, readiness 성격의 current-phase work를 loop 안에서 처리
 - 제외:
@@ -46,8 +47,9 @@
 
 - `workflow-kit`이 broader workflow map과 canonical loop contract의 SSOT를 계속 소유한다.
 - `loop-kit`은 사용자 표면과 runtime loop orchestration만 소유한다.
-- `turn-gate`는 internal mode를 local `references/`로 흡수해 사용하되, 그 reference는 upstream SSOT와 동기화해 유지한다.
-- `turn-gate`의 필수 운영 도구는 질문 도구 `request_user_input`와 계획 도구 `update_plan`이다.
+- `turn-gate`는 internal mode와 question-routing mode를 local `references/`로 흡수해 사용하되, 그 reference는 upstream SSOT와 동기화해 유지한다.
+- `turn-gate`의 필수 운영 도구는 기본적으로 질문 도구 `request_user_input`와 계획 도구 `update_plan`이다.
+- `self-drive` question-routing mode가 활성화되면 사용자 질문 대신 subagent 질문으로 결정 입력을 얻고, 명시적 승인 경계가 필요한 경우에는 사용자 승인 경계를 유지한다.
 - 새로운 내부 loop mode가 필요하면 먼저 `workflow-kit`의 canonical contract를 정의하거나 갱신한 뒤 `loop-kit`에 반영한다.
 - `loop-kit`에서는 `autopilot`, `ralph-loop`, `review-loop`, `commit-readiness-gate`를 직접 호출 가능한 사용자 엔트리포인트로 늘리지 않는다.
 - `turn-gate`의 phase model이나 internal mode selection rule이 바뀌면 `workflow-kit` upstream spec과 `loop-kit` spec을 같은 변경 단위에서 점검한다.
@@ -57,3 +59,4 @@
 - 이 플러그인은 intentionally narrow한 operational package다.
 - `turn-gate`가 메인 실행 표면이고, `loop-kit-guide`는 진입 분류만 담당한다.
 - 내부 loop mode의 canonical 의미는 `workflow-kit/specs/skills/deep-interview.md`, `workflow-kit/specs/skills/autopilot.md`, `workflow-kit/specs/skills/ralph-loop.md`, `workflow-kit/specs/skills/review-loop.md`, `workflow-kit/specs/skills/commit-readiness-gate.md`를 기준으로 보고, `turn-gate/references/`에는 그 실행용 absorbed contract를 둔다.
+- `self-drive`는 current-phase mode가 아니라 질문 대상 축의 mode로 보고, `turn-gate/references/self-drive.md`에 실행용 absorbed contract를 둔다.
