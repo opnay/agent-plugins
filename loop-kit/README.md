@@ -15,16 +15,26 @@
 
 ## 설치 방법
 
-1. 현재 레포지토리 위치에서 Codex CLI를 실행합니다.
-2. `/plugins`로 플러그인 목록을 엽니다.
-3. `Loop Kit` 항목을 찾아 설치합니다.
+먼저 이 저장소를 플러그인 마켓플레이스 source로 추가합니다.
+
+```sh
+codex plugin marketplace add opnay/agent-plugins
+```
+
+그다음 Codex에서 `/plugins`로 플러그인 목록을 열고 `Loop Kit` 항목을 찾아 설치합니다.
 
 한 번 설치하면 어느 위치에서 Codex를 실행해도 이 플러그인을 사용할 수 있습니다.
 
 ## 업데이트 방법
 
-업데이트도 현재 레포지토리 위치에서 Codex CLI를 실행한 뒤 `/plugins`에서 진행합니다.
-기존 `Loop Kit` 설치를 삭제한 다음, 같은 목록에서 `Loop Kit`을 다시 설치하면 됩니다.
+마켓플레이스 source를 최신 상태로 갱신합니다.
+
+```sh
+codex plugin marketplace upgrade
+```
+
+특정 marketplace만 갱신하려면 Codex에 표시되는 marketplace 이름을 붙여 실행합니다.
+그다음 `/plugins`에서 기존 `Loop Kit` 설치를 삭제하고 다시 설치하면 됩니다.
 
 ## 운영 방식
 
