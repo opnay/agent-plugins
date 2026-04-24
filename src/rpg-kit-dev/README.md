@@ -1,6 +1,6 @@
 # RPG Kit
 
-`rpg-kit` is a role-based subagent orchestration plugin.
+`rpg-kit-dev` is a role-based subagent orchestration plugin.
 It helps an agent decide when role-assigned subagents are useful, define bounded role packets, spawn subagents only when the active runtime allows it, and learn from the resulting subagent behavior.
 
 The plugin is intentionally narrow.
@@ -8,7 +8,7 @@ It does not make subagent use mandatory, and it does not replace the caller's re
 
 ## Surfaces
 
-- `rpg-kit-guide`: entrypoint for deciding whether a task belongs in this plugin and routing to the right internal skill.
+- `rpg-kit-dev-guide`: entrypoint for deciding whether a task belongs in this plugin and routing to the right internal skill.
 - `subagent-role`: defines role-assigned subagent packets, spawn boundaries, answer contracts, and learning notes.
 
 ## Operating Model
@@ -20,4 +20,7 @@ For example, `game-PM-origin PO` and `game-planning-origin frontend developer` a
 
 ## Repository Notes
 
+- Plugin spec: `specs/plugin.md`
+- Skill specs: `specs/skills/*.md`
+- Evaluation spec: `specs/subagent-role-packet-evaluation.md`
 - Skill implementations: `skills/*/SKILL.md`

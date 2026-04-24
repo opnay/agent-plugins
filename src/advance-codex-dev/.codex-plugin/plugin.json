@@ -1,0 +1,45 @@
+{
+  "name": "advance-codex-dev",
+  "version": "0.1.0",
+  "description": "[DEV] Capability plugin for strengthening Codex surfaces across skills, prompt evaluation, sessions, commits, plugins, tool-use guidance, and subagent systems.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "codex",
+    "skills",
+    "sessions",
+    "commits",
+    "plugins",
+    "tools",
+    "prompts",
+    "evaluation",
+    "subagents",
+    "delegation"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Advance Codex Dev",
+    "shortDescription": "[DEV] Strengthen skills, prompt evaluation, sessions, commits, tool-use guidance, plugins, and Codex subagent systems.",
+    "longDescription": "[DEV] Provides skills for strengthening Codex surfaces: shaping reusable skills, empirically evaluating reusable instructions, managing session continuity, finalizing Codex-made changes into stable commits, isolating tool-use policy, packaging plugins, and designing reliable subagent workflows and custom agents.",
+    "developerName": "opnay",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Analyze",
+      "Plan",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use $advance-codex-dev:advance-codex-dev-guide to decide whether this should become a skill, tool-use guidance layer, plugin, session surface, commit surface, or subagent workflow.",
+      "Use $advance-codex-dev:plugin-creator to package a plugin and define the right bundled surfaces.",
+      "Use $advance-codex-dev:skill-creator to design a reusable Codex skill with the right references and guardrails.",
+      "Use $advance-codex-dev:empirical-prompt-tuning to evaluate and iteratively improve reusable instructions with fresh subagents, fixed scenarios, and caller-side metrics.",
+      "Use $advance-codex-dev:session-manager to manage session_record.md, change_record.md, or retrospective_record.md under .agents/sessions/<session-id>/ when Codex session continuity needs a stable record.",
+      "Use $advance-codex-dev:git-committer to turn Codex-made changes into a task-scoped commit with strong verification and commit-message hygiene.",
+      "Use $advance-codex-dev:tool-use-guide to design reusable guidance for selecting and sequencing tools without burying tool policy inside a domain skill.",
+      "Use $advance-codex-dev:subagent-creator to design a Codex subagent workflow, custom agent spec, and runtime control plan."
+    ],
+    "brandColor": "#1F4B99"
+  }
+}

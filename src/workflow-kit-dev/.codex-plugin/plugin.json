@@ -1,0 +1,47 @@
+{
+  "name": "workflow-kit-dev",
+  "version": "0.1.0",
+  "description": "[DEV] Workflow plugin for task framing, definition, planning, execution workflows, review loops, final readiness gates, and canonical loop contracts used by loop-kit.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "workflow",
+    "framing",
+    "planning",
+    "alignment",
+    "interview",
+    "turn-gate",
+    "parallel",
+    "autopilot",
+    "delivery",
+    "qa"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Workflow Kit Dev",
+    "shortDescription": "[DEV] Framing, planning, execution, turn continuity, review, and readiness workflows for any task size.",
+    "longDescription": "[DEV] Provides workflow skills that help Codex stabilize an ambiguous task, define it correctly, build a read-only execution plan, choose the right execution mode, keep explicit turn continuity when needed, iterate on issues, review material findings, and run final readiness gates before work moves toward commit. This plugin also remains the canonical workflow and loop-contract source for the narrower `loop-kit` package.",
+    "developerName": "opnay",
+    "category": "Productivity",
+    "capabilities": [
+      "Analyze",
+      "Plan",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Stabilize this ambiguous task before choosing a workflow or execution path.",
+      "Keep this turn alive across question, plan, command, result reporting, and the next explicit flow.",
+      "Make a read-only execution plan before implementation starts.",
+      "Run this feature request end-to-end with autopilot.",
+      "Interview me first so the implementation aligns tightly with what I actually mean.",
+      "Before doing this bug fix or edit, ask the one key question that locks scope and success criteria.",
+      "Split these independent tasks into safe parallel work and integrate the result.",
+      "Take this brief from implementation through verification.",
+      "Handle this task autonomously and report the final status.",
+      "Check whether this change is commit-ready before I commit it."
+    ],
+    "brandColor": "#3D5A80"
+  }
+}

@@ -100,7 +100,10 @@ function copyPath(sourcePath, targetPath, devName, releaseName) {
   fs.mkdirSync(path.dirname(targetPath), { recursive: true });
   const data = fs.readFileSync(sourcePath);
   if (isTextFile(sourcePath)) {
-    fs.writeFileSync(targetPath, rewriteText(data.toString("utf8"), devName, releaseName));
+    fs.writeFileSync(
+      targetPath,
+      rewriteText(data.toString("utf8"), devName, releaseName, path.basename(sourcePath)),
+    );
   } else {
     fs.writeFileSync(targetPath, data);
   }
@@ -115,15 +118,22 @@ function rewritePathSegment(segment, devName, releaseName) {
   return segment.replaceAll(devName, releaseName);
 }
 
-function rewriteText(text, devName, releaseName) {
+function rewriteText(text, devName, releaseName, basename) {
   const releaseTitle = titleFromName(releaseName);
-  return text
+  const rewritten = text
     .replaceAll(`$${devName}:`, `$${releaseName}:`)
     .replaceAll(`${devName}-guide`, `${releaseName}-guide`)
     .replaceAll(devName, releaseName)
     .replaceAll(`${releaseTitle} Dev`, releaseTitle)
-    .replaceAll(" Dev", "")
     .replaceAll("[DEV] ", "");
+  return basename === "README.md" ? stripSourceOnlyReadmeLines(rewritten) : rewritten;
+}
+
+function stripSourceOnlyReadmeLines(text) {
+  return text
+    .split("\n")
+    .filter((line) => !line.includes("specs/"))
+    .join("\n");
 }
 
 function titleFromName(name) {
@@ -133,20 +143,32 @@ function titleFromName(name) {
     .join(" ");
 }
 
-function buildReleaseManifest(sourceManifest, releaseName, version) {
-  const displayName = sourceManifest.interface?.displayName ?? releaseName;
+function buildReleaseManifest(sourceManifest, devName, releaseName, version) {
+  const rewrittenManifest = rewriteManifestValue(sourceManifest, devName, releaseName);
+  const displayName = rewrittenManifest.interface?.displayName ?? releaseName;
   return {
-    ...sourceManifest,
+    ...rewrittenManifest,
     name: releaseName,
     version,
-    description: stripDev(sourceManifest.description),
+    description: stripDev(rewrittenManifest.description),
     interface: {
-      ...sourceManifest.interface,
+      ...rewrittenManifest.interface,
       displayName: stripDev(displayName),
-      shortDescription: stripDev(sourceManifest.interface?.shortDescription ?? ""),
-      longDescription: stripDev(sourceManifest.interface?.longDescription ?? ""),
+      shortDescription: stripDev(rewrittenManifest.interface?.shortDescription ?? ""),
+      longDescription: stripDev(rewrittenManifest.interface?.longDescription ?? ""),
     },
   };
+}
+
+function rewriteManifestValue(value, devName, releaseName) {
+  if (typeof value === "string") return rewriteText(value, devName, releaseName, "plugin.json");
+  if (Array.isArray(value)) return value.map((item) => rewriteManifestValue(item, devName, releaseName));
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, rewriteManifestValue(item, devName, releaseName)]),
+    );
+  }
+  return value;
 }
 
 function stripDev(value) {
@@ -193,7 +215,7 @@ function main() {
 
   fs.rmSync(targetDir, { recursive: true, force: true });
   copyRuntimeFiles(sourceDir, targetDir, devName, releaseName);
-  writeJson(targetManifestPath, buildReleaseManifest(sourceManifest, releaseName, resolvedVersion));
+  writeJson(targetManifestPath, buildReleaseManifest(sourceManifest, devName, releaseName, resolvedVersion));
   assertNoSpecs(targetDir);
 
   const files = listFiles(targetDir).map((filePath) => path.relative(repoRoot, filePath));

@@ -1,6 +1,6 @@
-# Loop Kit
+# Loop Kit Dev
 
-`loop-kit`은 하나의 작업 턴을 사용자가 명시적으로 종료할 때까지 유지하기 위한 Codex 플러그인입니다.
+`loop-kit-dev`은 하나의 작업 턴을 사용자가 명시적으로 종료할 때까지 유지하기 위한 Codex 플러그인입니다.
 
 이 플러그인의 중심 표면은 `turn-gate` 하나입니다.
 여러 loop skill을 사용자에게 직접 노출하지 않고, `turn-gate`가 현재 턴의 구조를 유지하면서 current phase에 맞는 내부 loop mode를 고르고, 결과 보고 전에 검증을 수행하고, 다음 플로우 선택지를 다시 엽니다.
@@ -21,7 +21,7 @@
 codex plugin marketplace add opnay/agent-plugins
 ```
 
-그다음 Codex에서 `/plugins`로 플러그인 목록을 열고 `Loop Kit` 항목을 찾아 설치합니다.
+그다음 Codex에서 `/plugins`로 플러그인 목록을 열고 `Loop Kit Dev` 항목을 찾아 설치합니다.
 
 한 번 설치하면 어느 위치에서 Codex를 실행해도 이 플러그인을 사용할 수 있습니다.
 
@@ -34,11 +34,11 @@ codex plugin marketplace upgrade
 ```
 
 특정 marketplace만 갱신하려면 Codex에 표시되는 marketplace 이름을 붙여 실행합니다.
-그다음 `/plugins`에서 기존 `Loop Kit` 설치를 삭제하고 다시 설치하면 됩니다.
+그다음 `/plugins`에서 기존 `Loop Kit Dev` 설치를 삭제하고 다시 설치하면 됩니다.
 
 ## 운영 방식
 
-`loop-kit`은 작업 흐름을 이어가기 위해 대상 저장소에 `.agents/sessions/` 폴더를 만들어 사용할 수 있습니다.
+`loop-kit-dev`은 작업 흐름을 이어가기 위해 대상 저장소에 `.agents/sessions/` 폴더를 만들어 사용할 수 있습니다.
 이 기록을 Git에 포함하지 않으려면 ignore 등록이 필요합니다.
 
 기기 전역으로 제외하려면 `~/.config/git/ignore`에 다음 항목을 추가합니다.
@@ -51,7 +51,7 @@ codex plugin marketplace upgrade
 
 많은 에이전트 작업은 한 번의 답변으로 깨끗하게 끝나지 않습니다.
 요구사항 확인, 구현, 검증, 리뷰 수정, 커밋 준비, 후속 선택이 같은 턴 안에서 이어집니다.
-`loop-kit`은 이 흐름을 명시적인 운영 계약으로 만들어, 에이전트가 상태 보고나 요약 뒤에 조용히 멈추지 않도록 합니다.
+`loop-kit-dev`은 이 흐름을 명시적인 운영 계약으로 만들어, 에이전트가 상태 보고나 요약 뒤에 조용히 멈추지 않도록 합니다.
 
 다음과 같은 작업에 적합합니다.
 
@@ -63,7 +63,7 @@ codex plugin marketplace upgrade
 
 ## 엔트리포인트
 
-- `loop-kit-guide`: 현재 요청이 `loop-kit`으로 시작할 작업인지 판단합니다.
+- `loop-kit-dev-guide`: 현재 요청이 `loop-kit-dev`으로 시작할 작업인지 판단합니다.
 - `turn-gate`: 실제 작업을 진행하는 메인 controller입니다.
 
 `turn-gate`가 호출되면, 현재 세션 동안 이 skill을 1급 운영 규칙으로 활성화한 것으로 취급합니다.
@@ -110,26 +110,28 @@ codex plugin marketplace upgrade
 ## 사용 예시
 
 ```text
-$loop-kit:turn-gate 프론트엔드 리팩토링하자.
+$loop-kit-dev:turn-gate 프론트엔드 리팩토링하자.
 ```
 
 ```text
-$loop-kit:turn-gate self-drive; 마인크래프트와 비슷하게 샌드박스 RPG 게임 하나 만들자. 위치는 ~/Workspace/game으로 하자
+$loop-kit-dev:turn-gate self-drive; 마인크래프트와 비슷하게 샌드박스 RPG 게임 하나 만들자. 위치는 ~/Workspace/game으로 하자
 ```
 
 ## 플러그인 구조
 
 ```text
-loop-kit/
+loop-kit-dev/
   .codex-plugin/plugin.json
   README.md
+  specs/plugin.md
+  specs/skills/
   skills/
-    loop-kit-guide/
+    loop-kit-dev-guide/
     turn-gate/
 ```
 
 ## 설계 경계
 
-`loop-kit`은 의도적으로 작은 플러그인입니다.
+`loop-kit-dev`은 의도적으로 작은 플러그인입니다.
 broader workflow taxonomy, domain-specific implementation guidance, 무관한 agent utility를 소유하지 않습니다.
 이 플러그인의 책임은 turn continuity, 내부 loop mode 선택, 결과 보고 전 검증, 명시적 next-flow reopening입니다.

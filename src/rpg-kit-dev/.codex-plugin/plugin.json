@@ -1,0 +1,35 @@
+{
+  "name": "rpg-kit-dev",
+  "version": "0.1.0",
+  "description": "[DEV] Subagent role orchestration kit for assigning bounded roles, spawning role-specific agents when allowed, and learning from their outputs.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "subagent",
+    "roles",
+    "orchestration",
+    "delegation",
+    "learning"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "RPG Kit Dev",
+    "shortDescription": "[DEV] Role-based subagent orchestration and learning guidance.",
+    "longDescription": "[DEV] Provides a narrow plugin for deciding when role-assigned subagents are useful, defining role packets, spawning them only when the active runtime and user intent allow it, and reading their outputs as evidence for how subagents behave in practice.",
+    "developerName": "opnay",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Analyze",
+      "Plan",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use RPG Kit to classify whether role-assigned subagents would help this task.",
+      "Define bounded subagent roles, expected outputs, and integration rules before spawning any subagent.",
+      "Use subagent-role when the task is specifically about role packets, role fit, or learning from role-assigned subagent behavior."
+    ],
+    "brandColor": "#6D4C9F"
+  }
+}
