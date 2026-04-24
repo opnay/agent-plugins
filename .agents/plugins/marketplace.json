@@ -1,7 +1,7 @@
 {
-  "name": "local-marketplace",
+  "name": "opnay-plugins",
   "interface": {
-    "displayName": "Local Plugins"
+    "displayName": "OPNay Plugins"
   },
   "plugins": [
     {
