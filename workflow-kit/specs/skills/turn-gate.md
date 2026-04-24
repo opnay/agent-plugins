@@ -93,6 +93,8 @@
 - `000-plan.md`는 사용자 요청 종료 이후에도 더 큰 작업이 이어지면 계속 증분되어야 한다.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record는 completed flow를 기다리지 말고 각 phase가 끝날 때마다 증분 갱신되어야 한다.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record의 최소 항목에는 user request message와 question-routing mode가 포함되어야 한다.
+- 각 flow record에는 짧은 `Continuity Guard`가 있어야 하며 result reporting과 next-flow reopening 직전에 갱신되어야 한다.
+- `Continuity Guard`에는 `turn-gate` 활성 여부, question-routing mode, user explicit stop 여부, terminal summary 허용 여부, required next action이 포함되어야 한다.
 - default flow-record template는 `skills/turn-gate/templates/flow-record-template.md`여야 한다.
 - default `000-plan.md` template는 `skills/turn-gate/templates/plan-template.md`여야 한다.
 - flow record는 phase 메모가 아니지만 각 phase 종료 시점의 현재 상태를 증분 반영해야 한다.
@@ -100,16 +102,19 @@
 - current phase mode와 별도로 question-routing mode를 선택한다.
 - 기본 question-routing mode는 `user-gated`이고, 사용자 선택지, scope lock, next-flow decision은 질문 도구로 묻는다.
 - `self-drive` question-routing mode가 활성화되면 사용자에게 묻던 phase 질문을 self-drive question packet으로 구성해 subagent에게 물어 그 답을 다음 결정 입력으로 사용한다.
-- self-drive question packet에는 최소한 phase, current mode, question type, decision needed, options, context, constraints, fallback, expected answer를 포함한다.
-- self-drive subagent answer에는 최소한 question id, selected option, decision, rationale, evidence, assumptions, confidence, blockers, approval boundary, next action을 포함한다.
+- self-drive question packet에는 최소한 phase, current mode, question type, decision needed, options, context, continuity guard, constraints, fallback, expected answer를 포함한다.
+- self-drive subagent answer에는 최소한 question id, selected option, decision, rationale, evidence, assumptions, confidence, blockers, approval boundary, continuity check, next action을 포함한다.
+- self-drive answer는 user explicit stop 또는 hard approval boundary가 없는 한 terminal summary를 허용하지 않고 계속 이어질 next action을 제시해야 한다.
 - subagent answer가 `context_gap`을 반환하면 메인 에이전트가 repo search, file read, log, deterministic check, policy-allowed web research로 회복 가능한지 먼저 판단하고, 회복 가능하면 evidence를 보강한 packet으로 다시 질문한다.
 - 사용자 취향을 확정할 수 없으면 명시적 manual preference lock 요청이 없는 한 가장 안전하고 되돌릴 수 있는 기본값을 가정으로 기록하고 계속 진행한다.
 - `low` confidence는 명시적 승인, 파괴적/비가역적/외부 action 승인, platform/tool/safety policy 경계처럼 self-drive가 회복하면 안 되는 경우에만 terminal로 취급한다.
+- `self-drive`에서 terminal은 자율 라우팅의 일시 중지를 의미하며, 턴을 종료하지 않고 `user-gated`로 전환해 `request_user_input`을 열어야 한다.
 - `self-drive`는 mode selection, criteria, scope assumption, verification choice, next-flow decision을 subagent 질문으로 처리할 수 있다.
 - runtime, tool, safety policy가 명시적 사용자 승인을 요구하는 경계는 `self-drive`가 대신 동의한 것으로 처리하지 않는다.
 - 분석 단계와 계획 단계에서는 필요하면 active question-routing mode로 질문을 열 수 있다.
 - future flow/phase 설계는 고정값이 아니며, 이후 loop에서 새 증거, changed intent, 새 blocker가 생겼을 때만 다시 설계한다.
 - 다음 플로우 진행을 위한 `user-gated` 사용자 응답 또는 `self-drive` subagent 답변도 같은 턴의 다음 `현재 메시지`로 받아들인다.
+- 결과 보고 전에는 `Continuity Guard`를 읽거나 재구성하고, 사용자가 명시적으로 종료하지 않았으면 terminal summary가 invalid임을 확인한다.
 - 각 phase는 가장 좁은 downstream workflow에 위임한다.
 - 결과 보고 후에는 기본적으로 다음 플로우 진행을 위한 question-routing 응답 표면을 연다.
 - user explicit stop이 없는 한 clean stop을 기본 경로로 두지 않는다.
@@ -128,7 +133,9 @@
 - cross-flow task라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 최신 상태인가?
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record가 현재 phase까지 증분 갱신됐는가?
 - 결과 보고 뒤에 explicit choice가 있는 다음 플로우 질문을 실제로 열었는가?
+- 결과 보고 직전에 `Continuity Guard`를 갱신했고 terminal summary 가능 여부를 확인했는가?
 - clean stop, summary-only closing, generic follow-up phrase로 턴을 닫고 있지 않은가?
+- `self-drive`가 hard boundary에 도달했을 때 자율 라우팅을 일시 중지하고, 턴을 종료하지 않은 채 `user-gated` 질문 도구로 전환했는가?
 - `self-drive`가 활성화된 경우 사용자 질문 대신 subagent 질문으로 다음 결정 입력을 얻었는가?
 
 ## 독립성 원칙

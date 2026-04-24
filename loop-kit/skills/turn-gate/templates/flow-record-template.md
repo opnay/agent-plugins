@@ -13,6 +13,15 @@ Update this record incrementally after each completed phase. Do not wait until t
 - Current mode: deep-interview | autopilot | review-loop | ralph-loop | commit-readiness-gate | undecided
 - Question-routing mode: user-gated | self-drive | undecided
 
+## Continuity Guard
+
+- Turn-gate active: yes | no
+- Question-routing mode: user-gated | self-drive | undecided
+- User explicit stop: yes | no
+- Terminal summary allowed: yes | no
+- Required next action:
+- Last refreshed phase:
+
 ## Analysis
 
 - User request:

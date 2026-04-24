@@ -64,6 +64,8 @@ This skill does not own:
 - Choose the narrowest downstream workflow that owns the current phase work.
 - Make `analysis`, `plan`, `work`, `verification`, and `result reporting` visible in the response shape.
 - Maintain running turn-gate records under `.agents/sessions/{YYYYMMDD}/`.
+- Maintain a compact `Continuity Guard` in every flow record and refresh it before result reporting and next-flow reopening.
+- The `Continuity Guard` must state whether `turn-gate` is active, the question-routing mode, whether the user explicitly stopped the turn, whether a terminal summary is allowed, and the required next action.
 - Use `000-plan.md` for the higher-level multi-flow plan and `001+` files for per-flow records.
 - Keep `000-plan.md` incrementally updated beyond one user request when the larger task continues.
 - Use `analysis` to structure the user's message into requested intent and requested action, and to decide whether future flows or phases need forward design or redesign.
@@ -72,6 +74,7 @@ This skill does not own:
 - Use `verification` to confirm the work outcome before result reporting and to surface whether later flow/phase redesign is needed.
 - Use `result reporting` to report the completed work outcome.
 - Do not let result reporting become a soft stop.
+- Before result reporting, read or reconstruct the `Continuity Guard`; if the user has not explicitly stopped the turn, a terminal summary is invalid.
 - Report results as prior explanation for the user's response into the next flow, not as a terminal message.
 - Reopen the next flow through the active question-routing mode with explicit choices.
 - In `self-drive`, replace phase questions that would normally go to the user with self-drive question packets sent to subagents, require the self-drive answer contract, and continue from the subagent answer.
@@ -88,7 +91,7 @@ This skill does not own:
 - Use `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` for flow records.
 - Keep `count-pad3` zero-padded like `001`, `002`, `003`.
 - Keep the slug English lower-case and `-` delimited.
-- Record at least: user request message, task, flow scope, current mode, question-routing mode, analysis, plan, work, verification, result report, next-flow options, residual risk.
+- Record at least: user request message, task, flow scope, current mode, question-routing mode, continuity guard, analysis, plan, work, verification, result report, next-flow options, residual risk.
 - Keep the current flow record current after `analysis`, `plan`, `work`, `verification`, and `result reporting`.
 - Update the flow record incrementally after each completed phase.
 - Prefer `templates/flow-record-template.md` as the default flow-record layout.
@@ -143,11 +146,14 @@ Question-routing signals:
 - `user-gated` by default, using the user-input question tool for choices, scope locks, and next-flow decisions
 - `self-drive` when the user wants questions answered by subagents so work can continue without user intervention
 - `self-drive` can answer mode selection, criteria, scope assumptions, verification choices, and next-flow decisions through self-drive question packets sent to subagents
-- self-drive subagent answers must include the chosen option or no-option result, decision, rationale, evidence, assumptions, confidence, blockers, approval boundary, and next action
+- self-drive packets must carry the current `Continuity Guard`
+- self-drive subagent answers must include the chosen option or no-option result, decision, rationale, evidence, assumptions, confidence, blockers, approval boundary, continuity check, and next action
+- self-drive answers must reject terminal summaries unless an explicit user stop or hard approval boundary exists
 - self-drive should recover subagent `context_gap` results through main-agent discovery when evidence can be found without an explicit approval boundary
 - missing user preference should become a recorded reversible assumption unless the user explicitly requested manual preference locking
 - `low` confidence is terminal only when the decision requires explicit approval, destructive/irreversible/external action approval, or a platform/tool/safety boundary
-- `self-drive` must still stop at explicit user-approval boundaries required by platform, tool, or safety policy
+- in `self-drive`, terminal means paused for autonomous routing only; switch to `user-gated` and use `request_user_input` instead of ending the turn
+- `self-drive` must still pause at explicit user-approval boundaries required by platform, tool, or safety policy
 
 Output:
 
@@ -212,6 +218,7 @@ Output:
 - `Verification`
 - `Phase result`
 - `Result report`
+- `Continuity guard`
 - `Question-routing prompt`
 - `Next-flow choices`
 - `Loop state`
@@ -247,10 +254,12 @@ Good turn-flow example:
 - Do not skip the `000-plan.md` update when the higher-level plan changes across flows.
 - Do not defer the flow-record update at `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` until the end of the flow; write it at each completed phase boundary.
 - Do not skip explicit verification between work and result reporting.
+- Do not emit result reporting until the `Continuity Guard` says whether next-flow reopening is still required.
 - Do not skip the next-flow response step merely because the next phase seems obvious.
 - Do not ask the next-flow question without giving the user explicit choices.
 - Do not use `self-drive` unless that question-routing mode is active.
 - Do not let `self-drive` simulate user approval where the runtime or tool policy requires explicit approval.
+- Do not end the turn when `self-drive` reaches an approval boundary; pause self-drive, switch to `user-gated`, and ask through `request_user_input`.
 - Do not treat the user's next-flow response as a new independent turn when the loop gate is still active.
 - Do not treat temporary blocking states as permission to close the turn.
 - Do not let this skill absorb domain execution, planning, or review detail.

@@ -45,6 +45,8 @@ Those references absorb the operational loop contracts into this skill while sta
 - Treat each incoming message as the current state of the same loop-gated turn.
 - Keep `analysis`, `plan`, `work`, `verification`, `result reporting`, and next-flow reopening visible.
 - Maintain turn-gate records under `.agents/sessions/{YYYYMMDD}/`.
+- Maintain a compact `Continuity Guard` in every flow record and refresh it before result reporting and next-flow reopening.
+- The `Continuity Guard` must state whether `turn-gate` is active, the question-routing mode, whether the user explicitly stopped the turn, whether a terminal summary is allowed, and the required next action.
 - Use `000-plan.md` for the higher-level plan when the task spans several flows.
 - Keep `000-plan.md` incrementally updated even if one user request ends and later follow-up flows continue the same larger task.
 - Use `analysis` and `plan` to design not only the current flow but also likely next flows or phases when forward design is useful.
@@ -58,6 +60,7 @@ Those references absorb the operational loop contracts into this skill while sta
 - Also choose one question-routing mode: default `user-gated` or `self-drive`.
 - Use the active question-routing mode whenever mode selection, criteria, scope, or next-flow choice is still unclear.
 - After `work`, run an explicit verification step before result reporting, and use that verification to surface whether later flow/phase redesign is needed.
+- Before result reporting, read or reconstruct the `Continuity Guard`; if the user has not explicitly stopped the turn, a terminal summary is invalid.
 - Reopen the next flow with explicit choices after each result unless the user asks to end the turn; in `self-drive`, route that choice to a subagent and continue automatically.
 - Do not expose direct loop entrypoints from this plugin surface.
 
@@ -85,10 +88,12 @@ Those references absorb the operational loop contracts into this skill while sta
 - Use `user-gated` by default: ask the user through `request_user_input` for choices, scope locks, and next-flow decisions.
 - Use `self-drive` when the user wants the loop to continue without user intervention.
 - In `self-drive`, read `references/self-drive.md`, send subagents a self-drive question packet for questions that would otherwise go to the user, require the self-drive answer contract, record the answer and assumptions, then continue the loop from that answer.
+- Every `self-drive` packet must carry the current `Continuity Guard`, and every answer must include a continuity check that preserves next-flow continuation unless a hard approval boundary or explicit user stop exists.
 - `self-drive` may answer mode selection, criteria, scope assumptions, verification choices, and next-flow decisions through subagents.
 - In `self-drive`, recover subagent `context_gap` results through main-agent discovery when the missing evidence can be found without an explicit approval boundary.
 - Treat missing user preference as a reversible assumption to record and continue unless the user explicitly requested manual preference locking.
 - Treat `low` confidence as terminal only when the missing decision requires explicit approval, destructive/irreversible/external action approval, or a platform/tool/safety boundary.
+- In `self-drive`, terminal means paused for autonomous routing only; switch to `user-gated` and use `request_user_input` instead of ending the turn.
 - `self-drive` does not override platform, tool, or safety policies that require explicit user approval.
 
 ## Session Record
@@ -99,7 +104,7 @@ Those references absorb the operational loop contracts into this skill while sta
 - Keep the slug in English lower-case words joined by `-`.
 - Use `templates/flow-record-template.md` as the default flow-record template.
 - Use `templates/plan-template.md` as the default `000-plan.md` template.
-- Record at least: user request message, task, flow scope, current mode, question-routing mode, analysis, plan, work, verification, result report, next-flow options, residual risk.
+- Record at least: user request message, task, flow scope, current mode, question-routing mode, continuity guard, analysis, plan, work, verification, result report, next-flow options, residual risk.
 - Treat `000-plan.md` as a long-lived incremental plan artifact, not a single-turn note.
 - Treat each `001+` file as one flow record, not one phase record.
 - Keep the current flow record current after `analysis`, `plan`, `work`, `verification`, and `result reporting`.
@@ -113,6 +118,7 @@ Those references absorb the operational loop contracts into this skill while sta
 - `Work`
 - `Verification`
 - `Result report`
+- `Continuity guard`
 - `Question-routing prompt`
 - `Next-flow choices`
 - `Loop state`
@@ -124,10 +130,12 @@ Those references absorb the operational loop contracts into this skill while sta
 - Do not ask freeform textual choice questions when the active question-routing mode can carry the decision.
 - Do not route user questions to subagents unless `self-drive` is active.
 - Do not let `self-drive` simulate user approval where the runtime or tool policy requires explicit approval.
+- Do not end the turn when `self-drive` reaches an approval boundary; pause self-drive, switch to `user-gated`, and ask through `request_user_input`.
 - Do not skip `update_plan` after moving past initial orientation into real work.
 - Do not skip the `000-plan.md` update when the higher-level plan changes across flows.
 - Do not defer `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` updates until the end of the flow; write them at each completed phase boundary.
 - Do not skip explicit verification between work and result reporting.
+- Do not emit result reporting until the `Continuity Guard` says whether next-flow reopening is still required.
 - Do not skip the next-flow question after reporting a result.
 - Do not let result reporting collapse into a soft closing.
 - Do not expose direct user entrypoints for internal loop modes in this plugin.
