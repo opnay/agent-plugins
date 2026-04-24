@@ -29,6 +29,23 @@ Every self-drive subagent question must include:
 The packet should be small enough for the subagent to answer directly.
 If the packet needs broad research before the question is answerable, split it into a discovery subtask first.
 
+## Answer Contract
+
+Every self-drive subagent answer must include:
+
+- `question_id`: the packet id being answered.
+- `selected_option`: chosen option when the packet provided options, or `none` if no option can be selected.
+- `decision`: the concrete decision to use as the next loop input.
+- `rationale`: short reason for the decision.
+- `evidence`: specific evidence from the packet context or discovered facts.
+- `assumptions`: assumptions the loop will carry forward if it continues.
+- `confidence`: high, medium, or low.
+- `blockers`: unresolved blockers or conflicts, if any.
+- `approval_boundary`: whether explicit user/tool approval is required before continuing.
+- `next_action`: the next phase or action the loop should take.
+
+If the subagent cannot answer within the packet, it must return `selected_option: none`, `confidence: low`, and a blocker instead of inventing missing user preference.
+
 ## Mode Boundary
 
 - Good fit: user explicitly wants autonomous continuation, self-driving loops, or no user intervention between phases.
@@ -38,5 +55,6 @@ If the packet needs broad research before the question is answerable, split it i
 
 - Did every non-approval question route to a subagent instead of the user?
 - Did each subagent question include a complete self-drive question packet?
-- Did the subagent answer include enough confidence and assumptions to continue responsibly?
+- Did the subagent answer follow the self-drive answer contract?
+- Did the subagent answer include enough evidence, confidence, and assumptions to continue responsibly?
 - Did the loop preserve hard approval boundaries required by the runtime or tool policy?

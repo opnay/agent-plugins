@@ -74,7 +74,7 @@ This skill does not own:
 - Do not let result reporting become a soft stop.
 - Report results as prior explanation for the user's response into the next flow, not as a terminal message.
 - Reopen the next flow through the active question-routing mode with explicit choices.
-- In `self-drive`, replace phase questions that would normally go to the user with self-drive question packets sent to subagents and continue from the subagent answer.
+- In `self-drive`, replace phase questions that would normally go to the user with self-drive question packets sent to subagents, require the self-drive answer contract, and continue from the subagent answer.
 - Allow questions during `analysis` and `plan` when clarifying intent, criteria, or scope is necessary.
 - Treat termination judgment as the user's choice, not the assistant's shortcut.
 - Treat "no next flow" as an exception that must be justified by the user asking to end the turn or by confirmed closure.
@@ -143,6 +143,7 @@ Question-routing signals:
 - `user-gated` by default, using the user-input question tool for choices, scope locks, and next-flow decisions
 - `self-drive` when the user wants questions answered by subagents so work can continue without user intervention
 - `self-drive` can answer mode selection, criteria, scope assumptions, verification choices, and next-flow decisions through self-drive question packets sent to subagents
+- self-drive subagent answers must include the chosen option or no-option result, decision, rationale, evidence, assumptions, confidence, blockers, approval boundary, and next action
 - `self-drive` must still stop at explicit user-approval boundaries required by platform, tool, or safety policy
 
 Output:

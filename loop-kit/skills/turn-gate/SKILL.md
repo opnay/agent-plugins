@@ -84,7 +84,7 @@ Those references absorb the operational loop contracts into this skill while sta
 
 - Use `user-gated` by default: ask the user through `request_user_input` for choices, scope locks, and next-flow decisions.
 - Use `self-drive` when the user wants the loop to continue without user intervention.
-- In `self-drive`, read `references/self-drive.md`, send subagents a self-drive question packet for questions that would otherwise go to the user, record their answers and assumptions, then continue the loop from that answer.
+- In `self-drive`, read `references/self-drive.md`, send subagents a self-drive question packet for questions that would otherwise go to the user, require the self-drive answer contract, record the answer and assumptions, then continue the loop from that answer.
 - `self-drive` may answer mode selection, criteria, scope assumptions, verification choices, and next-flow decisions through subagents.
 - `self-drive` does not override platform, tool, or safety policies that require explicit user approval.
 

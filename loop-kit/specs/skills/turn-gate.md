@@ -70,6 +70,7 @@
 - 기본 question-routing mode는 `user-gated`이며, scope lock, 선택지, next-flow reopening을 `request_user_input`으로 사용자에게 묻는다.
 - `self-drive` question-routing mode가 활성화되면 `references/self-drive.md`를 읽고, 사용자에게 묻던 phase 질문을 self-drive question packet으로 구성해 subagent에게 물어 그 답을 다음 결정 입력으로 사용한다.
 - self-drive question packet에는 최소한 phase, current mode, question type, decision needed, options, context, constraints, fallback, expected answer를 포함한다.
+- self-drive subagent answer에는 최소한 question id, selected option, decision, rationale, evidence, assumptions, confidence, blockers, approval boundary, next action을 포함한다.
 - `self-drive`는 mode selection, criteria, scope assumption, verification choice, next-flow decision을 subagent 질문으로 처리할 수 있다.
 - runtime, tool, safety policy가 명시적 사용자 승인을 요구하는 경계는 `self-drive`가 대신 동의한 것으로 처리하지 않는다.
 - local `references/`는 `workflow-kit` upstream spec과 동기화된 absorbed operational contract로 유지한다.
