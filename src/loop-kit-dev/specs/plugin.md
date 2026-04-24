@@ -50,6 +50,7 @@
 - `turn-gate`는 internal mode와 question-routing mode를 local `references/`로 흡수해 사용하되, 그 reference는 upstream SSOT와 동기화해 유지한다.
 - `turn-gate`의 필수 운영 도구는 기본적으로 질문 도구 `request_user_input`와 계획 도구 `update_plan`이다.
 - `self-drive` question-routing mode가 활성화되면 사용자 질문 대신 subagent 질문으로 결정 입력을 얻고, 명시적 승인 경계가 필요한 경우에는 사용자 승인 경계를 유지한다.
+- `self-drive` 도중 사용자 메시지가 들어오면 멈추지 않고 현재 플로우 조정 또는 다음 플로우 우선 등록으로 처리한다.
 - 새로운 내부 loop mode가 필요하면 먼저 `workflow-kit`의 canonical contract를 정의하거나 갱신한 뒤 `loop-kit-dev`에 반영한다.
 - `loop-kit-dev`에서는 `autopilot`, `ralph-loop`, `review-loop`, `commit-readiness-gate`를 직접 호출 가능한 사용자 엔트리포인트로 늘리지 않는다.
 - `turn-gate`의 phase model이나 internal mode selection rule이 바뀌면 `workflow-kit` upstream spec과 `loop-kit-dev` spec을 같은 변경 단위에서 점검한다.

@@ -61,6 +61,10 @@ This skill does not own:
 - Treat invocation of this skill as activation of a session-level first-class loop gate.
 - Treat each incoming message as the start or continuation of one loop-gated turn.
 - Treat the user's next-flow response or the `self-drive` subagent answer as the next message inside the same turn.
+- When a user message arrives while `self-drive` is active, treat it as authoritative loop input rather than a reason to stop.
+- Classify mid-self-drive user input as explicit turn stop, current-flow correction, current-flow priority change, or next-flow priority request.
+- Adjust the current flow immediately when the message changes active work; otherwise register the message as the highest-priority next-flow candidate.
+- Supersede any pending or returned self-drive subagent answer that conflicts with newer user input.
 - Choose the narrowest downstream workflow that owns the current phase work.
 - Make `analysis`, `plan`, `work`, `verification`, and `result reporting` visible in the response shape.
 - Maintain running turn-gate records under `.agents/sessions/{YYYYMMDD}/`.
@@ -149,6 +153,8 @@ Question-routing signals:
 - self-drive packets must carry the current `Continuity Guard`
 - self-drive subagent answers must include the chosen option or no-option result, decision, rationale, evidence, assumptions, confidence, blockers, approval boundary, continuity check, and next action
 - self-drive answers must reject terminal summaries unless an explicit user stop or hard approval boundary exists
+- real user messages outrank pending or returned self-drive subagent answers
+- mid-self-drive user intervention should adjust the current flow or become the highest-priority next flow, not stop the turn
 - self-drive should recover subagent `context_gap` results through main-agent discovery when evidence can be found without an explicit approval boundary
 - missing user preference should become a recorded reversible assumption unless the user explicitly requested manual preference locking
 - `low` confidence means an approval-boundary pause only when the decision requires explicit approval, destructive/irreversible/external action approval, or a platform/tool/safety boundary
@@ -199,6 +205,7 @@ Output:
 3. Offer the narrowest next-flow options that fit the current result.
 4. In `user-gated`, treat the user's response as the next user message and route it back into Phase 0 instead of ending the turn.
 5. In `self-drive`, ask a subagent to choose the next flow from the explicit choices, record its answer, and route that answer back into Phase 0 instead of ending the turn.
+6. If the user sends a message while self-drive is in progress, route it back into Phase 0 immediately as either a current-flow adjustment or a priority next-flow registration.
 
 Output:
 
@@ -259,6 +266,8 @@ Good turn-flow example:
 - Do not ask the next-flow question without giving the user explicit choices.
 - Do not use `self-drive` unless that question-routing mode is active.
 - Do not let `self-drive` simulate user approval where the runtime or tool policy requires explicit approval.
+- Do not treat mid-self-drive user intervention as completion, stop, or an approval-boundary pause unless the user explicitly asks to end the turn or creates a real approval boundary.
+- Do not continue from a stale self-drive subagent answer after newer user input changes the active flow.
 - Do not end the turn when `self-drive` reaches an approval boundary; pause self-drive, switch to `user-gated`, and ask through `request_user_input`.
 - Do not treat the user's next-flow response as a new independent turn when the loop gate is still active.
 - Do not treat temporary blocking states as permission to close the turn.

@@ -25,6 +25,8 @@
 - self-drive pause 상황에서 `request_user_input`을 열지 않는다.
 - `Continuity Guard`를 packet이나 flow record에 유지하지 않는다.
 - `stop`/`중지`를 self-drive 자율 라우팅 일시 중지 의미로 다시 사용한다.
+- self-drive 도중 사용자 메시지를 받으면 현재 플로우를 멈추거나 무시한다.
+- 새 사용자 입력과 충돌하는 stale subagent answer를 계속 사용한다.
 
 ## 공통 성공 기준
 
@@ -34,6 +36,7 @@
 - `[critical]` self-drive hard boundary는 턴 종료가 아니라 자율 라우팅의 일시 중지로 처리한다.
 - `[critical]` hard boundary에 도달하면 `user-gated`로 전환하고 `request_user_input`을 열어야 한다.
 - `[critical]` `Continuity Guard`가 flow record 또는 self-drive packet/answer 계약에 드러나야 한다.
+- `[critical]` self-drive 도중 사용자 메시지가 들어오면 stop이 아니라 현재 플로우 조정 또는 다음 플로우 우선 등록으로 처리한다.
 - 결과 보고 뒤에는 다음 flow action 또는 질문 도구 표면이 있어야 한다.
 - `stop`/`중지`는 실제 턴 종료나 user explicit stop 의미로만 사용해야 한다.
 
@@ -125,6 +128,32 @@ fresh executor에게 위 메시지를 active turn-gated flow의 다음 입력으
 - 종료 이유가 user explicit stop임을 기록한다.
 - self-drive pause와 actual turn stop을 혼동하지 않는다.
 
+## 시나리오 E: self-drive 중 사용자 개입
+
+### 상황
+
+self-drive 작업이 진행 중이고, subagent가 다음 next action을 고르는 중입니다.
+그 사이 사용자가 다음 메시지를 보냅니다.
+
+```text
+잠깐, 지금 하던 릴리즈 검증보다 turn-gate의 self-drive 중간 개입 문제를 먼저 고쳐.
+```
+
+사용자는 턴 종료를 요청하지 않았고, 실제 승인 경계도 만들지 않았습니다.
+
+### 평가 입력
+
+fresh executor에게 pending self-drive answer가 아직 돌아오지 않았거나, 돌아왔더라도 위 사용자 메시지를 반영하지 않는다고 가정하게 합니다.
+
+### 체크리스트
+
+- `[critical]` 사용자 메시지를 stop/completion/approval-boundary pause로 처리하지 않는다.
+- `[critical]` 사용자 메시지를 더 최신의 authoritative loop input으로 취급한다.
+- `[critical]` pending 또는 stale self-drive answer가 새 사용자 입력과 충돌하면 다음 phase 입력으로 쓰지 않는다.
+- current-flow correction인지 next-flow priority request인지 분류한다.
+- 현재 플로우를 즉시 조정하거나 flow record의 highest-priority next-flow 후보로 등록한다.
+- explicit stop이 없으므로 turn-gate continuity를 유지한다.
+
 ## 실행 프롬프트 템플릿
 
 fresh executor에게 다음 형식으로 요청합니다.
@@ -155,7 +184,7 @@ fresh executor에게 다음 형식으로 요청합니다.
 
 - `[critical]` 항목이 하나라도 fail이면 해당 시나리오는 fail입니다.
 - critical 항목이 모두 pass이고 나머지 항목의 80% 이상이 pass이면 scenario pass입니다.
-- 같은 instruction revision에서 4개 시나리오가 모두 pass해야 전체 pass입니다.
+- 같은 instruction revision에서 5개 시나리오가 모두 pass해야 전체 pass입니다.
 - 동일 시나리오를 재실행할 때는 fresh executor를 사용해야 하며, 이전 executor의 판단을 재사용하지 않습니다.
 
 ## Caller-Side Metrics
@@ -180,5 +209,6 @@ fresh executor에게 다음 형식으로 요청합니다.
 3. hard boundary의 `user-gated` 전환이 약함
 4. 일반 preference gap과 approval boundary가 혼동됨
 5. next-flow reopening 계약이 result reporting에 묻힘
+6. self-drive 중간 사용자 개입이 stop으로 오해되거나 stale subagent answer보다 낮은 우선순위로 처리됨
 
 각 iteration은 위 원인 중 하나만 고쳐야 합니다.

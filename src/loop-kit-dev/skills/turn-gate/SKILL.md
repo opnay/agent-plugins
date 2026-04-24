@@ -43,6 +43,10 @@ Those references absorb the operational loop contracts into this skill while sta
 
 - Treat invocation of this skill as activation of a session-level first-class operating rule.
 - Treat each incoming message as the current state of the same loop-gated turn.
+- When a user message arrives while `self-drive` is active, treat it as authoritative loop input, not as a reason to stop.
+- Classify a mid-self-drive user message as one of: explicit turn stop, current-flow correction, current-flow priority change, or next-flow priority request.
+- If the message changes the active work, adjust the current flow immediately and ignore any stale self-drive subagent answer that conflicts with the new user input.
+- If the message is a valid follow-up that does not need to interrupt the active work, register it as the highest-priority next flow in the flow record and continue to the next safe handoff point.
 - Keep `analysis`, `plan`, `work`, `verification`, `result reporting`, and next-flow reopening visible.
 - Maintain turn-gate records under `.agents/sessions/{YYYYMMDD}/`.
 - Maintain a compact `Continuity Guard` in every flow record and refresh it before result reporting and next-flow reopening.
@@ -89,6 +93,7 @@ Those references absorb the operational loop contracts into this skill while sta
 - Use `self-drive` when the user wants the loop to continue without user intervention.
 - In `self-drive`, read `references/self-drive.md`, send subagents a self-drive question packet for questions that would otherwise go to the user, require the self-drive answer contract, record the answer and assumptions, then continue the loop from that answer.
 - Every `self-drive` packet must carry the current `Continuity Guard`, and every answer must include a continuity check that preserves next-flow continuation unless a hard approval boundary or explicit user stop exists.
+- A real user message always outranks an in-flight or returned self-drive subagent answer.
 - `self-drive` may answer mode selection, criteria, scope assumptions, verification choices, and next-flow decisions through subagents.
 - In `self-drive`, recover subagent `context_gap` results through main-agent discovery when the missing evidence can be found without an explicit approval boundary.
 - Treat missing user preference as a reversible assumption to record and continue unless the user explicitly requested manual preference locking.
@@ -130,6 +135,8 @@ Those references absorb the operational loop contracts into this skill while sta
 - Do not ask freeform textual choice questions when the active question-routing mode can carry the decision.
 - Do not route user questions to subagents unless `self-drive` is active.
 - Do not let `self-drive` simulate user approval where the runtime or tool policy requires explicit approval.
+- Do not treat mid-self-drive user intervention as a stop, completion, or approval-boundary pause unless the user explicitly asks to stop the turn or the message creates a real approval boundary.
+- Do not continue from a stale self-drive subagent answer after newer user input changes the active flow.
 - Do not end the turn when `self-drive` reaches an approval boundary; pause self-drive, switch to `user-gated`, and ask through `request_user_input`.
 - Do not skip `update_plan` after moving past initial orientation into real work.
 - Do not skip the `000-plan.md` update when the higher-level plan changes across flows.

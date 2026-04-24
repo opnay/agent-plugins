@@ -10,6 +10,7 @@
 - broad end-to-end delivery가 현재 phase work라면 `workflow-kit/autopilot`의 계약도 `turn-gate` internal mode로 선택되길 원한다.
 - 지금까지의 current-phase mode 축과 별도로, 질문 대상을 고르는 question-routing 축을 두고 싶다.
 - `self-drive` mode에서는 사용자에게 묻던 질문을 subagent에게 물어 사용자 개입 없이 계속 자동 진행하고 싶다.
+- `self-drive` 진행 중 사용자가 중간 개입하면 멈추지 말고, 사용자 메시지를 현재 loop 입력으로 받아 현재 플로우를 조정하거나 다음 플로우 우선순위로 등록하길 원한다.
 - `turn-gate`는 질문 도구와 계획 도구를 선택 사항이 아니라 필수 도구로 사용해야 한다.
 - `turn-gate`로 진행한 작업은 `.agents/sessions` 아래에 기록이 남아야 한다.
 - 여러 플로우를 거치는 작업의 상위 계획은 `.agents/sessions/{YYYYMMDD}/000-plan.md` 경로에 누적되길 원한다.
@@ -56,6 +57,11 @@
 ### 활성화와 응답 흐름
 
 - 각 incoming message를 같은 loop-gated turn의 현재 입력으로 취급한다.
+- `self-drive`가 활성화된 중간에 사용자 메시지가 들어와도 이를 stop, completion, approval-boundary pause로 해석하지 않고 같은 loop-gated turn의 authoritative input으로 취급한다.
+- 중간 사용자 메시지는 explicit turn stop, current-flow correction, current-flow priority change, next-flow priority request 중 하나로 분류한다.
+- current-flow correction 또는 current-flow priority change라면 현재 analysis/plan을 즉시 조정하고 가장 이른 안전한 phase부터 이어간다.
+- next-flow priority request라면 flow record의 next-flow 후보 중 최우선으로 등록하고 다음 safe handoff point까지 이어간다.
+- 새 사용자 입력과 충돌하는 self-drive subagent 답변은 stale answer로 보고 다음 phase 입력으로 쓰지 않는다.
 - 이 skill이 사용되면 현재 세션 동안 `turn-gate`를 first-class operating rule로 활성화한 것으로 취급한다.
 - `analysis`, `plan`, `work`, `verification`, `result reporting`, `question-routing reopening`을 응답 shape에 계속 드러낸다.
 - 분석 단계와 계획 단계는 현재 플로우만이 아니라 이후 이어질 flow/phase 후보까지 미리 설계할 수 있다.
@@ -84,7 +90,9 @@
 - 기본 question-routing mode는 `user-gated`이며, scope lock, 선택지, next-flow reopening을 `request_user_input`으로 사용자에게 묻는다.
 - `self-drive` question-routing mode가 활성화되면 `references/self-drive.md`를 읽고, 사용자에게 묻던 phase 질문을 self-drive question packet으로 구성해 subagent에게 물어 그 답을 다음 결정 입력으로 사용한다.
 - self-drive question packet에는 최소한 phase, current mode, question type, decision needed, options, context, continuity guard, constraints, fallback, expected answer를 포함한다.
+- self-drive 도중 사용자 메시지가 들어온 경우 question packet에는 user interventions, classification, superseded assumptions/answers를 포함한다.
 - self-drive subagent answer에는 최소한 question id, selected option, decision, rationale, evidence, assumptions, confidence, blockers, approval boundary, continuity check, next action을 포함한다.
+- self-drive subagent answer는 더 최신 사용자 입력과 충돌하면 superseded로 취급되어야 한다.
 
 ### self-drive pause와 recovery
 
@@ -94,6 +102,7 @@
 - `low` confidence는 명시적 승인, 파괴적/비가역적/외부 action 승인, platform/tool/safety policy 경계처럼 self-drive가 회복하면 안 되는 경우에만 approval-boundary pause로 취급한다.
 - `self-drive`에서 approval-boundary pause는 자율 라우팅의 일시 중지만 의미하며, 턴을 종료하지 않고 `user-gated`로 전환해 `request_user_input`을 열어야 한다.
 - `self-drive`는 mode selection, criteria, scope assumption, verification choice, next-flow decision을 subagent 질문으로 처리할 수 있다.
+- 사용자 중간 개입은 `self-drive`를 자동으로 해제하지 않는다. 사용자가 manual control을 요구하거나 실제 승인 경계가 생긴 경우에만 `user-gated`로 전환한다.
 - runtime, tool, safety policy가 명시적 사용자 승인을 요구하는 경계는 `self-drive`가 대신 동의한 것으로 처리하지 않는다.
 
 ### 검증과 next-flow reopening
@@ -139,6 +148,7 @@
 - 다음 플로우 질문은 현재 결과에 직접 연결된 좁은 선택지여야 한다.
 - generic follow-up phrase나 자유형 마무리 질문으로 턴을 닫지 않는다.
 - `user-gated` 사용자 응답 또는 `self-drive` subagent 답변은 같은 턴의 다음 메시지로 즉시 이어진다.
+- `self-drive` 중간 사용자 메시지도 같은 턴의 다음 메시지로 즉시 이어지며, 현재 플로우 조정 또는 다음 플로우 우선 등록 중 하나로 처리된다.
 
 ## session record 규칙
 
@@ -171,6 +181,8 @@
 - 결과 보고 뒤 explicit next-flow choice를 실제로 열었는가?
 - 결과 보고 직전에 `Continuity Guard`를 갱신했고 terminal summary 가능 여부를 확인했는가?
 - `self-drive`가 hard boundary에 도달했을 때 자율 라우팅을 일시 중지하고, 턴을 종료하지 않은 채 `user-gated` 질문 도구로 전환했는가?
+- `self-drive` 중간 사용자 메시지를 stop으로 오해하지 않고 현재 플로우 조정 또는 다음 플로우 우선 등록으로 처리했는가?
+- 새 사용자 입력과 충돌하는 self-drive subagent 답변을 stale answer로 폐기했는가?
 
 ## 독립성 원칙
 
