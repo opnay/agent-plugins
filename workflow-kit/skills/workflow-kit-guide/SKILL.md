@@ -64,6 +64,7 @@ If the repository requires non-terminal turns, keep `turn-gate` active as the lo
 - Use planning when execution should remain deferred.
 - Use `turn-gate` when the main bottleneck is not a single phase, but keeping the whole turn open through analysis, plan, work, result report, and user-response-based next-flow continuation.
 - If the repository requires every result report to reopen the next flow, keep `turn-gate` active even when another workflow owns the current phase detail.
+- When this guide activates `turn-gate`, treat that activation as a session-level first-class loop gate rule.
 - When `turn-gate` is active, treat the user's next-flow response as the next user message inside the same turn rather than as a brand-new independent turn.
 - Use execution workflows when meaningful implementation or refinement still remains.
 - Use `commit-readiness-gate` only when the main question is readiness.
@@ -119,6 +120,7 @@ Meta-flow heuristic:
 
 - Treat `turn-gate` as the turn-level loop gate, not as an execution mode parallel to `autopilot`, `parallel-work`, `ralph-loop`, or `review-loop`.
 - Choose it when keeping the turn open until the user asks to end the turn is itself the governing contract.
+- Once chosen, keep `turn-gate` as a first-class rule for the rest of the current session unless the user ends the turn.
 - In repositories with mandatory loop-gate rules, assume `turn-gate` is already active unless the user asks to end the turn.
 
 ## Escalation Signals

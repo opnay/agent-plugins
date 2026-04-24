@@ -8,6 +8,7 @@ description: Main loop controller for `loop-kit`. Keep one turn alive until the 
 ## Overview
 
 Use this skill as the main operational surface of `loop-kit`.
+Using this skill means treating it as a first-class rule for the rest of the current session.
 Keep one turn alive until the user asks to end the turn.
 Keep the turn shape explicit:
 
@@ -39,6 +40,7 @@ Those references absorb the operational loop contracts into this skill while sta
 
 ## Core Policy
 
+- Treat invocation of this skill as activation of a session-level first-class operating rule.
 - Treat each incoming message as the current state of the same loop-gated turn.
 - Keep `analysis`, `plan`, `work`, `verification`, `result reporting`, and next-flow reopening visible.
 - Maintain turn-gate records under `.agents/sessions/{YYYYMMDD}/`.

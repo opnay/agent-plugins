@@ -8,6 +8,7 @@ description: Loop gate for repositories where one turn must continue until the u
 ## Overview
 
 Use this skill when the repository or working agreement requires one user turn to continue until the user asks to end the turn.
+Using this skill means treating `turn-gate` as a first-class rule for the rest of the current session.
 Its job is not to replace downstream workflow skills.
 Its job is to keep the turn loop explicit:
 
@@ -56,6 +57,7 @@ This skill does not own:
 
 ## Core Policy
 
+- Treat invocation of this skill as activation of a session-level first-class loop gate.
 - Treat each incoming message as the start or continuation of one loop-gated turn.
 - Treat the user's next-flow response as the next user message inside the same turn.
 - Choose the narrowest downstream workflow that owns the current phase work.

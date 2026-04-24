@@ -5,6 +5,7 @@
 `workflow-kit`은 작업 lifecycle 전반을 다루는 workflow 플러그인입니다.
 핵심 책임은 들어온 요청에 대해 requirement discovery, framing, planning, execution, refinement, review, final gating, 그리고 사용자가 턴을 종료하자고 요청할때까지 턴을 닫지 않는 loop-gated continuity 중 현재 병목이 무엇인지 판단하고, 가장 맞는 workflow skill로 연결하는 것입니다.
 repository-local operating rule이 non-terminal turn을 요구하면, `turn-gate`를 turn-level loop gate로 유지한 채 현재 phase owner를 선택합니다.
+`turn-gate`가 활성화되면 현재 세션 동안 first-class loop gate rule로 취급합니다.
 이 플러그인은 `loop-kit`이 사용하는 broader workflow taxonomy와 canonical loop contract의 SSOT이기도 합니다.
 
 ## 플러그인 경계와 비목표

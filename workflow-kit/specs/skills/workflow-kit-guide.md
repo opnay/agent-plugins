@@ -40,6 +40,7 @@
 - specialist plugin은 workflow 이후 handoff 대상으로만 둔다.
 - phase continuity가 핵심 병목이면 `turn-gate`를 명시적으로 활성화하거나 유지한다.
 - repository-local rule이 non-terminal turn을 요구하면 `turn-gate`를 기본 loop gate로 유지한다.
+- `turn-gate`를 활성화한다는 것은 현재 세션 동안 이를 first-class loop gate rule로 유지한다는 의미로 취급한다.
 - `turn-gate`는 execution mode가 아니라 turn-level gate contract로 분류한다.
 - `turn-gate`가 활성화된 상태의 사용자 응답은 같은 턴의 다음 메시지로 이어지는 것으로 취급한다.
 

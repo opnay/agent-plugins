@@ -1,6 +1,7 @@
 ## 사용자 스펙 의도
 
 - 하나의 턴을 사용자가 턴을 종료하자고 요청할때까지 닫지 않고 유지하고 싶다.
+- 이 스킬을 사용한다는건, 이 세션동안 이 스킬을 1급 규칙으로 사용한다는 의미입니다.
 - `turn-gate`가 현재 phase의 메인 작업을 보고 적절한 내부 loop mode를 고르길 원한다.
 - 필요한 경우 requirement discovery 성격의 `deep-interview`도 `turn-gate` 안의 internal mode로 흘러가길 원한다.
 - `ralph-loop`, `review-loop`, readiness gate 같은 loop는 사용자가 직접 고르지 않고 `turn-gate` 안에서 흘러가길 원한다.
@@ -50,6 +51,7 @@
 ## 핵심 처리 계약
 
 - 각 incoming message를 같은 loop-gated turn의 현재 입력으로 취급한다.
+- 이 skill이 사용되면 현재 세션 동안 `turn-gate`를 first-class operating rule로 활성화한 것으로 취급한다.
 - `analysis`, `plan`, `work`, `verification`, `result reporting`, `user-response reopening`을 응답 shape에 계속 드러낸다.
 - active turn-gated task마다 `.agents/sessions/{YYYYMMDD}/000-plan.md` 상위 계획과 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record 체계를 유지한다.
 - `000-plan.md`는 사용자 요청 종료 이후에도 더 큰 작업이 이어지면 계속 증분 갱신한다.
