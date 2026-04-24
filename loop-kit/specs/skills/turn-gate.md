@@ -53,34 +53,51 @@
 
 ## 핵심 처리 계약
 
+### 활성화와 응답 흐름
+
 - 각 incoming message를 같은 loop-gated turn의 현재 입력으로 취급한다.
 - 이 skill이 사용되면 현재 세션 동안 `turn-gate`를 first-class operating rule로 활성화한 것으로 취급한다.
 - `analysis`, `plan`, `work`, `verification`, `result reporting`, `question-routing reopening`을 응답 shape에 계속 드러낸다.
-- active turn-gated task마다 `.agents/sessions/{YYYYMMDD}/000-plan.md` 상위 계획과 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record 체계를 유지한다.
-- `000-plan.md`는 사용자 요청 종료 이후에도 더 큰 작업이 이어지면 계속 증분 갱신한다.
 - 분석 단계와 계획 단계는 현재 플로우만이 아니라 이후 이어질 flow/phase 후보까지 미리 설계할 수 있다.
 - 그 future flow/phase 설계는 provisional하며, 이후 loop에서 새 증거, changed intent, 새 blocker가 생겼을 때만 다시 설계한다.
+
+### 세션 기록과 Continuity Guard
+
+- active turn-gated task마다 `.agents/sessions/{YYYYMMDD}/000-plan.md` 상위 계획과 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record 체계를 유지한다.
+- `000-plan.md`는 사용자 요청 종료 이후에도 더 큰 작업이 이어지면 계속 증분 갱신한다.
 - 해당 `001+` record는 completed flow를 기다리지 말고 각 phase가 끝날 때마다 증분 갱신한다.
 - 각 flow record에는 짧은 `Continuity Guard`를 두고, result reporting과 next-flow reopening 직전에 반드시 갱신한다.
 - `Continuity Guard`에는 `turn-gate` 활성 여부, question-routing mode, user explicit stop 여부, terminal summary 허용 여부, required next action이 포함되어야 한다.
-- 질문, 선택지 제시, scope lock, next-flow reopening에는 active question-routing mode를 필수로 사용한다.
+
+### 도구와 internal mode 선택
+
 - 실질적인 작업이 시작되면 계획 도구 `update_plan`을 필수로 사용하고 현재 active step 상태를 유지한다.
 - `work`에 들어가기 전 current-phase work의 internal mode를 하나 선택한다.
 - `loop-kit`에서는 사용자가 internal mode를 직접 호출하는 대신 `turn-gate`가 이를 선택한다.
 - `turn-gate`는 선택된 internal mode에 대응하는 local `references/` 문서를 먼저 읽고 그 계약을 적용한다.
+- local `references/`는 `workflow-kit` upstream spec과 동기화된 absorbed operational contract로 유지한다.
+
+### question-routing mode
+
+- 질문, 선택지 제시, scope lock, next-flow reopening에는 active question-routing mode를 필수로 사용한다.
 - `turn-gate`는 current-phase internal mode와 별개로 question-routing mode를 선택한다.
 - 기본 question-routing mode는 `user-gated`이며, scope lock, 선택지, next-flow reopening을 `request_user_input`으로 사용자에게 묻는다.
 - `self-drive` question-routing mode가 활성화되면 `references/self-drive.md`를 읽고, 사용자에게 묻던 phase 질문을 self-drive question packet으로 구성해 subagent에게 물어 그 답을 다음 결정 입력으로 사용한다.
 - self-drive question packet에는 최소한 phase, current mode, question type, decision needed, options, context, continuity guard, constraints, fallback, expected answer를 포함한다.
 - self-drive subagent answer에는 최소한 question id, selected option, decision, rationale, evidence, assumptions, confidence, blockers, approval boundary, continuity check, next action을 포함한다.
+
+### self-drive pause와 recovery
+
 - self-drive answer는 user explicit stop 또는 hard approval boundary가 없는 한 terminal summary를 허용하지 않고 계속 이어질 next action을 제시해야 한다.
 - subagent answer가 `context_gap`을 반환하면 메인 에이전트가 repo search, file read, log, deterministic check, policy-allowed web research로 회복 가능한지 먼저 판단하고, 회복 가능하면 evidence를 보강한 packet으로 다시 질문한다.
 - 사용자 취향을 확정할 수 없으면 명시적 manual preference lock 요청이 없는 한 가장 안전하고 되돌릴 수 있는 기본값을 가정으로 기록하고 계속 진행한다.
-- `low` confidence는 명시적 승인, 파괴적/비가역적/외부 action 승인, platform/tool/safety policy 경계처럼 self-drive가 회복하면 안 되는 경우에만 terminal로 취급한다.
-- `self-drive`에서 terminal은 자율 라우팅의 일시 중지를 의미하며, 턴을 종료하지 않고 `user-gated`로 전환해 `request_user_input`을 열어야 한다.
+- `low` confidence는 명시적 승인, 파괴적/비가역적/외부 action 승인, platform/tool/safety policy 경계처럼 self-drive가 회복하면 안 되는 경우에만 approval-boundary pause로 취급한다.
+- `self-drive`에서 approval-boundary pause는 자율 라우팅의 일시 중지만 의미하며, 턴을 종료하지 않고 `user-gated`로 전환해 `request_user_input`을 열어야 한다.
 - `self-drive`는 mode selection, criteria, scope assumption, verification choice, next-flow decision을 subagent 질문으로 처리할 수 있다.
 - runtime, tool, safety policy가 명시적 사용자 승인을 요구하는 경계는 `self-drive`가 대신 동의한 것으로 처리하지 않는다.
-- local `references/`는 `workflow-kit` upstream spec과 동기화된 absorbed operational contract로 유지한다.
+
+### 검증과 next-flow reopening
+
 - `work` 뒤에는 결과 보고 전에 명시적 검증 단계를 두고, 그 검증은 이후 flow/phase 재설계 필요 여부를 드러내는 단계로 취급한다.
 - 결과 보고 전에는 `Continuity Guard`를 읽거나 재구성하고, 사용자가 명시적으로 종료하지 않았으면 terminal summary가 invalid임을 확인한다.
 - 결과 보고 뒤에는 explicit choice를 주는 active question-routing mode로 다음 플로우를 다시 연다.

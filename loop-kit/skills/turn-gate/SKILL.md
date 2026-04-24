@@ -92,8 +92,8 @@ Those references absorb the operational loop contracts into this skill while sta
 - `self-drive` may answer mode selection, criteria, scope assumptions, verification choices, and next-flow decisions through subagents.
 - In `self-drive`, recover subagent `context_gap` results through main-agent discovery when the missing evidence can be found without an explicit approval boundary.
 - Treat missing user preference as a reversible assumption to record and continue unless the user explicitly requested manual preference locking.
-- Treat `low` confidence as terminal only when the missing decision requires explicit approval, destructive/irreversible/external action approval, or a platform/tool/safety boundary.
-- In `self-drive`, terminal means paused for autonomous routing only; switch to `user-gated` and use `request_user_input` instead of ending the turn.
+- Treat `low` confidence as an approval-boundary pause only when the missing decision requires explicit approval, destructive/irreversible/external action approval, or a platform/tool/safety boundary.
+- In `self-drive`, an approval-boundary pause stops autonomous routing only; switch to `user-gated` and use `request_user_input` instead of ending the turn.
 - `self-drive` does not override platform, tool, or safety policies that require explicit user approval.
 
 ## Session Record

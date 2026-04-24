@@ -87,7 +87,7 @@ When a subagent returns `context_gap`:
 - Did the subagent answer follow the self-drive answer contract?
 - Did the packet include the current `Continuity Guard`, and did the answer include a continuity check?
 - Did the subagent answer include enough evidence, confidence, and assumptions to continue responsibly?
-- Were recoverable context gaps routed back through main-agent discovery instead of treated as terminal low confidence?
+- Were recoverable context gaps routed back through main-agent discovery instead of treated as approval-boundary pauses?
 - Were ordinary preference gaps converted into recorded reversible assumptions instead of stop conditions?
 - Did any completion report still provide a next-flow action unless an explicit stop or hard approval boundary existed?
 - When self-drive paused at a hard boundary, did the main agent switch to `user-gated` and use `request_user_input` instead of ending the turn?

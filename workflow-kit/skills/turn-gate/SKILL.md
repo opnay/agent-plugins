@@ -151,8 +151,8 @@ Question-routing signals:
 - self-drive answers must reject terminal summaries unless an explicit user stop or hard approval boundary exists
 - self-drive should recover subagent `context_gap` results through main-agent discovery when evidence can be found without an explicit approval boundary
 - missing user preference should become a recorded reversible assumption unless the user explicitly requested manual preference locking
-- `low` confidence is terminal only when the decision requires explicit approval, destructive/irreversible/external action approval, or a platform/tool/safety boundary
-- in `self-drive`, terminal means paused for autonomous routing only; switch to `user-gated` and use `request_user_input` instead of ending the turn
+- `low` confidence means an approval-boundary pause only when the decision requires explicit approval, destructive/irreversible/external action approval, or a platform/tool/safety boundary
+- in `self-drive`, an approval-boundary pause stops autonomous routing only; switch to `user-gated` and use `request_user_input` instead of ending the turn
 - `self-drive` must still pause at explicit user-approval boundaries required by platform, tool, or safety policy
 
 Output:
