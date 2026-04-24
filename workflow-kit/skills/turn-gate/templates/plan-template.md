@@ -12,15 +12,15 @@
 
 ## Planned Flows
 
-- Flow 1:
-- Flow 2:
-- Flow 3:
+1. <first outcome or phase>
+2. <next outcome or phase>
+3. <next outcome or phase>
 
 ## Current Status
 
-- Active flow:
+- Active item:
 - Latest decision:
 
 ## Risks
 
-- Risk 1:
+- <risk or uncertainty>

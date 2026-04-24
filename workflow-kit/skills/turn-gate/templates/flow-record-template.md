@@ -32,9 +32,9 @@ Update this record incrementally after each completed phase. Do not wait until t
 
 ## Plan
 
-- Step 1:
-- Step 2:
-- Step 3:
+1. <first action>
+2. <next action>
+3. <next action>
 
 ## Work
 
@@ -54,10 +54,10 @@ Update this record incrementally after each completed phase. Do not wait until t
 
 ## Next Flow Options
 
-- Option 1:
-- Option 2:
-- Option 3:
+1. <next flow choice>
+2. <alternative>
+3. <defer or stop path>
 
 ## Residual Risk
 
-- Risk 1:
+- <risk or uncertainty>
