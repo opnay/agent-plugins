@@ -144,8 +144,9 @@ Question-routing signals:
 - `self-drive` when the user wants questions answered by subagents so work can continue without user intervention
 - `self-drive` can answer mode selection, criteria, scope assumptions, verification choices, and next-flow decisions through self-drive question packets sent to subagents
 - self-drive subagent answers must include the chosen option or no-option result, decision, rationale, evidence, assumptions, confidence, blockers, approval boundary, and next action
-- self-drive should recover subagent `context_gap` results through main-agent discovery when evidence can be found without user preference or approval
-- `low` confidence is terminal only when the decision requires user preference, explicit approval, or a platform/tool/safety boundary
+- self-drive should recover subagent `context_gap` results through main-agent discovery when evidence can be found without an explicit approval boundary
+- missing user preference should become a recorded reversible assumption unless the user explicitly requested manual preference locking
+- `low` confidence is terminal only when the decision requires explicit approval, destructive/irreversible/external action approval, or a platform/tool/safety boundary
 - `self-drive` must still stop at explicit user-approval boundaries required by platform, tool, or safety policy
 
 Output:

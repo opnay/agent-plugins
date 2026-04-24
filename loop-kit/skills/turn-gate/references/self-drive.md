@@ -46,13 +46,14 @@ Every self-drive subagent answer must include:
 - `next_action`: the next phase or action the loop should take.
 
 If the subagent cannot answer because recoverable context is missing, it must return `selected_option: none`, `confidence: medium`, and `context_gap`.
-If the missing information requires user preference, explicit approval, or a policy boundary, it must return `selected_option: none`, `confidence: low`, and a blocker instead of inventing the answer.
+If a missing user preference is not recoverable, choose the safest reversible default, record it as an assumption, and continue.
+Only return `selected_option: none`, `confidence: low`, and a blocker when the missing decision requires explicit approval, destructive/irreversible/external action approval, or a platform/tool/safety boundary.
 
 ## Confidence Rules
 
 - `high`: evidence in the packet supports the decision, assumptions are minor, and no approval boundary is present. Continue automatically.
 - `medium`: the decision is plausible but has recoverable gaps or assumptions. Continue only by recording carried assumptions or by running the recovery action named in `next_action`.
-- `low`: self-drive cannot recover the missing information because the decision requires user preference, explicit approval, or a platform/tool/safety boundary. Stop at that boundary.
+- `low`: self-drive cannot continue because the decision requires explicit approval, destructive/irreversible/external action approval, or a platform/tool/safety boundary. Stop at that boundary.
 
 Do not classify a missing context item as `low` merely because it was absent from the packet.
 If the main agent can recover the gap through repo search, file reads, logs, deterministic checks, or policy-allowed web research, treat it as recoverable.
@@ -64,12 +65,13 @@ When a subagent returns `context_gap`:
 1. Classify whether the gap is recoverable by the main agent.
 2. If recoverable, run the needed discovery and build a new self-drive question packet with the added evidence.
 3. Ask the subagent again with the revised packet.
-4. If unrecoverable because it requires user preference, explicit approval, or a policy boundary, stop with `confidence: low`.
+4. If the gap is an unrecoverable user preference, choose the safest reversible default, record it as an assumption, and continue.
+5. If unrecoverable because it requires explicit approval, destructive/irreversible/external action approval, or a policy boundary, stop with `confidence: low`.
 
 ## Mode Boundary
 
 - Good fit: user explicitly wants autonomous continuation, self-driving loops, or no user intervention between phases.
-- Not a fit: the user wants manual approval at each step, the next step requires real-world/destructive approval, or the decision depends on private user preference that no subagent can infer from available context.
+- Not a fit: the user explicitly wants manual approval at each step, or the next step requires real-world/destructive/irreversible approval that the runtime or tool policy requires the user to approve.
 
 ## Review Questions
 
@@ -78,4 +80,5 @@ When a subagent returns `context_gap`:
 - Did the subagent answer follow the self-drive answer contract?
 - Did the subagent answer include enough evidence, confidence, and assumptions to continue responsibly?
 - Were recoverable context gaps routed back through main-agent discovery instead of treated as terminal low confidence?
+- Were ordinary preference gaps converted into recorded reversible assumptions instead of stop conditions?
 - Did the loop preserve hard approval boundaries required by the runtime or tool policy?

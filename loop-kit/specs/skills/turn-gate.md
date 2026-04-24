@@ -72,7 +72,8 @@
 - self-drive question packet에는 최소한 phase, current mode, question type, decision needed, options, context, constraints, fallback, expected answer를 포함한다.
 - self-drive subagent answer에는 최소한 question id, selected option, decision, rationale, evidence, assumptions, confidence, blockers, approval boundary, next action을 포함한다.
 - subagent answer가 `context_gap`을 반환하면 메인 에이전트가 repo search, file read, log, deterministic check, policy-allowed web research로 회복 가능한지 먼저 판단하고, 회복 가능하면 evidence를 보강한 packet으로 다시 질문한다.
-- `low` confidence는 사용자 취향, 명시적 승인, platform/tool/safety policy 경계처럼 self-drive가 회복하면 안 되는 경우에만 terminal로 취급한다.
+- 사용자 취향을 확정할 수 없으면 명시적 manual preference lock 요청이 없는 한 가장 안전하고 되돌릴 수 있는 기본값을 가정으로 기록하고 계속 진행한다.
+- `low` confidence는 명시적 승인, 파괴적/비가역적/외부 action 승인, platform/tool/safety policy 경계처럼 self-drive가 회복하면 안 되는 경우에만 terminal로 취급한다.
 - `self-drive`는 mode selection, criteria, scope assumption, verification choice, next-flow decision을 subagent 질문으로 처리할 수 있다.
 - runtime, tool, safety policy가 명시적 사용자 승인을 요구하는 경계는 `self-drive`가 대신 동의한 것으로 처리하지 않는다.
 - local `references/`는 `workflow-kit` upstream spec과 동기화된 absorbed operational contract로 유지한다.
