@@ -7,6 +7,7 @@
 - `ralph-loop`, `review-loop`, readiness gate 같은 loop는 사용자가 직접 고르지 않고 `turn-gate` 안에서 흘러가길 원한다.
 - 내부 loop mode의 canonical contract는 `workflow-kit`이 SSOT로 계속 소유하길 원한다.
 - 내부 loop mode는 `turn-gate` 스킬의 local `references/` 아래로 흡수돼야 하고, 실행 시 그 reference를 읽는 구조이길 원한다.
+- broad end-to-end delivery가 현재 phase work라면 `workflow-kit/autopilot`의 계약도 `turn-gate` internal mode로 선택되길 원한다.
 - `turn-gate`는 질문 도구와 계획 도구를 선택 사항이 아니라 필수 도구로 사용해야 한다.
 - `turn-gate`로 진행한 작업은 `.agents/sessions` 아래에 기록이 남아야 한다.
 - 여러 플로우를 거치는 작업의 상위 계획은 `.agents/sessions/{YYYYMMDD}/000-plan.md` 경로에 누적되길 원한다.
@@ -39,7 +40,7 @@
 ## 처리하려는 작업 형태
 
 - 사용자가 턴을 종료하자고 요청하기 전까지 한 턴 안에서 여러 phase를 이어가야 하는 작업
-- requirement discovery, refinement, review-driven correction, readiness checking 같은 current-phase work가 번갈아 나타나는 작업
+- requirement discovery, autonomous execution, refinement, review-driven correction, readiness checking 같은 current-phase work가 번갈아 나타나는 작업
 - 결과 보고 뒤 clean stop이 아니라 다음 플로우 선택이 기본이어야 하는 작업
 
 ## 엔트리포인트 / 대표 표면
@@ -71,6 +72,7 @@
 ## 내부 loop mode 선택 규칙
 
 - 실제 requirement discovery가 병목이면 `references/deep-interview.md`를 따른다.
+- broad end-to-end delivery가 필요한 current phase이면 `references/autopilot.md`를 따른다.
 - bounded issue를 작은 fix-verify-reassess cycle로 다루는 경우 `references/ralph-loop.md`를 따른다.
 - review feedback이나 material finding 처리인 경우 `references/review-loop.md`를 따른다.
 - 현재 변경 단위가 거의 끝났고 readiness 판단이 핵심이면 `references/commit-readiness-gate.md`를 따른다.
@@ -87,8 +89,9 @@
 - blocker가 requirement discovery, intent ambiguity, scope boundary, approval line이라면 `deep-interview`를 고른다.
 - input이 review feedback, QA finding, self-review finding이고 한 번에 하나의 material issue만 처리해야 한다면 `review-loop`를 고른다.
 - blocker가 하나의 bounded improvement cycle이고 작은 fix 뒤 즉시 검증하는 흐름이 맞다면 `ralph-loop`를 고른다.
+- brief request부터 implementation, QA, validation까지 이어지는 broad end-to-end delivery가 현재 phase work라면 `autopilot`을 고른다.
 - 구현이 거의 끝났고 intended change unit의 commit readiness 판단이 핵심이면 `commit-readiness-gate`를 고른다.
-- 여러 mode가 겹쳐 보이면 `deep-interview -> review-loop -> ralph-loop -> commit-readiness-gate` 순으로 더 이른 병목을 우선한다.
+- 여러 mode가 겹쳐 보이면 `deep-interview -> review-loop -> ralph-loop -> autopilot -> commit-readiness-gate` 순으로 더 이른 병목을 우선한다.
 - 그래도 mode를 못 잠그면 질문 도구로 선택지를 좁힌 뒤 work phase로 들어간다.
 
 ## next-flow reopening 규칙

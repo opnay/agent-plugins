@@ -15,7 +15,7 @@ Do not expose direct loop entrypoints such as `ralph-loop` or `review-loop` to t
 ## Routing Rules
 
 - Start in `turn-gate` when the repository or task requires the turn to stay open until the user asks to end the turn.
-- Start in `turn-gate` when the main value is keeping the turn alive while the active work mode changes across refinement, review, or readiness.
+- Start in `turn-gate` when the main value is keeping the turn alive while the active work mode changes across autonomous execution, refinement, review, or readiness.
 - Do not start in `loop-kit` when the main problem is still broad workflow selection, requirement discovery, or planning outside a loop-gated turn.
 - When `loop-kit` is not the best starting point, say so explicitly and prefer the broader `workflow-kit` surface.
 

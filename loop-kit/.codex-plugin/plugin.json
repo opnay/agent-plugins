@@ -18,8 +18,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Loop Kit",
-    "shortDescription": "Turn-gated continuity with internal refinement, review, and readiness loops driven from one main surface.",
-    "longDescription": "Provides a narrow operational plugin where turn-gate is the main user-facing surface. It keeps one turn alive until the user explicitly ends the work, keeps analysis, plan, work, result reporting, and next-flow choice visible, and selects the right internal loop mode for refinement, review findings, or readiness without exposing those loops as direct user entrypoints.",
+    "shortDescription": "Turn-gated continuity with internal execution, refinement, review, and readiness loops driven from one main surface.",
+    "longDescription": "Provides a narrow operational plugin where turn-gate is the main user-facing surface. It keeps one turn alive until the user explicitly ends the work, keeps analysis, plan, work, result reporting, and next-flow choice visible, and selects the right internal loop mode for autonomous execution, refinement, review findings, or readiness without exposing those loops as direct user entrypoints.",
     "developerName": "opnay",
     "category": "Productivity",
     "capabilities": [
@@ -30,7 +30,7 @@
     "defaultPrompt": [
       "Keep this turn alive until I explicitly stop and reopen the next flow with explicit choices.",
       "Use turn-gate as the main controller and choose the right internal loop for the current phase.",
-      "Handle this as a turn-gated loop where refinement, review, and readiness modes are selected inside turn-gate.",
+      "Handle this as a turn-gated loop where autonomous execution, refinement, review, and readiness modes are selected inside turn-gate.",
       "Do not expose direct loop entrypoints; drive the work through turn-gate."
     ],
     "brandColor": "#1D6E6E"

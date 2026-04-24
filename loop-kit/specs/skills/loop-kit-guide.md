@@ -46,7 +46,7 @@
 ## 라우팅 규칙
 
 - repository-local rule이나 task shape가 non-terminal turn을 요구하면 `turn-gate`로 시작한다.
-- current-phase work가 requirement discovery, refinement, review handling, readiness pass 중 하나로 좁혀질 수 있으면 `turn-gate`로 보낸다.
+- current-phase work가 requirement discovery, autonomous execution, refinement, review handling, readiness pass 중 하나로 좁혀질 수 있으면 `turn-gate`로 보낸다.
 - broad workflow selection 자체가 먼저 필요하면 `workflow-kit` 쪽 시작점을 우선 검토한다.
 
 ## 검토 질문

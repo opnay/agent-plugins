@@ -133,6 +133,7 @@ Selection signals:
 - `deep-interview` when the blocker is real requirement discovery
 - `review-loop` when the input is review findings and only material issues should be fixed
 - `ralph-loop` when one bounded fix-verify-reassess cycle is the best next step
+- `autopilot` when the current phase is broad end-to-end delivery from a brief request through implementation, QA, and validation
 - `commit-readiness-gate` when implementation is largely done and the current question is readiness for commit
 
 Output:

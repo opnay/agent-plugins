@@ -29,7 +29,7 @@ Those references absorb the operational loop contracts into this skill while sta
 
 - the repository or working agreement requires non-terminal turns until the user asks to end the turn
 - the active work may need a discovery round before execution or refinement can safely continue
-- the active work mode may shift between refinement, review handling, and readiness inside the same turn
+- the active work mode may shift between autonomous execution, refinement, review handling, and readiness inside the same turn
 - the main risk is losing turn continuity or exposing too many direct loop entrypoints
 
 ## Do Not Use When
@@ -60,6 +60,7 @@ Those references absorb the operational loop contracts into this skill while sta
 ## Internal Loop Modes
 
 - Read `references/deep-interview.md` and use that contract when the current phase is still requirement discovery and the next step depends on an actual question round.
+- Read `references/autopilot.md` and use that contract when the current phase is broad end-to-end delivery from a brief request to a verified result.
 - Read `references/ralph-loop.md` and use that contract when the work is a bounded issue that benefits from small fix-verify-reassess cycles.
 - Read `references/review-loop.md` and use that contract when the work is driven by review findings and only material issues should be fixed.
 - Read `references/commit-readiness-gate.md` and use that contract when implementation is largely done and the current question is readiness for commit.
@@ -70,8 +71,9 @@ Those references absorb the operational loop contracts into this skill while sta
 - Choose `deep-interview` when the current blocker is requirement discovery, unclear intent, missing scope boundaries, or unresolved approval lines.
 - Choose `review-loop` when the input is review feedback, QA findings, or self-review findings and the work should stay bounded to one material issue at a time.
 - Choose `ralph-loop` when the work is one bounded improvement cycle and the best next move is a small fix followed by immediate verification.
+- Choose `autopilot` when the work is broad end-to-end delivery that spans scope assumptions, implementation, QA, validation, and delivery.
 - Choose `commit-readiness-gate` when implementation is largely done and the current question is whether the intended change unit is ready to move toward commit.
-- If more than one mode seems plausible, prefer the earliest blocker in this order: `deep-interview` -> `review-loop` -> `ralph-loop` -> `commit-readiness-gate`.
+- If more than one mode seems plausible, prefer the earliest blocker in this order: `deep-interview` -> `review-loop` -> `ralph-loop` -> `autopilot` -> `commit-readiness-gate`.
 - If the blocker is still broader than any one internal mode, use `request_user_input` to narrow the mode choice before continuing.
 
 ## Session Record

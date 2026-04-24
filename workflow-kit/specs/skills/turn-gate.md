@@ -94,7 +94,7 @@
 - default flow-record template는 `skills/turn-gate/templates/flow-record-template.md`여야 한다.
 - default `000-plan.md` template는 `skills/turn-gate/templates/plan-template.md`여야 한다.
 - flow record는 phase 메모가 아니지만 각 phase 종료 시점의 현재 상태를 증분 반영해야 한다.
-- current phase의 downstream workflow 선택에는 최소한 `deep-interview`, `review-loop`, `ralph-loop`, `commit-readiness-gate` 구분 신호가 드러나야 한다.
+- current phase의 downstream workflow 선택에는 최소한 `deep-interview`, `autopilot`, `review-loop`, `ralph-loop`, `commit-readiness-gate` 구분 신호가 드러나야 한다.
 - 분석 단계와 계획 단계에서는 필요하면 사용자에게 질문을 열 수 있다.
 - future flow/phase 설계는 고정값이 아니며, 이후 loop에서 새 증거, changed intent, 새 blocker가 생겼을 때만 다시 설계한다.
 - 다음 플로우 진행을 위한 사용자 응답도 같은 턴의 다음 `현재 메시지`로 받아들인다.
