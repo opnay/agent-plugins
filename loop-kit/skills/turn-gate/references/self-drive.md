@@ -11,7 +11,31 @@ Use this question-routing mode when the turn should keep progressing without wai
 - Record the subagent question, answer, confidence, and any assumptions in the flow record.
 - Carry the current `Continuity Guard` into every self-drive packet so long contexts preserve the active loop rule.
 - Reject any self-drive answer that reports completion but does not preserve next-flow continuation when no explicit user stop or hard approval boundary exists.
+- Treat any user message that arrives during self-drive as higher-priority loop input than pending or returned subagent answers.
+- When the user intervenes during self-drive, classify the message and either adjust the current flow immediately or register it as the highest-priority next flow.
 - If a platform, tool, or safety policy requires explicit user approval, pause self-drive at that boundary, switch to `user-gated`, and open `request_user_input` with explicit choices instead of ending the turn.
+
+## User Intervention During Self-Drive
+
+Self-drive means the loop does not wait for user answers between phases.
+It does not mean user messages are ignored or treated as turn-ending interruptions.
+When a user message arrives while self-drive work is in progress:
+
+1. Treat the user message as authoritative current loop input.
+2. Refresh the `Continuity Guard` and preserve `user_explicit_stop: false` unless the message explicitly asks to end the turn.
+3. Classify the message:
+   - `explicit-turn-stop`: the user asks to stop/end the turn.
+   - `current-flow-correction`: the user corrects or changes what is being done now.
+   - `current-flow-priority-change`: the user adds a priority that should change the current plan before the next safe checkpoint.
+   - `next-flow-priority-request`: the user adds a follow-up that should run next but does not invalidate current work.
+4. For `current-flow-correction` or `current-flow-priority-change`, revise the current analysis and plan immediately, then continue from the earliest safe phase.
+5. For `next-flow-priority-request`, record it in the flow record as the highest-priority next-flow candidate and continue to the next safe handoff point.
+6. Ignore or supersede any self-drive subagent answer that conflicts with the newer user message.
+7. Continue in `self-drive` after incorporating the user input unless the user requests manual control or the message creates a real approval boundary.
+
+Do not call this a pause, stop, or completion.
+Only an explicit user stop ends the turn.
+Only a platform, tool, safety, destructive, irreversible, external-action, or explicit approval requirement switches the loop to `user-gated`.
 
 ## Question Packet
 
@@ -24,6 +48,7 @@ Every self-drive subagent question must include:
 - `decision_needed`: the exact decision the subagent must make.
 - `options`: explicit options when the decision can be bounded.
 - `context`: concise evidence from the current request, files, diffs, logs, plans, or prior flow records.
+- `user_interventions`: newer user messages received during self-drive, their classification, and whether they supersede earlier assumptions or subagent answers.
 - `continuity_guard`: compact current-state reminder with `turn_gate_active`, `question_routing_mode`, `user_explicit_stop`, `terminal_summary_allowed`, and `required_next_action`.
 - `constraints`: non-goals, approval boundaries, safety/tool limits, and anything the subagent must not assume.
 - `fallback`: what to do if confidence is too low or evidence conflicts.
@@ -46,12 +71,14 @@ Every self-drive subagent answer must include:
 - `context_gap`: missing information the subagent needs before it can answer better, if any.
 - `blockers`: unresolved blockers or conflicts, if any.
 - `approval_boundary`: whether explicit user/tool approval is required before continuing.
+- `superseded_by_user_input`: whether the answer is stale because a newer user message changed the current flow.
 - `continuity_check`: whether `turn-gate` remains active, whether terminal summary is allowed, and what next-flow action is required.
 - `next_action`: the next phase or action the loop should take.
 
 If `continuity_guard.user_explicit_stop` is false and no approval boundary is present, the answer must set `continuity_check.terminal_summary_allowed: false` and provide a concrete continuing `next_action`.
 If an approval boundary is present, the answer must set `next_action` to `switch-to-user-gated-question` and the main agent must call `request_user_input` rather than end the turn.
 An answer that only summarizes completion without a next action is invalid in self-drive.
+An answer that conflicts with a newer user intervention is stale and must not drive the next phase.
 If the subagent cannot answer because recoverable context is missing, it must return `selected_option: none`, `confidence: medium`, and `context_gap`.
 If a missing user preference is not recoverable, choose the safest reversible default, record it as an assumption, and continue.
 Only return `selected_option: none`, `confidence: low`, and a blocker when the missing decision requires explicit approval, destructive/irreversible/external action approval, or a platform/tool/safety boundary.
@@ -83,6 +110,8 @@ When a subagent returns `context_gap`:
 ## Review Questions
 
 - Did every non-approval question route to a subagent instead of the user?
+- If the user intervened during self-drive, was the message classified and incorporated as current-flow adjustment or highest-priority next flow?
+- Were stale subagent answers superseded when newer user input changed the flow?
 - Did each subagent question include a complete self-drive question packet?
 - Did the subagent answer follow the self-drive answer contract?
 - Did the packet include the current `Continuity Guard`, and did the answer include a continuity check?

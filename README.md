@@ -34,7 +34,18 @@ codex plugin marketplace upgrade
 
 공개 설치용 플러그인과 로컬 개발용 플러그인을 동시에 쓰려면 plugin name 충돌을 피해야 합니다.
 로컬 개발용 플러그인은 `src/` 아래에서 관리하고, plugin name에 `-dev` suffix를 붙입니다.
-일반 개발 변경은 `src/<plugin-name>-dev`만 수정하고, 루트의 공개 release surface는 명시적인 release 승격 작업에서만 갱신합니다.
+일반 개발 변경은 `src/<plugin-name>-dev`에 먼저 적용하고, 루트의 공개 release surface는 build command 산출물로 갱신합니다.
+
+## 브랜치 모델
+
+- `main`: 공개 release 브랜치입니다.
+- `next`: 개발 브랜치입니다.
+- 플러그인 수정은 기본적으로 `next`의 `src/<plugin-name>-dev`에서 진행합니다.
+- `main`에는 `next`의 개발 내용을 release로 승격할 때만 반영합니다.
+- 마지막 `main` merge 이후 `next`에서 플러그인을 처음 수정할 때, patch/minor/major 또는 target version을 사용자 확인으로 결정합니다.
+- 같은 플러그인의 이후 변경은 추가 version bump 없이 build만 수행합니다.
+- 개발 버전을 쓰는 사용자는 `next` 브랜치를 marketplace source로 등록하고 `<plugin-name>-dev`를 설치합니다.
+- 루트 `<plugin-name>/` release surface는 매 plugin 변경 뒤 build command로 갱신합니다.
 
 예를 들어 공개 플러그인은 `$rpg-kit:subagent-role`, 개발 플러그인은 `$rpg-kit-dev:subagent-role`로 분리됩니다.
 
@@ -105,8 +116,8 @@ src/<plugin-name>-dev/
 - 플러그인은 루트 바로 아래에 둡니다. `./plugins/<plugin-name>` 경로는 사용하지 않습니다.
 - 개발 원본은 `src/<plugin-name>-dev`에 둡니다.
 - specs는 `src/` 안에서만 관리합니다.
-- 일반 개발 변경은 `src/<plugin-name>-dev`에만 적용합니다.
-- 루트 release surface는 release 생성, 공개 설치 반영, marketplace 출하가 명시된 작업에서만 갱신합니다.
+- 일반 개발 변경은 `src/<plugin-name>-dev`에 먼저 적용합니다.
+- 루트 release surface는 build command 산출물로만 갱신합니다.
 - 플러그인 변경은 spec-driven으로 다룹니다.
 - plugin surface가 바뀌면 `src/<plugin-name>-dev/README.md`, `src/<plugin-name>-dev/specs/plugin.md`, 관련 skill spec, 관련 guide skill, `plugin.json`, marketplace entry를 함께 점검합니다.
 - 플러그인별 release version은 각 `.codex-plugin/plugin.json`의 `version`이 소유합니다.

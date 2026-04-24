@@ -33,6 +33,9 @@ Use only the axes that matter for the task:
 - `general_expertise`: product strategy, UX writing, implementation rigor, verification
 - `decision_style`: product sense, technical critique, verification
 
+When a task maps to a common role, consult the templates under `roles/` for default attention axes and packet defaults.
+Use those axes as prompts for role design, not as a fixed persona template.
+
 Examples:
 
 - `PM role for game scenario ownership`: PM judgment focused on game scenario responsibility
@@ -50,6 +53,9 @@ Use these as starting points and tighten them for the actual task:
 - `game-planning-origin frontend developer`: interaction interpretation, implementation constraints, UX risk, fallback option
 - `designer role for UX review`: UX findings, severity, proposed adjustment, acceptance signal. Keep it read-only unless explicitly assigned implementation; caller integrates only material issues.
 - `QA role for regression test design`: test matrix, high-risk flows, regression cases, pass/fail signal
+
+For reusable attention axes and packet defaults behind these patterns, prefer the templates under `roles/`.
+If a role pattern repeats and proves useful, promote it into that reference before expanding this skill body.
 
 ## Role Packet
 

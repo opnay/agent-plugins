@@ -1,0 +1,15 @@
+{
+  "name": "agent-plugins",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.32.1",
+  "scripts": {
+    "build:plugin": "tsx scripts/build-plugin.mjs",
+    "release:plugin": "tsx scripts/release-plugin.mjs",
+    "generate-release": "tsx scripts/generate-release.mjs"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
+  }
+}

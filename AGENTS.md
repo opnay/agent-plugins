@@ -18,8 +18,29 @@
 - 개발 원본 플러그인은 `./src/<plugin-name>-dev` 아래에 둡니다.
 - specs는 개발 원본인 `./src/<plugin-name>-dev/specs/` 안에서만 관리합니다.
 - 일반 개발 변경의 기본 편집 대상은 `./src/<plugin-name>-dev`입니다.
-- 저장소 루트의 release 플러그인은 명시적인 release 생성, release 승격, marketplace 출하 요청이 있을 때만 수정합니다.
+- 저장소 루트의 release 플러그인은 수동 편집하지 않고 build command 산출물로 갱신합니다.
 - 나중에 저장소 구조를 의도적으로 바꾸지 않는 한, 이 저장소에서 `./plugins/<plugin-name>` 경로를 만들거나 사용하지 않습니다.
+
+## 브랜치 운영 규칙
+
+- `main` 브랜치는 공개 release 브랜치입니다.
+- `next` 브랜치는 개발 브랜치입니다.
+- 일반 플러그인 수정은 `next`에서 `src/<plugin-name>-dev`에 적용합니다.
+- `main`에는 `next`에서 검증된 개발 내용을 release로 승격할 때만 반영합니다.
+- `next` 브랜치를 사용하는 동안에는 dev 플러그인 자체를 설치/사용할 수 있어야 하므로, 개발 표면은 `<plugin-name>-dev` 이름과 `src/<plugin-name>-dev` 구조를 유지합니다.
+- build command는 매 plugin 변경마다 루트 `./<plugin-name>` release surface를 갱신합니다.
+
+## 버전 승격 규칙
+
+- `next`에서 마지막 `main` merge 이후 특정 dev 플러그인을 처음 수정할 때, 먼저 `next`의 dev 플러그인 version bump 대상입니다.
+- version bump 종류는 자동으로 단정하지 않고 사용자에게 patch/minor/major 또는 구체 version을 확인합니다.
+- 사용자가 version 유지 또는 bump를 명시하면 그 결정에 따라 `src/<plugin-name>-dev/.codex-plugin/plugin.json` version을 유지하거나 올립니다.
+- 예: `turn-gate`를 수정했다면 `next`의 `src/loop-kit-dev`와 필요 시 upstream `src/workflow-kit-dev`를 수정합니다.
+- 이때 마지막 `main` merge 이후 첫 `loop-kit-dev` 수정이라면, 수정 전에 사용자에게 `loop-kit-dev` patch/minor/major bump 선택지를 엽니다.
+- 같은 플러그인의 이후 변경은 추가 version bump 없이 build만 수행합니다.
+- `next` 브랜치를 marketplace로 등록해 개발 버전을 사용하는 사람은 bump된 dev plugin version을 설치/업데이트합니다.
+- 실제 공개 release 단계가 되면 `next`를 `main`으로 merge하고, release surface를 루트 폴더로 생성/갱신합니다.
+- build는 매 plugin 변경마다 수행하고, release(version bump)는 마지막 `main` merge 이후 해당 plugin의 첫 수정 때 수행합니다.
 
 ## 필수 플러그인 구조
 
@@ -88,13 +109,24 @@
 ## 플러그인 변경 워크플로
 
 1. 개발 원본 플러그인은 `./src/<plugin-name>-dev`에 생성하거나 이동합니다.
-2. 일반 개발 변경은 `./src/<plugin-name>-dev`의 README, specs, skills, manifest만 갱신합니다.
-3. 공개 release 플러그인은 명시적인 release 생성 또는 release 승격 요청이 있을 때만 저장소 루트 `./<plugin-name>`에 생성하거나 갱신합니다.
+2. 일반 개발 변경은 `./src/<plugin-name>-dev`의 README, specs, skills, manifest에 먼저 적용합니다.
+3. 변경한 plugin은 build command로 저장소 루트 `./<plugin-name>` release surface를 갱신합니다.
 4. `.codex-plugin/plugin.json`이 존재하고 유효한 JSON인지 확인합니다.
 5. specs는 `./src/<plugin-name>-dev/specs/`에서 만들거나 현재 표면에 맞게 갱신합니다.
 6. release 승격이 요청된 경우에만 `./.agents/plugins/marketplace.json`에 공개 release 항목을 추가하거나 갱신합니다.
 7. 모든 마켓플레이스 항목에 `policy.installation`, `policy.authentication`, `category`가 포함되도록 유지합니다.
 8. 변경한 JSON 파일은 수정 후 검증합니다.
+
+## Release 승격 워크플로
+
+1. `next`에서 release할 플러그인 변경 범위를 확인합니다.
+2. `next`에서 이미 dev plugin version bump가 반영됐는지 확인합니다.
+3. 마지막 `main` merge 이후 첫 수정인 플러그인은 사용자에게 patch/minor/major 또는 목표 version을 확인하고 release command를 실행합니다.
+4. 같은 플러그인의 이후 수정은 추가 version bump 없이 build command만 실행합니다.
+5. `next`를 `main`으로 merge할 release 단위를 확정합니다.
+6. build command로 `src/<plugin-name>-dev`를 루트 `./<plugin-name>` release surface로 변환합니다.
+7. release root에 `specs/`가 없는지, manifest name/version과 marketplace entry가 맞는지 검증합니다.
+8. 검증된 release 변경을 `main`에 반영합니다.
 
 ## 플러그인 의도 관련 메모
 
@@ -173,8 +205,9 @@
 
 - 두 번째 레이아웃 관례를 조용히 도입하지 않습니다.
 - 명시적으로 재정렬 요청이 없는 한, 기존 마켓플레이스 순서를 유지합니다.
-- 일반 개발 수정에서 저장소 루트의 release 플러그인 산출물을 함께 수정하지 않습니다.
-- release 산출물 재생성은 사용자가 release, 출하, 공개 설치 반영, marketplace 반영을 명시적으로 요청했을 때만 수행합니다.
+- 저장소 루트의 release 플러그인은 직접 편집하지 않습니다.
+- 루트 release 변경은 build command 산출물로만 만듭니다.
+- release command를 통한 version bump는 마지막 `main` merge 이후 해당 plugin의 첫 수정 때만 수행합니다.
 - 메타데이터나 경로만 손보면 되는 경우, 스캐폴드 재생성보다 작고 직접적인 수정을 선호합니다.
 - 플러그인을 이동했다면 같은 변경 안에서 마켓플레이스 경로도 함께 갱신합니다.
 - 스캐폴드 도구가 `./plugins/<plugin-name>`를 생성했다면 마무리 전에 `./<plugin-name>`로 옮깁니다.
