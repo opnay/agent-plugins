@@ -34,6 +34,7 @@ codex plugin marketplace upgrade
 
 공개 설치용 플러그인과 로컬 개발용 플러그인을 동시에 쓰려면 plugin name 충돌을 피해야 합니다.
 로컬 개발용 플러그인은 `src/` 아래에서 관리하고, plugin name에 `-dev` suffix를 붙입니다.
+일반 개발 변경은 `src/<plugin-name>-dev`만 수정하고, 루트의 공개 release surface는 명시적인 release 승격 작업에서만 갱신합니다.
 
 예를 들어 공개 플러그인은 `$rpg-kit:subagent-role`, 개발 플러그인은 `$rpg-kit-dev:subagent-role`로 분리됩니다.
 
@@ -74,7 +75,7 @@ skill 작성, plugin 작성, empirical prompt tuning, session 관리, commit wor
 - 경로: `rpg-kit/`
 - 대표 엔트리포인트: `rpg-kit-guide`
 - 주요 실행 표면: `subagent-role`
-- 평가 설계: `rpg-kit/specs/subagent-role-packet-evaluation.md`
+- 평가 설계: `src/rpg-kit-dev/specs/subagent-role-packet-evaluation.md`
 
 ## 저장소 구조
 
@@ -104,6 +105,8 @@ src/<plugin-name>-dev/
 - 플러그인은 루트 바로 아래에 둡니다. `./plugins/<plugin-name>` 경로는 사용하지 않습니다.
 - 개발 원본은 `src/<plugin-name>-dev`에 둡니다.
 - specs는 `src/` 안에서만 관리합니다.
+- 일반 개발 변경은 `src/<plugin-name>-dev`에만 적용합니다.
+- 루트 release surface는 release 생성, 공개 설치 반영, marketplace 출하가 명시된 작업에서만 갱신합니다.
 - 플러그인 변경은 spec-driven으로 다룹니다.
 - plugin surface가 바뀌면 `src/<plugin-name>-dev/README.md`, `src/<plugin-name>-dev/specs/plugin.md`, 관련 skill spec, 관련 guide skill, `plugin.json`, marketplace entry를 함께 점검합니다.
 - 플러그인별 release version은 각 `.codex-plugin/plugin.json`의 `version`이 소유합니다.

@@ -17,6 +17,8 @@
 - 공개 설치용 release 플러그인은 저장소 루트 바로 아래에 둡니다.
 - 개발 원본 플러그인은 `./src/<plugin-name>-dev` 아래에 둡니다.
 - specs는 개발 원본인 `./src/<plugin-name>-dev/specs/` 안에서만 관리합니다.
+- 일반 개발 변경의 기본 편집 대상은 `./src/<plugin-name>-dev`입니다.
+- 저장소 루트의 release 플러그인은 명시적인 release 생성, release 승격, marketplace 출하 요청이 있을 때만 수정합니다.
 - 나중에 저장소 구조를 의도적으로 바꾸지 않는 한, 이 저장소에서 `./plugins/<plugin-name>` 경로를 만들거나 사용하지 않습니다.
 
 ## 필수 플러그인 구조
@@ -86,12 +88,13 @@
 ## 플러그인 변경 워크플로
 
 1. 개발 원본 플러그인은 `./src/<plugin-name>-dev`에 생성하거나 이동합니다.
-2. 공개 release 플러그인은 저장소 루트 `./<plugin-name>`에 생성하거나 갱신합니다.
-3. `.codex-plugin/plugin.json`이 존재하고 유효한 JSON인지 확인합니다.
-4. specs는 `./src/<plugin-name>-dev/specs/`에서 만들거나 현재 표면에 맞게 갱신합니다.
-5. `./.agents/plugins/marketplace.json`에 공개 release 항목을 추가하거나 갱신합니다.
-6. 모든 마켓플레이스 항목에 `policy.installation`, `policy.authentication`, `category`가 포함되도록 유지합니다.
-7. 변경한 JSON 파일은 수정 후 검증합니다.
+2. 일반 개발 변경은 `./src/<plugin-name>-dev`의 README, specs, skills, manifest만 갱신합니다.
+3. 공개 release 플러그인은 명시적인 release 생성 또는 release 승격 요청이 있을 때만 저장소 루트 `./<plugin-name>`에 생성하거나 갱신합니다.
+4. `.codex-plugin/plugin.json`이 존재하고 유효한 JSON인지 확인합니다.
+5. specs는 `./src/<plugin-name>-dev/specs/`에서 만들거나 현재 표면에 맞게 갱신합니다.
+6. release 승격이 요청된 경우에만 `./.agents/plugins/marketplace.json`에 공개 release 항목을 추가하거나 갱신합니다.
+7. 모든 마켓플레이스 항목에 `policy.installation`, `policy.authentication`, `category`가 포함되도록 유지합니다.
+8. 변경한 JSON 파일은 수정 후 검증합니다.
 
 ## 플러그인 의도 관련 메모
 
@@ -170,6 +173,8 @@
 
 - 두 번째 레이아웃 관례를 조용히 도입하지 않습니다.
 - 명시적으로 재정렬 요청이 없는 한, 기존 마켓플레이스 순서를 유지합니다.
+- 일반 개발 수정에서 저장소 루트의 release 플러그인 산출물을 함께 수정하지 않습니다.
+- release 산출물 재생성은 사용자가 release, 출하, 공개 설치 반영, marketplace 반영을 명시적으로 요청했을 때만 수행합니다.
 - 메타데이터나 경로만 손보면 되는 경우, 스캐폴드 재생성보다 작고 직접적인 수정을 선호합니다.
 - 플러그인을 이동했다면 같은 변경 안에서 마켓플레이스 경로도 함께 갱신합니다.
 - 스캐폴드 도구가 `./plugins/<plugin-name>`를 생성했다면 마무리 전에 `./<plugin-name>`로 옮깁니다.
