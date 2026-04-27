@@ -9,6 +9,8 @@ description: Loop gate for repositories where one turn must continue until the u
 
 Use this skill when the repository or working agreement requires one user turn to continue until the user asks to end the turn.
 Using this skill means treating `turn-gate` as a first-class rule for the rest of the current session.
+The `turn-gate` flow is the first-class control rule for the conversation response itself, not only a skill-specific checklist.
+Once active, every assistant response must either continue the loop, ask through the active question-routing mode, or honor an explicit user stop.
 Its job is not to replace downstream workflow skills.
 Its job is to keep the turn loop explicit:
 
@@ -58,7 +60,9 @@ This skill does not own:
 
 ## Core Policy
 
-- Treat invocation of this skill as activation of a session-level first-class loop gate.
+- Treat invocation of this skill as activation of a conversation-level first-class loop gate.
+- Apply this gate to the assistant's response lifecycle itself: result reporting is not the terminal response while `user_explicit_stop` is false.
+- Do not use a `final`/summary-only response as the last action unless the user explicitly asked to end the turn or a confirmed closure has been recorded.
 - Treat each incoming message as the start or continuation of one loop-gated turn.
 - Treat the user's next-flow response as the next message inside the same turn.
 - Treat in-turn user messages as authoritative loop input rather than a reason to stop.
@@ -79,6 +83,7 @@ This skill does not own:
 - Use `verification` to confirm the work outcome before result reporting and to surface whether later flow/phase redesign is needed.
 - Use `result reporting` to report the completed work outcome.
 - Do not let result reporting become a soft stop.
+- Do not treat the normal assistant final-answer channel as permission to terminate the loop; the next-flow question is still required unless the user explicitly stopped the turn.
 - Before result reporting, read or reconstruct the `Continuity Guard`; if the user has not explicitly stopped the turn, a terminal summary is invalid.
 - Report results as prior explanation for the user's response into the next flow, not as a terminal message.
 - Reopen the next flow through the active question-routing mode with explicit choices.

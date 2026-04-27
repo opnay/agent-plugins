@@ -9,6 +9,8 @@ description: Main loop controller for `loop-kit`. Keep one turn alive until the 
 
 Use this skill as the main operational surface of `loop-kit`.
 Using this skill means treating it as a first-class rule for the rest of the current session.
+The `turn-gate` flow is the first-class control rule for the conversation response itself, not only a skill-specific checklist.
+Once active, every assistant response must either continue the loop, ask through the active question-routing mode, or honor an explicit user stop.
 Keep one turn alive until the user asks to end the turn.
 Keep the turn shape explicit:
 
@@ -40,7 +42,9 @@ Those references absorb the operational loop contracts into this skill while sta
 
 ## Core Policy
 
-- Treat invocation of this skill as activation of a session-level first-class operating rule.
+- Treat invocation of this skill as activation of a conversation-level first-class operating rule.
+- Apply this rule to the assistant's response lifecycle itself: result reporting is not the terminal response while `user_explicit_stop` is false.
+- Do not use a `final`/summary-only response as the last action unless the user explicitly asked to end the turn or a confirmed closure has been recorded.
 - Treat each incoming message as the current state of the same loop-gated turn.
 - Treat every user message as authoritative loop input, not as a reason to stop.
 - Classify an in-turn user message as one of: explicit turn stop, current-flow correction, current-flow priority change, or next-flow priority request.
@@ -126,6 +130,7 @@ Those references absorb the operational loop contracts into this skill while sta
 ## Guardrails
 
 - Do not end the turn by default.
+- Do not treat the normal assistant final-answer channel as permission to terminate the loop; the next-flow question is still required unless the user explicitly stopped the turn.
 - Do not ask freeform textual choice questions when the active question-routing mode can carry the decision.
 - Do not route user-gated questions to subagents from this skill.
 - Do not simulate user approval where the runtime or tool policy requires explicit approval.
