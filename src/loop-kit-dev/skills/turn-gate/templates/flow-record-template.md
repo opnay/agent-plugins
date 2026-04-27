@@ -56,7 +56,8 @@ Update this record incrementally after each completed phase. Do not wait until t
 
 1. <next flow choice>
 2. <alternative>
-3. <defer or stop path>
+3. <defer or alternate path>
+4. Turn end option: <record explicit user-stop option even when not shown in the visible question UI>
 
 ## Residual Risk
 

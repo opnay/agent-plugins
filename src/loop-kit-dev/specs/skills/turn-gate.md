@@ -12,6 +12,7 @@
 - `self-drive` mode에서는 사용자에게 묻던 질문을 subagent에게 물어 사용자 개입 없이 계속 자동 진행하고 싶다.
 - `self-drive` 진행 중 사용자가 중간 개입하면 멈추지 말고, 사용자 메시지를 현재 loop 입력으로 받아 현재 플로우를 조정하거나 다음 플로우 우선순위로 등록하길 원한다.
 - `turn-gate`는 질문 도구와 계획 도구를 선택 사항이 아니라 필수 도구로 사용해야 한다.
+- 다음 플로우 질문의 사용자 표시 선택지가 3개 이상이라 턴 종료 선택지를 표시하지 못하더라도, sessions flow record의 `Next Flow Options`에는 명시적인 턴 종료 선택지가 항상 남아야 한다.
 - `turn-gate`로 진행한 작업은 `.agents/sessions` 아래에 기록이 남아야 한다.
 - 여러 플로우를 거치는 작업의 상위 계획은 `.agents/sessions/{YYYYMMDD}/000-plan.md` 경로에 누적되길 원한다.
 - 개별 플로우 기록은 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 형식으로 남고 싶다.
@@ -72,6 +73,7 @@
 - active turn-gated task마다 `.agents/sessions/{YYYYMMDD}/000-plan.md` 상위 계획과 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record 체계를 유지한다.
 - `000-plan.md`는 사용자 요청 종료 이후에도 더 큰 작업이 이어지면 계속 증분 갱신한다.
 - 해당 `001+` record는 completed flow를 기다리지 말고 각 phase가 끝날 때마다 증분 갱신한다.
+- flow record의 `Next Flow Options`에는 사용자 표시 질문에 턴 종료 선택지가 보이지 않는 경우에도 명시적인 turn-end option이 포함되어야 한다.
 - 각 flow record에는 짧은 `Continuity Guard`를 두고, result reporting과 next-flow reopening 직전에 반드시 갱신한다.
 - `Continuity Guard`에는 `turn-gate` 활성 여부, question-routing mode, user explicit stop 여부, terminal summary 허용 여부, required next action이 포함되어야 한다.
 
@@ -110,6 +112,7 @@
 - `work` 뒤에는 결과 보고 전에 명시적 검증 단계를 두고, 그 검증은 이후 flow/phase 재설계 필요 여부를 드러내는 단계로 취급한다.
 - 결과 보고 전에는 `Continuity Guard`를 읽거나 재구성하고, 사용자가 명시적으로 종료하지 않았으면 terminal summary가 invalid임을 확인한다.
 - 결과 보고 뒤에는 explicit choice를 주는 active question-routing mode로 다음 플로우를 다시 연다.
+- 사용자에게 보이는 선택지가 3개 이상이라 턴 종료 선택지를 표시하지 못하는 경우에도, flow record의 `Next Flow Options`에는 별도 turn-end option을 기록한다.
 - 사용자가 턴을 종료하자고 요청하지 않으면 clean stop을 기본 경로로 두지 않는다.
 
 ## 내부 loop mode 선택 규칙
@@ -179,6 +182,7 @@
 - `work -> verification -> result reporting` 순서를 실제로 유지했는가?
 - direct loop entrypoint를 사용자 표면으로 다시 열지 않았는가?
 - 결과 보고 뒤 explicit next-flow choice를 실제로 열었는가?
+- 사용자 표시 선택지에 턴 종료 option이 없더라도 flow record의 `Next Flow Options`에 명시적인 turn-end option을 남겼는가?
 - 결과 보고 직전에 `Continuity Guard`를 갱신했고 terminal summary 가능 여부를 확인했는가?
 - `self-drive`가 hard boundary에 도달했을 때 자율 라우팅을 일시 중지하고, 턴을 종료하지 않은 채 `user-gated` 질문 도구로 전환했는가?
 - `self-drive` 중간 사용자 메시지를 stop으로 오해하지 않고 현재 플로우 조정 또는 다음 플로우 우선 등록으로 처리했는가?

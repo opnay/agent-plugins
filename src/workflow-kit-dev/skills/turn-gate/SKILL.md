@@ -70,6 +70,7 @@ This skill does not own:
 - Maintain running turn-gate records under `.agents/sessions/{YYYYMMDD}/`.
 - Maintain a compact `Continuity Guard` in every flow record and refresh it before result reporting and next-flow reopening.
 - The `Continuity Guard` must state whether `turn-gate` is active, the question-routing mode, whether the user explicitly stopped the turn, whether a terminal summary is allowed, and the required next action.
+- Record an explicit turn-end option in the flow record's `Next Flow Options` even when the user-facing question already has three visible choices and cannot display that option.
 - Use `000-plan.md` for the higher-level multi-flow plan and `001+` files for per-flow records.
 - Keep `000-plan.md` incrementally updated beyond one user request when the larger task continues.
 - Use `analysis` to structure the user's message into requested intent and requested action, and to decide whether future flows or phases need forward design or redesign.
@@ -203,9 +204,10 @@ Output:
 1. Ask what next flow should proceed.
 2. Use the active question-routing mode with explicit choices.
 3. Offer the narrowest next-flow options that fit the current result.
-4. In `user-gated`, treat the user's response as the next user message and route it back into Phase 0 instead of ending the turn.
-5. In `self-drive`, ask a subagent to choose the next flow from the explicit choices, record its answer, and route that answer back into Phase 0 instead of ending the turn.
-6. If the user sends a message while self-drive is in progress, route it back into Phase 0 immediately as either a current-flow adjustment or a priority next-flow registration.
+4. If three or more user-facing options are already needed, keep those visible choices narrow and record a separate turn-end option in the session flow record even if it is not displayed.
+5. In `user-gated`, treat the user's response as the next user message and route it back into Phase 0 instead of ending the turn.
+6. In `self-drive`, ask a subagent to choose the next flow from the explicit choices, record its answer, and route that answer back into Phase 0 instead of ending the turn.
+7. If the user sends a message while self-drive is in progress, route it back into Phase 0 immediately as either a current-flow adjustment or a priority next-flow registration.
 
 Output:
 
@@ -264,6 +266,7 @@ Good turn-flow example:
 - Do not emit result reporting until the `Continuity Guard` says whether next-flow reopening is still required.
 - Do not skip the next-flow response step merely because the next phase seems obvious.
 - Do not ask the next-flow question without giving the user explicit choices.
+- Do not omit the session-recorded turn-end option from `Next Flow Options`, even when the visible question options are full.
 - Do not use `self-drive` unless that question-routing mode is active.
 - Do not let `self-drive` simulate user approval where the runtime or tool policy requires explicit approval.
 - Do not treat mid-self-drive user intervention as completion, stop, or an approval-boundary pause unless the user explicitly asks to end the turn or creates a real approval boundary.

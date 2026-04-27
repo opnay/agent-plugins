@@ -51,6 +51,7 @@ Those references absorb the operational loop contracts into this skill while sta
 - Maintain turn-gate records under `.agents/sessions/{YYYYMMDD}/`.
 - Maintain a compact `Continuity Guard` in every flow record and refresh it before result reporting and next-flow reopening.
 - The `Continuity Guard` must state whether `turn-gate` is active, the question-routing mode, whether the user explicitly stopped the turn, whether a terminal summary is allowed, and the required next action.
+- Record an explicit turn-end option in the flow record's `Next Flow Options` even when the user-facing question already has three visible choices and cannot display that option.
 - Use `000-plan.md` for the higher-level plan when the task spans several flows.
 - Keep `000-plan.md` incrementally updated even if one user request ends and later follow-up flows continue the same larger task.
 - Use `analysis` and `plan` to design not only the current flow but also likely next flows or phases when forward design is useful.
@@ -66,6 +67,7 @@ Those references absorb the operational loop contracts into this skill while sta
 - After `work`, run an explicit verification step before result reporting, and use that verification to surface whether later flow/phase redesign is needed.
 - Before result reporting, read or reconstruct the `Continuity Guard`; if the user has not explicitly stopped the turn, a terminal summary is invalid.
 - Reopen the next flow with explicit choices after each result unless the user asks to end the turn; in `self-drive`, route that choice to a subagent and continue automatically.
+- If three or more user-facing next-flow choices are already needed, keep those visible choices narrow and record a separate turn-end option in the session flow record even if it is not displayed.
 - Do not expose direct loop entrypoints from this plugin surface.
 
 ## Internal Loop Modes
@@ -144,6 +146,7 @@ Those references absorb the operational loop contracts into this skill while sta
 - Do not skip explicit verification between work and result reporting.
 - Do not emit result reporting until the `Continuity Guard` says whether next-flow reopening is still required.
 - Do not skip the next-flow question after reporting a result.
+- Do not omit the session-recorded turn-end option from `Next Flow Options`, even when the visible question options are full.
 - Do not let result reporting collapse into a soft closing.
 - Do not expose direct user entrypoints for internal loop modes in this plugin.
 - Do not drift away from the canonical loop-mode contracts owned by `workflow-kit`.

@@ -19,6 +19,7 @@
 - 분석 단계와 계획 단계에서는 사용자에게 질문하는 과정이 필요할 수 있습니다.
 - `다음 플로우 진행을 위한 question-routing 응답` 자체는 다시 현재 메시지로 취급되어야 하며, 같은 턴 안에서 다음 루프의 입력으로 즉시 이어져야 합니다.
 - 따라서 사용자가 턴을 종료하자고 요청하지 않는 한, `turn-gate`는 한 플로우가 끝날 때마다 다음 플로우로 반복 진입하는 구조를 유지해야 합니다.
+- 다음 플로우 질문의 사용자 표시 선택지가 3개 이상이라 턴 종료 선택지를 표시하지 못하더라도, sessions flow record의 `Next Flow Options`에는 명시적인 턴 종료 선택지가 항상 남아야 합니다.
 - `turn-gate`로 진행한 작업은 `.agents/sessions` 아래에 기록이 남아야 합니다.
 - 여러 플로우를 거치는 작업의 상위 계획은 `.agents/sessions/{YYYYMMDD}/000-plan.md` 경로에 증분되어야 합니다.
 - 개별 플로우 기록은 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 형식으로 남아야 합니다.
@@ -104,6 +105,7 @@
 - `000-plan.md`는 사용자 요청 종료 이후에도 더 큰 작업이 이어지면 계속 증분되어야 한다.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record는 completed flow를 기다리지 말고 각 phase가 끝날 때마다 증분 갱신되어야 한다.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record의 최소 항목에는 user request message와 question-routing mode가 포함되어야 한다.
+- flow record의 `Next Flow Options`에는 사용자 표시 질문에 턴 종료 선택지가 보이지 않는 경우에도 명시적인 turn-end option이 포함되어야 한다.
 - 각 flow record에는 짧은 `Continuity Guard`가 있어야 하며 result reporting과 next-flow reopening 직전에 갱신되어야 한다.
 - `Continuity Guard`에는 `turn-gate` 활성 여부, question-routing mode, user explicit stop 여부, terminal summary 허용 여부, required next action이 포함되어야 한다.
 - default flow-record template는 `skills/turn-gate/templates/flow-record-template.md`여야 한다.
@@ -145,6 +147,7 @@
 - `self-drive` 중간 사용자 메시지도 같은 턴의 다음 메시지로 즉시 이어지며, 현재 플로우 조정 또는 다음 플로우 우선 등록 중 하나로 처리된다.
 - 결과 보고 전에는 `Continuity Guard`를 읽거나 재구성하고, 사용자가 명시적으로 종료하지 않았으면 terminal summary가 invalid임을 확인한다.
 - 결과 보고 후에는 기본적으로 다음 플로우 진행을 위한 question-routing 응답 표면을 연다.
+- 사용자에게 보이는 선택지가 3개 이상이라 턴 종료 선택지를 표시하지 못하는 경우에도, flow record의 `Next Flow Options`에는 별도 turn-end option을 기록한다.
 - user explicit stop이 없는 한 clean stop을 기본 경로로 두지 않는다.
 - summary-only closing과 generic follow-up phrase를 정상 종료 형태로 취급하지 않는다.
 
@@ -160,6 +163,7 @@
 - cross-flow task라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 최신 상태인가?
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record가 현재 phase까지 증분 갱신됐는가?
 - 결과 보고 뒤에 explicit choice가 있는 다음 플로우 질문을 실제로 열었는가?
+- 사용자 표시 선택지에 턴 종료 option이 없더라도 flow record의 `Next Flow Options`에 명시적인 turn-end option을 남겼는가?
 - 결과 보고 직전에 `Continuity Guard`를 갱신했고 terminal summary 가능 여부를 확인했는가?
 - clean stop, summary-only closing, generic follow-up phrase로 턴을 닫고 있지 않은가?
 - `self-drive`가 hard boundary에 도달했을 때 자율 라우팅을 일시 중지하고, 턴을 종료하지 않은 채 `user-gated` 질문 도구로 전환했는가?

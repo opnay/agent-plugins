@@ -1,6 +1,6 @@
 {
   "name": "loop-kit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Turn-gated loop plugin that keeps one turn alive until explicit user stop and selects the right internal loop mode from turn-gate.",
   "author": {
     "name": "opnay"
