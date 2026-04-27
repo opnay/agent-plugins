@@ -1,6 +1,6 @@
 {
   "name": "workflow-kit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Workflow plugin for task framing, definition, planning, execution workflows, review loops, final readiness gates, and canonical loop contracts used by loop-kit.",
   "author": {
     "name": "opnay"

@@ -90,7 +90,7 @@ Output:
 ### Phase 4: QA Loop
 
 1. Run narrow checks first, then broader checks as needed, and capture failing evidence.
-2. Create or update a QA issue list at `./.tmp/<uuid>/autopilot-qa-issues.md`.
+2. Create or update a QA issue list at `.agents/sessions/{YYYYMMDD}/autopilot-qa-issues.md`.
 3. Record each issue with index, symptom, failing command, status (`open`, `fixed`, `reopened`), and owner/fix note.
 4. Fix prioritized open issues one by one.
 5. After each fix, run a short QA pass:
@@ -118,8 +118,8 @@ Output:
 
 Track progress in thread-local files:
 
-- Path: `./.tmp/<uuid>/autopilot-state.md`
-- Path: `./.tmp/<uuid>/autopilot-qa-issues.md`
+- Path: `.agents/sessions/{YYYYMMDD}/autopilot-state.md`
+- Path: `.agents/sessions/{YYYYMMDD}/autopilot-qa-issues.md`
 - Minimum state fields: current phase, qa cycle count, completed steps, open blockers, next action, open issue IDs
 
 If interrupted, resume from the latest completed phase instead of restarting.

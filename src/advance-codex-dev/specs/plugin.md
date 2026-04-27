@@ -3,7 +3,7 @@
 ## 플러그인 목적
 
 `advance-codex-dev`는 Codex 활용 방식을 더 명시적이고 재사용 가능하게 설계하는 플러그인입니다.
-핵심 책임은 지금 다루는 산출물이 skill인지, reusable tool policy인지, plugin bundle인지, custom agent인지, empirical instruction evaluation인지, session continuity인지, change finalization인지를 먼저 분류하고 그에 맞는 좁은 surface로 연결하는 것입니다.
+핵심 책임은 지금 다루는 산출물이 skill인지, reusable tool policy인지, plugin bundle인지, custom agent인지, empirical instruction evaluation인지, session folder convention인지, change finalization인지를 먼저 분류하고 그에 맞는 좁은 surface로 연결하는 것입니다.
 
 ## 플러그인 경계와 비목표
 
@@ -13,7 +13,7 @@
   - tool selection, sequencing, ask-vs-infer, escalation policy 분리
   - installable plugin boundary와 bundled skill coherence 설계
   - custom agent 정의와 usage guidance
-  - `.agents/sessions/<uuid>/` 기반 session artifact 운영
+  - `.agents/sessions` 폴더의 기본 용도와 `turn-gate` 정렬 plan/flow record 골격 정의
   - task-scoped commit finalization discipline
 - 제외:
   - 일반 제품 구현 workflow
@@ -25,7 +25,7 @@
 - 새 skill, plugin, custom agent를 만들거나 기존 것을 재설계하는 작업
 - reusable instruction 품질을 경험적 평가로 끌어올리는 작업
 - domain workflow와 분리된 tool-use policy를 설계하는 작업
-- session artifact나 commit workflow처럼 Codex 사용 자체의 운영 품질을 안정화하는 작업
+- `.agents/sessions` 폴더 경계나 commit workflow처럼 Codex 사용 자체의 운영 품질을 안정화하는 작업
 
 ## 엔트리포인트 / 대표 표면
 
@@ -48,8 +48,8 @@
   - spec: `advance-codex-dev/specs/skills/plugin-creator.md`
 - `subagent-creator`: `.codex/agents/*.toml`과 custom agent usage guidance를 정의한다.
   - spec: `advance-codex-dev/specs/skills/subagent-creator.md`
-- `session-manager`: session, change, retrospective record를 생성·갱신·검증한다.
-  - spec: `advance-codex-dev/specs/skills/session-manager.md`
+- `agents-sessions`: `.agents/sessions` 폴더의 기본 용도와 `turn-gate` 정렬 plan/flow record 골격을 정의한다.
+  - spec: `advance-codex-dev/specs/skills/agents-sessions.md`
 - `git-committer`: 검증 가능한 task-scoped commit finalization 규율을 제공한다.
   - spec: `advance-codex-dev/specs/skills/git-committer.md`
 

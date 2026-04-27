@@ -1,6 +1,6 @@
 ---
 name: advance-codex-guide
-description: Entrypoint skill for the `advance-codex` plugin. Use when a task is about improving how Codex is used and you should first classify whether the primary deliverable is a skill, empirical prompt-evaluation workflow, tool-use guidance layer, plugin bundle, session management workflow, commit workflow, or subagent/custom agent definition.
+description: Entrypoint skill for the `advance-codex` plugin. Use when a task is about improving how Codex is used and you should first classify whether the primary deliverable is a skill, empirical prompt-evaluation workflow, tool-use guidance layer, plugin bundle, session folder convention, commit workflow, or subagent/custom agent definition.
 ---
 
 # Advance Codex Guide
@@ -18,7 +18,7 @@ If the task spans several deliverable types, choose the sequence explicitly inst
    - an empirical prompt-evaluation workflow
    - a tool-use guidance layer
    - a plugin
-   - a session management workflow
+   - a session folder convention
    - a commit workflow
    - a subagent workflow or custom agent
 2. Identify whether the task is:
@@ -40,14 +40,14 @@ If the task spans several deliverable types, choose the sequence explicitly inst
 - Choose `tool-use-guide` when the main output is reusable guidance for how an artifact should choose, sequence, constrain, or escalate tools without burying tool policy inside a domain workflow.
 - Choose `plugin-creator` when the main output is an installable plugin bundle with `.codex-plugin/plugin.json` and optional bundled skills.
 - When `plugin-creator` applies, pair the canonical system `plugin-creator` with the local `advance-codex:plugin-creator` extension.
-- Choose `session-manager` when the main output is repository-local session continuity through `.agents/sessions/<uuid>/` session, change, or retrospective records rather than a new artifact shape.
+- Choose `agents-sessions` when the main output is defining or explaining the basic purpose and default `turn-gate`-aligned structure of the `.agents/sessions` folder.
 - Choose `git-committer` when the main output is a disciplined task-scoped commit workflow for changes you made rather than a new artifact shape.
 - Choose `subagent-creator` when the main output is a custom agent definition: how to define `.codex/agents/*.toml`, shape the agent's role, and document how you should use that custom agent from normal work.
 - When building a new multi-skill plugin, prefer this order:
   1. plugin structure
   2. contained skills
   3. tool-use guidance if the plugin needs a reusable tool-policy layer
-  4. session management if the plugin needs session continuity support
+  4. session folder convention if the plugin needs `.agents/sessions` boundary guidance
   5. commit finalization if the plugin needs stable change finalization rules
   6. subagent guidance if the plugin needs it
 
@@ -57,7 +57,7 @@ If the task spans several deliverable types, choose the sequence explicitly inst
 - Treat skill design as the top-level concern when the user wants a reusable workflow but no plugin packaging.
 - Treat empirical prompt tuning as the top-level concern when the hard part is validating or improving instruction quality through repeatable fresh-executor evidence rather than author intuition.
 - Treat tool-use design as the top-level concern when the hard part is not the domain workflow itself, but how artifacts should select and use tools consistently.
-- Treat session management as the top-level concern when the hard part is how you should persist, inspect, validate, or update session-scoped records across work.
+- Treat agents-sessions as the top-level concern when the hard part is whether an artifact belongs under `.agents/sessions` at all.
 - Treat commit finalization as the top-level concern when the hard part is how you should review, verify, message, and split your changes into stable commits.
 - Treat subagent design as the top-level concern when the hard part is custom agent behavior, agent reuse, or multi-agent runtime control rather than local file structure.
 - If the task is mostly about choosing between several bundled skills, add or update an entrypoint skill.
@@ -78,7 +78,7 @@ If the task spans several deliverable types, choose the sequence explicitly inst
 - Do not bury "when to use" logic in the body of a skill; keep it in the description.
 - Do not bury reusable tool policy inside a domain skill when that policy should be isolated.
 - Do not treat self-rereading as empirical validation when the real requirement is fresh-executor evidence.
-- Do not treat session continuity as generic repository hygiene when the real concern is session-scoped records.
+- Do not treat session folder conventions as generic repository hygiene when the real concern is the `turn-gate`-aligned plan/flow record skeleton.
 - Do not treat change finalization as generic git hygiene when the real concern is commit-scoped output finalization.
 - Do not widen custom-agent work into unrelated orchestration design.
 - Do not create a multi-skill plugin without deciding whether it needs an entrypoint skill.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agents Sessions"
+  short_description: "Define when to use .agents/sessions"
+  default_prompt: "Use $agents-sessions to decide whether an artifact belongs under date-based .agents/sessions/{YYYYMMDD}, how it relates to turn-gate records, or whether it should be handled as source/spec work instead."

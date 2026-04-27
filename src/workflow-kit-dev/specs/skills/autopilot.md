@@ -38,11 +38,13 @@
 - broad execution이 필요한지 먼저 확인하고, 맞다면 단계별 진행과 검증을 이어서 수행한다.
 - 분석, 구현, QA, review를 분절되지 않은 흐름으로 관리한다.
 - stop condition과 final checklist를 명시적으로 점검한다.
+- QA issue list와 resume state는 repository-local `.agents/sessions/{YYYYMMDD}/` 아래에 기록한다.
 
 ## 검토 질문
 
 - 지금 작업이 정말 broad end-to-end execution이 필요한 범위인가?
 - 단계별 진행과 검증이 끊기지 않게 설계돼 있는가?
+- QA issue list와 resume state가 `.agents/sessions/{YYYYMMDD}/` 아래에 남는가?
 - planning-only, narrow-loop, final-gate 역할을 이 스킬이 과도하게 흡수하고 있지 않은가?
 
 ## 독립성 원칙

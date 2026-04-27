@@ -15,7 +15,7 @@
 ## 경계
 
 - 포함:
-  - skill, empirical evaluation, tool-use guidance, plugin, session workflow, commit workflow, custom agent 중 주된 artifact 분류
+  - skill, empirical evaluation, tool-use guidance, plugin, session folder convention, commit workflow, custom agent 중 주된 artifact 분류
   - revision, creation, packaging 여부 판단
   - multi-artifact 작업의 실행 순서 결정
 - 제외:
@@ -44,7 +44,7 @@
 
 ## 검토 질문
 
-- 지금의 main artifact가 skill, plugin, tool policy, session, commit, custom agent 중 무엇인가?
+- 지금의 main artifact가 skill, plugin, tool policy, session folder convention, commit, custom agent 중 무엇인가?
 - plugin-level concern을 먼저 잠가야 하는데 하위 skill로 성급히 내려가고 있지 않은가?
 - 선택한 실행 순서가 여러 artifact를 한 단계에 섞지 않도록 유지하는가?
 
