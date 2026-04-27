@@ -33,6 +33,7 @@
     "defaultPrompt": [
       "Stabilize this ambiguous task before choosing a workflow or execution path.",
       "Keep this turn alive across question, plan, command, result reporting, and the next explicit flow.",
+      "Use turn-gate-self-drive when turn-gated questions should be answered by subagents instead of by me.",
       "Make a read-only execution plan before implementation starts.",
       "Run this feature request end-to-end with autopilot.",
       "Interview me first so the implementation aligns tightly with what I actually mean.",

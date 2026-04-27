@@ -1,26 +1,46 @@
-# Turn-Gate Plan Template
+# Turn-Gate Daily Plan Template
 
-## Task
+This file is the date-scoped history and index for turn-gated work.
+Keep it incremental. Do not delete completed work; summarize completed flows and keep their links.
 
-- Request:
-- Why this needs several flows:
+## Date
 
-## Outcome Target
+- YYYY-MM-DD
 
-- Primary outcome:
-- Stop condition:
+## Daily Work History
 
-## Planned Flows
+- Summary:
+- Latest user request:
+- Latest decision:
 
-1. <first outcome or phase>
-2. <next outcome or phase>
-3. <next outcome or phase>
+## User Requests Today
+
+1. <user request summary and time/order>
+
+## Flow Index
+
+1. `.agents/sessions/YYYYMMDD/001-english-lower-slug.md`
+   - User request:
+   - Flow purpose:
+   - Status: planned | active | complete | blocked
+   - Summary:
+
+## Current Plan
+
+1. <next planned flow or action>
+2. <next planned flow or action>
+3. <next planned flow or action>
 
 ## Current Status
 
-- Active item:
+- Active flow:
 - Latest decision:
+- Required next action:
 
-## Risks
+## Completed Flow Summaries
+
+- `<flow filename>`: <short retained summary>
+
+## Open Risks
 
 - <risk or uncertainty>

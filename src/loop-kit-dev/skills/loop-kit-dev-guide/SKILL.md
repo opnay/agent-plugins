@@ -9,14 +9,14 @@ description: Entrypoint skill for `loop-kit-dev`. Use it to decide whether the t
 
 Use this skill as the default entrypoint for `loop-kit-dev`.
 Its job is to decide whether the current task should begin in this narrow loop package.
-If the answer is yes, route into `turn-gate`.
+If the answer is yes, route into `turn-gate` or `turn-gate-self-drive`.
 Do not expose direct loop entrypoints such as `ralph-loop` or `review-loop` to the user from this plugin surface.
 
 ## Routing Rules
 
 - Start in `turn-gate` when the repository or task requires the turn to stay open until the user asks to end the turn.
 - Start in `turn-gate` when the main value is keeping the turn alive while the active work mode changes across autonomous execution, refinement, review, or readiness.
-- Start in `turn-gate` when the user wants self-driving progress where blocked questions are answered by subagents instead of by the user.
+- Start in `turn-gate-self-drive` when the user wants self-driving progress where blocked questions are answered by subagents instead of by the user.
 - Do not start in `loop-kit-dev` when the main problem is still broad workflow selection, requirement discovery, or planning outside a loop-gated turn.
 - When `loop-kit-dev` is not the best starting point, say so explicitly and prefer the broader `workflow-kit` surface.
 

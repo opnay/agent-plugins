@@ -22,7 +22,7 @@ Its job is to keep the turn loop explicit:
 
 This skill is a loop gate.
 It owns turn continuity and next-flow reopening, not the domain work inside each phase.
-It also owns the question-routing axis: `user-gated` by default, or `self-drive` when questions should go to subagents so the loop can continue without user intervention.
+It uses user-gated question routing by default.
 
 ## Use When
 
@@ -60,19 +60,19 @@ This skill does not own:
 
 - Treat invocation of this skill as activation of a session-level first-class loop gate.
 - Treat each incoming message as the start or continuation of one loop-gated turn.
-- Treat the user's next-flow response or the `self-drive` subagent answer as the next message inside the same turn.
-- When a user message arrives while `self-drive` is active, treat it as authoritative loop input rather than a reason to stop.
-- Classify mid-self-drive user input as explicit turn stop, current-flow correction, current-flow priority change, or next-flow priority request.
+- Treat the user's next-flow response as the next message inside the same turn.
+- Treat in-turn user messages as authoritative loop input rather than a reason to stop.
+- Classify in-turn user input as explicit turn stop, current-flow correction, current-flow priority change, or next-flow priority request.
 - Adjust the current flow immediately when the message changes active work; otherwise register the message as the highest-priority next-flow candidate.
-- Supersede any pending or returned self-drive subagent answer that conflicts with newer user input.
 - Choose the narrowest downstream workflow that owns the current phase work.
 - Make `analysis`, `plan`, `work`, `verification`, and `result reporting` visible in the response shape.
 - Maintain running turn-gate records under `.agents/sessions/{YYYYMMDD}/`.
 - Maintain a compact `Continuity Guard` in every flow record and refresh it before result reporting and next-flow reopening.
 - The `Continuity Guard` must state whether `turn-gate` is active, the question-routing mode, whether the user explicitly stopped the turn, whether a terminal summary is allowed, and the required next action.
 - Record an explicit turn-end option in the flow record's `Next Flow Options` even when the user-facing question already has three visible choices and cannot display that option.
-- Use `000-plan.md` for the higher-level multi-flow plan and `001+` files for per-flow records.
-- Keep `000-plan.md` incrementally updated beyond one user request when the larger task continues.
+- Use `000-plan.md` as the date-scoped plan: the durable history, user-request list, flow index, current plan, and completed-flow summary for `.agents/sessions/{YYYYMMDD}/`.
+- Keep `000-plan.md` incremental. Do not delete completed work from it; summarize completed flows and keep their references.
+- Use `001+` files as detailed flow reports for each user-request-driven work flow.
 - Use `analysis` to structure the user's message into requested intent and requested action, and to decide whether future flows or phases need forward design or redesign.
 - Use `plan` to prepare the detailed next steps needed to fulfill the analyzed request and, when useful, a provisional design for later flows or phases.
 - Use `work` to execute the prepared plan.
@@ -82,20 +82,21 @@ This skill does not own:
 - Before result reporting, read or reconstruct the `Continuity Guard`; if the user has not explicitly stopped the turn, a terminal summary is invalid.
 - Report results as prior explanation for the user's response into the next flow, not as a terminal message.
 - Reopen the next flow through the active question-routing mode with explicit choices.
-- In `self-drive`, replace phase questions that would normally go to the user with self-drive question packets sent to subagents, require the self-drive answer contract, and continue from the subagent answer.
 - Allow questions during `analysis` and `plan` when clarifying intent, criteria, or scope is necessary.
 - Treat termination judgment as the user's choice, not the assistant's shortcut.
 - Treat "no next flow" as an exception that must be justified by the user asking to end the turn or by confirmed closure.
 - When later loops return to `analysis` or `plan`, revise future flow/phase design only when new evidence, changed intent, or a revealed blocker makes redesign necessary.
-- Prefer the structured user-input tool for the next-flow step unless `self-drive` is active.
+- Prefer the structured user-input tool for the next-flow step.
 - Keep the loop moving; do not reopen broad framing once the next phase is already clear.
 
 ## Session Record
 
-- Use `.agents/sessions/{YYYYMMDD}/000-plan.md` for the higher-level plan when the task spans several flows.
-- Use `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` for flow records.
+- Use `.agents/sessions/{YYYYMMDD}/000-plan.md` as the date-scoped plan, history, and flow index for that day's turn-gated work.
+- Use `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` for detailed flow reports.
 - Keep `count-pad3` zero-padded like `001`, `002`, `003`.
 - Keep the slug English lower-case and `-` delimited.
+- Each user-request-driven flow should get its own `001+` flow report when it needs detailed tracking.
+- The plan should list the day's user requests and the corresponding `001+` flow reports.
 - Record at least: user request message, task, flow scope, current mode, question-routing mode, continuity guard, analysis, plan, work, verification, result report, next-flow options, residual risk.
 - Keep the current flow record current after `analysis`, `plan`, `work`, `verification`, and `result reporting`.
 - Update the flow record incrementally after each completed phase.
@@ -149,18 +150,7 @@ Selection signals:
 Question-routing signals:
 
 - `user-gated` by default, using the user-input question tool for choices, scope locks, and next-flow decisions
-- `self-drive` when the user wants questions answered by subagents so work can continue without user intervention
-- `self-drive` can answer mode selection, criteria, scope assumptions, verification choices, and next-flow decisions through self-drive question packets sent to subagents
-- self-drive packets must carry the current `Continuity Guard`
-- self-drive subagent answers must include the chosen option or no-option result, decision, rationale, evidence, assumptions, confidence, blockers, approval boundary, continuity check, and next action
-- self-drive answers must reject terminal summaries unless an explicit user stop or hard approval boundary exists
-- real user messages outrank pending or returned self-drive subagent answers
-- mid-self-drive user intervention should adjust the current flow or become the highest-priority next flow, not stop the turn
-- self-drive should recover subagent `context_gap` results through main-agent discovery when evidence can be found without an explicit approval boundary
-- missing user preference should become a recorded reversible assumption unless the user explicitly requested manual preference locking
-- `low` confidence means an approval-boundary pause only when the decision requires explicit approval, destructive/irreversible/external action approval, or a platform/tool/safety boundary
-- in `self-drive`, an approval-boundary pause stops autonomous routing only; switch to `user-gated` and use `request_user_input` instead of ending the turn
-- `self-drive` must still pause at explicit user-approval boundaries required by platform, tool, or safety policy
+- explicit user, tool, platform, safety, destructive, irreversible, or external-action approval boundaries must stay user-gated
 
 Output:
 
@@ -202,12 +192,10 @@ Output:
 ### Phase 5: Open The Next Flow Through Question Routing
 
 1. Ask what next flow should proceed.
-2. Use the active question-routing mode with explicit choices.
+2. Use user-gated question routing with explicit choices.
 3. Offer the narrowest next-flow options that fit the current result.
 4. If three or more user-facing options are already needed, keep those visible choices narrow and record a separate turn-end option in the session flow record even if it is not displayed.
-5. In `user-gated`, treat the user's response as the next user message and route it back into Phase 0 instead of ending the turn.
-6. In `self-drive`, ask a subagent to choose the next flow from the explicit choices, record its answer, and route that answer back into Phase 0 instead of ending the turn.
-7. If the user sends a message while self-drive is in progress, route it back into Phase 0 immediately as either a current-flow adjustment or a priority next-flow registration.
+5. Treat the user's response as the next user message and route it back into Phase 0 instead of ending the turn.
 
 Output:
 
@@ -267,11 +255,9 @@ Good turn-flow example:
 - Do not skip the next-flow response step merely because the next phase seems obvious.
 - Do not ask the next-flow question without giving the user explicit choices.
 - Do not omit the session-recorded turn-end option from `Next Flow Options`, even when the visible question options are full.
-- Do not use `self-drive` unless that question-routing mode is active.
-- Do not let `self-drive` simulate user approval where the runtime or tool policy requires explicit approval.
-- Do not treat mid-self-drive user intervention as completion, stop, or an approval-boundary pause unless the user explicitly asks to end the turn or creates a real approval boundary.
-- Do not continue from a stale self-drive subagent answer after newer user input changes the active flow.
-- Do not end the turn when `self-drive` reaches an approval boundary; pause self-drive, switch to `user-gated`, and ask through `request_user_input`.
+- Do not route user-gated questions to subagents from this skill.
+- Do not simulate user approval where the runtime or tool policy requires explicit approval.
+- Do not treat in-turn user intervention as completion, stop, or an approval-boundary pause unless the user explicitly asks to end the turn or creates a real approval boundary.
 - Do not treat the user's next-flow response as a new independent turn when the loop gate is still active.
 - Do not treat temporary blocking states as permission to close the turn.
 - Do not let this skill absorb domain execution, planning, or review detail.

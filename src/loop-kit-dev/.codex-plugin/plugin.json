@@ -19,7 +19,7 @@
   "interface": {
     "displayName": "Loop Kit Dev",
     "shortDescription": "[DEV] Turn-gated continuity with internal execution, refinement, review, and readiness loops driven from one main surface.",
-    "longDescription": "[DEV] Provides a narrow operational plugin where turn-gate is the main user-facing surface. It keeps one turn alive until the user explicitly ends the work, keeps analysis, plan, work, result reporting, and next-flow choice visible, selects the right internal loop mode for autonomous execution, refinement, review findings, or readiness, and can run self-drive question routing through subagents without exposing those loops as direct user entrypoints.",
+    "longDescription": "[DEV] Provides a narrow operational plugin where turn-gate is the main user-facing surface. It keeps one turn alive until the user explicitly ends the work, keeps analysis, plan, work, result reporting, and next-flow choice visible, selects the right internal loop mode for autonomous execution, refinement, review findings, or readiness, and provides turn-gate-self-drive as an overlay for autonomous subagent question routing.",
     "developerName": "opnay",
     "category": "Productivity",
     "capabilities": [
@@ -31,7 +31,7 @@
       "Keep this turn alive until I explicitly stop and reopen the next flow with explicit choices.",
       "Use turn-gate as the main controller and choose the right internal loop for the current phase.",
       "Handle this as a turn-gated loop where autonomous execution, refinement, review, and readiness modes are selected inside turn-gate.",
-      "Use self-drive question routing when I want blocked questions answered by subagents instead of by me.",
+      "Use turn-gate-self-drive when I want blocked questions answered by subagents instead of by me.",
       "Do not expose direct loop entrypoints; drive the work through turn-gate."
     ],
     "brandColor": "#1D6E6E"

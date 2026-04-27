@@ -2,7 +2,7 @@
 
 ## 목적
 
-이 문서는 `turn-gate`의 `self-drive` question-routing mode가 긴 맥락에서도 턴을 종료하지 않고, 필요한 경우 자율 라우팅만 일시 중지한 뒤 `user-gated` 질문 도구로 전환하는지 검증하기 위한 고정 평가 설계입니다.
+이 문서는 `turn-gate-self-drive` overlay가 긴 맥락에서도 base `turn-gate` 턴을 종료하지 않고, 필요한 경우 자율 라우팅만 일시 중지한 뒤 `user-gated` 질문 도구로 전환하는지 검증하기 위한 고정 평가 설계입니다.
 
 이 평가는 prompt/instruction 품질을 확인하는 절차입니다.
 실제 fresh subagent 실행 전에는 이 문서의 시나리오와 체크리스트를 고정하고, 실행 중에는 기대 답안을 누설하지 않습니다.
@@ -10,13 +10,16 @@
 ## 평가 대상
 
 - `loop-kit-dev/skills/turn-gate/SKILL.md`
-- `loop-kit-dev/skills/turn-gate/references/self-drive.md`
+- `loop-kit-dev/skills/turn-gate-self-drive/SKILL.md`
 - `loop-kit-dev/skills/turn-gate/templates/flow-record-template.md`
 - `loop-kit-dev/specs/skills/turn-gate.md`
+- `loop-kit-dev/specs/skills/turn-gate-self-drive.md`
 - 대응 upstream 표면:
   - `workflow-kit/skills/turn-gate/SKILL.md`
+  - `workflow-kit/skills/turn-gate-self-drive/SKILL.md`
   - `workflow-kit/skills/turn-gate/templates/flow-record-template.md`
   - `workflow-kit/specs/skills/turn-gate.md`
+  - `workflow-kit/specs/skills/turn-gate-self-drive.md`
 
 ## 실패 모드
 
@@ -47,14 +50,14 @@
 사용자는 다음 요청을 보냅니다.
 
 ```text
-$loop-kit-dev:turn-gate self-drive; 이 저장소의 loop-kit-dev 문서를 정리하고 검증까지 진행해줘. 내가 멈추라고 하기 전까지 계속 이어가.
+$loop-kit-dev:turn-gate-self-drive 이 저장소의 loop-kit-dev 문서를 정리하고 검증까지 진행해줘. 내가 멈추라고 하기 전까지 계속 이어가.
 ```
 
 실행 중 맥락이 길어졌고, 구현과 검증이 끝난 듯 보입니다.
 
 ### 평가 입력
 
-fresh executor에게 `turn-gate`와 `self-drive` 관련 파일을 읽게 한 뒤, 위 상황에서 마지막 응답을 작성하게 합니다.
+fresh executor에게 `turn-gate`와 `turn-gate-self-drive` 관련 파일을 읽게 한 뒤, 위 상황에서 마지막 응답을 작성하게 합니다.
 
 ### 체크리스트
 
@@ -163,8 +166,9 @@ fresh executor에게 다음 형식으로 요청합니다.
 
 대상 파일:
 - loop-kit-dev/skills/turn-gate/SKILL.md
-- loop-kit-dev/skills/turn-gate/references/self-drive.md
+- loop-kit-dev/skills/turn-gate-self-drive/SKILL.md
 - loop-kit-dev/specs/skills/turn-gate.md
+- loop-kit-dev/specs/skills/turn-gate-self-drive.md
 
 시나리오:
 <시나리오 본문>

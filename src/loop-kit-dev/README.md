@@ -59,12 +59,13 @@ codex plugin marketplace upgrade
 - 분석, 계획, 작업, 검증, 결과 보고, 다음 플로우 선택이 드러나야 하는 작업
 - 실행, 정제, 리뷰 처리, 커밋 준비 loop를 하나의 controller 안에서 골라야 하는 작업
 - 사용자 선택이 필요한 지점에서는 질문 도구를 써야 하는 작업
-- 필요하면 `self-drive`로 사용자 질문을 subagent 질문으로 바꿔 계속 진행해야 하는 작업
+- 필요하면 `turn-gate-self-drive`로 bounded decision을 subagent question packet에 라우팅해야 하는 작업
 
 ## 엔트리포인트
 
 - `loop-kit-dev-guide`: 현재 요청이 `loop-kit-dev`으로 시작할 작업인지 판단합니다.
 - `turn-gate`: 실제 작업을 진행하는 메인 controller입니다.
+- `turn-gate-self-drive`: `turn-gate`를 먼저 적용한 뒤 blocked question을 subagent question packet으로 라우팅하는 overlay입니다.
 
 `turn-gate`가 호출되면, 현재 세션 동안 이 skill을 1급 운영 규칙으로 활성화한 것으로 취급합니다.
 
@@ -98,12 +99,12 @@ codex plugin marketplace upgrade
 
 ## 질문 라우팅
 
-`turn-gate`에는 current-phase mode와 별도로 질문 대상을 고르는 question-routing 축이 있습니다.
+`turn-gate`는 기본적으로 user-gated question routing을 사용합니다.
 
-- `user-gated`: 기본값입니다. 선택지, scope lock, next-flow decision을 사용자 질문 도구로 묻습니다.
-- `self-drive`: 사용자에게 묻던 질문을 subagent 질문 packet으로 바꿔, 사용자 개입 없이 loop를 계속 진행합니다.
+- `turn-gate`: 선택지, scope lock, next-flow decision을 사용자 질문 도구로 묻습니다.
+- `turn-gate-self-drive`: bounded decision을 subagent question packet으로 라우팅해, 사용자 개입 없이 loop를 계속 진행합니다.
 
-`self-drive`에서는 일반적인 사용자 취향 누락을 중지 조건으로 보지 않습니다.
+`turn-gate-self-drive`에서는 일반적인 사용자 취향 누락을 중지 조건으로 보지 않습니다.
 가능한 한 안전하고 되돌릴 수 있는 기본값을 가정으로 기록하고 계속 진행합니다.
 멈춰야 하는 경우는 명시적 승인, 파괴적이거나 비가역적인 action 승인, 외부 action 승인, platform/tool/safety policy 경계처럼 hard boundary가 있는 경우로 제한합니다.
 
@@ -114,7 +115,7 @@ $loop-kit-dev:turn-gate 프론트엔드 리팩토링하자.
 ```
 
 ```text
-$loop-kit-dev:turn-gate self-drive; 마인크래프트와 비슷하게 샌드박스 RPG 게임 하나 만들자. 위치는 ~/Workspace/game으로 하자
+$loop-kit-dev:turn-gate-self-drive 마인크래프트와 비슷하게 샌드박스 RPG 게임 하나 만들자. 위치는 ~/Workspace/game으로 하자
 ```
 
 ## 플러그인 구조
@@ -128,6 +129,7 @@ loop-kit-dev/
   skills/
     loop-kit-dev-guide/
     turn-gate/
+    turn-gate-self-drive/
 ```
 
 ## 설계 경계

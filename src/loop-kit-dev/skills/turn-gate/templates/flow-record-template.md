@@ -1,6 +1,8 @@
-# Turn-Gate Flow Template
+# Turn-Gate Flow Report Template
 
-Update this record incrementally after each completed phase. Do not wait until the end of the flow.
+This file is the detailed report for one user-request-driven flow.
+Update it incrementally after each completed phase. Do not wait until the end of the flow.
+Keep the date-level history and flow index in `000-plan.md`; keep the detailed evidence and phase report here.
 
 ## Metadata
 
@@ -10,13 +12,14 @@ Update this record incrementally after each completed phase. Do not wait until t
 - User request message: <original user message for this flow>
 - Task: <short task statement>
 - Flow scope: <what this flow owns>
+- Parent plan: .agents/sessions/YYYYMMDD/000-plan.md
 - Current mode: deep-interview | autopilot | review-loop | ralph-loop | commit-readiness-gate | undecided
-- Question-routing mode: user-gated | self-drive | undecided
+- Question-routing mode: user-gated | undecided
 
 ## Continuity Guard
 
 - Turn-gate active: yes | no
-- Question-routing mode: user-gated | self-drive | undecided
+- Question-routing mode: user-gated | undecided
 - User explicit stop: yes | no
 - Terminal summary allowed: yes | no
 - Required next action:
@@ -40,6 +43,7 @@ Update this record incrementally after each completed phase. Do not wait until t
 
 - Change or action:
 - Files or surfaces touched:
+- Evidence or command output summary:
 
 ## Verification
 
@@ -50,6 +54,7 @@ Update this record incrementally after each completed phase. Do not wait until t
 ## Result Report
 
 - Outcome:
+- Files changed:
 - Commit-ready state:
 
 ## Next Flow Options
