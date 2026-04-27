@@ -7,11 +7,12 @@ description: Self-drive overlay for `turn-gate`. Use when a turn-gated workflow 
 
 ## Overview
 
-Use this skill as an overlay on `turn-gate`.
-First apply the base `turn-gate` loop: analyze, plan, work, verify, report, maintain session records, refresh the `Continuity Guard`, and reopen the next flow.
+Use this plugin skill as a self-drive overlay that runs beside `turn-gate` in `workflow-kit-dev`.
+First apply the base loop contract from the `turn-gate` skill in the same plugin: analyze, plan, work, verify, report, maintain session records, refresh the `Continuity Guard`, and reopen the next flow.
 Then route bounded decisions into subagent question packets.
 
 This skill owns self-drive packet, answer, stale-answer, pause, and recovery rules.
+It is not a surface owned by `turn-gate`; it is a `workflow-kit-dev` plugin skill that depends on `turn-gate` for base loop continuity.
 It does not own the base loop gate or the current-phase workflow.
 
 ## Use When
@@ -28,7 +29,7 @@ It does not own the base loop gate or the current-phase workflow.
 
 ## Core Contract
 
-- Treat `turn-gate` as the base contract.
+- Treat the `turn-gate` skill in the same plugin as the base contract.
 - Build a self-drive question packet before asking a subagent.
 - Ask subagents to resolve mode selection, criteria, scope assumptions, verification choices, and next-flow decisions from packet evidence.
 - Continue the loop using the subagent answer as the current decision input.
@@ -36,7 +37,7 @@ It does not own the base loop gate or the current-phase workflow.
 - Carry the current `Continuity Guard` into every packet.
 - Reject any answer that reports completion without preserving next-flow continuation when no explicit user stop or hard approval boundary exists.
 - Treat newer user messages as higher-priority loop input than pending or returned subagent answers.
-- At explicit approval boundaries, pause self-drive only, switch back to user-gated `turn-gate`, and call `request_user_input`.
+- At explicit approval boundaries, pause self-drive only, switch back to user-gated routing from the `turn-gate` skill in the same plugin, and call `request_user_input`.
 
 ## Question Packet
 
@@ -58,7 +59,7 @@ When a user message arrives during self-drive:
 2. Keep `user_explicit_stop: false` unless the message explicitly asks to end the turn.
 3. Classify it as explicit turn stop, current-flow correction, current-flow priority change, or next-flow priority request.
 4. Supersede any pending or returned subagent answer that conflicts with the newer message.
-5. Continue from the earliest safe phase, or switch to user-gated `turn-gate` if a real approval boundary appears.
+5. Continue from the earliest safe phase, or switch to user-gated routing from the `turn-gate` skill in the same plugin if a real approval boundary appears.
 
 ## Output
 

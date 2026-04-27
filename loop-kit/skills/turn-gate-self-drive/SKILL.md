@@ -7,11 +7,12 @@ description: Self-drive overlay for `turn-gate`. Use when a turn-gated task shou
 
 ## Overview
 
-Use this skill as an overlay on top of `turn-gate`.
-First apply the `turn-gate` contract: keep the same turn alive, maintain `.agents/sessions/{YYYYMMDD}/` records, preserve the `Continuity Guard`, verify before result reporting, and reopen the next flow.
+Use this plugin skill as a self-drive overlay that runs beside `turn-gate` in `loop-kit`.
+First apply the base contract from the `turn-gate` skill in the same plugin: keep the same turn alive, maintain `.agents/sessions/{YYYYMMDD}/` records, preserve the `Continuity Guard`, verify before result reporting, and reopen the next flow.
 Then route bounded decisions into self-drive question packets sent to subagents.
 
 This skill owns self-drive packet, answer, pause, recovery, and stale-answer handling.
+It is not a surface owned by `turn-gate`; it is a `loop-kit` plugin skill that depends on `turn-gate` for base loop continuity.
 It does not replace `turn-gate`, and it does not own the current-phase loop modes.
 
 ## Use When
@@ -28,7 +29,7 @@ It does not replace `turn-gate`, and it does not own the current-phase loop mode
 
 ## Core Contract
 
-- Use `turn-gate` as the base loop contract for every phase.
+- Use the `turn-gate` skill in the same plugin as the base loop contract for every phase.
 - Build a self-drive question packet before asking a subagent.
 - Ask subagents to resolve bounded decisions from packet evidence.
 - Continue the loop using the subagent answer as the current decision input.
@@ -36,7 +37,7 @@ It does not replace `turn-gate`, and it does not own the current-phase loop mode
 - Carry the current `Continuity Guard` into every self-drive packet.
 - Reject any answer that reports completion but does not preserve next-flow continuation when no explicit user stop or hard approval boundary exists.
 - Treat any user message that arrives during self-drive as higher-priority loop input than pending or returned subagent answers.
-- If explicit approval is required, pause self-drive only, switch back to `turn-gate` user-gated routing, and call `request_user_input`.
+- If explicit approval is required, pause self-drive only, switch back to user-gated routing from the `turn-gate` skill in the same plugin, and call `request_user_input`.
 
 ## User Intervention
 
