@@ -121,6 +121,19 @@
 7. 모든 마켓플레이스 항목에 `policy.installation`, `policy.authentication`, `category`가 포함되도록 유지합니다.
 8. 변경한 JSON 파일은 수정 후 검증합니다.
 
+## 플러그인 작업 workflow
+
+- 플러그인 수정 요청은 먼저 해당 dev source의 spec을 확인하고 필요한 spec 변경을 반영합니다.
+- 실제 skill 본문 변경은 spec 변경 또는 spec 확인 이후에 진행합니다.
+- skill 본문을 직접 수정해야 하는 작업은 가능한 한 subagent를 사용해 skill 변경안을 만들거나 검토하게 합니다.
+- subagent에는 담당 파일과 책임 범위를 명시하고, 다른 작업자가 같은 저장소에서 작업 중일 수 있음을 알려 충돌을 피하게 합니다.
+- subagent 결과를 그대로 신뢰하지 말고, main agent가 spec 정합성, plugin surface 영향, release surface 반영 여부를 최종 확인합니다.
+- 일반 build는 `pnpm build:plugin <plugin-name> [--force]`를 사용합니다.
+- version bump가 필요한 release 승격은 `pnpm release:plugin <plugin-name> --bump <patch|minor|major> [--force]` 또는 `pnpm release:plugin <plugin-name> --version <version> [--force]`를 사용합니다.
+- `pnpm generate-release`는 split 안내용 legacy command입니다. 새 작업에서는 `build:plugin` 또는 `release:plugin`을 선택해 사용합니다.
+- dev source를 수정한 뒤에는 해당 plugin의 root release surface가 build 산출물로 갱신됐는지 확인합니다.
+- skill 책임, guide 라우팅, plugin boundary가 바뀌면 관련 skill spec, plugin spec, guide skill, upstream/downstream plugin surface를 같은 변경 단위에서 함께 점검합니다.
+
 ## Release 승격 워크플로
 
 1. `next`에서 release할 플러그인 변경 범위를 확인합니다.
