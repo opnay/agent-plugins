@@ -5,210 +5,97 @@ description: Loop gate for repositories where one turn must continue until the u
 
 # Turn Gate
 
-## Overview
+## Purpose
 
-Use this skill when the repository or working agreement requires one user turn to continue until the user asks to end the turn.
-Using this skill means treating `turn-gate` as a first-class rule for the rest of the current session.
-The `turn-gate` flow is the first-class control rule for the conversation response itself, not only a skill-specific checklist.
-Once active, every assistant response must either continue the loop, ask through the active question-routing mode, or honor an explicit user stop.
-Its job is not to replace downstream workflow skills.
-Its job is to keep the turn loop explicit:
+Use this skill when a repository or working agreement requires one user turn to stay open until the user explicitly asks to end it. Once invoked, `turn-gate` is a conversation-level first-class loop gate rule for the current session, not a checklist that applies only inside this file.
 
-1. analyze the user's message
-2. state the plan
-3. do the work
-4. verify the work
-5. report the result or commit-ready state
-6. open the next flow through a question-routing response with explicit choices
-7. continue unless the user asks to end the turn
+While `user_explicit_stop` is false, every response must end in one of these states:
 
-This skill is a loop gate.
-It owns turn continuity and next-flow reopening, not the domain work inside each phase.
-It uses user-gated question routing by default.
+- loop continuation
+- active question-routing
+- explicit user stop handling
 
-## Use When
+Result reporting, readiness reporting, and the normal final-answer channel are not turn termination. A summary-only close is invalid unless the user explicitly stops the turn or a confirmed closure is already recorded.
 
-- the repository requires one turn to stay open until the user asks to end the turn
-- the repository requires `analysis -> plan -> work -> result reporting / commit-ready -> user response` style progression
-- result reporting must be followed by a next-flow choice surface instead of a soft closing
-- the user should be given explicit choices for the next flow
-- the main risk is premature turn termination rather than lack of a phase-specific workflow
+## Boundary
 
-## Do Not Use When
+This skill owns turn continuity, phase classification, downstream owner selection for the current phase, session continuity records, and next-flow reopening.
 
-- the task is a normal single-phase request that can end cleanly after one answer
-- the repository does not require turn continuity until the user asks to end the turn
-- the main blocker is still choosing between clarification, planning, or execution rather than managing turn continuity itself
+This skill does not own requirements interviewing, planning, implementation, review handling, or commit execution. Delegate those details to the narrowest downstream workflow once the phase is clear.
 
-## Scope Boundary
+## Core Loop
 
-This skill owns:
+Treat each incoming user message as authoritative input inside the same loop-gated turn. Classify in-turn input as:
 
-- turn-level phase classification
-- downstream workflow selection for the current phase work
-- explicit analysis / plan / work / verification / result reporting structure
-- next-flow reopening after every phase result unless the user asks to end the turn
-- choice-granting question-routing surface for the next flow
+- explicit turn stop
+- current-flow correction
+- current-flow priority change
+- next-flow priority request
 
-This skill does not own:
-
-- requirements interviewing itself
-- read-only planning itself
-- implementation itself
-- review-loop handling itself
-- commit finalization itself
-
-## Core Policy
-
-- Treat invocation of this skill as activation of a conversation-level first-class loop gate.
-- Apply this gate to the assistant's response lifecycle itself: result reporting is not the terminal response while `user_explicit_stop` is false.
-- Do not use a `final`/summary-only response as the last action unless the user explicitly asked to end the turn or a confirmed closure has been recorded.
-- Treat each incoming message as the start or continuation of one loop-gated turn.
-- Treat the user's next-flow response as the next message inside the same turn.
-- Treat in-turn user messages as authoritative loop input rather than a reason to stop.
-- Classify in-turn user input as explicit turn stop, current-flow correction, current-flow priority change, or next-flow priority request.
-- Adjust the current flow immediately when the message changes active work; otherwise register the message as the highest-priority next-flow candidate.
-- Choose the narrowest downstream workflow that owns the current phase work.
-- Make `analysis`, `plan`, `work`, `verification`, and `result reporting` visible in the response shape.
-- Maintain running turn-gate records under `.agents/sessions/{YYYYMMDD}/`.
-- Maintain a compact `Continuity Guard` in every flow record and refresh it before result reporting and next-flow reopening.
-- The `Continuity Guard` must state whether `turn-gate` is active, the question-routing mode, whether the user explicitly stopped the turn, whether a terminal summary is allowed, and the required next action.
-- Record an explicit turn-end option in the flow record's `Next Flow Options` even when the user-facing question already has three visible choices and cannot display that option.
-- Use `000-plan.md` as the date-scoped plan: the durable history, user-request list, flow index, current plan, and completed-flow summary for `.agents/sessions/{YYYYMMDD}/`.
-- Keep `000-plan.md` incremental. Do not delete completed work from it; summarize completed flows and keep their references.
-- Use `001+` files as detailed flow reports for each user-request-driven work flow.
-- Use `analysis` to structure the user's message into requested intent and requested action, and to decide whether future flows or phases need forward design or redesign.
-- Use `plan` to prepare the detailed next steps needed to fulfill the analyzed request and, when useful, a provisional design for later flows or phases.
-- Use `work` to execute the prepared plan.
-- Use `verification` to confirm the work outcome before result reporting and to surface whether later flow/phase redesign is needed.
-- Use `result reporting` to report the completed work outcome.
-- Do not let result reporting become a soft stop.
-- Do not treat the normal assistant final-answer channel as permission to terminate the loop; the next-flow question is still required unless the user explicitly stopped the turn.
-- Before result reporting, read or reconstruct the `Continuity Guard`; if the user has not explicitly stopped the turn, a terminal summary is invalid.
-- Report results as prior explanation for the user's response into the next flow, not as a terminal message.
-- Reopen the next flow through the active question-routing mode with explicit choices.
-- Allow questions during `analysis` and `plan` when clarifying intent, criteria, or scope is necessary.
-- Treat termination judgment as the user's choice, not the assistant's shortcut.
-- Treat "no next flow" as an exception that must be justified by the user asking to end the turn or by confirmed closure.
-- When later loops return to `analysis` or `plan`, revise future flow/phase design only when new evidence, changed intent, or a revealed blocker makes redesign necessary.
-- Prefer the structured user-input tool for the next-flow step.
-- Keep the loop moving; do not reopen broad framing once the next phase is already clear.
-
-## Session Record
-
-- Use `.agents/sessions/{YYYYMMDD}/000-plan.md` as the date-scoped plan, history, and flow index for that day's turn-gated work.
-- Use `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` for detailed flow reports.
-- Keep `count-pad3` zero-padded like `001`, `002`, `003`.
-- Keep the slug English lower-case and `-` delimited.
-- Each user-request-driven flow should get its own `001+` flow report when it needs detailed tracking.
-- The plan should list the day's user requests and the corresponding `001+` flow reports.
-- Record at least: user request message, task, flow scope, current mode, question-routing mode, continuity guard, analysis, plan, work, verification, result report, next-flow options, residual risk.
-- Keep the current flow record current after `analysis`, `plan`, `work`, `verification`, and `result reporting`.
-- Update the flow record incrementally after each completed phase.
-- Prefer `templates/flow-record-template.md` as the default flow-record layout.
-- Prefer `templates/plan-template.md` as the default `000-plan.md` layout.
+For corrections or priority changes, adjust the current analysis/plan immediately and resume from the earliest safe phase. For next-flow priority requests, record the request as the highest-priority next-flow candidate and continue to the next safe handoff point.
 
 ## Phase Loop
 
-### Phase 0: Analyze
+Keep the loop phases separate enough to inspect while working:
 
-1. Structure the user's message into requested intent and requested action.
-2. State what is already clear and what still needs clarification.
-3. Decide what the current phase work actually is.
-4. Ask through the active question-routing mode when clarification is necessary before safe planning.
-5. Choose the downstream workflow that owns that work.
+1. `analysis`: structure the user message into requested intent and requested action. Identify current blockers, approval boundaries, whether a downstream workflow owns the next phase, and any useful future flow/phase candidates.
+2. `plan`: prepare the current-flow plan from the analysis. Include the selected downstream owner, the next concrete steps, required records, verification target, and any provisional future flow/phase design.
+3. `work`: execute the plan through the narrowest downstream workflow that owns the current phase. Keep the meta loop here and leave phase-specific detail to the downstream workflow.
+4. `verification`: verify the work before reporting it. State what was checked, what failed or remains uncertain, and whether new evidence means the later flow/phase design should be revised.
+5. `result reporting`: report the completed outcome, readiness state, or blocker as context for the next choice. This is not a terminal response while `user_explicit_stop` is false.
+6. `next-flow question-routing`: read or reconstruct the `Continuity Guard`, confirm whether terminal summary is allowed, and open explicit next-flow choices through user-gated question routing unless the user explicitly stopped the turn.
 
-Output:
+Future flow/phase design is provisional. Revisit it only when new evidence, changed intent, or a revealed blocker makes redesign useful.
 
-- `Analysis`
-- `Requested intent`
-- `Requested action`
-- `Chosen downstream owner`
+## Question Routing
 
-### Phase 1: Plan
+Use `user-gated` question routing by default. Use the user-input question tool for clarification, choices, scope locks, next-flow decisions, and any explicit user/tool/platform/safety/destructive/irreversible/external-action approval boundary.
 
-1. Prepare the detailed plan needed to fulfill the analyzed request.
-2. Ask through the active question-routing mode when planning is blocked by missing criteria, scope, or approval.
-3. Include fallback or verification steps when they matter.
-4. Keep the plan narrow enough to finish before reopening the next flow.
+Next-flow choices should be narrow and directly connected to the result just reported. Do not reopen broad framing when the next phase is already clear. If three visible choices are already needed and a turn-end option cannot be shown, still record an explicit turn-end option in the flow record's `Next Flow Options`.
 
-Typical downstream owners:
+## Session Records
 
-- `structured-thinking`
-- `deep-interview`
-- `planner`
-- `autopilot`
-- `parallel-work`
-- `ralph-loop`
-- `review-loop`
-- `commit-readiness-gate`
-- a specialist plugin after the workflow phase is clear
+Maintain turn-gated work under `.agents/sessions/{YYYYMMDD}/`.
 
-Selection signals:
+- `000-plan.md` is the date-scoped plan artifact. It owns the day's turn-gated history, user request list, flow index, current plan, and completed-flow summaries. Update it incrementally and keep completed flow references.
+- `{count-pad3}-{eng-lower-slug}.md` files are detailed flow reports, not phase notes. Use `001`, `002`, `003` style numbering and English lower-case `-` delimited slugs.
+- Prefer `templates/plan-template.md` for `000-plan.md`.
+- Prefer `templates/flow-record-template.md` for flow records.
 
-- `deep-interview` when the blocker is real requirement discovery
-- `review-loop` when the input is review findings and only material issues should be fixed
-- `ralph-loop` when one bounded fix-verify-reassess cycle is the best next step
-- `autopilot` when the current phase is broad end-to-end delivery from a brief request through implementation, QA, and validation
-- `commit-readiness-gate` when implementation is largely done and the current question is readiness for commit
+Each flow record must include at least: user request message, task, flow scope, current mode, question-routing mode, continuity guard, analysis, plan, work, verification, result report, next-flow options, and residual risk.
 
-Question-routing signals:
+Update the active flow record after each completed phase. Do not wait for the flow to finish.
 
-- `user-gated` by default, using the user-input question tool for choices, scope locks, and next-flow decisions
-- explicit user, tool, platform, safety, destructive, irreversible, or external-action approval boundaries must stay user-gated
+## Continuity Guard
 
-Output:
+Every flow record must contain a compact `Continuity Guard`. Refresh it before result reporting and before next-flow reopening.
 
-- `Plan`
+It must state:
 
-### Phase 2: Work
+- whether `turn-gate` is active
+- question-routing mode
+- whether the user explicitly stopped the turn
+- whether terminal summary is allowed
+- required next action
 
-1. Execute the prepared plan through the selected downstream workflow.
-2. Keep the current work bounded.
-3. Do not replace work with meta commentary.
+Before result reporting, read or reconstruct this guard. If `user_explicit_stop` is false, terminal summary is not allowed and the response must proceed to next-flow reopening or active question-routing.
 
-Output:
+## Downstream Owner Signals
 
-- `Work`
-- `Phase result`
+Choose the narrowest downstream workflow that owns the current phase:
 
-### Phase 3: Verification
+- `deep-interview` when requirement discovery, intent ambiguity, scope boundaries, or approval lines are the blocker
+- `review-loop` when the input is review or QA findings and the work must stay bounded to material issues
+- `ralph-loop` when a small fix-verify-reassess cycle is the right current move
+- `autopilot` when the current phase is broad end-to-end delivery from brief to verified result
+- `commit-readiness-gate` when the intended change unit is nearly done and readiness is the core question
+- another specialist workflow only after the current phase is clear
 
-1. Run the narrowest meaningful verification for the work just performed.
-2. State what was verified, what passed, and what remains uncertain.
-3. Treat missing verification as an explicit residual risk, not an implicit omission.
+Keep the meta loop here. Keep phase-specific detail in the downstream workflow.
 
-Output:
+## Response Contract
 
-- `Verification`
-
-### Phase 4: Report Result Or Commit-Ready State
-
-1. Report what changed, what was decided, or what remains blocked.
-2. If the work reached a readiness boundary, report that state explicitly.
-3. Treat the report as prior explanation for the user's next response.
-4. Do not treat the report as the end of the turn.
-
-Output:
-
-- `Result report`
-- `Commit-ready state` when relevant
-
-### Phase 5: Open The Next Flow Through Question Routing
-
-1. Ask what next flow should proceed.
-2. Use user-gated question routing with explicit choices.
-3. Offer the narrowest next-flow options that fit the current result.
-4. If three or more user-facing options are already needed, keep those visible choices narrow and record a separate turn-end option in the session flow record even if it is not displayed.
-5. Treat the user's response as the next user message and route it back into Phase 0 instead of ending the turn.
-
-Output:
-
-- `Question-routing prompt`
-- `Next-flow choices`
-- `Planned next-flow continuation`
-
-## Output Contract
+Use the labels that fit the situation, but preserve this information shape:
 
 - `Analysis`
 - `Requested intent`
@@ -218,7 +105,6 @@ Output:
 - `Plan`
 - `Work`
 - `Verification`
-- `Phase result`
 - `Result report`
 - `Continuity guard`
 - `Question-routing prompt`
@@ -226,38 +112,15 @@ Output:
 - `Loop state`
 - `Residual risk`
 
-## Response Pattern
-
-Preferred turn shape:
-
-1. analyze the user's message
-2. state the plan
-3. describe the work
-4. state the verification briefly
-5. report the result briefly
-6. ask for the next-flow response through the active question-routing mode
-
-Bad ending shape:
-
-- summary-only closing such as "완료했습니다", "필요하면 더 말씀해주세요", or option lists without a concrete next-flow response surface
-- freeform next-step prompting without giving the user explicit choices
-- blocked-state closing such as "여기까지 확인했습니다" without a next-flow response surface
-
-Good turn-flow example:
-
-- "`workflow-kit-dev`의 기본 시작점을 찾아달라는 요청이지만, 시작점을 어떤 기준으로 볼지 먼저 맞춰야 한다고 판단했습니다. 지금은 기준 선택이 먼저 필요합니다. 시작점을 어떤 기준으로 볼까요?"
-- "1. 플러그인 관점 2. `AGENTS.md` 관점 3. 스킬 관점"
-
 ## Guardrails
 
-- Do not replace a phase-specific workflow with vague meta commentary.
-- Do not emit a terminal summary unless the user asks to end the turn.
+- Do not treat result reporting, readiness reporting, or a final summary as turn termination while `user_explicit_stop` is false.
 - Do not decide on behalf of the user that the turn should terminate.
-- Do not skip the `000-plan.md` update when the higher-level plan changes across flows.
-- Do not defer the flow-record update at `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` until the end of the flow; write it at each completed phase boundary.
+- Do not end with generic follow-up phrasing such as "let me know if you need anything else".
+- Do not use summary-only closing as a valid ending shape. Bad ending shapes include: reporting only "done", giving a broad final summary without next-flow choices, or ending with a generic follow-up phrase instead of question-routing.
 - Do not skip explicit verification between work and result reporting.
-- Do not emit result reporting until the `Continuity Guard` says whether next-flow reopening is still required.
-- Do not skip the next-flow response step merely because the next phase seems obvious.
+- Do not skip the next-flow question because the next phase seems obvious.
+- Do not let session records lag behind phase boundaries.
 - Do not ask the next-flow question without giving the user explicit choices.
 - Do not omit the session-recorded turn-end option from `Next Flow Options`, even when the visible question options are full.
 - Do not route user-gated questions to subagents from this skill.

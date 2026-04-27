@@ -56,6 +56,15 @@
 
 ## 핵심 처리 계약
 
+### Skill body 작성 계약
+
+- `loop-kit-dev/skills/turn-gate/SKILL.md`는 이 스펙의 단순 요약본이 아니라 runtime에서 읽는 운영 표면이다.
+- skill body는 대화 응답 자체를 제어하는 conversation-level first-class rule을 앞부분에서 명시해야 한다.
+- skill body에는 `Core Loop` 또는 이에 준하는 단계별 실행 섹션이 있어야 하며, 최소한 analysis, plan, work, verification, result reporting, question-routing reopening을 각각 구분해 설명해야 한다.
+- skill body에는 internal mode selection과 local `references/` 읽기 규칙이 직접 남아 있어야 한다.
+- skill body에는 terminal summary 금지, next-flow reopening, Continuity Guard 확인, user-gated question routing, explicit turn-end option 기록 규칙이 직접 남아 있어야 한다.
+- skill body를 짧게 다듬더라도 위 단계와 금지 규칙을 한 문단으로 뭉개지 말고, 실행 중 빠르게 확인 가능한 형태로 유지한다.
+
 ### 활성화와 응답 흐름
 
 - 각 incoming message를 같은 loop-gated turn의 현재 입력으로 취급한다.
