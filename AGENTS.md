@@ -80,12 +80,24 @@
 - spec은 구현 세부보다 의도, 경계, 라우팅, 책임 배치를 먼저 고정해야 합니다.
 - 파일 종류나 구현 관성을 적더라도, spec의 핵심 판단 기준은 change pressure, ownership, routing 이유를 먼저 설명하는 쪽을 우선합니다.
 
+## Change Spec 규칙
+
+- version-scoped release나 migration 범위는 `src/<plugin-name>-dev/changes/<version>.md` change spec으로 고정할 수 있습니다.
+- change spec은 사용자 스펙 의도, 변경 목적, 포함 변경, 비목표, 호환성/마이그레이션, 검증 기준을 기록합니다.
+- change spec은 먼저 아주 간단한 `변경사항 요약` 리스트를 보여주고, 각 변경의 목적, 범위, 관련 표면, 검증 같은 상세 내용은 별도 `변경 상세` 섹션에 둡니다.
+- change spec은 영구 normative plugin/skill contract를 대체하지 않습니다.
+- change spec에서 확정된 지속 규칙은 `specs/plugin.md`, 관련 `specs/skills/*.md`, guide skill, README 같은 소유 표면으로 승격합니다.
+- 일회성 release history, migration 배경, 제거 범위, 검증 결과는 change spec에 남기고 일반 skill spec으로 옮기지 않습니다.
+- release surface에는 `changes/`를 포함하지 않습니다.
+- change spec을 정식 규칙으로 승격하라는 요청은 repo-level 규칙 또는 해당 소유 spec으로 반영하고, change spec 자체만 고쳐서 끝내지 않습니다.
+
 ## 권장 스펙 양식
 
-새 플러그인이나 skill spec을 시작할 때는 아래 템플릿을 기본 시작점으로 사용합니다.
+새 플러그인, skill spec, change spec을 시작할 때는 아래 템플릿을 기본 시작점으로 사용합니다.
 
 - plugin spec starter: `docs/templates/plugin-spec.md`
 - skill spec starter: `docs/templates/skill-spec.md`
+- change spec starter: `docs/templates/change-spec.md`
 - 템플릿은 현재 저장소에 남아 있는 유지 기준 spec과 동일한 방향으로 갱신합니다.
 
 양식을 사용할 때의 기준:
