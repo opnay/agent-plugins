@@ -18,7 +18,6 @@ If the repository requires non-terminal turns, keep `turn-gate` active as the lo
 ## Workflow
 
 1. Identify which bundled skill is the best starting point:
-   - `structured-thinking`
    - `deep-interview`
    - `planner`
    - `turn-gate` when the repository requires a turn-level loop gate contract
@@ -42,7 +41,6 @@ If the repository requires non-terminal turns, keep `turn-gate` active as the lo
 
 ## Routing Rules
 
-- Choose `structured-thinking` when the task is still too unstable to choose the next workflow safely and the first job is to isolate ambiguity, assumptions, and the most plausible next path.
 - Choose `deep-interview` when the main job is to understand the user's real intent, boundaries, tradeoffs, approval lines, or success criteria through questions, pressure-testing, or direction evaluation.
 - Choose `planner` when implementation should stay deferred until a read-only investigation, tradeoff analysis, verification path, and execution-ready plan are complete.
 - Activate or keep `turn-gate` when the repository or task requires one turn to remain open until the user asks to end the turn.
@@ -58,8 +56,7 @@ If the repository requires non-terminal turns, keep `turn-gate` active as the lo
 
 - Treat this guide as the default first stop for routing.
 - Pick the skill that best addresses the current bottleneck.
-- Choose `deep-interview` over `structured-thinking` when the request is a proposal, direction check, greenfield setup, or "괜찮을까?" style evaluation and the missing information is about what the user really wants, what constraints matter most, or what success should mean.
-- Keep `structured-thinking` for workflow ambiguity, not for requirement discovery that should continue as an actual interview.
+- Use this guide itself to resolve lightweight workflow-selection ambiguity before handing off to a narrower skill.
 - Use `deep-interview` when the blocker is still understanding what the user actually wants, where the scope should stop, or how to evaluate a direction before committing to a plan or implementation.
 - Use clarification skills when intent, scope, tradeoff, or approval boundaries are still the blocker.
 - Use planning when execution should remain deferred.

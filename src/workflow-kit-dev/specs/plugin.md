@@ -44,8 +44,6 @@ bounded decision을 subagent question packet으로 라우팅해 자동 진행해
 
 - `workflow-kit-dev-guide`: current bottleneck에 맞는 starting workflow와 handoff를 정한다.
   - spec: `workflow-kit-dev/specs/skills/workflow-kit-dev-guide.md`
-- `structured-thinking`: workflow 선택이 아직 불안정한 task를 안정화한다.
-  - spec: `workflow-kit-dev/specs/skills/structured-thinking.md`
 - `deep-interview`: intent, scope, tradeoff, approval boundary를 질문으로 잠근다.
   - spec: `workflow-kit-dev/specs/skills/deep-interview.md`
 - `planner`: read-only investigation을 통해 decision-complete plan을 만든다.
