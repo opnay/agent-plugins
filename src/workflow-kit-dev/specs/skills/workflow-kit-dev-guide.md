@@ -18,6 +18,7 @@
 
 - 포함:
   - current bottleneck 분류
+  - routing 전 사용자 operation 의미 해독 필요 여부 판단
   - starting workflow와 handoff 결정
   - sequential problem-solving 필요 여부 판단
   - execution mode 선택 기준 제시
@@ -41,6 +42,9 @@
 ## 핵심 처리 계약
 
 - current bottleneck을 먼저 하나로 좁힌다.
+- 사용자 표현의 operation target이 skill, spec, guide, plugin, phase, routing rule, release surface 중 여러 단위를 가리킬 수 있으면 starting skill을 고르기 전에 의미를 잠근다.
+- `그`, `그 밑`, `그건`, `그거`, `위`, `아래`, `현재 것` 같은 지시 표현이 여러 주변 대상을 가리킬 수 있으면 routing 전에 target을 잠근다.
+- operation 또는 target ambiguity는 requirement discovery가 아니므로, 그 자체를 `deep-interview`로 넘기지 않는다.
 - starting skill과 planned handoff를 함께 제시한다.
 - 복잡한 분석, 설계, 계획, 디버깅에서 reasoning 자체가 병목이면 `sequential-thinking`을 선택한다.
 - specialist plugin은 workflow 이후 handoff 대상으로만 둔다.
@@ -48,12 +52,16 @@
 - repository-local rule이 non-terminal turn을 요구하면 `turn-gate`를 기본 loop gate로 유지한다.
 - `turn-gate`를 활성화한다는 것은 현재 세션 동안 이를 first-class loop gate rule로 유지한다는 의미로 취급한다.
 - bounded decision을 subagent question packet으로 라우팅해야 하면 `turn-gate-self-drive` overlay를 선택한다.
+- `turn-gate-self-drive`를 쓰더라도 approval, destructive, irreversible, external-action, safety 결정은 subagent에 넘기지 않고 user-gated로 유지한다.
+- 사용자가 명시적으로 commit 실행을 요청하면 readiness, scope, staged/final status 확인 뒤 commit execution workflow로 넘긴다.
+- readiness-only 요청은 commit 승인으로 취급하지 않는다.
 - `turn-gate`는 execution mode가 아니라 turn-level gate contract로 분류한다.
 - `turn-gate`가 활성화된 상태의 사용자 응답 또는 `turn-gate-self-drive`의 subagent 답변은 같은 턴의 다음 메시지로 이어지는 것으로 취급한다.
 
 ## 검토 질문
 
 - current bottleneck을 정말 하나로 좁혔는가?
+- 사용자 지시어 자체가 다의적인데 하나의 operation으로 단정하지 않았는가?
 - starting skill과 planned handoff가 함께 제시돼 있는가?
 - `sequential-thinking`을 router가 아니라 problem-solving workflow로 판단했는가?
 - `turn-gate`를 execution mode가 아니라 turn-level gate contract로 분리해서 판단했는가?

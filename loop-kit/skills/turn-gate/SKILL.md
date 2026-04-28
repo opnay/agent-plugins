@@ -28,15 +28,18 @@ This skill owns turn continuity, current-phase internal mode selection, local re
 Treat every incoming user message as authoritative input inside the same loop-gated turn. Classify in-turn input as:
 
 - explicit turn stop
+- status or progress check
 - current-flow correction
 - current-flow priority change
 - next-flow priority request
+
+For status or progress checks, answer with the current phase, blocker or progress, and next concrete action, then continue the active flow. Do not treat a status check as a stop or as permission to close the turn.
 
 For corrections or priority changes, adjust the current analysis/plan immediately and resume from the earliest safe phase. For next-flow priority requests, record the request as the highest-priority next-flow candidate and continue to the next safe handoff point.
 
 Keep this runtime phase shape visible:
 
-1. `analysis`: identify requested intent, requested action, current blocker, likely internal mode, and any approval boundary. Note future flow/phase candidates only when they help the current decision.
+1. `analysis`: identify requested intent, requested action, current blocker, likely internal mode, whether meaning resolution is needed, and any approval boundary. Note future flow/phase candidates only when they help the current decision.
 2. `plan`: set the active steps for the current flow; use `update_plan` once meaningful work begins and keep the active step current.
 3. `work`: before working, choose one internal mode and read its local `references/` contract. Execute only after the mode and relevant contract are clear.
 4. `verification`: verify the work before reporting it, surface residual uncertainty, and state whether later flow/phase redesign is needed.
@@ -44,6 +47,16 @@ Keep this runtime phase shape visible:
 6. `question-routing reopening`: read or reconstruct the `Continuity Guard`, confirm whether terminal summary is allowed, and reopen the next flow with explicit choices unless the user explicitly stopped the turn.
 
 Analysis and planning may include provisional future flow/phase design. Revisit that design only when new evidence, changed intent, or a revealed blocker makes redesign useful.
+
+## Meaning Resolution
+
+Before selecting an internal mode or acting on a user correction, check whether the user's operation wording or contextual reference can mean more than one thing. Terms such as merge, absorb, remove, split, route, phase, surface, skill, spec, or contract often change meaning depending on whether the target is a file, workflow phase, routing rule, or plugin surface. Referential wording such as this, that, below, above, current one, `그`, `그 밑`, `그건`, or `그거` also needs locking when multiple nearby targets are plausible.
+
+Treat provenance, source URLs, and user-intent/spec-intent blocks as meaningful targets, not disposable conversation context. If "source", "original", "intent", or "below that" could point to either a provenance note, a user intent block, or the normative spec body, lock that target before editing.
+
+When the interpretation would change the work, do not pick one meaning silently. Record the literal wording, the interpreted operation, the operation target, plausible alternate interpretations, and the impact of ambiguity. Then use user-gated question routing to lock the meaning before work starts.
+
+This is not `deep-interview`. It is current-flow meaning resolution for the user's instruction itself. Ask a narrow structural question, such as whether "merge" means combining skill/spec surfaces or absorbing behavior into a `turn-gate` phase.
 
 ## Internal Mode Selection
 
@@ -54,6 +67,7 @@ Before `work`, select exactly one internal mode for the current phase. If the mo
 - `ralph-loop`: read `references/ralph-loop.md` when one small fix-verify-reassess cycle is the right current move.
 - `autopilot`: read `references/autopilot.md` when the phase is broad end-to-end delivery from brief to verified result.
 - `commit-readiness-gate`: read `references/commit-readiness-gate.md` when implementation is largely done and readiness for commit is the core question.
+- commit execution workflow: when the user explicitly asks to commit and the intended change unit has passed scope, staged/final status, and readiness checks, hand off to the appropriate commit workflow. `turn-gate` keeps the loop; it does not own commit execution details.
 
 When multiple modes seem plausible, prefer the earliest blocker in this order: `deep-interview` -> `review-loop` -> `ralph-loop` -> `autopilot` -> `commit-readiness-gate`.
 
@@ -62,6 +76,8 @@ When multiple modes seem plausible, prefer the earliest blocker in this order: `
 Use `user-gated` question routing for clarification, choices, scope locks, mode narrowing, and next-flow decisions. Use `request_user_input` for those questions.
 
 Explicit user, tool, platform, safety, destructive, irreversible, or external-action approval boundaries must stay user-gated. Do not simulate approval and do not route user-gated questions to subagents.
+
+Before destructive, irreversible, or external actions, inspect the current state closely enough to state the exact target and risk. If the user asks to use subagents to keep moving, hand off autonomous question routing to `turn-gate-self-drive`; approval, destructive, irreversible, external-action, and safety decisions remain with the user and should be recorded as such.
 
 Next-flow choices should be narrow and directly connected to the result just reported. If three visible choices are already needed and a turn-end option cannot be shown, still record an explicit turn-end option in the flow record's `Next Flow Options`.
 
@@ -97,6 +113,7 @@ Before result reporting, read or reconstruct this guard. If `user_explicit_stop`
 Use the labels that fit the situation, but preserve this information shape:
 
 - `Analysis`
+- `Meaning resolution` when relevant
 - `Plan`
 - `Chosen internal mode`
 - `Question-routing mode`
@@ -117,6 +134,8 @@ Use the labels that fit the situation, but preserve this information shape:
 - Do not use summary-only closing as a valid ending shape. Bad ending shapes include: reporting only "done", giving a broad final summary without next-flow choices, or ending with a generic follow-up phrase instead of question-routing.
 - Do not ask freeform textual choice questions when the active question-routing mode can carry the decision.
 - Do not treat in-turn user intervention as a stop, completion, or approval-boundary pause unless the user explicitly asks to stop or creates a real approval boundary.
+- Do not collapse overloaded user wording into one concrete action when different interpretations would change files, phases, routing, or commit scope.
+- Do not treat a readiness request as commit approval, and do not treat commit approval as permission to include unrelated changes.
 - Do not skip `update_plan` after meaningful work begins.
 - Do not skip explicit verification between work and result reporting.
 - Do not emit result reporting until the `Continuity Guard` says whether next-flow reopening is still required.

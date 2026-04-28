@@ -4,6 +4,7 @@
 
 `loop-kit-dev`은 `turn-gate`를 메인 표면으로 삼는 loop-oriented workflow 플러그인입니다.
 핵심 책임은 하나의 턴을 사용자가 턴을 종료하자고 요청할때까지 닫지 않고 유지하면서, 현재 phase의 메인 작업에 맞는 내부 loop mode를 `turn-gate` 안에서 선택해 실행하는 것입니다.
+내부 mode 선택 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, phase, routing rule, release surface 중 무엇을 가리키는지 확인하고, 해석에 따라 작업이 달라지면 meaning resolution 질문으로 먼저 잠급니다.
 이 플러그인은 `workflow-kit`이 정의한 broader workflow taxonomy와 canonical loop-mode contract를 runtime-oriented surface로 묶어 제공합니다.
 
 ## 플러그인 경계와 비목표
@@ -11,6 +12,7 @@
 - 포함:
   - turn-level loop gate contract
   - `analysis -> plan -> work -> verification -> result reporting -> next-flow question-routing response` 구조 유지
+  - internal mode 선택 전 operation meaning resolution
   - `turn-gate` 내부의 loop mode 선택
   - user-gated question routing 유지
   - autonomous subagent question routing을 위한 별도 overlay skill 제공
@@ -25,6 +27,7 @@
 ## 처리하려는 작업 형태
 
 - 결과 보고 뒤에도 같은 턴에서 다음 플로우를 계속 이어가야 하는 작업
+- 사용자 지시어가 여러 구조 단위를 가리켜 current-phase work를 고르기 전에 의미를 잠가야 하는 작업
 - 현재 phase의 작업이 requirement discovery, autonomous execution, refinement, review handling, readiness pass 중 하나로 좁혀지는 작업
 - loop continuity가 top-level governing contract인 작업
 

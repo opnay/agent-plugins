@@ -4,6 +4,7 @@
 
 `workflow-kit-dev`은 작업 lifecycle 전반을 다루는 workflow 플러그인입니다.
 핵심 책임은 들어온 요청에 대해 requirement discovery, sequential analysis, planning, execution, refinement, review, final gating, 그리고 사용자가 턴을 종료하자고 요청할때까지 턴을 닫지 않는 loop-gated continuity 중 현재 병목이 무엇인지 판단하고, 가장 맞는 workflow skill로 연결하는 것입니다.
+이 판단 전에는 사용자 지시어의 operation 의미가 skill, spec, guide, plugin, phase, routing rule, release surface 중 어디를 가리키는지 확인해야 하며, 해석에 따라 작업이 달라지면 meaning resolution 질문으로 먼저 잠급니다.
 repository-local operating rule이 non-terminal turn을 요구하면, `turn-gate`를 turn-level loop gate로 유지한 채 현재 phase owner를 선택합니다.
 `turn-gate`가 활성화되면 현재 세션 동안 first-class loop gate rule로 취급합니다.
 bounded decision을 subagent question packet으로 라우팅해 자동 진행해야 하는 경우 `turn-gate-self-drive` overlay를 선택합니다.
@@ -14,6 +15,7 @@ bounded decision을 subagent question packet으로 라우팅해 자동 진행해
 
 - 포함:
   - sequential and reflective problem solving
+  - operation meaning resolution before routing
   - requirement discovery와 direction evaluation
   - read-only planning
   - broad execution workflow
@@ -29,6 +31,7 @@ bounded decision을 subagent question packet으로 라우팅해 자동 진행해
 ## 처리하려는 작업 형태
 
 - 요청을 어떤 workflow로 먼저 처리해야 하는지 결정하는 작업
+- 사용자의 구조 변경 지시어가 여러 작업 단위를 가리킬 수 있어 의미를 먼저 잠가야 하는 작업
 - 복잡한 분석, 설계, 계획, 디버깅에서 단계적 사고, revision, branch, hypothesis verification이 필요한 작업
 - 구현 전에 alignment나 planning이 필요한 작업
 - broad execution부터 review와 final gate까지 이어지는 lifecycle 작업

@@ -35,6 +35,7 @@
 - 포함:
   - turn-level continuity 유지
   - `analysis -> plan -> work -> verification -> result reporting -> next-flow question-routing response` 구조 유지
+  - 사용자 메시지의 operation 의미 해독
   - current-phase work의 internal mode selection
   - 결과 보고 뒤 explicit choice 기반 next-flow reopening
 - 제외:
@@ -69,7 +70,8 @@
 
 - 각 incoming message를 같은 loop-gated turn의 현재 입력으로 취급한다.
 - 중간 사용자 메시지를 stop, completion, approval-boundary pause로 해석하지 않고 같은 loop-gated turn의 authoritative input으로 취급한다.
-- 중간 사용자 메시지는 explicit turn stop, current-flow correction, current-flow priority change, next-flow priority request 중 하나로 분류한다.
+- 중간 사용자 메시지는 explicit turn stop, status/progress check, current-flow correction, current-flow priority change, next-flow priority request 중 하나로 분류한다.
+- status/progress check라면 현재 phase, blocker 또는 progress, 다음 concrete action을 짧게 보고한 뒤 active flow를 계속한다.
 - current-flow correction 또는 current-flow priority change라면 현재 analysis/plan을 즉시 조정하고 가장 이른 안전한 phase부터 이어간다.
 - next-flow priority request라면 flow record의 next-flow 후보 중 최우선으로 등록하고 다음 safe handoff point까지 이어간다.
 - 이 skill이 사용되면 현재 세션 동안 `turn-gate`를 conversation-level first-class operating rule로 활성화한 것으로 취급한다.
@@ -79,6 +81,17 @@
 - `analysis`, `plan`, `work`, `verification`, `result reporting`, `question-routing reopening`을 응답 shape에 계속 드러낸다.
 - 분석 단계와 계획 단계는 현재 플로우만이 아니라 이후 이어질 flow/phase 후보까지 미리 설계할 수 있다.
 - 그 future flow/phase 설계는 provisional하며, 이후 loop에서 새 증거, changed intent, 새 blocker가 생겼을 때만 다시 설계한다.
+
+### meaning resolution
+
+- analysis 단계에서는 internal mode 선택이나 작업 실행 전에 사용자 메시지의 operation 의미를 먼저 해독한다.
+- `merge`, `absorb`, `remove`, `split`, `route`, `phase`, `surface`, `skill`, `spec`, `contract` 또는 이에 대응되는 한국어 표현처럼 여러 구조 단위를 가리킬 수 있는 표현은 바로 하나의 작업으로 단정하지 않는다.
+- `그`, `그 밑`, `그건`, `그거`, `위`, `아래`, `현재 것`처럼 주변 문맥의 여러 대상을 가리킬 수 있는 지시 표현도 해석에 따라 작업이 달라지면 meaning resolution 대상으로 본다.
+- source URL, provenance note, `사용자 스펙 의도` 또는 spec intent block은 대화 맥락처럼 버릴 수 있는 텍스트가 아니라 작업 target이 될 수 있다. `출처`, `원본`, `의도`, `그 밑`이 provenance, intent block, normative spec body 중 무엇을 가리키는지에 따라 작업이 달라지면 먼저 target을 잠근다.
+- 해석 후보에 따라 파일 범위, 삭제 여부, phase 설계, routing rule, migration 의미, commit scope가 달라지면 active question-routing으로 의미를 먼저 잠근다.
+- meaning resolution 질문은 `deep-interview`가 소유하는 requirement discovery가 아니라, 현재 지시어의 operation 또는 target을 잠그는 current-flow clarification이다.
+- 질문은 넓은 freeform 질문이 아니라 "여기서 병합은 skill/spec surface를 합치는 뜻인가, `turn-gate` phase로 흡수하는 뜻인가"처럼 다의어가 가리키는 구조 단위를 직접 잠그는 형태여야 한다.
+- meaning resolution이 필요한 경우 flow record의 analysis에는 literal wording, interpreted operation, operation target, alternate interpretations, impact of ambiguity를 남긴다.
 
 ### 세션 기록과 Continuity Guard
 
@@ -103,6 +116,8 @@
 - 질문, 선택지 제시, scope lock, next-flow reopening에는 user-gated question routing을 필수로 사용한다.
 - scope lock, 선택지, next-flow reopening은 `request_user_input`으로 사용자에게 묻는다.
 - explicit user, tool, platform, safety, destructive, irreversible, external-action approval boundary는 반드시 사용자 질문으로 유지한다.
+- destructive, irreversible, external action 전에는 현재 상태를 확인해 대상과 위험을 말할 수 있어야 한다.
+- 사용자가 subagent로 막힌 질문을 처리하라고 하면 autonomous question routing은 `turn-gate-self-drive`로 넘기고, approval, destructive, irreversible, external-action, safety 결정은 user-gated로 유지한다.
 
 ### 검증과 next-flow reopening
 
@@ -120,6 +135,7 @@
 - bounded issue를 작은 fix-verify-reassess cycle로 다루는 경우 `references/ralph-loop.md`를 따른다.
 - review feedback이나 material finding 처리인 경우 `references/review-loop.md`를 따른다.
 - 현재 변경 단위가 거의 끝났고 readiness 판단이 핵심이면 `references/commit-readiness-gate.md`를 따른다.
+- 사용자가 명시적으로 commit 실행을 요청한 경우에도 먼저 intended change unit의 scope, staged/final status, readiness를 확인한 뒤 commit execution workflow로 넘긴다. readiness 점검 요청은 commit 승인으로 해석하지 않는다.
 - 아직 어떤 internal mode가 맞는지 확정되지 않았다면 active question-routing mode나 좁은 분석으로 먼저 mode selection을 잠근다.
 
 ## deep-interview 원본 관계
@@ -172,6 +188,7 @@
 ## 검토 질문
 
 - 이번 응답이 turn continuity를 실제로 유지하고 있는가?
+- 사용자 표현에 구조적 다의성이 있으면 internal mode 선택 전에 meaning resolution 질문을 열었는가?
 - current-phase work에 맞는 internal mode를 하나로 좁혔는가?
 - user-gated question routing과 계획 도구 `update_plan`를 필수 단계에서 실제로 사용했는가?
 - cross-flow 작업이라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 최신 상태인가?

@@ -40,6 +40,8 @@ If the repository requires non-terminal turns, keep `turn-gate` active as the lo
 5. Route to the narrowest bundled skill that owns the current bottleneck.
 6. If the task spans several bundled skills, choose the starting skill and handoff point explicitly.
 
+Before step 1 becomes a concrete routing decision, check whether the user's operation wording or contextual reference is itself ambiguous. If terms like merge, absorb, remove, split, route, phase, surface, skill, spec, or contract could point to different work units, or if this/that/below/above-style references could point to different nearby targets, lock that meaning first instead of routing on one assumed interpretation.
+
 ## Routing Rules
 
 - Choose `sequential-thinking` when the current work itself needs sequential analysis, revision, branching, hypothesis generation, and verification before a final answer.
@@ -52,12 +54,15 @@ If the repository requires non-terminal turns, keep `turn-gate` active as the lo
 - Choose `ralph-loop` when the work is best handled as repeated bounded fix-verify-reassess cycles.
 - Choose `review-loop` when the input is review feedback or findings and the job is to fix only the material issues one at a time.
 - Choose `commit-readiness-gate` when implementation is largely done and the main question is whether the current change is isolated, verified, risk-classified, and ready to move toward commit.
+- When the user explicitly asks to commit, route through readiness, scope, and staged/final status checks before handing off to the commit execution workflow. Do not treat readiness-only wording as commit approval.
 - If the task clearly begins as execution and ends with a commit-readiness pass, start with the fitting execution workflow and hand off to `commit-readiness-gate` only after the intended change unit is complete.
 
 ## Decision Rules
 
 - Treat this guide as the default first stop for routing.
 - Pick the skill that best addresses the current bottleneck.
+- Preserve materially different interpretations of the user's operation before choosing a starting skill.
+- Treat operation-target ambiguity as meaning resolution, not as `deep-interview` requirement discovery.
 - Choose `deep-interview` over `sequential-thinking` when the request is a proposal, direction check, greenfield setup, or "괜찮을까?" style evaluation and the missing information is about what the user really wants, what constraints matter most, or what success should mean.
 - Keep `sequential-thinking` for complex problem solving, not for requirement discovery that should continue as an actual interview.
 - Use `deep-interview` when the blocker is still understanding what the user actually wants, where the scope should stop, or how to evaluate a direction before committing to a plan or implementation.
@@ -66,6 +71,7 @@ If the repository requires non-terminal turns, keep `turn-gate` active as the lo
 - Use planning when execution should remain deferred.
 - Use `turn-gate` when the main bottleneck is not a single phase, but keeping the whole turn open through analysis, plan, work, result report, and question-routing-based next-flow continuation.
 - Use `turn-gate-self-drive` when the user wants blocked questions answered by subagents instead of by the user so the turn can keep moving automatically.
+- With `turn-gate-self-drive`, send only bounded non-approval questions to subagents. Keep approval, destructive, irreversible, external-action, and safety decisions user-gated.
 - If the repository requires every result report to reopen the next flow, keep `turn-gate` active even when another workflow owns the current phase detail.
 - When this guide activates `turn-gate`, treat that activation as a session-level first-class loop gate rule.
 - When `turn-gate` is active, treat the user's next-flow response as the next user message inside the same turn rather than as a brand-new independent turn.
@@ -140,6 +146,7 @@ Meta-flow heuristic:
 ## Output Contract
 
 - `Current bottleneck`
+- `Meaning ambiguity` when relevant
 - `Scope size` when execution is selected
 - `Verification style` when execution is selected
 - `Chosen skill`
@@ -150,6 +157,7 @@ Meta-flow heuristic:
 ## Guardrails
 
 - Do not treat another plugin as the default global entrypoint.
+- Do not route an instruction whose operation target is ambiguous until the ambiguity is resolved or explicitly recorded.
 - Do not skip an obvious alignment pass when the user's intent is still materially underspecified.
 - Do not skip sequential analysis when the task genuinely needs revision, branching, hypothesis generation, or verification before a sound answer.
 - Do not skip a planning pass when execution should remain deferred until read-only investigation and handoff are complete.

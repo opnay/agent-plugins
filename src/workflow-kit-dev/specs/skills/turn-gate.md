@@ -59,6 +59,7 @@
 
 - 포함:
   - turn-level phase classification
+  - 사용자 메시지의 operation 의미 해독
   - current phase의 downstream workflow 선택
   - 결과 보고 뒤 다음 플로우 진행을 위한 question-routing 응답 개방
   - 선택권을 주는 user-gated question routing을 통한 loop 유지
@@ -96,7 +97,8 @@
 
 - 현재 메시지를 이번 턴의 분석 대상으로 받아들인다.
 - 중간 사용자 메시지를 stop, completion, approval-boundary pause로 해석하지 않고 authoritative loop input으로 받아들인다.
-- 중간 사용자 메시지는 explicit turn stop, current-flow correction, current-flow priority change, next-flow priority request 중 하나로 분류한다.
+- 중간 사용자 메시지는 explicit turn stop, status/progress check, current-flow correction, current-flow priority change, next-flow priority request 중 하나로 분류한다.
+- status/progress check라면 현재 phase, blocker 또는 progress, 다음 concrete action을 짧게 보고한 뒤 active flow를 계속한다.
 - current-flow correction 또는 current-flow priority change라면 현재 analysis/plan을 즉시 조정하고 가장 이른 안전한 phase부터 이어간다.
 - next-flow priority request라면 flow record의 next-flow 후보 중 최우선으로 등록하고 다음 safe handoff point까지 이어간다.
 - 이 skill이 사용되면 현재 세션 동안 `turn-gate`를 conversation-level first-class loop gate rule로 활성화한 것으로 취급한다.
@@ -109,6 +111,17 @@
 - 작업 단계에서는 준비한 계획을 실행한다.
 - 검증 단계에서는 작업 결과를 확인하고 남은 불확실성을 드러내며, 이후 flow/phase 재설계가 필요한지 여부를 surface한다.
 - 결과 보고 단계에서는 완료된 작업의 결과를 보고한다.
+
+### meaning resolution
+
+- 분석 단계에서는 downstream workflow 선택이나 파일 편집 전에 사용자 메시지의 의미를 먼저 해독한다.
+- `merge`, `absorb`, `remove`, `split`, `route`, `phase`, `surface`, `skill`, `spec`, `contract` 또는 이에 대응되는 한국어 표현처럼 여러 구조 단위를 가리킬 수 있는 표현은 바로 하나의 작업으로 단정하지 않는다.
+- `그`, `그 밑`, `그건`, `그거`, `위`, `아래`, `현재 것`처럼 주변 문맥의 여러 대상을 가리킬 수 있는 지시 표현도 해석에 따라 작업이 달라지면 meaning resolution 대상으로 본다.
+- source URL, provenance note, `사용자 스펙 의도` 또는 spec intent block은 대화 맥락처럼 버릴 수 있는 텍스트가 아니라 작업 target이 될 수 있다. `출처`, `원본`, `의도`, `그 밑`이 provenance, intent block, normative spec body 중 무엇을 가리키는지에 따라 작업이 달라지면 먼저 target을 잠근다.
+- 해석 후보에 따라 수정 파일, 삭제 여부, migration 의미, commit scope가 달라지면 active question-routing으로 의미를 먼저 잠근다.
+- meaning resolution 질문은 requirement discovery가 아니라 현재 지시어의 operation 또는 target을 잠그는 질문이다. 단순히 의미가 불명확하다는 이유만으로 `deep-interview`로 넘기지 않는다.
+- 질문은 "어떻게 할까요?"처럼 넓게 열지 않고, "여기서 병합은 skill/spec surface를 합치는 뜻인가, `turn-gate` phase로 흡수하는 뜻인가"처럼 다의어가 가리키는 구조 단위를 직접 잠근다.
+- meaning resolution이 필요한 경우 flow record의 analysis에는 literal wording, interpreted operation, operation target, alternate interpretations, impact of ambiguity를 남긴다.
 
 ### 세션 기록과 Continuity Guard
 
@@ -127,6 +140,7 @@
 ### mode selection과 phase 위임
 
 - current phase의 downstream workflow 선택에는 최소한 `deep-interview`, `autopilot`, `review-loop`, `ralph-loop`, `commit-readiness-gate` 구분 신호가 드러나야 한다.
+- 사용자가 명시적으로 commit 실행을 요청한 경우에도 먼저 intended change unit의 scope, staged/final status, readiness를 확인한 뒤 commit execution workflow로 넘긴다. readiness 점검 요청은 commit 승인으로 해석하지 않는다.
 - 분석 단계와 계획 단계에서는 필요하면 user-gated question routing으로 질문을 열 수 있다.
 - future flow/phase 설계는 고정값이 아니며, 이후 loop에서 새 증거, changed intent, 새 blocker가 생겼을 때만 다시 설계한다.
 - 각 phase는 가장 좁은 downstream workflow에 위임한다.
@@ -136,6 +150,8 @@
 
 - 기본 question routing은 `user-gated`이고, 사용자 선택지, scope lock, next-flow decision은 질문 도구로 묻는다.
 - explicit user, tool, platform, safety, destructive, irreversible, external-action approval boundary는 반드시 사용자 질문으로 유지한다.
+- destructive, irreversible, external action 전에는 현재 상태를 확인해 대상과 위험을 말할 수 있어야 한다.
+- 사용자가 subagent로 막힌 질문을 처리하라고 하면 autonomous question routing은 `turn-gate-self-drive`로 넘기고, approval, destructive, irreversible, external-action, safety 결정은 user-gated로 유지한다.
 
 ### next-flow reopening
 
@@ -156,6 +172,7 @@
 ## 검토 질문
 
 - 이번 응답이 `분석 -> 계획 -> 작업 -> 검증 -> 결과 보고`를 visible shape로 유지하고 있는가?
+- 사용자 표현에 구조적 다의성이 있으면 downstream workflow 선택 전에 meaning resolution 질문을 열었는가?
 - cross-flow task라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 최신 상태인가?
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record가 현재 phase까지 증분 갱신됐는가?
 - 결과 보고 뒤에 explicit choice가 있는 다음 플로우 질문을 실제로 열었는가?
