@@ -87,7 +87,7 @@
 이 skill의 책임:
 
 - 요청을 보고 현재 workflow bottleneck을 고른다.
-- `deep-interview`, `planner`, `autopilot` 등 중 시작 skill을 정한다.
+- `sequential-thinking`, `deep-interview`, `planner`, `autopilot` 등 중 시작 skill을 정한다.
 - specialist plugin은 직접 시작점으로 고르지 않고, workflow 안에서 필요할 때 handoff 대상으로만 둔다.
 
 이 skill은 다음 질문을 해결해야 한다.
@@ -97,6 +97,24 @@
 - read-only planning인가
 - broad execution인가
 - review correction인가
+
+### `sequential-thinking`
+
+이 skill은 복잡한 문제를 단계적으로 분석하고, 필요하면 revision, branch, hypothesis verification을 수행하는 problem-solving workflow skill이다.
+
+이 skill의 책임:
+
+- 복잡한 분석, 설계, 계획, 디버깅 문제를 순차적으로 다룬다.
+- 필요한 경우 이전 판단을 수정하거나 대안 branch를 비교한다.
+- 결론 전에 hypothesis를 만들고 검증한다.
+
+이 skill의 비책임:
+
+- 요구사항 인터뷰를 실제로 수행하는 것
+- 여러 질문 라운드를 통해 intent를 잠그는 것
+- workflow 선택용 router로 동작하는 것
+
+즉 `sequential-thinking`은 problem-solving executor일 수는 있어도 interview executor나 workflow router는 아니다.
 
 ### `deep-interview`
 
@@ -119,7 +137,7 @@
 
 ### `workflow-kit-dev-guide -> deep-interview`로 가야 하는 경우
 
-다음 조건이면 단순 workflow 선택보다 `deep-interview`를 우선한다.
+다음 조건이면 `sequential-thinking`보다 `deep-interview`를 우선한다.
 
 - 요청이 proposal, direction check, “괜찮을까?”, “어떻게 가는 게 맞나?” 같은 평가형 질문이다.
 - 신규 프로젝트, 신규 구조, 신규 시스템 제안인데 사용자의 실제 우선순위가 아직 드러나지 않았다.
@@ -127,8 +145,17 @@
 - 답을 주기 전에 먼저 질문으로 intent를 드러내야 더 나은 판단이 가능하다.
 - high-level recommendation 뒤에 바로 “원하시면 다음 턴에서…”로 미루지 말고 지금 질문을 이어가야 한다.
 
+### `workflow-kit-dev-guide -> sequential-thinking`으로 가야 하는 경우
+
+다음 조건이면 `deep-interview`보다 `sequential-thinking`을 우선한다.
+
+- 현재 문제는 요구사항 discovery가 아니라 복잡한 분석, 설계, 계획, 디버깅 자체다.
+- 중간 revision, branch, hypothesis verification이 답 품질에 영향을 준다.
+- 질문을 하더라도 그 질문의 목적이 intent discovery가 아니라 reasoning path를 바꾸는 핵심 정보 확인이다.
+
 ### handoff 규칙
 
+- `sequential-thinking` 중 user intent, scope, tradeoff, acceptance criteria가 병목으로 드러나면 advisory answer로 종료하지 않고 `deep-interview`로 handoff한다.
 - `deep-interview`가 enough clarity를 확보했다면 `planner`, `autopilot`, `parallel-work`, `review-loop` 또는 specialist plugin handoff를 추천한다.
 - specialist plugin handoff는 requirements discovery 이후에 붙는다.
 
@@ -191,7 +218,7 @@
 
 다음이 만족되면 적응이 성공한 것으로 본다.
 
-- greenfield proposal 질문이 들어왔을 때 단순 routing answer에서 끝나지 않는다.
+- greenfield proposal 질문이 들어왔을 때 `sequential-thinking`에서 끝나지 않는다.
 - `deep-interview`가 필요한 경우 실제 질문 라운드가 시작된다.
 - bounded choice 질문은 `request_user_input`으로 묻는다.
 - specialist plugin은 requirements lock 이후에 붙는다.
@@ -209,6 +236,7 @@
 이 스펙을 구현할 때 같이 봐야 하는 파일:
 
 - `workflow-kit-dev/skills/workflow-kit-dev-guide/SKILL.md`
+- `workflow-kit-dev/skills/sequential-thinking/SKILL.md`
 - `workflow-kit-dev/skills/deep-interview/SKILL.md`
 - `workflow-kit-dev/specs/plugin.md`
 - 필요 시 `advance-codex/skills/tool-use-guide/SKILL.md`
@@ -216,6 +244,6 @@
 ## 현재 구조에서 우선 고쳐야 하는 것
 
 1. `workflow-kit-dev-guide`가 proposal / direction evaluation / greenfield setup에서 `deep-interview`를 더 우선 고르게 할 것
-2. guide가 handoff 전 advisory answer로 끝나지 않게 할 것
+2. `sequential-thinking`이 requirement discovery를 대체하지 않게 할 것
 3. `deep-interview`에 `request_user_input` 우선 사용 규칙을 명시할 것
 4. specialist plugin은 downstream handoff라는 점을 유지할 것

@@ -51,7 +51,7 @@
 ## 독립성 원칙
 
 - 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 예.
-- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: discovery 결과는 hidden sibling context 없이 downstream workflow가 바로 시작 가능해야 하며, 단순 workflow 선택과의 경계도 이 스펙 자체에서 읽혀야 한다.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: discovery 결과는 hidden sibling context 없이 downstream workflow가 바로 시작 가능해야 하며, `sequential-thinking`과의 경계도 이 스펙 자체에서 읽혀야 한다.
 
 ## 확장 원칙
 

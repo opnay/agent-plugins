@@ -18,6 +18,7 @@ If the repository requires non-terminal turns, keep `turn-gate` active as the lo
 ## Workflow
 
 1. Identify which bundled skill is the best starting point:
+   - `sequential-thinking`
    - `deep-interview`
    - `planner`
    - `turn-gate` when the repository requires a turn-level loop gate contract
@@ -41,6 +42,7 @@ If the repository requires non-terminal turns, keep `turn-gate` active as the lo
 
 ## Routing Rules
 
+- Choose `sequential-thinking` when the current work itself needs sequential analysis, revision, branching, hypothesis generation, and verification before a final answer.
 - Choose `deep-interview` when the main job is to understand the user's real intent, boundaries, tradeoffs, approval lines, or success criteria through questions, pressure-testing, or direction evaluation.
 - Choose `planner` when implementation should stay deferred until a read-only investigation, tradeoff analysis, verification path, and execution-ready plan are complete.
 - Activate or keep `turn-gate` when the repository or task requires one turn to remain open until the user asks to end the turn.
@@ -56,9 +58,11 @@ If the repository requires non-terminal turns, keep `turn-gate` active as the lo
 
 - Treat this guide as the default first stop for routing.
 - Pick the skill that best addresses the current bottleneck.
-- Use this guide itself to resolve lightweight workflow-selection ambiguity before handing off to a narrower skill.
+- Choose `deep-interview` over `sequential-thinking` when the request is a proposal, direction check, greenfield setup, or "괜찮을까?" style evaluation and the missing information is about what the user really wants, what constraints matter most, or what success should mean.
+- Keep `sequential-thinking` for complex problem solving, not for requirement discovery that should continue as an actual interview.
 - Use `deep-interview` when the blocker is still understanding what the user actually wants, where the scope should stop, or how to evaluate a direction before committing to a plan or implementation.
 - Use clarification skills when intent, scope, tradeoff, or approval boundaries are still the blocker.
+- Use `sequential-thinking` when the blocker is reasoning quality inside a complex analysis, design, planning, or debugging problem rather than workflow selection.
 - Use planning when execution should remain deferred.
 - Use `turn-gate` when the main bottleneck is not a single phase, but keeping the whole turn open through analysis, plan, work, result report, and question-routing-based next-flow continuation.
 - Use `turn-gate-self-drive` when the user wants blocked questions answered by subagents instead of by the user so the turn can keep moving automatically.
@@ -147,7 +151,7 @@ Meta-flow heuristic:
 
 - Do not treat another plugin as the default global entrypoint.
 - Do not skip an obvious alignment pass when the user's intent is still materially underspecified.
-- Do not skip a framing pass when workflow selection itself is still unstable.
+- Do not skip sequential analysis when the task genuinely needs revision, branching, hypothesis generation, or verification before a sound answer.
 - Do not skip a planning pass when execution should remain deferred until read-only investigation and handoff are complete.
 - Do not treat a work-defining prompt as a simple opinion request when the likely next step is real task execution.
 - Do not stay in execution-mode selection when the real blocker is unclear user intent or an unlocked scope boundary.

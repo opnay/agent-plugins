@@ -3,7 +3,7 @@
 ## 플러그인 목적
 
 `workflow-kit-dev`은 작업 lifecycle 전반을 다루는 workflow 플러그인입니다.
-핵심 책임은 들어온 요청에 대해 requirement discovery, framing, planning, execution, refinement, review, final gating, 그리고 사용자가 턴을 종료하자고 요청할때까지 턴을 닫지 않는 loop-gated continuity 중 현재 병목이 무엇인지 판단하고, 가장 맞는 workflow skill로 연결하는 것입니다.
+핵심 책임은 들어온 요청에 대해 requirement discovery, sequential analysis, planning, execution, refinement, review, final gating, 그리고 사용자가 턴을 종료하자고 요청할때까지 턴을 닫지 않는 loop-gated continuity 중 현재 병목이 무엇인지 판단하고, 가장 맞는 workflow skill로 연결하는 것입니다.
 repository-local operating rule이 non-terminal turn을 요구하면, `turn-gate`를 turn-level loop gate로 유지한 채 현재 phase owner를 선택합니다.
 `turn-gate`가 활성화되면 현재 세션 동안 first-class loop gate rule로 취급합니다.
 bounded decision을 subagent question packet으로 라우팅해 자동 진행해야 하는 경우 `turn-gate-self-drive` overlay를 선택합니다.
@@ -13,7 +13,7 @@ bounded decision을 subagent question packet으로 라우팅해 자동 진행해
 ## 플러그인 경계와 비목표
 
 - 포함:
-  - pre-workflow framing
+  - sequential and reflective problem solving
   - requirement discovery와 direction evaluation
   - read-only planning
   - broad execution workflow
@@ -29,6 +29,7 @@ bounded decision을 subagent question packet으로 라우팅해 자동 진행해
 ## 처리하려는 작업 형태
 
 - 요청을 어떤 workflow로 먼저 처리해야 하는지 결정하는 작업
+- 복잡한 분석, 설계, 계획, 디버깅에서 단계적 사고, revision, branch, hypothesis verification이 필요한 작업
 - 구현 전에 alignment나 planning이 필요한 작업
 - broad execution부터 review와 final gate까지 이어지는 lifecycle 작업
 - 결과 보고 뒤 다음 플로우 진행을 위한 question-routing 응답을 열어야 하는 지속적 turn workflow
@@ -44,6 +45,8 @@ bounded decision을 subagent question packet으로 라우팅해 자동 진행해
 
 - `workflow-kit-dev-guide`: current bottleneck에 맞는 starting workflow와 handoff를 정한다.
   - spec: `workflow-kit-dev/specs/skills/workflow-kit-dev-guide.md`
+- `sequential-thinking`: 복잡한 분석, 설계, 계획, 디버깅 문제를 단계적으로 풀고 필요하면 revision, branch, hypothesis verification을 수행한다.
+  - spec: `workflow-kit-dev/specs/skills/sequential-thinking.md`
 - `deep-interview`: intent, scope, tradeoff, approval boundary를 질문으로 잠근다.
   - spec: `workflow-kit-dev/specs/skills/deep-interview.md`
 - `planner`: read-only investigation을 통해 decision-complete plan을 만든다.
