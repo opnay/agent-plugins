@@ -144,7 +144,6 @@
 - subagent 결과를 그대로 신뢰하지 말고, main agent가 spec 정합성, plugin surface 영향, release surface 반영 여부를 최종 확인합니다.
 - 일반 build는 `pnpm build:plugin <plugin-name> [--force]`를 사용합니다.
 - version bump가 필요한 release 승격은 `pnpm release:plugin <plugin-name> --bump <patch|minor|major> [--force]` 또는 `pnpm release:plugin <plugin-name> --version <version> [--force]`를 사용합니다.
-- `pnpm generate-release`는 split 안내용 legacy command입니다. 새 작업에서는 `build:plugin` 또는 `release:plugin`을 선택해 사용합니다.
 - dev source를 수정한 뒤에는 해당 plugin의 root release surface가 build 산출물로 갱신됐는지 확인합니다.
 - skill 책임, guide 라우팅, plugin boundary가 바뀌면 관련 skill spec, plugin spec, guide skill, upstream/downstream plugin surface를 같은 변경 단위에서 함께 점검합니다.
 
