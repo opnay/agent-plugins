@@ -39,6 +39,17 @@ It does not replace `turn-gate`, and it does not own the current-phase loop mode
 - Treat any user message that arrives during self-drive as higher-priority loop input than pending or returned subagent answers.
 - If explicit approval is required, pause self-drive only, switch back to user-gated routing from the `turn-gate` skill in the same plugin, and call `request_user_input`.
 
+## Flow-End Context Refresh
+
+At every self-drive flow-end question-routing boundary, always reread the same-plugin skill contracts before asking the next question. This applies before next-flow questions, scope questions, self-drive subagent packet questions, and user-gated approval questions after a flow result report.
+
+1. Reread the same-plugin `turn-gate` skill.
+2. Reread this `turn-gate-self-drive` skill.
+3. Re-check the current `Continuity Guard`, active flow record, pending next-flow candidates, and approval boundaries.
+4. Continue only through the base `turn-gate` routing that matches the rechecked state.
+
+This deterministic refresh reduces context drift after long self-drive work and reloads both the base loop contract and this overlay contract. It does not allow self-drive to bypass user-gated approval, destructive, irreversible, external-action, tool, platform, or safety boundaries.
+
 ## User Intervention
 
 When a user message arrives while self-drive work is in progress:
