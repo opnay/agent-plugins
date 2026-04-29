@@ -56,7 +56,7 @@
 ## SDD 운영 원칙
 
 - plugin spec은 bundle 목적, 경계, routing surface, skill composition만 소유한다.
-- 각 skill의 목적, 처리 계약, 독립성 원칙은 반드시 별도 `specs/skills/<skill>-spec.md`에 둔다.
+- 각 skill의 목적, 처리 계약, 독립성 원칙은 반드시 별도 `specs/skills/<skill-name>.md`에 둔다.
 - skill 책임이 바뀌면 해당 skill spec과 `plugin.md`를 같은 변경 단위로 갱신한다.
 - routing 기준이 바뀌면 `advance-codex-dev-guide`와 관련 creator skill spec을 함께 점검한다.
 - empirical workflow나 tool-use policy처럼 독립 관심사로 분리된 계약은 다시 sibling skill 안으로 흡수하지 않는다.

@@ -38,7 +38,7 @@
 - 대표 스펙: `loop-kit-dev/specs/plugin.md`
 - skill 상세 스펙 위치: `loop-kit-dev/specs/skills/*.md`
 - turn-gate local references: `loop-kit-dev/skills/turn-gate/references/*.md`
-- canonical upstream SSOT: `workflow-kit/specs/plugin.md`, `workflow-kit/specs/skills/*.md`
+- canonical upstream SSOT: `src/workflow-kit-dev/specs/plugin.md`, `src/workflow-kit-dev/specs/skills/*.md`
 
 ## 내장 skill 체계
 
@@ -65,5 +65,5 @@
 
 - 이 플러그인은 intentionally narrow한 operational package다.
 - `turn-gate`가 메인 실행 표면이고, `loop-kit-dev-guide`는 진입 분류만 담당한다.
-- 내부 loop mode의 canonical 의미는 `workflow-kit/specs/skills/deep-interview.md`, `workflow-kit/specs/skills/autopilot.md`, `workflow-kit/specs/skills/ralph-loop.md`, `workflow-kit/specs/skills/review-loop.md`, `workflow-kit/specs/skills/commit-readiness-gate.md`를 기준으로 보고, `turn-gate/references/`에는 그 실행용 absorbed contract를 둔다.
+- 내부 loop mode의 canonical 의미는 `src/workflow-kit-dev/specs/skills/deep-interview.md`, `src/workflow-kit-dev/specs/skills/autopilot.md`, `src/workflow-kit-dev/specs/skills/ralph-loop.md`, `src/workflow-kit-dev/specs/skills/review-loop.md`, `src/workflow-kit-dev/specs/skills/commit-readiness-gate.md`를 기준으로 보고, `turn-gate/references/`에는 그 실행용 absorbed contract를 둔다.
 - autonomous subagent question routing은 current-phase mode가 아니라 `turn-gate-self-drive` overlay skill의 책임으로 둔다.
