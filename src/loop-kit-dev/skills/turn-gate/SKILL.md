@@ -5,11 +5,22 @@ description: Main loop controller for `loop-kit-dev`. Keep one turn alive until 
 
 # Turn Gate
 
+## Important
+
+- Once invoked, `turn-gate` is a session-level first-class operating rule for the assistant response lifecycle, not an internal checklist.
+- While `user_explicit_stop` is false, do not close with a terminal summary; result reporting must continue into next-flow reopening or active question-routing.
+- Every response must end in one of these states:
+  - loop continuation
+  - active question-routing
+  - explicit user stop handling
+- Use `request_user_input` for next-flow decisions, scope locks, mode narrowing, and user-gated approval boundaries.
+- Maintain `.agents/sessions/{YYYYMMDD}/000-plan.md` and the active flow record, including `Continuity Guard` and `Next Flow Options`.
+
 ## Purpose
 
-Use this skill as the main operational surface of `loop-kit-dev`. Once invoked, `turn-gate` is a conversation-level first-class operating rule for the current session, not a checklist that applies only inside this file.
+Use this skill as the main operational surface of `loop-kit-dev`. Keep one turn alive until the user explicitly asks to end it.
 
-Keep one turn alive until the user explicitly asks to end it. While `user_explicit_stop` is false, every response must end in one of these states:
+While `user_explicit_stop` is false, valid response endings are:
 
 - loop continuation
 - active question-routing

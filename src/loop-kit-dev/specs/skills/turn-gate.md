@@ -3,6 +3,7 @@
 - 하나의 턴을 사용자가 턴을 종료하자고 요청할때까지 닫지 않고 유지하고 싶다.
 - 이 스킬을 사용한다는건, 이 세션동안 이 스킬을 1급 규칙으로 사용한다는 의미입니다.
 - `turn-gate`의 메인 플로우는 스킬 내부 체크리스트가 아니라 대화 응답 자체를 제어하는 1급 규칙이어야 합니다.
+- `turn-gate`의 1급 규칙은 일반 목적 설명보다 더 높은 우선순위로 보이도록 skill body의 앞부분에 `Important` 섹션으로 드러나야 합니다.
 - `turn-gate`가 활성화된 동안 assistant의 응답은 loop continuation, question-routing, explicit user stop 처리 중 하나로 끝나야 하며, 일반적인 final summary로 턴을 닫으면 안 됩니다.
 - `turn-gate`가 현재 phase의 메인 작업을 보고 적절한 내부 loop mode를 고르길 원한다.
 - 필요한 경우 requirement discovery 성격의 `deep-interview`도 `turn-gate` 안의 internal mode로 흘러가길 원한다.
@@ -60,7 +61,9 @@
 ### Skill body 작성 계약
 
 - `loop-kit-dev/skills/turn-gate/SKILL.md`는 이 스펙의 단순 요약본이 아니라 runtime에서 읽는 운영 표면이다.
-- skill body는 대화 응답 자체를 제어하는 conversation-level first-class rule을 앞부분에서 명시해야 한다.
+- skill body는 대화 응답 자체를 제어하는 conversation-level first-class rule을 `## Important` 섹션으로 앞부분에서 명시해야 한다.
+- `## Important` 섹션은 `Purpose`보다 먼저 위치해야 하며, 최소한 session-level activation, terminal summary 금지, required ending states, `request_user_input` 기반 next-flow reopening, session record 유지 의무를 포함해야 한다.
+- `## Important` 섹션은 긴 설명이 아니라 실행 중 우선 확인할 수 있는 짧은 규칙 목록이어야 한다.
 - skill body에는 `Core Loop` 또는 이에 준하는 단계별 실행 섹션이 있어야 하며, 최소한 analysis, plan, work, verification, result reporting, question-routing reopening을 각각 구분해 설명해야 한다.
 - skill body에는 internal mode selection과 local `references/` 읽기 규칙이 직접 남아 있어야 한다.
 - skill body에는 terminal summary 금지, next-flow reopening, Continuity Guard 확인, user-gated question routing, explicit turn-end option 기록 규칙이 직접 남아 있어야 한다.
@@ -76,6 +79,7 @@
 - next-flow priority request라면 flow record의 next-flow 후보 중 최우선으로 등록하고 다음 safe handoff point까지 이어간다.
 - 이 skill이 사용되면 현재 세션 동안 `turn-gate`를 conversation-level first-class operating rule로 활성화한 것으로 취급한다.
 - 이 규칙은 skill 내부 체크리스트가 아니라 assistant response lifecycle 자체에 적용한다.
+- 이 규칙은 skill body의 일반 설명보다 앞선 `Important` 섹션에서 다시 확인 가능해야 한다.
 - `user_explicit_stop`이 false인 동안 result reporting은 terminal response가 아니며, 반드시 next-flow reopening 또는 active question-routing으로 이어져야 한다.
 - 사용자가 명시적으로 턴 종료를 요청했거나 flow record에 confirmed closure가 기록된 경우가 아니라면 일반적인 final summary로 턴을 닫지 않는다.
 - `analysis`, `plan`, `work`, `verification`, `result reporting`, `question-routing reopening`을 응답 shape에 계속 드러낸다.
@@ -188,6 +192,7 @@
 ## 검토 질문
 
 - 이번 응답이 turn continuity를 실제로 유지하고 있는가?
+- skill body 앞부분에 `Important` 섹션이 있고 1급 규칙, terminal summary 금지, next-flow reopening이 먼저 드러나는가?
 - 사용자 표현에 구조적 다의성이 있으면 internal mode 선택 전에 meaning resolution 질문을 열었는가?
 - current-phase work에 맞는 internal mode를 하나로 좁혔는가?
 - user-gated question routing과 계획 도구 `update_plan`를 필수 단계에서 실제로 사용했는가?
