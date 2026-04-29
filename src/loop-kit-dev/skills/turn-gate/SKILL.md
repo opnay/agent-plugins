@@ -15,6 +15,7 @@ description: Main loop controller for `loop-kit-dev`. Keep one turn alive until 
   - active question-routing
   - explicit user stop handling
 - Use `request_user_input` for next-flow decisions, scope locks, mode narrowing, and user-gated approval boundaries.
+- After `work`, dispatch a clean-context verification subagent before result reporting; do not verify the work directly in the same context.
 - Maintain `.agents/sessions/{YYYYMMDD}/000-plan.md` and the active flow record, including `Continuity Guard` and `Next Flow Options`.
 - On explicit user stop, record confirmed closure before sending a terminal summary and do not reopen next-flow choices.
 
@@ -59,7 +60,7 @@ Keep this runtime phase shape visible:
 1. `analysis`: identify requested intent, requested action, current blocker, likely internal mode, whether meaning resolution is needed, and any approval boundary. Note future flow/phase candidates only when they help the current decision.
 2. `plan`: set the active steps for the current flow; use `update_plan` once meaningful work begins and keep the active step current. For multi-flow work, keep the cross-flow decomposition in `000-plan.md` and the detailed current-flow plan in the active `001+` record.
 3. `work`: before working, choose one internal mode and read its local `references/` contract. Execute only after the mode and relevant contract are clear.
-4. `verification`: verify the work before reporting it, surface residual uncertainty, and state whether later flow/phase redesign is needed.
+4. `verification`: dispatch a clean-context verification subagent before reporting. Provide the target, user intent, files or artifacts, commands or checks, and pass/fail criteria. The main agent must not directly verify in the same context; it integrates the subagent's findings into residual uncertainty and whether later flow/phase redesign is needed.
 5. `result reporting`: report the outcome, readiness state, or blocker as context for the next choice. This is not a terminal response while `user_explicit_stop` is false.
 6. `question-routing reopening`: read the `Continuity Guard`, reconstruct only if unavailable, confirm whether terminal summary is allowed, and reopen the next flow with visible `request_user_input` choices unless the user explicitly stopped the turn.
 
@@ -138,7 +139,7 @@ Use the labels that fit the situation, but preserve this information shape:
 - `Chosen internal mode`
 - `Question-routing mode`
 - `Work`
-- `Verification`
+- `Verification` with clean-context subagent request and findings
 - `Result report`
 - `Continuity guard`
 - `Question-routing prompt`
@@ -157,7 +158,8 @@ Use the labels that fit the situation, but preserve this information shape:
 - Do not collapse overloaded user wording into one concrete action when different interpretations would change files, phases, routing, or commit scope.
 - Do not treat a readiness request as commit approval, and do not treat commit approval as permission to include unrelated changes.
 - Do not skip `update_plan` after meaningful work begins.
-- Do not skip explicit verification between work and result reporting.
+- Do not skip clean-context subagent verification between work and result reporting.
+- Do not let the verification subagent implement fixes or expand scope; it only verifies and reports findings.
 - Do not emit result reporting until the `Continuity Guard` says whether next-flow reopening is still required.
 - Do not skip the next-flow question after reporting a result.
 - Do not let session records lag behind phase boundaries.

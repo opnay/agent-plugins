@@ -18,6 +18,8 @@
 - 여러 플로우를 거치는 작업의 상위 계획은 `.agents/sessions/{YYYYMMDD}/000-plan.md` 경로에 누적되길 원한다.
 - `000-plan.md`는 단순 현재 상태 로그가 아니라 여러 flow의 상위 계획과 흐름을 소유해야 한다.
 - 예를 들어 "컴포넌트 오타가 있어. 수정하자" 같은 요청은 `컴포넌트 문구 점검`, `컴포넌트 문구 수정`, `commit-ready` 같은 flow sequence로 나뉘고, 각 flow는 자기 내부의 점검/수정/검증 하위 작업을 소유해야 한다.
+- 검증 단계는 main agent가 같은 context에서 직접 수행하지 않고, 무조건 clean context 상태의 subagent가 수행해야 한다.
+- main agent는 clean-context subagent 검증 요청을 구성하고, subagent 결과를 통합해 결과 보고와 다음 flow 판단으로 이어가야 한다.
 - 개별 플로우 기록은 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 형식으로 남고 싶다.
 - `001+` 문서는 phase 메모가 아니라 flow 기록으로 남고 싶다.
 - 분석 단계와 계획 단계는 현재 플로우만이 아니라 이후 이어질 flow/phase 후보까지 필요하면 미리 설계하길 원한다.
@@ -136,7 +138,11 @@
 
 ### 검증과 next-flow reopening
 
-- `work` 뒤에는 결과 보고 전에 명시적 검증 단계를 두고, 그 검증은 이후 flow/phase 재설계 필요 여부를 드러내는 단계로 취급한다.
+- `work` 뒤에는 결과 보고 전에 명시적 검증 단계를 두고, 그 검증은 무조건 clean context 상태의 subagent가 수행해야 한다.
+- main agent는 같은 context에서 검증을 대신 수행해 통과로 단정하지 않는다. main agent의 역할은 검증 요청을 구성하고, subagent 결과를 읽어 residual uncertainty와 이후 flow/phase 재설계 필요 여부를 통합 판정하는 것이다.
+- clean-context subagent에는 검증 대상, 기대된 사용자 의도, 변경 파일 또는 산출물, 실행해야 할 command/check, 보고해야 할 pass/fail 기준을 명시한다.
+- 검증 subagent는 active flow 작업을 구현하거나 scope를 확장하지 않고, 검증과 finding 보고만 수행한다.
+- subagent 검증 결과가 실패하거나 불충분하면 result reporting 전에 active flow를 가장 이른 안전한 phase로 되돌려 보완하거나, user-gated question-routing으로 blocker를 연다.
 - 결과 보고 전에는 `Continuity Guard`를 읽거나 재구성하고, 사용자가 명시적으로 종료하지 않았으면 terminal summary가 invalid임을 확인한다.
 - 결과 보고 뒤에는 explicit choice를 주는 active question-routing mode로 다음 플로우를 다시 연다.
 - 결과 보고 뒤 visible next-flow choice는 도구 기반 질문이어야 하며, 가능한 경우 `request_user_input`으로 직접 연다. loop continuation도 사용자에게 현재 phase, required next action, 열린 선택지를 볼 수 있게 해야 한다.
