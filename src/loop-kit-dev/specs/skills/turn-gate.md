@@ -80,19 +80,24 @@
 - 이 skill이 사용되면 현재 세션 동안 `turn-gate`를 conversation-level first-class operating rule로 활성화한 것으로 취급한다.
 - 이 규칙은 skill 내부 체크리스트가 아니라 assistant response lifecycle 자체에 적용한다.
 - 이 규칙은 skill body의 일반 설명보다 앞선 `Important` 섹션에서 다시 확인 가능해야 한다.
+- concrete task 없이 activation만 요청된 경우에도 `turn-gate`를 활성화하고 session record를 생성 또는 갱신한다. 이때 `user_explicit_stop=false`로 보고, work mode를 성급히 고르지 않고 user-gated next-flow 또는 scope selection을 연다.
 - `user_explicit_stop`이 false인 동안 result reporting은 terminal response가 아니며, 반드시 next-flow reopening 또는 active question-routing으로 이어져야 한다.
 - 사용자가 명시적으로 턴 종료를 요청했거나 flow record에 confirmed closure가 기록된 경우가 아니라면 일반적인 final summary로 턴을 닫지 않는다.
+- 사용자가 explicit stop을 요청하면 active flow record와 `Continuity Guard`에 confirmed closure를 기록하고, `terminal summary allowed`를 허용 상태로 갱신하며, next-flow choices를 다시 열지 않는다.
 - `analysis`, `plan`, `work`, `verification`, `result reporting`, `question-routing reopening`을 응답 shape에 계속 드러낸다.
 - 분석 단계와 계획 단계는 현재 플로우만이 아니라 이후 이어질 flow/phase 후보까지 미리 설계할 수 있다.
 - 그 future flow/phase 설계는 provisional하며, 이후 loop에서 새 증거, changed intent, 새 blocker가 생겼을 때만 다시 설계한다.
+- 계획 이후 current-flow correction이나 target file/state 변경이 들어오면 affected files 또는 state를 다시 읽고 reconcile한 뒤 가장 이른 안전한 phase부터 재개한다.
+- status/progress check를 처리한 뒤에도 진행 상태가 바뀌었으면 active flow record의 phase, blocker, required next action을 갱신한다.
 
 ### meaning resolution
 
 - analysis 단계에서는 internal mode 선택이나 작업 실행 전에 사용자 메시지의 operation 의미를 먼저 해독한다.
-- `merge`, `absorb`, `remove`, `split`, `route`, `phase`, `surface`, `skill`, `spec`, `contract` 또는 이에 대응되는 한국어 표현처럼 여러 구조 단위를 가리킬 수 있는 표현은 바로 하나의 작업으로 단정하지 않는다.
+- `merge`, `absorb`, `remove`, `delete`, `split`, `route`, `phase`, `surface`, `skill`, `spec`, `contract` 또는 이에 대응되는 한국어 표현처럼 여러 구조 단위를 가리킬 수 있는 표현은 바로 하나의 작업으로 단정하지 않는다.
 - `그`, `그 밑`, `그건`, `그거`, `위`, `아래`, `현재 것`처럼 주변 문맥의 여러 대상을 가리킬 수 있는 지시 표현도 해석에 따라 작업이 달라지면 meaning resolution 대상으로 본다.
 - source URL, provenance note, `사용자 스펙 의도` 또는 spec intent block은 대화 맥락처럼 버릴 수 있는 텍스트가 아니라 작업 target이 될 수 있다. `출처`, `원본`, `의도`, `그 밑`이 provenance, intent block, normative spec body 중 무엇을 가리키는지에 따라 작업이 달라지면 먼저 target을 잠근다.
 - 해석 후보에 따라 파일 범위, 삭제 여부, phase 설계, routing rule, migration 의미, commit scope가 달라지면 active question-routing으로 의미를 먼저 잠근다.
+- meaning resolution 질문도 user-gated이며, 구조적 선택지를 줄 수 있으면 `request_user_input`으로 잠근다.
 - meaning resolution 질문은 `deep-interview`가 소유하는 requirement discovery가 아니라, 현재 지시어의 operation 또는 target을 잠그는 current-flow clarification이다.
 - 질문은 넓은 freeform 질문이 아니라 "여기서 병합은 skill/spec surface를 합치는 뜻인가, `turn-gate` phase로 흡수하는 뜻인가"처럼 다의어가 가리키는 구조 단위를 직접 잠그는 형태여야 한다.
 - meaning resolution이 필요한 경우 flow record의 analysis에는 literal wording, interpreted operation, operation target, alternate interpretations, impact of ambiguity를 남긴다.
@@ -106,6 +111,7 @@
 - flow record의 `Next Flow Options`에는 사용자 표시 질문에 턴 종료 선택지가 보이지 않는 경우에도 명시적인 turn-end option이 포함되어야 한다.
 - 각 flow record에는 짧은 `Continuity Guard`를 두고, result reporting과 next-flow reopening 직전에 반드시 갱신한다.
 - `Continuity Guard`에는 `turn-gate` 활성 여부, question-routing mode, user explicit stop 여부, terminal summary 허용 여부, required next action이 포함되어야 한다.
+- result reporting과 next-flow reopening 전에는 active flow record의 `Continuity Guard`를 먼저 읽는다. 기록이 없거나 접근할 수 없을 때만 재구성하고, 재구성한 guard는 가능한 즉시 flow record에 다시 쓴다.
 
 ### 도구와 internal mode 선택
 
@@ -121,6 +127,7 @@
 - scope lock, 선택지, next-flow reopening은 `request_user_input`으로 사용자에게 묻는다.
 - explicit user, tool, platform, safety, destructive, irreversible, external-action approval boundary는 반드시 사용자 질문으로 유지한다.
 - destructive, irreversible, external action 전에는 현재 상태를 확인해 대상과 위험을 말할 수 있어야 한다.
+- publish, push, pull request 생성처럼 외부 시스템에 영향을 주는 action은 branch, remote, scope, risk를 먼저 확인하고 사용자 승인을 받은 뒤 GitHub 또는 해당 external-action workflow로 넘긴다.
 - 사용자가 subagent로 막힌 질문을 처리하라고 하면 autonomous question routing은 `turn-gate-self-drive`로 넘기고, approval, destructive, irreversible, external-action, safety 결정은 user-gated로 유지한다.
 
 ### 검증과 next-flow reopening
@@ -128,6 +135,7 @@
 - `work` 뒤에는 결과 보고 전에 명시적 검증 단계를 두고, 그 검증은 이후 flow/phase 재설계 필요 여부를 드러내는 단계로 취급한다.
 - 결과 보고 전에는 `Continuity Guard`를 읽거나 재구성하고, 사용자가 명시적으로 종료하지 않았으면 terminal summary가 invalid임을 확인한다.
 - 결과 보고 뒤에는 explicit choice를 주는 active question-routing mode로 다음 플로우를 다시 연다.
+- 결과 보고 뒤 visible next-flow choice는 도구 기반 질문이어야 하며, 가능한 경우 `request_user_input`으로 직접 연다. loop continuation도 사용자에게 현재 phase, required next action, 열린 선택지를 볼 수 있게 해야 한다.
 - assistant final-answer channel이 사용되더라도 그것만으로 loop termination을 의미하지 않는다. explicit stop이 없다면 next-flow question이 여전히 필수다.
 - 사용자에게 보이는 선택지가 3개 이상이라 턴 종료 선택지를 표시하지 못하는 경우에도, flow record의 `Next Flow Options`에는 별도 turn-end option을 기록한다.
 - 사용자가 턴을 종료하자고 요청하지 않으면 clean stop을 기본 경로로 두지 않는다.
