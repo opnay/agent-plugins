@@ -36,7 +36,7 @@
 - 대표 엔트리포인트: `loop-kit-dev-guide`
 - 대표 실행 표면: `turn-gate`
 - 대표 스펙: `loop-kit-dev/specs/plugin.md`
-- skill 상세 스펙 위치: `loop-kit-dev/specs/skills/*.md`
+- skill 상세 스펙 위치: `loop-kit-dev/specs/skills/*.md` 또는 복잡한 skill의 `loop-kit-dev/specs/skills/<skill-name>/spec.md`
 - turn-gate local references: `loop-kit-dev/skills/turn-gate/references/*.md`
 - canonical upstream SSOT: `src/workflow-kit-dev/specs/plugin.md`, `src/workflow-kit-dev/specs/skills/*.md`
 
@@ -45,7 +45,7 @@
 - `loop-kit-dev-guide`: `loop-kit-dev`가 현재 작업의 적절한 시작점인지 판단하고 `turn-gate`로 진입시킨다.
   - spec: `loop-kit-dev/specs/skills/loop-kit-dev-guide.md`
 - `turn-gate`: turn continuity를 유지하고 current-phase work에 맞는 내부 loop mode를 고른다.
-  - spec: `loop-kit-dev/specs/skills/turn-gate.md`
+  - spec: `loop-kit-dev/specs/skills/turn-gate/spec.md`
 - `turn-gate-self-drive`: `turn-gate`를 base contract로 적용하고, bounded decision을 subagent question packet으로 라우팅해 자동 진행한다.
   - spec: `loop-kit-dev/specs/skills/turn-gate-self-drive.md`
 
@@ -54,6 +54,7 @@
 - `workflow-kit`이 broader workflow map과 canonical loop contract의 SSOT를 계속 소유한다.
 - `loop-kit-dev`은 사용자 표면과 runtime loop orchestration만 소유한다.
 - `turn-gate`는 internal mode를 local `references/`로 흡수해 사용하되, 그 reference는 upstream SSOT와 동기화해 유지한다.
+- 복잡한 skill spec은 `specs/skills/<skill-name>/spec.md`를 기본 index로 두고, 세부 계약은 같은 folder 아래 sub-spec으로 분리할 수 있다.
 - `turn-gate`의 필수 운영 도구는 기본적으로 질문 도구 `request_user_input`와 계획 도구 `update_plan`이다.
 - `turn-gate-self-drive`는 self-drive overlay로만 동작하며, base loop gate 자체는 `turn-gate`를 직접 따른다.
 - `turn-gate-self-drive` 도중 사용자 메시지가 들어오면 멈추지 않고 현재 플로우 조정 또는 다음 플로우 우선 등록으로 처리한다.

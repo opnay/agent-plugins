@@ -73,6 +73,8 @@
   - 새 skill을 추가하거나 기존 skill 책임을 바꿀 때 유지해야 할 확장 원칙
 - 플러그인 스펙은 기본적으로 플러그인 경계, 라우팅 표면, 내장 skill 체계를 소유하고, 개별 skill의 상세 처리 계약은 가능한 한 분리해서 다룹니다.
 - 개별 skill의 입력 형태, 판단 기준, 출력 계약, 가드레일처럼 skill 자체의 처리 계약이 중요해지면 `specs/skills/<skill-name>.md`로 분리하는 방식을 우선 검토합니다.
+- skill spec이 커져 하나의 파일 안에서 index와 세부 계약이 반복되면 `specs/skills/<skill-name>/spec.md`를 기본 index로 두고, 같은 폴더 아래에 `lifecycle.md`, `routing.md`, `verification.md`처럼 책임별 sub-spec을 자유롭게 둘 수 있습니다.
+- nested skill spec을 사용할 때 `spec.md`는 해당 skill의 목적, 경계, 대표 표면, sub-spec map, 확장 원칙을 소유하고, 세부 처리 계약은 child spec이 소유합니다.
 - 플러그인 스펙에서 각 skill을 언급할 때는 목적과 관계를 요약하고, 상세 기준은 대응되는 skill spec 위치로 연결하는 방식을 기본으로 합니다.
 - 플러그인 작업은 spec이 먼저 있고, skill/manifest 변경은 그 spec과 일치해야 합니다.
 - 플러그인 표면이 바뀌면 `README.md`, `specs/plugin.md`, 관련 skill spec, 관련 guide skill, `plugin.json`을 같은 변경 단위에서 함께 점검합니다.
@@ -86,7 +88,7 @@
 - change spec은 사용자 스펙 의도, 변경 목적, 포함 변경, 비목표, 호환성/마이그레이션, 검증 기준을 기록합니다.
 - change spec은 먼저 아주 간단한 `변경사항 요약` 리스트를 보여주고, 각 변경의 목적, 범위, 관련 표면, 검증 같은 상세 내용은 별도 `변경 상세` 섹션에 둡니다.
 - change spec은 영구 normative plugin/skill contract를 대체하지 않습니다.
-- change spec에서 확정된 지속 규칙은 `specs/plugin.md`, 관련 `specs/skills/*.md`, guide skill, README 같은 소유 표면으로 승격합니다.
+- change spec에서 확정된 지속 규칙은 `specs/plugin.md`, 관련 `specs/skills/*.md` 또는 `specs/skills/<skill-name>/spec.md`, guide skill, README 같은 소유 표면으로 승격합니다.
 - 일회성 release history, migration 배경, 제거 범위, 검증 결과는 change spec에 남기고 일반 skill spec으로 옮기지 않습니다.
 - release surface에는 `changes/`를 포함하지 않습니다.
 - change spec을 정식 규칙으로 승격하라는 요청은 repo-level 규칙 또는 해당 소유 spec으로 반영하고, change spec 자체만 고쳐서 끝내지 않습니다.
