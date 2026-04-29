@@ -57,7 +57,7 @@ For explicit turn stop, update the active flow record and `Continuity Guard` wit
 Keep this runtime phase shape visible:
 
 1. `analysis`: identify requested intent, requested action, current blocker, likely internal mode, whether meaning resolution is needed, and any approval boundary. Note future flow/phase candidates only when they help the current decision.
-2. `plan`: set the active steps for the current flow; use `update_plan` once meaningful work begins and keep the active step current.
+2. `plan`: set the active steps for the current flow; use `update_plan` once meaningful work begins and keep the active step current. For multi-flow work, keep the cross-flow decomposition in `000-plan.md` and the detailed current-flow plan in the active `001+` record.
 3. `work`: before working, choose one internal mode and read its local `references/` contract. Execute only after the mode and relevant contract are clear.
 4. `verification`: verify the work before reporting it, surface residual uncertainty, and state whether later flow/phase redesign is needed.
 5. `result reporting`: report the outcome, readiness state, or blocker as context for the next choice. This is not a terminal response while `user_explicit_stop` is false.
@@ -103,8 +103,10 @@ Next-flow choices should be narrow, visible, tool-backed, and directly connected
 
 Maintain active turn-gated work under `.agents/sessions/{YYYYMMDD}/`.
 
-- `000-plan.md` is the date-scoped plan artifact. It owns the day's turn-gated history, user request list, flow index, current plan, and completed-flow summaries. Update it incrementally and keep completed flow references.
-- `{count-pad3}-{eng-lower-slug}.md` files are detailed flow reports, not phase notes. Use `001`, `002`, `003` style numbering and English lower-case `-` delimited slugs.
+- `000-plan.md` is the date-scoped multi-flow plan and flow-sequence artifact. It owns the day's turn-gated history, user request list, flow index, planned flow sequence, current status, and completed-flow summaries. Update it incrementally and keep completed flow references.
+- `000-plan.md` owns planned flow decomposition: each planned flow's purpose, why the flow exists, completion criteria, and next-flow trigger. Keep detailed per-flow plan, work, and verification inside the matching `001+` record.
+- Example shape: a typo request can decompose into a wording inspection flow, then a wording fix flow, then a commit-ready flow. The inspection flow owns locating and confirming wording; the fix flow owns edits and focused checks; the commit-ready flow owns final diff/readiness review.
+- `{count-pad3}-{eng-lower-slug}.md` files are detailed per-flow reports, not phase notes or the cross-flow plan. Use `001`, `002`, `003` style numbering and English lower-case `-` delimited slugs.
 - Use `templates/plan-template.md` as the default `000-plan.md` template.
 - Use `templates/flow-record-template.md` as the default flow-record template.
 

@@ -16,6 +16,8 @@
 - 다음 플로우 질문의 사용자 표시 선택지가 3개 이상이라 턴 종료 선택지를 표시하지 못하더라도, sessions flow record의 `Next Flow Options`에는 명시적인 턴 종료 선택지가 항상 남아야 한다.
 - `turn-gate`로 진행한 작업은 `.agents/sessions` 아래에 기록이 남아야 한다.
 - 여러 플로우를 거치는 작업의 상위 계획은 `.agents/sessions/{YYYYMMDD}/000-plan.md` 경로에 누적되길 원한다.
+- `000-plan.md`는 단순 현재 상태 로그가 아니라 여러 flow의 상위 계획과 흐름을 소유해야 한다.
+- 예를 들어 "컴포넌트 오타가 있어. 수정하자" 같은 요청은 `컴포넌트 문구 점검`, `컴포넌트 문구 수정`, `commit-ready` 같은 flow sequence로 나뉘고, 각 flow는 자기 내부의 점검/수정/검증 하위 작업을 소유해야 한다.
 - 개별 플로우 기록은 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 형식으로 남고 싶다.
 - `001+` 문서는 phase 메모가 아니라 flow 기록으로 남고 싶다.
 - 분석 단계와 계획 단계는 현재 플로우만이 아니라 이후 이어질 flow/phase 후보까지 필요하면 미리 설계하길 원한다.
@@ -106,6 +108,8 @@
 
 - active turn-gated task마다 `.agents/sessions/{YYYYMMDD}/000-plan.md` 날짜 기준 plan과 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 상세 flow report 체계를 유지한다.
 - `000-plan.md`는 당일 작업의 히스토리, 사용자 요청 목록, flow index, 현재 계획, 완료 flow 요약을 소유한다.
+- `000-plan.md`의 현재 계획은 action checklist가 아니라 planned flow sequence여야 한다. 각 planned flow에는 flow 목적, 왜 이 flow가 필요한지, 완료 기준, 다음 flow로 넘어가는 조건이 드러나야 한다.
+- 세부 작업 단계는 해당 `001+` flow record의 plan/work/verification에 둔다. `000-plan.md`는 "이 작업이 어떤 flow들의 흐름으로 진행되는지"를 소유하고, 각 flow record는 "그 flow 안에서 무엇을 했는지"를 소유한다.
 - `000-plan.md`는 증분 갱신하고, 완료된 작업도 삭제하지 않고 요약과 flow reference를 유지한다.
 - 해당 `001+` record는 사용자 요청에 따른 개별 flow의 상세 보고서이며, completed flow를 기다리지 말고 각 phase가 끝날 때마다 증분 갱신한다.
 - flow record의 `Next Flow Options`에는 사용자 표시 질문에 턴 종료 선택지가 보이지 않는 경우에도 명시적인 turn-end option이 포함되어야 한다.
@@ -180,7 +184,9 @@
 ## session record 규칙
 
 - 여러 플로우를 거치는 작업이면 `.agents/sessions/{YYYYMMDD}/000-plan.md`를 먼저 둔다.
-- `000-plan.md`는 날짜 기준 plan artifact로 유지하고, 당일 작업 히스토리, 사용자 요청 목록, flow index, 현재 계획, 완료 flow 요약을 계속 증분한다.
+- `000-plan.md`는 날짜 기준 plan artifact로 유지하고, 당일 작업 히스토리, 사용자 요청 목록, flow index, planned flow sequence, 완료 flow 요약을 계속 증분한다.
+- `000-plan.md`의 planned flow sequence는 여러 flow를 위에서 아래로 설계한다. 예: `컴포넌트 문구 점검` flow가 위치 확인, 문구 확인, 맥락 파악, 리스트업을 소유하고, `컴포넌트 문구 수정` flow가 리스트 기반 수정과 빌드/린트를 소유하며, `commit-ready` flow가 사용자 의도 대비 commit diff 확인과 review를 소유한다.
+- `000-plan.md`에는 각 flow의 목적, 상태, 완료 기준, 다음 flow 전환 조건을 요약하고, flow 내부의 하위 단계는 해당 `001+` record에 둔다.
 - 완료된 작업은 삭제하지 않고 요약과 flow reference를 유지한다.
 - flow 기록 파일은 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 형식을 사용한다.
 - `count-pad3`는 `001`, `002`, `003`처럼 3자리 zero-padded 숫자를 사용한다.
@@ -188,7 +194,7 @@
 - flow 기본 템플릿은 `skills/turn-gate/templates/flow-record-template.md`를 사용한다.
 - `000-plan.md` 기본 템플릿은 `skills/turn-gate/templates/plan-template.md`를 사용한다.
 - 최소 flow 기록 항목은 user request message, task, flow scope, current mode, question-routing mode, continuity guard, analysis, plan, work, verification, result report, next-flow options, residual risk다.
-- `000-plan.md`는 날짜 기준 증분 계획과 히스토리 artifact로, `001+`는 flow 단위 상세 보고서로 취급한다.
+- `000-plan.md`는 날짜 기준 증분 계획과 flow-sequence artifact로, `001+`는 flow 단위 상세 보고서로 취급한다.
 - flow record는 phase 메모가 아니지만, `analysis`, `plan`, `work`, `verification`, `result reporting` 각 phase가 끝날 때마다 현재 상태로 갱신해야 한다.
 
 ## SSOT 동기화 규칙
@@ -204,7 +210,7 @@
 - 사용자 표현에 구조적 다의성이 있으면 internal mode 선택 전에 meaning resolution 질문을 열었는가?
 - current-phase work에 맞는 internal mode를 하나로 좁혔는가?
 - user-gated question routing과 계획 도구 `update_plan`를 필수 단계에서 실제로 사용했는가?
-- cross-flow 작업이라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 최신 상태인가?
+- cross-flow 작업이라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 planned flow sequence, 각 flow의 완료 기준, 다음 flow 전환 조건을 최신 상태로 담고 있는가?
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`가 현재 phase까지 증분 갱신됐는가?
 - `work -> verification -> result reporting` 순서를 실제로 유지했는가?
 - direct loop entrypoint를 사용자 표면으로 다시 열지 않았는가?
