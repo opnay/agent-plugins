@@ -1,6 +1,6 @@
 ---
 name: advance-codex-guide
-description: Entrypoint skill for the `advance-codex` plugin. Use when a task is about improving how Codex is used and you should first classify whether the primary deliverable is a skill, empirical prompt-evaluation workflow, tool-use guidance layer, plugin bundle, session folder convention, commit workflow, or subagent/custom agent definition.
+description: Entrypoint skill for the `advance-codex` plugin. Use when a task is about improving how Codex is used and you should first classify whether the primary deliverable is a skill, empirical prompt-evaluation workflow, tool-use guidance layer, plugin bundle, session folder convention, commit workflow, subagent handoff gate, or subagent/custom agent definition.
 ---
 
 # Advance Codex Guide
@@ -21,6 +21,7 @@ If the task spans several deliverable types, choose the sequence explicitly inst
    - a session folder convention
    - a commit workflow
    - a subagent workflow or custom agent
+   - a subagent handoff gate
 2. Identify whether the task is:
    - new creation
    - revision of an existing artifact
@@ -43,6 +44,7 @@ If the task spans several deliverable types, choose the sequence explicitly inst
 - Choose `agents-sessions` when the main output is defining or explaining the basic purpose and default `turn-gate`-aligned structure of the `.agents/sessions` folder.
 - Choose `git-committer` when the main output is a disciplined task-scoped commit workflow for changes you made rather than a new artifact shape.
 - Choose `subagent-creator` when the main output is a custom agent definition: how to define `.codex/agents/*.toml`, shape the agent's role, and document how you should use that custom agent from normal work.
+- Choose `subagent-gate` when the main output is preparing a subagent handoff before spawn or message: exit plan, minimal context packet, ownership, output contract, and approval limits.
 - When building a new multi-skill plugin, prefer this order:
   1. plugin structure
   2. contained skills
@@ -60,13 +62,14 @@ If the task spans several deliverable types, choose the sequence explicitly inst
 - Treat agents-sessions as the top-level concern when the hard part is whether an artifact belongs under `.agents/sessions` at all.
 - Treat commit finalization as the top-level concern when the hard part is how you should review, verify, message, and split your changes into stable commits.
 - Treat subagent design as the top-level concern when the hard part is custom agent behavior, agent reuse, or multi-agent runtime control rather than local file structure.
+- Treat subagent handoff gating as the top-level concern when the hard part is deciding what a subagent should receive, when it should return, and which decisions must stay with the main thread.
 - If the task is mostly about choosing between several bundled skills, add or update an entrypoint skill.
 
 ## Output Contract
 
 - `Primary artifact`
 - `Task shape`
-- `Chosen creator skill`
+- `Chosen creator or gate skill`
 - `Execution order`
 - `Main risk`
 - `Validation path`
