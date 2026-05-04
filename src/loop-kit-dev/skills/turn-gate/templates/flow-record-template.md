@@ -24,6 +24,10 @@ Keep the date-level history and flow index in `000-plan.md`; keep the detailed e
 - Terminal summary allowed: yes | no
 - Required next action:
 - Last refreshed phase:
+- Closure source message: <required only when confirmed closure is recorded>
+- Pending question state: none | pending | answered | aborted | superseded
+- Pending question id or summary:
+- Verification status: not-started | requested | pass | fail | blocked | insufficient | not-applicable
 
 ## Analysis
 

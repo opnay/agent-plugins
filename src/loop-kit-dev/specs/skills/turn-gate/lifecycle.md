@@ -15,9 +15,13 @@
 - 이 skill이 사용되면 현재 세션 동안 `turn-gate`를 conversation-level first-class operating rule로 활성화한 것으로 취급한다.
 - 이 규칙은 skill 내부 체크리스트가 아니라 assistant response lifecycle 자체에 적용한다.
 - concrete task 없이 activation만 요청된 경우에도 `turn-gate`를 활성화하고 session record를 생성 또는 갱신한다. 이때 `user_explicit_stop=false`로 보고, work mode를 성급히 고르지 않고 user-gated next-flow 또는 scope selection을 연다.
+  - 예: "turn-gate 켜줘", "Use turn-gate", `$loop-kit:turn-gate`만 온 경우에는 activation 완료 요약으로 닫지 않고 다음 scope 또는 next-flow 선택을 연다.
 - `user_explicit_stop`이 false인 동안 result reporting은 terminal response가 아니며, 반드시 next-flow reopening 또는 active question-routing으로 이어져야 한다.
-- 사용자가 명시적으로 턴 종료를 요청했거나 flow record에 confirmed closure가 기록된 경우가 아니라면 일반적인 final summary로 턴을 닫지 않는다.
-- 사용자가 explicit stop을 요청하면 active flow record와 `Continuity Guard`에 confirmed closure를 기록하고, `terminal summary allowed`를 허용 상태로 갱신하며, next-flow choices를 다시 열지 않는다.
+- 일반적인 final summary 또는 final-answer-like terminal close는 사용자가 명시적으로 턴 종료를 요청한 경우에만 허용한다.
+- flow record의 `confirmed closure`는 특정 explicit stop 사용자 메시지와 함께 기록된 경우에만 유효하다. closure source message가 없거나 현재 incoming message와 맞지 않는 stale closure 기록은 terminal close 근거로 쓰지 않는다.
+- 사용자가 explicit stop을 요청하면 active flow record와 `Continuity Guard`에 confirmed closure, closure source message, closure recorded time 또는 phase를 기록하고, `terminal summary allowed`를 허용 상태로 갱신하며, next-flow choices를 다시 열지 않는다.
+- "status?", "진행 상황은?", "아니 그 파일 말고", "먼저 X", "다음엔 commit readiness 봐줘" 같은 입력은 explicit stop이 아니라 status/progress check, current-flow correction, current-flow priority change, next-flow priority request로 분류한다.
+- "여기서 끝", "턴 종료", "이 turn은 그만", "stop the turn"처럼 현재 turn 자체를 끝내려는 의도가 분명한 입력만 explicit turn stop으로 분류한다.
 
 ## Phase Shape
 

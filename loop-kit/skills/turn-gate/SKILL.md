@@ -15,9 +15,9 @@ description: Main loop controller for `loop-kit`. Keep one turn alive until the 
   - active question-routing
   - explicit user stop handling
 - Use `request_user_input` for next-flow decisions, scope locks, mode narrowing, and user-gated approval boundaries.
-- After `work`, dispatch a clean-context verification subagent before result reporting; do not verify the work directly in the same context.
+- After `work`, dispatch a clean-context verification subagent before result reporting; do not verify the work directly in the same context. Clean context means no full-history fork, only a bounded verification packet.
 - Maintain `.agents/sessions/{YYYYMMDD}/000-plan.md` and the active flow record, including `Continuity Guard` and `Next Flow Options`.
-- On explicit user stop, record confirmed closure before sending a terminal summary and do not reopen next-flow choices.
+- On explicit user stop, record confirmed closure with the closure source message before sending a terminal summary and do not reopen next-flow choices.
 
 ## Purpose
 
@@ -29,7 +29,7 @@ While `user_explicit_stop` is false, valid response endings are:
 - active question-routing
 - explicit user stop handling
 
-Result reporting, readiness reporting, and the normal final-answer channel are not turn termination. A summary-only close is invalid unless the user explicitly stops the turn or a confirmed closure is already recorded.
+Result reporting and readiness reporting are not turn termination. A summary-only close or final-answer-like terminal close is invalid unless the user explicitly stops the turn and a confirmed closure is recorded with its source message.
 
 Activation-only requests are still meaningful work: mark `turn-gate` active, initialize or refresh the session records, and ask the user to choose the first scope or next flow with user-gated routing.
 
@@ -53,16 +53,16 @@ For status or progress checks, answer with the current phase, blocker or progres
 
 For corrections or priority changes, re-read affected files, records, or state, reconcile them against the correction, adjust the current analysis/plan immediately, and resume from the earliest safe phase. For next-flow priority requests, record the request as the highest-priority next-flow candidate and continue to the next safe handoff point.
 
-For explicit turn stop, update the active flow record and `Continuity Guard` with confirmed closure, set terminal summary allowed, then give the closure summary without reopening next-flow choices.
+For explicit turn stop, update the active flow record and `Continuity Guard` with confirmed closure, the closure source message, and terminal summary allowed, then give the closure summary without reopening next-flow choices. A stale closure record or `terminal summary allowed: yes` without a source explicit-stop message is not valid closure authority.
 
 Keep this runtime phase shape visible:
 
 1. `analysis`: identify requested intent, requested action, current blocker, likely internal mode, whether meaning resolution is needed, and any approval boundary. Note future flow/phase candidates only when they help the current decision.
 2. `plan`: set the active steps for the current flow; use `update_plan` once meaningful work begins and keep the active step current. For multi-flow work, keep the cross-flow decomposition in `000-plan.md` and the detailed current-flow plan in the active `001+` record.
 3. `work`: before working, choose one internal mode and read its local `references/` contract. Execute only after the mode and relevant contract are clear.
-4. `verification`: dispatch a clean-context verification subagent before reporting. Provide the target, user intent, files or artifacts, commands or checks, and pass/fail criteria. The main agent must not directly verify in the same context; it integrates the subagent's findings into residual uncertainty and whether later flow/phase redesign is needed.
+4. `verification`: dispatch a clean-context verification subagent before reporting. Do not fork the full conversation history; provide a bounded packet with target, user intent, files or artifacts, commands or checks, pass/fail criteria, edit permission set to none, and stop conditions. The main agent must not directly verify in the same context; it integrates the subagent's findings into pass, fail, blocked, or insufficient, residual uncertainty, and whether later flow/phase redesign is needed.
 5. `result reporting`: report the outcome, readiness state, or blocker as context for the next choice. This is not a terminal response while `user_explicit_stop` is false.
-6. `question-routing reopening`: read the `Continuity Guard`, reconstruct only if unavailable, confirm whether terminal summary is allowed, and reopen the next flow with visible `request_user_input` choices unless the user explicitly stopped the turn.
+6. `question-routing reopening`: read the `Continuity Guard`, reconstruct only if missing, treat inaccessible records as blockers, confirm whether terminal summary is allowed from a source explicit-stop message, and reopen the next flow with visible `request_user_input` choices unless the user explicitly stopped the turn.
 
 Analysis and planning may include provisional future flow/phase design. Revisit that design only when new evidence, changed intent, or a revealed blocker makes redesign useful.
 
@@ -98,7 +98,7 @@ Explicit user, tool, platform, safety, destructive, irreversible, or external-ac
 
 Before destructive, irreversible, or external actions, inspect the current state closely enough to state the exact target and risk. Treat wording like delete, remove, wipe, reset, overwrite, discard, publish, push, or open PR as approval-sensitive when it can change local state irreversibly or affect external systems. If the user asks to use subagents to keep moving, hand off autonomous question routing to `turn-gate-self-drive`; approval, destructive, irreversible, external-action, and safety decisions remain with the user and should be recorded as such.
 
-Next-flow choices should be narrow, visible, tool-backed, and directly connected to the result just reported. Use `request_user_input` whenever available. If three visible choices are already needed and a turn-end option cannot be shown, still record an explicit turn-end option in the flow record's `Next Flow Options`.
+Next-flow choices should be narrow, visible, tool-backed, and directly connected to the result just reported. Use `request_user_input` whenever available. If it is unavailable, say so, record the required next action, and keep the response in active question-routing rather than terminal close. If three visible choices are already needed and a turn-end option cannot be shown, make the visible prompt clear that explicit stop remains available and still record an explicit turn-end option in the flow record's `Next Flow Options`.
 
 ## Session Records
 
@@ -126,8 +126,11 @@ It must state:
 - whether the user explicitly stopped the turn
 - whether terminal summary is allowed
 - required next action
+- closure source message when confirmed closure is recorded
+- pending question state when a question is pending, aborted, answered, or superseded
+- verification status when verification is required
 
-Before result reporting, read the recorded guard; reconstruct it only if it is missing or inaccessible. If reconstructed, write it back to the flow record as soon as possible. If `user_explicit_stop` is false, terminal summary is not allowed and the response must proceed to next-flow reopening or active question-routing. If explicit stop is confirmed, record closure and terminal summary allowance before closing.
+Before result reporting, read the recorded guard; reconstruct it only if it is missing. If the record is inaccessible, treat that as a blocker instead of inventing closure state. If reconstructed, write it back to the flow record as soon as possible. If `user_explicit_stop` is false, terminal summary is not allowed and the response must proceed to next-flow reopening or active question-routing. If explicit stop is confirmed, record closure source and terminal summary allowance before closing. Stale `terminal summary allowed: yes` or source-less confirmed closure is invalid.
 
 ## Output Shape
 
@@ -153,12 +156,14 @@ Use the labels that fit the situation, but preserve this information shape:
 - Do not treat result reporting, readiness reporting, or a final summary as turn termination while `user_explicit_stop` is false.
 - Do not end with generic follow-up phrasing such as "let me know if you need anything else".
 - Do not use summary-only closing as a valid ending shape. Bad ending shapes include: reporting only "done", giving a broad final summary without next-flow choices, or ending with a generic follow-up phrase instead of question-routing.
+- Do not use a stale `confirmed closure` or stale `terminal summary allowed` field as permission to close; closure must be tied to a concrete explicit-stop user message.
 - Do not ask freeform textual choice questions when the active question-routing mode can carry the decision.
 - Do not treat in-turn user intervention as a stop, completion, or approval-boundary pause unless the user explicitly asks to stop or creates a real approval boundary.
 - Do not collapse overloaded user wording into one concrete action when different interpretations would change files, phases, routing, or commit scope.
 - Do not treat a readiness request as commit approval, and do not treat commit approval as permission to include unrelated changes.
 - Do not skip `update_plan` after meaningful work begins.
-- Do not skip clean-context subagent verification between work and result reporting.
+- Do not skip clean-context subagent verification between work and result reporting, and do not pass a full-history fork as clean context.
+- Do not treat failed, blocked, unavailable, or insufficient verification as passed; return to the earliest safe phase or open a user-gated blocker.
 - Do not let the verification subagent implement fixes or expand scope; it only verifies and reports findings.
 - Do not emit result reporting until the `Continuity Guard` says whether next-flow reopening is still required.
 - Do not skip the next-flow question after reporting a result.
