@@ -38,14 +38,17 @@
 
 ## 상세 계약 구조
 
-`turn-gate`의 사용자 스펙 의도와 세부 계약은 이 index가 직접 모두 소유하지 않고, 아래 sibling spec 문서로 분리합니다.
-이 파일은 top-level ownership, routing overview, sibling contract map을 소유합니다.
+`turn-gate`의 사용자 스펙 의도, 전체 흐름, 세부 계약은 같은 folder 아래 sibling spec 문서로 분리합니다.
+이 파일은 top-level ownership, whole-flow overview, sibling contract map을 소유합니다.
 
 - `intent.md`: `turn-gate`의 사용자 스펙 의도 기록
-- `lifecycle.md`: activation, response ending states, in-turn user intervention, explicit stop 처리
-- `session-records.md`: `000-plan.md`, `001+` flow records, Continuity Guard, templates, `Next Flow Options`
+- `runtime-flow.md`: activation부터 explicit stop까지 `turn-gate`의 전체 phase 흐름과 전환 조건
 - `meaning-resolution.md`: operation/target ambiguity, provenance/intent block target locking, user-gated clarification
-- `verification.md`: mandatory clean-context subagent verification, result reporting, next-flow reopening
+- `mode-selection.md`: internal mode selection, local references, mode-vs-handoff, upstream SSOT 동기화
+- `approval-boundary.md`: destructive, irreversible, external-action, commit/publish approval boundary
+- `verification.md`: mandatory clean-context subagent verification and non-pass handling
+- `question-routing.md`: `request_user_input`, next-flow reopening, fallback, visible/recorded turn-end option
+- `session-records.md`: `000-plan.md`, `001+` flow records, Continuity Guard, templates, `Next Flow Options`
 
 ## 핵심 처리 계약
 
@@ -53,43 +56,16 @@
 - skill body는 대화 응답 자체를 제어하는 conversation-level first-class rule을 `## Important` 섹션으로 앞부분에서 명시해야 한다.
 - `## Important` 섹션은 `Purpose`보다 먼저 위치해야 하며, session-level activation, terminal summary 금지, required ending states, `request_user_input` 기반 next-flow reopening, session record 유지 의무를 포함해야 한다.
 - skill body에는 `Core Loop` 또는 이에 준하는 단계별 실행 섹션이 있어야 하며, 최소한 analysis, plan, work, verification, result reporting, question-routing reopening을 각각 구분해 설명해야 한다.
-- skill body에는 internal mode selection과 local `references/` 읽기 규칙이 직접 남아 있어야 한다.
+- skill body에는 `runtime-flow.md`의 전체 흐름과 `mode-selection.md`의 local `references/` 읽기 규칙이 직접 남아 있어야 한다.
 - skill body에는 terminal summary 금지, source message에 묶인 confirmed closure, next-flow reopening, Continuity Guard 확인, user-gated question routing, explicit turn-end option 기록 규칙이 직접 남아 있어야 한다.
 - skill body에는 clean-context verification이 full-history fork가 아니라 bounded verification packet이라는 점과 실패/차단/불충분 검증을 통과로 취급하지 않는 규칙이 직접 남아 있어야 한다.
 - skill body를 짧게 다듬더라도 위 단계와 금지 규칙을 한 문단으로 뭉개지 말고, 실행 중 빠르게 확인 가능한 형태로 유지한다.
-
-## Internal Mode Selection
-
-- `work`에 들어가기 전 current-phase work의 internal mode를 하나 선택한다.
-- `loop-kit-dev`에서는 사용자가 internal mode를 직접 호출하는 대신 `turn-gate`가 이를 선택한다.
-- `turn-gate`는 선택된 internal mode에 대응하는 local `references/` 문서를 먼저 읽고 그 계약을 적용한다.
-- local `references/`는 `workflow-kit` upstream spec과 동기화된 absorbed operational contract로 유지한다.
-- 실제 requirement discovery가 병목이면 `references/deep-interview.md`를 따른다.
-- broad end-to-end delivery가 필요한 current phase이면 `references/autopilot.md`를 따른다.
-- bounded issue를 작은 fix-verify-reassess cycle로 다루는 경우 `references/ralph-loop.md`를 따른다.
-- review feedback이나 material finding 처리인 경우 `references/review-loop.md`를 따른다.
-- 현재 변경 단위가 거의 끝났고 readiness 판단이 핵심이면 `references/commit-readiness-gate.md`를 따른다.
-- 여러 mode가 겹쳐 보이면 `deep-interview -> review-loop -> ralph-loop -> autopilot -> commit-readiness-gate` 순으로 더 이른 병목을 우선한다.
-- 아직 어떤 internal mode가 맞는지 확정되지 않았다면 active question-routing mode나 좁은 분석으로 먼저 mode selection을 잠근다.
-
-## Deep-Interview 원본 관계
-
-- 원본 skill source는 `https://github.com/Yeachan-Heo/oh-my-codex/blob/main/skills/deep-interview/SKILL.md`다.
-- 원본은 ambiguity gating, OMX tooling, artifact handoff까지 포함한 더 큰 workflow다.
-- `loop-kit-dev`의 `references/deep-interview.md`는 full workflow를 그대로 복제한 것이 아니라, `turn-gate`가 requirement-discovery phase에서 필요한 boundary만 흡수한 derived reference다.
-
-## SSOT 동기화 규칙
-
-- internal mode contract 변경은 먼저 `workflow-kit` upstream spec에서 정리한다.
-- `loop-kit-dev`은 runtime orchestration 관점의 차이와 local absorbed references를 별도로 소유한다.
-- upstream contract와 `turn-gate` references의 문구가 어긋나면 같은 변경 단위에서 함께 갱신한다.
-- 새로운 internal mode는 기존 mode로 current-phase work를 소유할 수 없을 때만 추가한다.
-- internal mode set이나 mandatory tool rule이 바뀌면 `workflow-kit` upstream spec, `loop-kit-dev` plugin spec, `loop-kit-dev-guide`, `turn-gate`, `turn-gate/references/`를 함께 갱신한다.
 
 ## 검토 질문
 
 - 이번 응답이 turn continuity를 실제로 유지하고 있는가?
 - skill body 앞부분에 `Important` 섹션이 있고 1급 규칙, terminal summary 금지, next-flow reopening이 먼저 드러나는가?
+- `runtime-flow.md`만 읽어도 전체 phase 흐름과 다음 상세 spec 위치를 알 수 있는가?
 - 사용자 표현에 구조적 다의성이 있으면 internal mode 선택 전에 meaning resolution 질문을 열었는가?
 - current-phase work에 맞는 internal mode를 하나로 좁혔는가?
 - user-gated question routing과 계획 도구 `update_plan`를 필수 단계에서 실제로 사용했는가?

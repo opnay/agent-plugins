@@ -36,6 +36,7 @@
 - 기록이 없을 때만 재구성하고, 재구성한 guard는 가능한 즉시 flow record에 다시 쓴다.
 - 기록이 접근 불가인 경우 missing record처럼 조용히 재구성하지 않는다. 접근 실패를 blocker로 보고하고, 접근이 복구되거나 user-gated decision이 있을 때까지 terminal summary 허용 근거로 삼지 않는다.
 - guard의 terminal summary 허용 값은 현재 incoming message 또는 source가 확인된 explicit stop 기록과 일치할 때만 유효하다. stale `terminal summary allowed: yes`나 source 없는 `confirmed closure`는 무효다.
+- stale closure state를 발견하면 guard를 `user explicit stop: no`, `terminal summary allowed: no`로 갱신하고, 이전 closure state가 source-less 또는 stale이었다는 note를 남긴다.
 
 ## Next Flow Options
 

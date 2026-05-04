@@ -2,7 +2,8 @@
 
 ## 목적
 
-이 문서는 `work` 이후 clean-context subagent verification, result reporting, next-flow reopening 계약을 소유합니다.
+이 문서는 `work` 이후 clean-context subagent verification과 non-pass handling 계약을 소유합니다.
+result reporting과 next-flow reopening 세부 계약은 `question-routing.md`가 소유합니다.
 
 ## Clean-Context Verification
 
@@ -16,27 +17,10 @@
 - subagent 검증 결과는 `pass`, `fail`, `blocked`, `insufficient` 중 하나로 통합한다.
 - 검증 결과가 `fail` 또는 `insufficient`이면 result reporting 전에 active flow를 가장 이른 안전한 phase로 되돌려 보완한다.
 - 검증 결과가 `blocked`이거나 검증 도구/subagent를 사용할 수 없으면 통과로 간주하지 않고 user-gated question-routing으로 blocker를 연다.
-
-## Result Reporting
-
-- 결과 보고 전에는 `Continuity Guard`를 읽거나 재구성하고, 사용자가 명시적으로 종료하지 않았으면 terminal summary가 invalid임을 확인한다.
-- result reporting은 terminal response가 아니라 다음 flow decision을 열기 위한 context report다.
-- explicit stop이 없다면 final-answer-like terminal close를 사용하지 않는다. 결과 보고는 next-flow reopening 또는 active question-routing으로 이어지는 non-terminal continuation이어야 한다.
-- result reporting에는 남아 있는 blocker, failed/insufficient verification, residual uncertainty가 비어 있지 않은 경우 이를 사용자에게 보이게 포함한다.
-- explicit stop이 없다면 next-flow question이 여전히 필수다.
-
-## Next-Flow Reopening
-
-- 결과 보고 뒤에는 explicit choice를 주는 active question-routing mode로 다음 플로우를 다시 연다.
-- 결과 보고 뒤 visible next-flow choice는 도구 기반 질문이어야 하며, `request_user_input`을 사용할 수 있는 환경에서는 반드시 `request_user_input`으로 직접 연다.
-- `request_user_input`을 사용할 수 없는 경우에만 fallback을 쓴다. fallback result report에는 도구가 unavailable인 사실, 열린 선택지, record에 남긴 required next action을 명시하고 terminal summary로 닫지 않는다.
-- loop continuation도 사용자에게 현재 phase, required next action, 열린 선택지를 볼 수 있게 해야 한다.
-- 사용자에게 보이는 선택지가 3개 이상이라 턴 종료 선택지를 표시하지 못하는 경우에도, visible question text에는 명시적 stop 요청이 여전히 가능하다는 사실을 드러내고 flow record의 `Next Flow Options`에는 별도 turn-end option을 기록한다.
-- 사용자가 턴을 종료하자고 요청하지 않으면 clean stop을 기본 경로로 두지 않는다.
+- non-pass 상태 보고는 blocker report로만 가능하며, successful completion처럼 표현하지 않는다.
 
 ## 검토 질문
 
 - work 뒤 검증을 clean-context subagent에게 맡겼는가?
 - 검증 요청에 대상, 의도, 파일/산출물, checks, pass/fail 기준이 들어갔는가?
-- result reporting 직전에 terminal summary 가능 여부를 확인했는가?
-- result reporting 뒤 `request_user_input` 또는 active question-routing으로 다음 flow를 열었는가?
+- non-pass verification을 통과로 취급하지 않고 earliest safe phase 또는 user-gated blocker로 라우팅했는가?
