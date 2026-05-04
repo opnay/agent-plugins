@@ -1,0 +1,28 @@
+## 사용자 스펙 의도
+
+- 하나의 턴을 사용자가 턴을 종료하자고 요청할때까지 닫지 않고 유지하고 싶다.
+- 이 스킬을 사용한다는건, 이 세션동안 이 스킬을 1급 규칙으로 사용한다는 의미입니다.
+- `turn-gate`의 메인 플로우는 스킬 내부 체크리스트가 아니라 대화 응답 자체를 제어하는 1급 규칙이어야 합니다.
+- `turn-gate`의 1급 규칙은 일반 목적 설명보다 더 높은 우선순위로 보이도록 skill body의 앞부분에 `Important` 섹션으로 드러나야 합니다.
+- `turn-gate`가 활성화된 동안 assistant의 응답은 loop continuation, question-routing, explicit user stop 처리 중 하나로 끝나야 하며, 일반적인 final summary로 턴을 닫으면 안 됩니다.
+- `turn-gate`가 현재 phase의 메인 작업을 보고 적절한 내부 loop mode를 고르길 원한다.
+- 필요한 경우 requirement discovery 성격의 `deep-interview`도 `turn-gate` 안의 internal mode로 흘러가길 원한다.
+- `ralph-loop`, `review-loop`, readiness gate 같은 loop는 사용자가 직접 고르지 않고 `turn-gate` 안에서 흘러가길 원한다.
+- 내부 loop mode의 canonical contract는 `workflow-kit`이 SSOT로 계속 소유하길 원한다.
+- 내부 loop mode는 `turn-gate` 스킬의 local `references/` 아래로 흡수돼야 하고, 실행 시 그 reference를 읽는 구조이길 원한다.
+- broad end-to-end delivery가 현재 phase work라면 `workflow-kit/autopilot`의 계약도 `turn-gate` internal mode로 선택되길 원한다.
+- 질문, 선택지, scope lock, 다음 플로우 선택은 기본적으로 user-gated question routing으로 처리하길 원한다.
+- `turn-gate`는 질문 도구와 계획 도구를 선택 사항이 아니라 필수 도구로 사용해야 한다.
+- 다음 플로우 질문의 사용자 표시 선택지가 3개 이상이라 턴 종료 선택지를 표시하지 못하더라도, sessions flow record의 `Next Flow Options`에는 명시적인 턴 종료 선택지가 항상 남아야 한다.
+- `turn-gate`로 진행한 작업은 `.agents/sessions` 아래에 기록이 남아야 한다.
+- 여러 플로우를 거치는 작업의 상위 계획은 `.agents/sessions/{YYYYMMDD}/000-plan.md` 경로에 누적되길 원한다.
+- `000-plan.md`는 단순 현재 상태 로그가 아니라 여러 flow의 상위 계획과 흐름을 소유해야 한다.
+- 예를 들어 "컴포넌트 오타가 있어. 수정하자" 같은 요청은 `컴포넌트 문구 점검`, `컴포넌트 문구 수정`, `commit-ready` 같은 flow sequence로 나뉘고, 각 flow는 자기 내부의 점검/수정/검증 하위 작업을 소유해야 한다.
+- 검증 단계는 main agent가 같은 context에서 직접 수행하지 않고, 무조건 clean context 상태의 subagent가 수행해야 한다.
+- main agent는 clean-context subagent 검증 요청을 구성하고, subagent 결과를 통합해 결과 보고와 다음 flow 판단으로 이어가야 한다.
+- 개별 플로우 기록은 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 형식으로 남고 싶다.
+- `001+` 문서는 phase 메모가 아니라 flow 기록으로 남고 싶다.
+- 분석 단계와 계획 단계는 현재 플로우만이 아니라 이후 이어질 flow/phase 후보까지 필요하면 미리 설계하길 원한다.
+- 이후 loop에서 다시 분석 단계나 계획 단계로 돌아오면, 이전 flow/phase 설계를 고정값처럼 취급하지 말고 필요할 때만 다시 설계하길 원한다.
+- 검증 단계는 그 재설계를 직접 수행하는 단계라기보다, 이후 flow/phase 재설계가 필요한지 여부를 드러내는 단계이길 원한다.
+- `turn-gate` 상세 규칙이 커졌으므로 `specs/skills/turn-gate/spec.md`를 기본 index로 두고, 세부 계약은 같은 폴더 아래 sub-spec으로 분리하고 싶다.
