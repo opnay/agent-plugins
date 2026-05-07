@@ -3,23 +3,18 @@
 ## 플러그인 목적
 
 `workflow-kit-dev`은 작업 lifecycle 전반을 다루는 workflow 플러그인입니다.
-핵심 책임은 requirement discovery, sequential analysis, planning, execution, refinement, review, final gating, 그리고 사용자가 턴을 종료하자고 요청할때까지 턴을 닫지 않는 loop-gated continuity를 각각의 workflow skill로 제공하는 것입니다.
-이 판단 전에는 사용자 지시어의 operation 의미가 skill, spec, plugin, phase, routing rule, release surface 중 어디를 가리키는지 확인해야 하며, 해석에 따라 작업이 달라지면 meaning resolution 질문으로 먼저 잠급니다.
-repository-local operating rule이 non-terminal turn을 요구하면, `turn-gate`를 turn-level loop gate로 유지한 채 각 flow를 `준비 -> 작업 -> 검증 -> 보고`로 이어갑니다. 사용자 메시지 기반 준비에서는 deep-interview alignment로 의도를 정렬하고 이후 flow list를 만들며, 이미 선택된 flow의 준비에서는 수정 범위, 현재 상태, 대상 파일 또는 산출물, 검증 조건을 확인합니다.
-`turn-gate`가 활성화되면 현재 세션 동안 first-class loop gate rule로 취급합니다.
-bounded decision을 subagent question packet으로 라우팅해 자동 진행해야 하는 경우 `turn-gate-self-drive` overlay를 선택합니다.
-`turn-gate-self-drive` 도중 사용자 메시지가 들어오면 이를 중단으로 보지 않고 현재 플로우 조정 또는 다음 플로우 우선 등록으로 처리합니다.
-이 플러그인은 `loop-kit`이 사용하는 broader workflow taxonomy와 canonical loop contract의 SSOT이기도 합니다.
+핵심 책임은 requirement discovery, sequential analysis, planning, execution, refinement, review, final gating을 각각의 workflow skill로 제공하는 것입니다.
+workflow 선택 전에는 사용자 지시어의 operation 의미가 skill, spec, plugin, phase, routing rule, release surface 중 어디를 가리키는지 확인해야 하며, 해석에 따라 작업이 달라지면 meaning resolution 질문으로 먼저 잠급니다.
+각 workflow skill은 직접 호출 가능한 작업 표면으로 유지합니다.
 
 ## 플러그인 경계와 비목표
 
 - 포함:
   - sequential and reflective problem solving
-  - operation meaning resolution before routing
+  - operation meaning resolution before workflow selection
   - requirement discovery와 direction evaluation
   - read-only planning
   - broad execution workflow
-  - turn-level loop gate contract
   - bounded refinement loop
   - review-driven correction
   - final readiness gate
@@ -35,7 +30,7 @@ bounded decision을 subagent question packet으로 라우팅해 자동 진행해
 - 복잡한 분석, 설계, 계획, 디버깅에서 단계적 사고, revision, branch, hypothesis verification이 필요한 작업
 - 구현 전에 alignment나 planning이 필요한 작업
 - broad execution부터 review와 final gate까지 이어지는 lifecycle 작업
-- 결과 보고 뒤 다음 플로우 진행을 위한 question-routing 응답을 열어야 하는 지속적 turn workflow
+- 여러 workflow skill 중 어떤 표면을 직접 사용할지 정해야 하는 작업
 
 ## 대표 표면
 
@@ -51,10 +46,6 @@ bounded decision을 subagent question packet으로 라우팅해 자동 진행해
   - spec: `workflow-kit-dev/specs/skills/deep-interview.md`
 - `planner`: read-only investigation을 통해 decision-complete plan을 만든다.
   - spec: `workflow-kit-dev/specs/skills/planner.md`
-- `turn-gate`: `준비 -> 작업 -> 검증 -> 보고 -> 다음 플로우 진행을 위한 question-routing 응답` 구조를 유지하고, repository rule이 요구하면 사용자가 턴을 종료하자고 요청할때까지 턴을 닫지 않는 loop gate를 관리한다.
-  - spec: `workflow-kit-dev/specs/skills/turn-gate.md`
-- `turn-gate-self-drive`: `turn-gate`를 base contract로 직접 적용한 뒤, blocked question을 subagent question packet으로 라우팅하는 overlay를 제공한다.
-  - spec: `workflow-kit-dev/specs/skills/turn-gate-self-drive.md`
 - `autopilot`: brief부터 implementation, verification까지 broad end-to-end delivery를 수행한다.
   - spec: `workflow-kit-dev/specs/skills/autopilot.md`
 - `parallel-work`: 소수의 독립 lane으로 분리하고 결과를 통합한다.
@@ -76,6 +67,4 @@ bounded decision을 subagent question packet으로 라우팅해 자동 진행해
 ## 현재 구조 메모
 
 - `deep-interview-adaptation.md`는 적응 배경 문서로 유지하되 normative skill contract는 `specs/skills/deep-interview.md`가 소유한다.
-- 이 플러그인의 주요 리스크는 lifecycle stage와 turn-level loop gate가 서로 흡수되면서 workflow가 execution 중심으로 납작해지거나, 반대로 loop gate 규칙이 phase skill을 과도하게 오염시키는 것이다.
-- `loop-kit`은 이 플러그인의 narrower operational package로 두고, `turn-gate` 중심 표면과 internal loop mode orchestration을 별도 플러그인으로 노출한다.
-- `loop-kit`의 internal mode 의미는 `workflow-kit-dev/specs/skills/ralph-loop.md`, `workflow-kit-dev/specs/skills/review-loop.md`, `workflow-kit-dev/specs/skills/commit-readiness-gate.md`를 canonical upstream으로 본다.
+- 이 플러그인의 주요 리스크는 lifecycle stage가 execution 중심으로 납작해지거나, 특정 workflow skill이 다른 skill의 책임을 과도하게 흡수하는 것이다.

@@ -35,7 +35,7 @@
 - `next`에서 마지막 `main` merge 이후 특정 dev 플러그인을 처음 수정할 때, 먼저 `next`의 dev 플러그인 version bump 대상입니다.
 - version bump 종류는 자동으로 단정하지 않고 사용자에게 patch/minor/major 또는 구체 version을 확인합니다.
 - 사용자가 version 유지 또는 bump를 명시하면 그 결정에 따라 `src/<plugin-name>-dev/.codex-plugin/plugin.json` version을 유지하거나 올립니다.
-- 예: `turn-gate`를 수정했다면 `next`의 `src/loop-kit-dev`와 필요 시 upstream `src/workflow-kit-dev`를 수정합니다.
+- 예: `turn-gate`를 수정했다면 `next`의 `src/loop-kit-dev`를 수정하고, 참조하는 workflow skill의 일반 의미가 바뀐 경우에만 관련 `src/workflow-kit-dev` skill spec을 수정합니다.
 - 이때 마지막 `main` merge 이후 첫 `loop-kit-dev` 수정이라면, 수정 전에 사용자에게 `loop-kit-dev` patch/minor/major bump 선택지를 엽니다.
 - 같은 플러그인의 이후 변경은 추가 version bump 없이 build만 수행합니다.
 - `next` 브랜치를 marketplace로 등록해 개발 버전을 사용하는 사람은 bump된 dev plugin version을 설치/업데이트합니다.

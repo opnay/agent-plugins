@@ -44,7 +44,7 @@ For example, if `turn-gate` changes:
 1. Compare `main`'s `loop-kit` version with `next`'s `loop-kit-dev` version.
 2. If this is the first `loop-kit-dev` modification on `next` since the last `main` merge, ask whether the `turn-gate` change should bump `loop-kit-dev` as patch, minor, major, or a specific version.
 3. Update `src/loop-kit-dev`.
-4. Update upstream `src/workflow-kit-dev` too when the canonical turn-gate contract changes.
+4. Update `src/workflow-kit-dev` only when the change affects the workflow skill contracts that `loop-kit` references.
 5. Update `next`.
 6. Build `loop-kit/` after each change so the root release surface mirrors the current dev source.
 7. Developers using the dev version register/install from the `next` branch marketplace source.

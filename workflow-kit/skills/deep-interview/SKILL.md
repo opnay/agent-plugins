@@ -32,7 +32,7 @@ This skill does not replace execution. It produces a sharper brief, clearer judg
 - the user explicitly wants fast execution with reasonable assumptions
 - the user is only asking for lightweight opinion, inspiration, or taste-level feedback with no implied implementation commitment
 - the user explicitly wants rough idea generation and is comfortable with broad assumptions
-- the task is only about choosing a workflow mode
+- the task is only about choosing a workflow skill
 - the task is already implemented and only needs final verification or commit-readiness judgment
 
 ## Scope Boundary

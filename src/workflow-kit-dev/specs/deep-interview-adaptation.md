@@ -30,11 +30,11 @@
 
 현재 환경은 다음 전제를 가진다.
 
-- 사용자가 skill을 직접 호출하지 않는다.
-- 에이전트가 요청을 분석하고 skill을 자체적으로 선택한다.
-- global 시작점은 manifest prompt와 plugin spec의 workflow 선택 기준이다.
+- 사용자는 skill을 직접 호출할 수 있고, manifest prompt와 plugin spec의 workflow 선택 기준을 통해 간접적으로 진입할 수도 있다.
+- 에이전트는 요청을 분석해 적절한 workflow skill을 선택할 수 있다.
+- plugin-level 시작점은 manifest prompt와 plugin spec의 workflow 선택 기준이다.
 - 질문 도구는 현재 런타임의 `request_user_input`과 일반 대화 questioning이다.
-- skill은 독립 실행 artifact가 아니라 플러그인 내부 라우팅 체인의 일부다.
+- skill은 독립 실행 가능한 작업 표면이면서, 다른 workflow skill과 handoff될 수 있는 플러그인 구성 요소다.
 
 따라서 원본 skill의 핵심을 가져오되, 호출 방식과 운영 구조는 새로 설계해야 한다.
 
@@ -66,25 +66,26 @@
 - 질문 도구: `request_user_input` 또는 일반 대화 질문
 - handoff: `workflow-kit-dev` 내부 다른 skill 또는 downstream specialist plugin
 
-### 3. skill은 직접 호출형이 아니라 라우팅형이다
+### 3. skill은 직접 호출과 라우팅 진입을 모두 허용한다
 
-`deep-interview`는 더 이상 사용자가 직접 진입하는 primary UX가 아니다.
-현재 환경에서의 primary UX는 다음과 같다.
+`deep-interview`는 직접 호출될 수도 있고, manifest prompt나 plugin spec의 workflow 선택 기준을 통해 선택될 수도 있다.
+현재 환경에서의 진입 방식은 다음과 같다.
 
 1. 사용자가 작업이나 질문을 던진다.
-2. manifest prompt와 plugin spec의 기준에 따라 현재 workflow를 선택한다.
-3. 요구사항 파악과 방향 잠금이 병목이면 `deep-interview`를 선택한다.
+2. 사용자가 직접 `deep-interview`를 호출했거나, manifest prompt와 plugin spec의 기준에 따라 현재 workflow를 선택한다.
+3. 요구사항 파악과 방향 잠금이 병목이면 `deep-interview`를 실행한다.
 4. `deep-interview`는 실제 질문을 수행하고, 그 결과를 잠근 뒤 다음 workflow로 handoff한다.
 
-즉 `deep-interview`는 direct-entry skill이 아니라 routed workflow skill이다.
+즉 `deep-interview`는 direct-entry workflow skill이면서 routed workflow skill이다.
 
 ## 플러그인 내 역할 정의
 
 ### Workflow 선택 기준
 
-이 skill은 global first-read router다.
+plugin spec과 manifest prompt가 workflow 선택 기준을 소유한다.
+이 문서는 그 선택 기준 안에서 `deep-interview`가 맡는 역할을 설명한다.
 
-이 skill의 책임:
+plugin-level 선택 기준의 책임:
 
 - 요청을 보고 현재 workflow bottleneck을 고른다.
 - `sequential-thinking`, `deep-interview`, `planner`, `autopilot` 등 중 시작 skill을 정한다.

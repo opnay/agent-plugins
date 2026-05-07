@@ -1,7 +1,7 @@
 {
   "name": "workflow-kit-dev",
   "version": "0.1.1",
-  "description": "[DEV] Workflow plugin for sequential analysis, definition, planning, execution workflows, review loops, final readiness gates, and canonical loop contracts used by loop-kit.",
+  "description": "[DEV] Workflow plugin for sequential analysis, definition, planning, execution workflows, review loops, and final readiness gates.",
   "author": {
     "name": "opnay"
   },
@@ -12,7 +12,6 @@
     "planning",
     "alignment",
     "interview",
-    "turn-gate",
     "parallel",
     "autopilot",
     "delivery",
@@ -21,8 +20,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Workflow Kit Dev",
-    "shortDescription": "[DEV] Sequential analysis, planning, execution, turn continuity, review, and readiness workflows for any task size.",
-    "longDescription": "[DEV] Provides workflow skills that help Codex reason through complex problems step by step, define work correctly, build a read-only execution plan, choose the right execution mode, keep explicit turn continuity when needed, iterate on issues, review material findings, and run final readiness gates before work moves toward commit. This plugin also remains the canonical workflow and loop-contract source for the narrower `loop-kit` package.",
+    "shortDescription": "[DEV] Sequential analysis, planning, execution, review, and readiness workflows for any task size.",
+    "longDescription": "[DEV] Provides workflow skills that help Codex reason through complex problems step by step, define work correctly, build a read-only execution plan, choose the right execution mode, iterate on issues, review material findings, and run final readiness gates before work moves toward commit.",
     "developerName": "opnay",
     "category": "Productivity",
     "capabilities": [
@@ -32,9 +31,6 @@
     ],
     "defaultPrompt": [
       "Think through this complex problem step by step, revise assumptions if needed, and verify the conclusion.",
-      "Keep this turn alive across preparation, work, verification, reporting, and the next explicit flow.",
-      "In turn-gate, use deep-interview and flow-list design for user-message preparation, and inspect scope, current state, targets, and verification expectations for existing-flow preparation.",
-      "Use turn-gate-self-drive when turn-gated questions should be answered by subagents instead of by me.",
       "Make a read-only execution plan before implementation starts.",
       "Run this feature request end-to-end with autopilot.",
       "Interview me first so the implementation aligns tightly with what I actually mean.",

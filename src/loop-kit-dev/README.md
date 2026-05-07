@@ -95,7 +95,7 @@ codex plugin marketplace upgrade
 - `commit-readiness-gate`: 변경 단위가 커밋으로 넘어갈 준비가 됐는지 확인하는 gate
 
 이 mode들의 실행용 absorbed contract는 `skills/turn-gate/references/` 아래에 있습니다.
-더 넓은 workflow taxonomy와 canonical loop-mode contract의 upstream SSOT는 `workflow-kit`이 계속 소유합니다.
+`workflow-kit`은 각 workflow skill의 일반 의미를 제공하지만, turn-gate runtime contract와 session continuity는 `loop-kit`이 직접 소유합니다.
 
 ## 질문 라우팅
 

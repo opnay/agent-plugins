@@ -8,7 +8,7 @@ description: Parallel execution workflow for a small set of clearly independent 
 ## Overview
 
 Use this skill when the task should move through a few parallel lanes instead of one sequential queue.
-This is a user-facing workflow mode for bounded independent work, not an internal execution engine.
+This is a user-facing workflow skill for bounded independent work, not an internal execution engine.
 Its job is to decide what can safely run in parallel, launch only the lanes that are truly independent, and then integrate the results with one shared verification pass.
 
 ## Use When
@@ -133,7 +133,7 @@ When stopping, report:
 
 1. Which lanes completed
 2. Which lanes were deferred or blocked
-3. Whether the next step should switch to another workflow mode
+3. Whether the next step should switch to another workflow skill
 
 ## Output Contract
 

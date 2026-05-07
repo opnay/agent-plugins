@@ -83,7 +83,7 @@
 ## 독립성 원칙
 
 - 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 아니오.
-- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: 이 skill은 `workflow-kit`의 canonical loop-mode contract와 `loop-kit-dev`의 narrow runtime packaging을 전제로 한다. 다만 turn continuity와 mode selection rule 자체는 이 index spec에서 명시적으로 읽혀야 한다.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: 이 skill은 `workflow-kit`의 일반 workflow skill 의미와 `loop-kit-dev`의 narrow runtime packaging을 전제로 한다. 다만 turn continuity와 mode selection rule 자체는 이 index spec에서 명시적으로 읽혀야 한다.
 
 ## 확장 원칙
 

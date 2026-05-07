@@ -6,7 +6,7 @@
 핵심 책임은 하나의 턴을 사용자가 턴을 종료하자고 요청할때까지 닫지 않고 유지하면서, 각 flow를 `준비 -> 작업 -> 검증 -> 보고`로 이어가고, 현재 phase의 메인 작업에 맞는 내부 loop mode를 `turn-gate` 안에서 선택해 실행하는 것입니다.
 사용자 메시지 기반 준비에서는 deep-interview alignment로 의도를 정렬하고 그 결과를 flow list로 만들며, 이미 선택된 flow의 준비에서는 수정 범위, 현재 상태, 대상 파일 또는 산출물, 검증 조건을 확인합니다.
 내부 mode 선택 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, phase, routing rule, release surface 중 무엇을 가리키는지 확인하고, 해석에 따라 작업이 달라지면 meaning resolution 질문으로 먼저 잠급니다.
-이 플러그인은 `workflow-kit`이 정의한 broader workflow taxonomy와 canonical loop-mode contract를 runtime-oriented surface로 묶어 제공합니다.
+이 플러그인은 `workflow-kit`의 일반 workflow skill 의미를 참조하되, turn-gate runtime contract와 session continuity는 자체 runtime-oriented surface로 소유합니다.
 
 ## 플러그인 경계와 비목표
 
@@ -42,7 +42,7 @@
 - 대표 스펙: `loop-kit-dev/specs/plugin.md`
 - skill 상세 스펙 위치: `loop-kit-dev/specs/skills/*.md` 또는 복잡한 skill의 `loop-kit-dev/specs/skills/<skill-name>/spec.md`
 - turn-gate local references: `loop-kit-dev/skills/turn-gate/references/*.md`
-- canonical upstream SSOT: `src/workflow-kit-dev/specs/plugin.md`, `src/workflow-kit-dev/specs/skills/*.md`
+- referenced workflow skill specs: `src/workflow-kit-dev/specs/skills/deep-interview.md`, `src/workflow-kit-dev/specs/skills/autopilot.md`, `src/workflow-kit-dev/specs/skills/ralph-loop.md`, `src/workflow-kit-dev/specs/skills/review-loop.md`, `src/workflow-kit-dev/specs/skills/commit-readiness-gate.md`
 
 ## 내장 skill 체계
 
@@ -53,21 +53,21 @@
 
 ## SDD 운영 원칙
 
-- `workflow-kit`이 broader workflow map과 canonical loop contract의 SSOT를 계속 소유한다.
-- `loop-kit-dev`은 사용자 표면과 runtime loop orchestration만 소유한다.
-- `turn-gate`는 internal mode를 local `references/`로 흡수해 사용하되, 그 reference는 upstream SSOT와 동기화해 유지한다.
+- `workflow-kit`은 일반 workflow skill 의미를 제공한다.
+- `loop-kit-dev`은 turn-gate 사용자 표면, runtime loop orchestration, session continuity contract를 소유한다.
+- `turn-gate`는 internal mode를 local `references/`로 흡수해 사용하되, 그 reference는 관련 workflow skill spec과 동기화해 유지한다.
 - 복잡한 skill spec은 `specs/skills/<skill-name>/spec.md`를 기본 index로 두고, 세부 계약은 같은 folder 아래 sub-spec으로 분리할 수 있다.
 - `turn-gate`의 필수 운영 도구는 기본적으로 질문 도구 `request_user_input`와 계획 도구 `update_plan`이다.
 - `turn-gate`의 phase model은 `준비 -> 작업 -> 검증 -> 보고`를 런타임 surface에 드러내야 하며, deep-interview alignment, flow list design, meaning resolution, current-state inspection은 preparation 세부 작업으로 설명해야 한다.
 - `turn-gate-self-drive`는 self-drive overlay로만 동작하며, base loop gate 자체는 `turn-gate`를 직접 따른다.
 - `turn-gate-self-drive` 도중 사용자 메시지가 들어오면 멈추지 않고 현재 플로우 조정 또는 다음 플로우 우선 등록으로 처리한다.
-- 새로운 내부 loop mode가 필요하면 먼저 `workflow-kit`의 canonical contract를 정의하거나 갱신한 뒤 `loop-kit-dev`에 반영한다.
+- 새로운 내부 loop mode가 필요하면 해당 workflow skill의 일반 의미를 `workflow-kit`에 정의하거나 갱신한 뒤 `loop-kit-dev`의 runtime reference에 반영한다.
 - `loop-kit-dev`에서는 `autopilot`, `ralph-loop`, `review-loop`, `commit-readiness-gate`를 직접 호출 가능한 사용자 엔트리포인트로 늘리지 않는다.
-- `turn-gate`의 phase model이나 internal mode selection rule이 바뀌면 `workflow-kit` upstream spec, `loop-kit-dev` spec, manifest prompt를 같은 변경 단위에서 점검한다.
+- `turn-gate`의 phase model이나 session continuity rule이 바뀌면 `loop-kit-dev` spec, skill body, manifest prompt를 같은 변경 단위에서 점검한다. Internal mode 의미가 바뀐 경우에만 관련 `workflow-kit` skill spec을 함께 점검한다.
 
 ## 현재 구조 메모
 
 - 이 플러그인은 intentionally narrow한 operational package다.
 - `turn-gate`가 메인 실행 표면이다.
-- 내부 loop mode의 canonical 의미는 `src/workflow-kit-dev/specs/skills/deep-interview.md`, `src/workflow-kit-dev/specs/skills/autopilot.md`, `src/workflow-kit-dev/specs/skills/ralph-loop.md`, `src/workflow-kit-dev/specs/skills/review-loop.md`, `src/workflow-kit-dev/specs/skills/commit-readiness-gate.md`를 기준으로 보고, `turn-gate/references/`에는 그 실행용 absorbed contract를 둔다.
+- 내부 loop mode의 일반 의미는 `src/workflow-kit-dev/specs/skills/deep-interview.md`, `src/workflow-kit-dev/specs/skills/autopilot.md`, `src/workflow-kit-dev/specs/skills/ralph-loop.md`, `src/workflow-kit-dev/specs/skills/review-loop.md`, `src/workflow-kit-dev/specs/skills/commit-readiness-gate.md`를 기준으로 보고, `turn-gate/references/`에는 그 실행용 absorbed contract를 둔다.
 - autonomous subagent question routing은 current-phase mode가 아니라 `turn-gate-self-drive` overlay skill의 책임으로 둔다.
