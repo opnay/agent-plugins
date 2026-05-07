@@ -38,6 +38,11 @@ deep-interview alignment, flow list design, meaning resolution, current-state in
   - 사용자 메시지의 scope가 비어 있거나 너무 넓거나 여러 결과물을 만들 수 있거나 성공 기준과 검증 경로를 바꿀 수 있으면, work로 넘어가기 전에 user-gated question-routing으로 scope를 먼저 잠근다.
   - 범위 잠금은 최소한 포함 범위, 제외 범위, 대상 파일/표면 또는 산출물, 완료 기준, 검증 신호 중 이번 flow 결과를 바꿀 항목을 다룬다.
   - scope가 충분하다고 추론하는 경우에도 그 추론한 work boundary와 non-goal을 flow record에 남겨야 하며, 추론이 틀리면 되돌리기 어려운 작업은 질문 없이 진행하지 않는다.
+  - 사용자 메시지 기반 preparation은 planned flow list 전체를 진행하는 데 필요한 정보가 무엇인지 확인하고, 이후 flow들이 추가 사용자 질문 없이 self-drive로 진행될 수 있을 만큼 intent, scope, non-goal, acceptance signal, approval boundary, verification expectation을 수집한다.
+  - approval boundary, destructive/irreversible/external action, commit/push/PR/publish 결정처럼 예상되는 위험 작업은 초기 preparation에서 질문해 승인/비승인 또는 handoff 경계를 별도로 표시하고, self-drive가 자동 처리하지 못하는 user-gated checkpoint로 계획한다.
+  - 이후 flow 진행 중 초기 협의 범위 밖의 위험 작업이나 새 approval boundary가 나타나면, self-drive는 자동 처리하지 않고 user-gated question-routing으로 다시 질문해야 한다.
+  - 사용자가 self-drive 진행을 원하거나 autonomous continuation이 적합한 경우, planned flow list의 실행은 같은 플러그인의 `turn-gate-self-drive` overlay로 넘길 수 있다.
+  - self-driven planned flow sequence의 마지막 flow는 commit execution이 아니라 commit-readiness reporting을 완료 기준으로 둔다. commit execution, push, PR, publish는 별도 user-gated handoff다.
   - 사용자 메시지 기반 deep-interview 결과는 단순 질문 답변이 아니라 이후 flow list로 변환되어야 한다.
   - 비 사용자 메시지에서 시작하는 preparation은 이미 준비된 flow의 실행 전 준비이며, 필요한 수정 범위, 현재 상태, 대상 파일, stale assumption, 실행 전 조건을 확인한다.
   - operation/target ambiguity가 flow list나 작업 결과를 바꿀 수 있으면 flow list design이나 work 전에 meaning resolution으로 먼저 잠근다.

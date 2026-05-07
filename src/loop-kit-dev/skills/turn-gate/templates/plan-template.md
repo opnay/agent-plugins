@@ -38,7 +38,13 @@ Keep it incremental. Do not delete completed work; summarize completed flows and
 - Scope lock status: locked-by-question | inferred | not-needed | pending
 - Work boundary:
 - Non-goals:
+- Acceptance signal:
 - Verification expectation:
+- Expected risky actions:
+- Approval boundary summary:
+- Self-drive eligibility: eligible | partial | not-eligible | undecided
+- User-gated checkpoints:
+- Final planned flow: commit-readiness reporting | other
 
 1. `<flow slug or title>`
    - Purpose:
@@ -47,6 +53,9 @@ Keep it incremental. Do not delete completed work; summarize completed flows and
    - Core phase coverage: preparation | work | verification | reporting
    - Completion criteria:
    - Next-flow trigger:
+   - Verification expectation:
+   - Expected risky actions:
+   - Approval boundary: approved | not-approved | deferred | handoff-required | none
 2. `<flow slug or title>`
    - Purpose:
    - Why this flow:
@@ -54,6 +63,9 @@ Keep it incremental. Do not delete completed work; summarize completed flows and
    - Core phase coverage: preparation | work | verification | reporting
    - Completion criteria:
    - Next-flow trigger:
+   - Verification expectation:
+   - Expected risky actions:
+   - Approval boundary: approved | not-approved | deferred | handoff-required | none
 3. `<flow slug or title>`
    - Purpose:
    - Why this flow:
@@ -61,6 +73,9 @@ Keep it incremental. Do not delete completed work; summarize completed flows and
    - Core phase coverage: preparation | work | verification | reporting
    - Completion criteria:
    - Next-flow trigger:
+   - Verification expectation:
+   - Expected risky actions:
+   - Approval boundary: approved | not-approved | deferred | handoff-required | none
 
 ## Current Status
 
@@ -70,14 +85,19 @@ Keep it incremental. Do not delete completed work; summarize completed flows and
 - Required next action:
 - Pending question state: none | pending | answered | aborted | superseded
 - Work boundary:
+- Non-goals:
+- Acceptance signal:
 - Verification expectation:
 - Verification status: not-started | requested | pass | fail | blocked | insufficient | not-applicable
+- Expected risky actions:
+- Approval boundary status:
+- User-gated checkpoints:
 - Next planned flow:
 
 ## Continuity Guard Snapshot
 
 - Turn-gate active: yes | no
-- Question-routing mode: user-gated | undecided
+- Question-routing mode: user-gated | self-drive-handoff | undecided
 - User explicit stop: yes | no
 - Terminal summary allowed: yes | no
 - Required next action:

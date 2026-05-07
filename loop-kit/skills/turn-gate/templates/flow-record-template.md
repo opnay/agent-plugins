@@ -14,13 +14,13 @@ Keep the date-level history and flow index in `000-plan.md`; keep the detailed e
 - Flow scope: <what this flow owns>
 - Parent plan: .agents/sessions/YYYYMMDD/000-plan.md
 - Current mode: deep-interview | autopilot | review-loop | ralph-loop | commit-readiness-gate | undecided
-- Question-routing mode: user-gated | undecided
+- Question-routing mode: user-gated | self-drive-handoff | undecided
 - Current core phase: preparation | work | verification | reporting
 
 ## Continuity Guard
 
 - Turn-gate active: yes | no
-- Question-routing mode: user-gated | undecided
+- Question-routing mode: user-gated | self-drive-handoff | undecided
 - User explicit stop: yes | no
 - Terminal summary allowed: yes | no
 - Required next action:
@@ -47,9 +47,25 @@ Keep the date-level history and flow index in `000-plan.md`; keep the detailed e
 - Scope lock status: locked-by-question | inferred | not-needed | pending
 - Work boundary:
 - Non-goals:
+- Acceptance signal:
+- Expected risky actions:
 - Approval boundary:
+- User-gated checkpoints:
+- Self-drive eligibility:
 - Verification expectation:
 - Material judgment calls:
+
+## Expected Risky Actions
+
+1. <destructive | irreversible | external | commit | push | PR | publish | other>
+   - Exact target:
+   - Expected effect:
+   - Risk:
+   - Rollback or recovery:
+   - Included scope:
+   - Excluded scope:
+   - Initial agreement: approved | not-approved | deferred | handoff-required | not-applicable
+   - Self-drive handling: covered-by-initial-agreement | return-to-user-gated-question-routing
 
 ## Plan
 
@@ -75,7 +91,8 @@ Keep the date-level history and flow index in `000-plan.md`; keep the detailed e
 
 - Outcome:
 - Files changed:
-- Commit-ready state:
+- Commit-readiness report:
+- Commit execution approval: not-requested | requested-separately | not-applicable
 - Next-flow context:
 - Blocker, if any:
 

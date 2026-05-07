@@ -5,6 +5,8 @@
 `loop-kit-dev`은 `turn-gate`를 메인 표면으로 삼는 loop-oriented workflow 플러그인입니다.
 핵심 책임은 하나의 턴을 사용자가 턴을 종료하자고 요청할때까지 닫지 않고 유지하면서, 각 flow를 `준비 -> 작업 -> 검증 -> 보고`로 이어가고, 현재 phase의 메인 작업에 맞는 내부 loop mode를 `turn-gate` 안에서 선택해 실행하는 것입니다.
 사용자 메시지 기반 준비에서는 deep-interview alignment로 의도를 정렬하고 그 결과를 flow list로 만들며, 이미 선택된 flow의 준비에서는 수정 범위, 현재 상태, 대상 파일 또는 산출물, 검증 조건을 확인합니다.
+사용자 메시지 기반 준비는 planned flow list 전체를 실행하는 데 필요한 정보와 예상 위험 작업, approval boundary를 먼저 질문해 수집해야 하며, 사용자가 autonomous continuation을 원하면 이후 flow들은 `turn-gate-self-drive` overlay로 진행할 수 있습니다.
+이때 마지막 planned flow는 commit execution이 아니라 commit-readiness reporting으로 끝나며, 실제 commit, push, PR, publish는 별도 user-gated handoff로 남깁니다.
 내부 mode 선택 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, phase, routing rule, release surface 중 무엇을 가리키는지 확인하고, 해석에 따라 작업이 달라지면 meaning resolution 질문으로 먼저 잠급니다.
 이 플러그인은 `workflow-kit`의 일반 workflow skill 의미를 참조하되, turn-gate runtime contract와 session continuity는 자체 runtime-oriented surface로 소유합니다.
 
@@ -15,6 +17,8 @@
   - `preparation -> work -> verification -> reporting -> next-flow question-routing response` 구조 유지
   - 사용자 메시지 기반 준비와 기존 flow 기반 준비의 구분 유지
   - deep-interview alignment와 flow list design을 preparation 세부 작업으로 유지
+  - 사용자 메시지 기반 준비에서 planned flow list 전체에 필요한 정보, 예상 위험 작업, user-gated checkpoint 수집
+  - prepared planned flow list의 self-drive 실행과 마지막 commit-readiness reporting
   - internal mode 선택 전 operation meaning resolution
   - `turn-gate` 내부의 loop mode 선택
   - user-gated question routing 유지
@@ -50,6 +54,7 @@
 - `turn-gate`: turn continuity를 유지하고 각 flow를 `준비 -> 작업 -> 검증 -> 보고`로 진행하며 current-phase work에 맞는 내부 loop mode를 고른다.
   - spec: `loop-kit-dev/specs/skills/turn-gate/spec.md`
 - `turn-gate-self-drive`: `turn-gate`를 base contract로 적용하고, bounded decision을 subagent question packet으로 라우팅해 자동 진행한다.
+  - prepared planned flow list를 초기 협의된 경계 안에서 self-drive로 진행하고 마지막 flow에서 commit-readiness reporting을 수행한다.
   - spec: `loop-kit-dev/specs/skills/turn-gate-self-drive.md`
 
 ## SDD 운영 원칙
@@ -62,6 +67,9 @@
 - `turn-gate`의 clean-context verification은 읽기 전용 bounded verifier subagent 실행을 포함하며, 이 검증 전용 실행은 `turn-gate` 활성 중 사전 허용된 계약으로 취급한다.
 - `turn-gate`의 phase model은 `준비 -> 작업 -> 검증 -> 보고`를 런타임 surface에 드러내야 하며, deep-interview alignment, flow list design, meaning resolution, current-state inspection은 preparation 세부 작업으로 설명해야 한다.
 - `turn-gate-self-drive`는 self-drive overlay로만 동작하며, base loop gate 자체는 `turn-gate`를 직접 따른다.
+- `turn-gate-self-drive`는 초기 preparation을 대신하지 않고, `turn-gate`가 만든 planned flow list, 예상 위험 작업, approval boundary를 실행 입력으로 사용한다.
+- self-drive 중 초기 협의 범위 밖의 위험 작업이나 새 approval boundary가 나타나면 다시 user-gated question routing으로 질문한다.
+- self-driven planned flow sequence의 마지막 단계는 commit execution이 아니라 commit-readiness reporting이며, commit/push/PR/publish는 별도 user-gated handoff다.
 - `turn-gate-self-drive` 도중 사용자 메시지가 들어오면 멈추지 않고 현재 플로우 조정 또는 다음 플로우 우선 등록으로 처리한다.
 - 새로운 내부 loop mode가 필요하면 해당 workflow skill의 일반 의미를 `workflow-kit`에 정의하거나 갱신한 뒤 `loop-kit-dev`의 runtime reference에 반영한다.
 - `loop-kit-dev`에서는 `autopilot`, `ralph-loop`, `review-loop`, `commit-readiness-gate`를 직접 호출 가능한 사용자 엔트리포인트로 늘리지 않는다.

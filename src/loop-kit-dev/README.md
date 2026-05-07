@@ -4,6 +4,7 @@
 
 이 플러그인의 중심 표면은 `turn-gate` 하나입니다.
 여러 loop skill을 사용자에게 직접 노출하지 않고, `turn-gate`가 현재 턴의 구조를 유지하면서 기본 flow를 `준비 -> 작업 -> 검증 -> 보고`로 이어갑니다. 사용자 메시지 기반 준비에서는 deep-interview alignment로 의도를 정렬하고 이후 flow list를 만들며, 이미 선택된 flow의 준비에서는 수정 범위, 현재 상태, 대상 파일, 검증 조건을 먼저 확인합니다.
+사용자가 self-drive 진행을 원하면, 초기 준비에서 planned flow list 전체에 필요한 정보와 예상 위험 작업, approval boundary를 먼저 질문한 뒤 `turn-gate-self-drive`가 여러 flow를 이어서 수행합니다. 마지막 flow는 commit 실행이 아니라 commit-ready 보고로 끝나며, 실제 commit, push, PR, publish는 별도 승인 흐름으로 남깁니다.
 
 > [!WARNING]
 > Codex의 개발 중인 기능인 `default_mode_request_user_input`를 활성화해야 합니다.
@@ -58,6 +59,7 @@ codex plugin marketplace upgrade
 - 사용자가 멈추라고 할 때까지 턴을 계속 유지해야 하는 작업
 - 준비, 작업, 검증, 보고, 다음 플로우 선택이 드러나야 하는 작업
 - 사용자 메시지에서는 deep-interview로 의도를 정렬하고 flow list를 만들어야 하는 작업
+- 초기 준비에서 필요한 정보를 모은 뒤 여러 flow를 self-drive로 이어가고 마지막에 commit-ready 보고를 받아야 하는 작업
 - 이미 선택된 flow에서는 수정 범위, 현재 상태, 대상 파일, 검증 조건을 먼저 확인해야 하는 작업
 - 실행, 정제, 리뷰 처리, 커밋 준비 loop를 하나의 controller 안에서 골라야 하는 작업
 - 사용자 선택이 필요한 지점에서는 질문 도구를 써야 하는 작업
@@ -68,6 +70,7 @@ codex plugin marketplace upgrade
 
 - `turn-gate`: 실제 작업을 진행하는 메인 controller입니다.
 - `turn-gate-self-drive`: `turn-gate`를 먼저 적용한 뒤 blocked question을 subagent question packet으로 라우팅하는 overlay입니다.
+- `turn-gate-self-drive`: 초기 준비가 끝난 planned flow list를 협의된 경계 안에서 이어가고 마지막 flow에서 commit-ready 보고를 남기는 overlay입니다.
 
 `turn-gate`가 호출되면, 현재 세션 동안 이 skill을 1급 운영 규칙으로 활성화한 것으로 취급합니다.
 이 규칙은 skill body의 `Important` 섹션에서 먼저 드러나며, 결과 보고만으로 턴을 닫지 않고 다음 플로우 질문을 다시 여는 동작을 우선 계약으로 둡니다.
@@ -107,7 +110,9 @@ codex plugin marketplace upgrade
 
 `turn-gate-self-drive`에서는 일반적인 사용자 취향 누락을 중지 조건으로 보지 않습니다.
 가능한 한 안전하고 되돌릴 수 있는 기본값을 가정으로 기록하고 계속 진행합니다.
-멈춰야 하는 경우는 명시적 승인, 파괴적이거나 비가역적인 action 승인, 외부 action 승인, platform/tool/safety policy 경계처럼 hard boundary가 있는 경우로 제한합니다.
+초기 준비에서 예상되는 위험 작업은 미리 질문해 승인/비승인 또는 handoff 경계를 계획합니다.
+멈춰야 하는 경우는 초기 협의 범위 밖의 위험 작업, 새 명시적 승인, 파괴적이거나 비가역적인 action 승인, 외부 action 승인, platform/tool/safety policy 경계처럼 새 hard boundary가 나타나는 경우로 제한합니다.
+준비된 여러 flow를 self-drive로 진행할 때는 각 flow의 work boundary, non-goal, verification expectation을 다시 확인하고, planned flow list의 마지막에는 commit-readiness gate를 실행해 commit-ready 상태를 보고합니다.
 
 ## 사용 예시
 

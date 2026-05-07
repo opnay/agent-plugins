@@ -60,6 +60,9 @@
 - skill body는 deep-interview, flow list design, meaning resolution, current-state inspection을 `preparation`의 세부 방식으로 설명해야 한다.
 - skill body는 사용자 메시지 기반 preparation에서 scope가 비어 있거나 너무 넓거나 여러 결과물을 만들 수 있거나 성공 기준과 검증 경로를 바꿀 수 있으면 work 전에 질문으로 scope를 잠그도록 직접 설명해야 한다.
 - skill body는 질문 없이 추론한 scope라도 work boundary와 non-goal을 flow record에 남기도록 설명해야 한다.
+- skill body는 사용자 메시지 기반 preparation이 planned flow list 전체를 실행하는 데 필요한 intent, scope, non-goal, acceptance signal, verification expectation을 수집하고, 예상되는 위험 작업과 approval boundary를 질문해 self-drive로 진행 가능한 flow와 user-gated checkpoint를 구분하도록 설명해야 한다.
+- skill body는 초기 협의 범위 밖의 위험 작업이나 새 approval boundary가 이후 flow 중 나타나면 self-drive가 자동 처리하지 않고 다시 질문해야 한다고 설명해야 한다.
+- skill body는 self-driven planned flow sequence의 마지막 flow가 commit execution이 아니라 commit-readiness reporting으로 끝나야 하며, commit/push/PR/publish는 별도 승인 handoff임을 설명해야 한다.
 - skill body에는 `runtime-flow.md`의 전체 흐름과 `mode-selection.md`의 local `references/` 읽기 규칙이 직접 남아 있어야 한다.
 - skill body에는 terminal summary 금지, source message에 묶인 confirmed closure, next-flow reopening, Continuity Guard 확인, user-gated question routing, explicit turn-end option 기록 규칙이 직접 남아 있어야 한다.
 - skill body에는 clean-context verification이 full-history fork가 아니라 bounded verification packet이라는 점과 실패/차단/불충분 검증을 통과로 취급하지 않는 규칙이 직접 남아 있어야 한다.
