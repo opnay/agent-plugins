@@ -15,6 +15,7 @@ Keep the date-level history and flow index in `000-plan.md`; keep the detailed e
 - Parent plan: .agents/sessions/YYYYMMDD/000-plan.md
 - Current mode: deep-interview | autopilot | review-loop | ralph-loop | commit-readiness-gate | undecided
 - Question-routing mode: user-gated | undecided
+- Current core phase: preparation | work | verification | reporting
 
 ## Continuity Guard
 
@@ -32,10 +33,15 @@ Keep the date-level history and flow index in `000-plan.md`; keep the detailed e
 ## Analysis
 
 - User request:
+- Preparation source: user-message | existing-flow | correction | next-flow
+- Preparation result:
+- Planned flow list:
 - Current blocker:
 - Why this flow:
 - Why this mode:
 - Why this question-routing mode:
+- Work boundary:
+- Verification expectation:
 
 ## Plan
 
@@ -54,12 +60,14 @@ Keep the date-level history and flow index in `000-plan.md`; keep the detailed e
 - What was checked:
 - Result:
 - Remaining uncertainty:
+- Contrary evidence or multi-angle critique:
 
 ## Result Report
 
 - Outcome:
 - Files changed:
 - Commit-ready state:
+- Next-flow context:
 
 ## Next Flow Options
 

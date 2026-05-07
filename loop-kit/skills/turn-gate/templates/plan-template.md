@@ -30,35 +30,49 @@ Keep it incremental. Do not delete completed work; summarize completed flows and
 
 ## Planned Flow Sequence
 
+- Preparation source: user-message | existing-flow | correction | next-flow
+- Preparation result:
+- Flow-list basis:
+
 1. `<flow slug or title>`
    - Purpose:
    - Why this flow:
    - Owns:
+   - Core phase coverage: preparation | work | verification | reporting
    - Completion criteria:
    - Next-flow trigger:
 2. `<flow slug or title>`
    - Purpose:
    - Why this flow:
    - Owns:
+   - Core phase coverage: preparation | work | verification | reporting
    - Completion criteria:
    - Next-flow trigger:
 3. `<flow slug or title>`
    - Purpose:
    - Why this flow:
    - Owns:
+   - Core phase coverage: preparation | work | verification | reporting
    - Completion criteria:
    - Next-flow trigger:
 
 ## Current Status
 
 - Active flow:
+- Current core phase: preparation | work | verification | reporting
 - Latest decision:
 - Required next action:
+- Work boundary:
+- Verification expectation:
 - Next planned flow:
 
 ## Completed Flow Summaries
 
 - `<flow filename>`: <short retained summary>
+
+## Explicit Turn-End Option
+
+- Record that the user can explicitly stop the turn even when the visible question UI cannot show a stop option.
 
 ## Open Risks
 

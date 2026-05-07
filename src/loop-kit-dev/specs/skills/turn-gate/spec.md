@@ -9,7 +9,7 @@
 
 - 포함:
   - turn-level continuity 유지
-  - `analysis -> plan -> work -> verification -> result reporting -> next-flow question-routing response` 구조 유지
+  - `preparation -> work -> verification -> reporting -> next-flow question-routing response` 구조 유지
   - 사용자 메시지의 operation 의미 해독
   - current-phase work의 internal mode selection
   - 결과 보고 뒤 explicit choice 기반 next-flow reopening
@@ -24,6 +24,7 @@
 
 - 사용자가 턴을 종료하자고 요청하기 전까지 한 턴 안에서 여러 phase를 이어가야 하는 작업
 - requirement discovery, autonomous execution, refinement, review-driven correction, readiness checking 같은 current-phase work가 번갈아 나타나는 작업
+- 사용자 메시지 기반 준비와 비 사용자 메시지 기반 준비를 구분하고, 준비 뒤 작업, 검증, 보고로 이어져야 하는 작업
 - 결과 보고 뒤 clean stop이 아니라 다음 플로우 선택이 기본이어야 하는 작업
 - 사용자 지시어가 여러 구조 단위를 가리켜 작업 전에 target 또는 operation을 잠가야 하는 작업
 
@@ -55,7 +56,8 @@
 - `loop-kit-dev/skills/turn-gate/SKILL.md`는 이 스펙의 단순 요약본이 아니라 runtime에서 읽는 운영 표면이다.
 - skill body는 대화 응답 자체를 제어하는 conversation-level first-class rule을 `## Important` 섹션으로 앞부분에서 명시해야 한다.
 - `## Important` 섹션은 `Purpose`보다 먼저 위치해야 하며, session-level activation, terminal summary 금지, required ending states, `request_user_input` 기반 next-flow reopening, session record 유지 의무를 포함해야 한다.
-- skill body에는 `Core Loop` 또는 이에 준하는 단계별 실행 섹션이 있어야 하며, 최소한 analysis, plan, work, verification, result reporting, question-routing reopening을 각각 구분해 설명해야 한다.
+- skill body에는 `Core Loop` 또는 이에 준하는 단계별 실행 섹션이 있어야 하며, 최소한 preparation, work, verification, reporting, question-routing reopening을 각각 구분해 설명해야 한다.
+- skill body는 deep-interview, flow list design, meaning resolution, current-state inspection을 `preparation`의 세부 방식으로 설명해야 한다.
 - skill body에는 `runtime-flow.md`의 전체 흐름과 `mode-selection.md`의 local `references/` 읽기 규칙이 직접 남아 있어야 한다.
 - skill body에는 terminal summary 금지, source message에 묶인 confirmed closure, next-flow reopening, Continuity Guard 확인, user-gated question routing, explicit turn-end option 기록 규칙이 직접 남아 있어야 한다.
 - skill body에는 clean-context verification이 full-history fork가 아니라 bounded verification packet이라는 점과 실패/차단/불충분 검증을 통과로 취급하지 않는 규칙이 직접 남아 있어야 한다.
@@ -72,6 +74,8 @@
 - cross-flow 작업이라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 planned flow sequence, 각 flow의 완료 기준, 다음 flow 전환 조건을 최신 상태로 담고 있는가?
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`가 현재 phase까지 증분 갱신됐는가?
 - `work -> verification -> result reporting` 순서를 실제로 유지했는가?
+- 기본 flow를 `준비 -> 작업 -> 검증 -> 보고`로 유지했는가?
+- 사용자 메시지 기반 준비와 비 사용자 메시지 기반 준비를 구분했는가?
 - direct loop entrypoint를 사용자 표면으로 다시 열지 않았는가?
 - 결과 보고 뒤 explicit next-flow choice를 실제로 열었는가?
 - 결과 보고 직전에 `Continuity Guard`를 갱신했고 terminal summary 가능 여부를 확인했는가?

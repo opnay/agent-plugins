@@ -10,6 +10,11 @@
 - `000-plan.md`는 당일 작업의 히스토리, 사용자 요청 목록, flow index, 현재 계획, 완료 flow 요약을 소유한다.
 - `000-plan.md`의 현재 계획은 action checklist가 아니라 planned flow sequence여야 한다.
 - 각 planned flow에는 flow 목적, 왜 이 flow가 필요한지, 완료 기준, 다음 flow로 넘어가는 조건이 드러나야 한다.
+- concrete task에서 만든 planned flow sequence에는 preparation source, preparation result, planned flow list가 드러나야 한다.
+- 각 flow는 기본적으로 `preparation -> work -> verification -> reporting` 단계를 가진다.
+- 사용자 메시지 기반 preparation이면 deep-interview result와 사용자 의도에 맞춘 flow list를 기록한다.
+- 비 사용자 메시지 기반 preparation이면 수정 범위, 현재 상태, 대상 파일, stale assumption, 실행 전 조건 확인 결과를 기록한다.
+- 압축했다면 어느 flow가 preparation/work/verification/reporting을 함께 소유하는지 설명한다.
 - 세부 작업 단계는 해당 `001+` flow record의 plan/work/verification에 둔다.
 - `000-plan.md`는 "이 작업이 어떤 flow들의 흐름으로 진행되는지"를 소유하고, 각 flow record는 "그 flow 안에서 무엇을 했는지"를 소유한다.
 - `000-plan.md`는 증분 갱신하고, 완료된 작업도 삭제하지 않고 요약과 flow reference를 유지한다.
@@ -22,8 +27,8 @@
 - slug는 영어 소문자와 `-`만 사용한다.
 - flow 기본 템플릿은 `skills/turn-gate/templates/flow-record-template.md`를 사용한다.
 - `000-plan.md` 기본 템플릿은 `skills/turn-gate/templates/plan-template.md`를 사용한다.
-- 최소 flow 기록 항목은 user request message, task, flow scope, current mode, question-routing mode, continuity guard, analysis, plan, work, verification, result report, next-flow options, residual risk다.
-- flow record는 phase 메모가 아니지만, `analysis`, `plan`, `work`, `verification`, `result reporting` 각 phase가 끝날 때마다 현재 상태로 갱신해야 한다.
+- 최소 flow 기록 항목은 user request message, task, flow scope, current mode, question-routing mode, current core phase, preparation source/result, planned flow list, continuity guard, work, verification, report, next-flow options, residual risk다.
+- flow record는 phase 메모가 아니지만, `preparation`, `work`, `verification`, `reporting` 각 phase가 끝날 때마다 현재 상태로 갱신해야 한다.
 
 ## Continuity Guard
 
@@ -47,6 +52,7 @@
 ## 검토 질문
 
 - `000-plan.md`가 flow sequence와 transition criteria를 소유하고 있는가?
+- flow sequence가 preparation 결과에서 파생됐고 각 flow가 preparation/work/verification/reporting 구조를 유지하는가?
 - active flow record가 현재 phase까지 증분 갱신됐는가?
 - visible choices에 turn-end option이 없어도 record에는 turn-end option이 남았는가?
 - confirmed closure가 있다면 source explicit stop message가 같이 기록돼 있는가?

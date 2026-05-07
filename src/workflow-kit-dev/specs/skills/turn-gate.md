@@ -7,7 +7,13 @@
 - `turn-gate`는 연속성을 가지는 루프 게이트이면서, `종료`라는 판단을 사용자에게 넘기는 루프 게이트입니다.
 - 이 의도는 결과 보고를 종결로 닫지 않고, 다음 플로우 선택권을 계속 열어두는 방향으로 해석되어야 합니다.
 - 다음 플로우 선택지는 현재 결과 보고와 직접 연결된 좁은 옵션이어야 하며, 불필요하게 넓은 재프레이밍으로 흐르지 않아야 합니다.
-- 기본 턴 흐름은 `사용자 메시지 -> 분석 -> 계획 -> 작업 -> 검증 -> 결과 보고 / commit-ready -> 다음 플로우 진행을 위한 question-routing 응답`으로 이어집니다.
+- `turn-gate`의 가장 기본 flow는 `준비 -> 작업 -> 검증 -> 보고`입니다.
+- deep-interview, flow list design, 분석, 계획, 상태 파악, 수정 범위 파악, 질문 라우팅은 기본 flow 자체가 아니라 준비 단계의 세부 작업입니다.
+- 사용자 메시지에서 시작하는 준비는 deep-interview를 통해 intent, scope, 성공 기준, approval boundary를 정렬하고, 그 결과로 이후 flow list를 만들어야 합니다.
+- 비 사용자 메시지에서 시작하는 준비는 이미 준비된 flow에 대한 준비 과정이며, 필요한 수정 범위와 현재 상태 파악 등을 진행해야 합니다.
+- 작업은 실제 사용자가 요청한 작업을 진행하는 단계이며 파일 수정, 검증 실행, 조사 등 다양한 방식의 작업이 될 수 있습니다.
+- 검증은 이 flow에 대한 검증 작업이며, 수정한 파일이 제대로 적용됐는지, 타입 오류는 없는지, 조사를 했다면 다양한 관점으로 논리 비판을 했는지 확인해야 합니다.
+- 보고는 turn 종료가 아니라 다음 flow 진행을 위해 이번 flow의 맥락을 정리하는 단계입니다. 계획된 flow가 소진되면 질문 도구로 다음 flow나 작업을 받아야 합니다.
 - 분석 단계에서는 사용자 메시지를 구조 분해하여, 사용자의 요청 의도와 요청 행동을 정리해야 합니다.
 - 계획 단계에서는 분석 단계에서 정리한 요청을 작업하기 위한 상세 계획을 준비해야 합니다.
 - 작업 단계에서는 준비한 계획을 실행해야 합니다.
@@ -52,7 +58,7 @@
 
 ## 목적
 
-`turn-gate`는 하나의 사용자 턴 안에서 `분석 -> 계획 -> 작업 -> 검증 -> 결과 보고 / commit-ready -> 다음 플로우 진행을 위한 question-routing 응답`을 명시적으로 이어가고, 사용자가 턴을 종료하자고 요청할때까지 턴을 종료하지 않도록 유지하는 loop gate 스킬입니다.
+`turn-gate`는 하나의 사용자 턴 안에서 `준비 -> 작업 -> 검증 -> 보고 -> 다음 플로우 진행을 위한 question-routing 응답`을 명시적으로 이어가고, 사용자가 턴을 종료하자고 요청할때까지 턴을 종료하지 않도록 유지하는 loop gate 스킬입니다.
 이 skill이 활성화되면 `turn-gate` 메인 플로우는 대화 응답 자체의 1급 제어 규칙이 되며, 사용자의 explicit stop 전까지 결과 보고를 terminal response로 닫지 않습니다.
 
 ## 경계
@@ -88,7 +94,9 @@
 
 - `workflow-kit-dev/skills/turn-gate/SKILL.md`는 이 스펙의 단순 요약본이 아니라 runtime에서 읽는 운영 표면이다.
 - skill body는 대화 응답 자체를 제어하는 conversation-level first-class rule을 앞부분에서 명시해야 한다.
-- skill body에는 `Phase Loop` 또는 이에 준하는 단계별 실행 섹션이 있어야 하며, 최소한 analyze, plan, work, verification, result reporting, next-flow question-routing 단계를 각각 구분해 설명해야 한다.
+- skill body에는 `Phase Loop` 또는 이에 준하는 단계별 실행 섹션이 있어야 하며, 최소한 preparation, work, verification, reporting을 core flow로 각각 구분해 설명해야 한다.
+- next-flow question-routing은 추가 core phase가 아니라 reporting 이후 같은 턴을 이어가기 위한 continuation surface로 설명해야 한다.
+- skill body는 deep-interview, flow-list design, meaning resolution, current-state inspection을 preparation의 세부 방식으로 설명해야 한다.
 - skill body에는 terminal summary 금지, next-flow reopening, Continuity Guard 확인, user-gated question routing, explicit turn-end option 기록 규칙이 직접 남아 있어야 한다.
 - skill body를 짧게 다듬더라도 위 단계와 금지 규칙을 한 문단으로 뭉개지 말고, 실행 중 빠르게 확인 가능한 형태로 유지한다.
 - 세부 예시는 줄일 수 있지만 bad ending shape 또는 그에 준하는 금지 패턴은 skill body에 남겨 summary-only closing과 generic follow-up phrase를 막아야 한다.
@@ -105,12 +113,12 @@
 - 이 규칙은 skill 내부 체크리스트가 아니라 assistant response lifecycle 자체에 적용한다.
 - `user_explicit_stop`이 false인 동안 result reporting은 terminal response가 아니며, 반드시 next-flow reopening 또는 active question-routing으로 이어져야 한다.
 - 사용자가 명시적으로 턴 종료를 요청했거나 flow record에 confirmed closure가 기록된 경우가 아니라면 일반적인 final summary로 턴을 닫지 않는다.
-- 분석 단계에서는 사용자 메시지를 구조 분해해 요청 의도와 요청 행동을 정리한다.
-- 분석 단계는 필요하면 이후 이어질 future flow/phase 후보까지 미리 설계할 수 있다.
-- 계획 단계에서는 분석 단계에서 정리한 요청을 작업하기 위한 상세 계획과, 필요하면 이후 flow/phase를 위한 provisional 설계를 준비한다.
-- 작업 단계에서는 준비한 계획을 실행한다.
-- 검증 단계에서는 작업 결과를 확인하고 남은 불확실성을 드러내며, 이후 flow/phase 재설계가 필요한지 여부를 surface한다.
-- 결과 보고 단계에서는 완료된 작업의 결과를 보고한다.
+- preparation 단계에서는 사용자 메시지 또는 기존 flow 상태를 바탕으로 요청 의도, 요청 행동, 수정 범위, 현재 상태, 성공 기준, approval boundary, verification signal, planned flow list를 정리한다.
+- 사용자 메시지에서 시작하는 preparation은 deep-interview alignment를 사용한다.
+- 비 사용자 메시지에서 시작하는 preparation은 이미 준비된 flow의 수정 범위, 현재 상태, 대상 파일, stale assumption, 실행 전 조건을 확인한다.
+- work 단계에서는 준비한 경계 안에서 실제 요청 작업을 수행한다.
+- verification 단계에서는 work 결과를 확인하고 남은 불확실성을 드러내며, 조사/판단 작업이라면 다양한 관점의 논리 비판을 수행한다.
+- reporting 단계에서는 완료된 작업의 결과를 다음 flow 진행을 위한 맥락으로 보고한다.
 
 ### meaning resolution
 
@@ -128,6 +136,8 @@
 - `.agents/sessions/{YYYYMMDD}/000-plan.md`는 날짜 기준 plan artifact이며, 당일 turn-gated 작업의 히스토리, 사용자 요청 목록, flow index, 현재 계획, 완료 flow 요약을 소유한다.
 - `000-plan.md`는 증분 갱신되어야 하고, 완료된 작업도 삭제하지 않고 요약과 flow reference를 유지한다.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record는 사용자 요청에 따른 개별 flow의 상세 보고서이며, 해당 flow의 analysis, plan, work, verification, result report를 구체적으로 남긴다.
+- 개별 flow record에는 preparation source/result, planned flow list, current core phase가 필요한 경우 함께 남아야 한다.
+- preparation result에는 사용자 메시지 기반 deep-interview 결과 또는 비 사용자 메시지 기반 수정 범위/현재 상태/대상 파일/실행 전 조건 확인 결과가 드러나야 한다.
 - 상세 flow record는 completed flow를 기다리지 말고 각 phase가 끝날 때마다 증분 갱신되어야 한다.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record의 최소 항목에는 user request message와 question-routing mode가 포함되어야 한다.
 - flow record의 `Next Flow Options`에는 사용자 표시 질문에 턴 종료 선택지가 보이지 않는 경우에도 명시적인 turn-end option이 포함되어야 한다.
@@ -171,7 +181,8 @@
 
 ## 검토 질문
 
-- 이번 응답이 `분석 -> 계획 -> 작업 -> 검증 -> 결과 보고`를 visible shape로 유지하고 있는가?
+- 이번 응답이 `준비 -> 작업 -> 검증 -> 보고`를 visible shape로 유지하고 있는가?
+- deep-interview와 flow-list design을 preparation의 세부 작업으로 다뤘는가?
 - 사용자 표현에 구조적 다의성이 있으면 downstream workflow 선택 전에 meaning resolution 질문을 열었는가?
 - cross-flow task라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 최신 상태인가?
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` record가 현재 phase까지 증분 갱신됐는가?

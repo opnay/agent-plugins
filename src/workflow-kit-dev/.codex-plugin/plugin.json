@@ -32,7 +32,8 @@
     ],
     "defaultPrompt": [
       "Think through this complex problem step by step, revise assumptions if needed, and verify the conclusion.",
-      "Keep this turn alive across question, plan, command, result reporting, and the next explicit flow.",
+      "Keep this turn alive across preparation, work, verification, reporting, and the next explicit flow.",
+      "In turn-gate, use deep-interview and flow-list design for user-message preparation, and inspect scope, current state, targets, and verification expectations for existing-flow preparation.",
       "Use turn-gate-self-drive when turn-gated questions should be answered by subagents instead of by me.",
       "Make a read-only execution plan before implementation starts.",
       "Run this feature request end-to-end with autopilot.",

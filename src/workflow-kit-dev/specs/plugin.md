@@ -5,7 +5,7 @@
 `workflow-kit-dev`은 작업 lifecycle 전반을 다루는 workflow 플러그인입니다.
 핵심 책임은 requirement discovery, sequential analysis, planning, execution, refinement, review, final gating, 그리고 사용자가 턴을 종료하자고 요청할때까지 턴을 닫지 않는 loop-gated continuity를 각각의 workflow skill로 제공하는 것입니다.
 이 판단 전에는 사용자 지시어의 operation 의미가 skill, spec, plugin, phase, routing rule, release surface 중 어디를 가리키는지 확인해야 하며, 해석에 따라 작업이 달라지면 meaning resolution 질문으로 먼저 잠급니다.
-repository-local operating rule이 non-terminal turn을 요구하면, `turn-gate`를 turn-level loop gate로 유지한 채 현재 phase owner를 선택합니다.
+repository-local operating rule이 non-terminal turn을 요구하면, `turn-gate`를 turn-level loop gate로 유지한 채 각 flow를 `준비 -> 작업 -> 검증 -> 보고`로 이어갑니다. 사용자 메시지 기반 준비에서는 deep-interview alignment로 의도를 정렬하고 이후 flow list를 만들며, 이미 선택된 flow의 준비에서는 수정 범위, 현재 상태, 대상 파일 또는 산출물, 검증 조건을 확인합니다.
 `turn-gate`가 활성화되면 현재 세션 동안 first-class loop gate rule로 취급합니다.
 bounded decision을 subagent question packet으로 라우팅해 자동 진행해야 하는 경우 `turn-gate-self-drive` overlay를 선택합니다.
 `turn-gate-self-drive` 도중 사용자 메시지가 들어오면 이를 중단으로 보지 않고 현재 플로우 조정 또는 다음 플로우 우선 등록으로 처리합니다.
@@ -51,7 +51,7 @@ bounded decision을 subagent question packet으로 라우팅해 자동 진행해
   - spec: `workflow-kit-dev/specs/skills/deep-interview.md`
 - `planner`: read-only investigation을 통해 decision-complete plan을 만든다.
   - spec: `workflow-kit-dev/specs/skills/planner.md`
-- `turn-gate`: `분석 -> 계획 -> 작업 -> 결과 보고 / commit-ready -> 다음 플로우 진행을 위한 question-routing 응답` 구조를 유지하고, repository rule이 요구하면 사용자가 턴을 종료하자고 요청할때까지 턴을 닫지 않는 loop gate를 관리한다.
+- `turn-gate`: `준비 -> 작업 -> 검증 -> 보고 -> 다음 플로우 진행을 위한 question-routing 응답` 구조를 유지하고, repository rule이 요구하면 사용자가 턴을 종료하자고 요청할때까지 턴을 닫지 않는 loop gate를 관리한다.
   - spec: `workflow-kit-dev/specs/skills/turn-gate.md`
 - `turn-gate-self-drive`: `turn-gate`를 base contract로 직접 적용한 뒤, blocked question을 subagent question packet으로 라우팅하는 overlay를 제공한다.
   - spec: `workflow-kit-dev/specs/skills/turn-gate-self-drive.md`

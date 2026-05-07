@@ -8,6 +8,15 @@
   - 활성화된 동안 응답은 loop continuation, question-routing, explicit user stop 처리 중 하나로 끝나야 하며, 일반적인 final summary로 턴을 닫으면 안 된다.
 
 - `turn-gate`가 current-phase work에 맞는 내부 loop mode를 고르길 원한다.
+  - `turn-gate`의 가장 기본 flow는 `준비 -> 작업 -> 검증 -> 보고`여야 한다.
+  - deep-interview, flow list design, 상태 파악, 수정 범위 파악, 질문 라우팅, 내부 mode 선택은 기본 flow 자체가 아니라 `준비` 안의 세부 작업이나 파생 작업이어야 한다.
+  - 사용자 메시지에서 시작하는 준비는 deep-interview를 사용해 intent, scope, 성공 기준, approval boundary를 확인하고, 사용자 의도에 맞는 이후 flow list를 준비해야 한다.
+  - 예를 들어 "로그인 페이지를 만들자"라는 요청은 deep-interview로 페이지 구현에 필요한 컴포넌트, 디자인 시스템 사용 여부, 작업을 flow 단위로 나눌 기준을 확보한 뒤 작업으로 넘어가야 한다.
+  - 비 사용자 메시지에서 시작하는 준비는 이미 준비된 flow에 대한 준비 과정이며, 필요한 수정 범위 파악, 현재 상태 파악, 대상 파일 재확인, 실행 전 조건 확인을 수행해야 한다.
+  - 작업은 사용자가 요청한 실제 작업을 진행하는 단계이며, 파일 수정, 검증, 조사 같은 다양한 작업 유형을 포함할 수 있다.
+  - 검증은 해당 flow에 대한 검증 단계이며, 파일 수정이 제대로 적용됐는지, 타입 오류가 없는지, 조사의 경우 다양한 관점에서 논리 비판을 수행했는지 확인해야 한다.
+  - 보고는 turn 종료가 아니라 다음 flow 진행을 위한 이번 flow의 맥락 정리 단계여야 한다.
+  - 계획된 flow가 소진되면 보고 단계에서 질문 도구를 사용해 사용자에게 다음 flow나 작업을 받아야 한다.
   - requirement discovery 성격의 `deep-interview`도 내부 mode로 흘러가길 원한다.
   - `autopilot`, `ralph-loop`, `review-loop`, readiness gate 같은 loop는 사용자가 직접 고르지 않고 `turn-gate` 안에서 선택되길 원한다.
   - 내부 loop mode의 canonical contract는 `workflow-kit`이 SSOT로 계속 소유하길 원한다.
