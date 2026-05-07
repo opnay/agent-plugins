@@ -44,7 +44,7 @@ Activation, incoming message handling, planned self-drive handoff, next-flow reo
 
 Treat every incoming user message as authoritative input inside the same gated turn.
 
-First decide whether the message clearly asks to end the current turn itself. Only clear wording such as "end this turn", "stop the turn", "we are done here", "턴 종료", "여기서 끝", or equivalent intent counts as explicit turn stop. If that intent is unclear, do not infer closure.
+First decide whether the message clearly asks to end the current turn itself. Only clear wording such as "end this turn", "stop the turn", "we are done here", "turn end", "턴 종료", "여기서 끝", or equivalent intent counts as explicit turn stop. If that intent is unclear, do not infer closure.
 
 If the message is not an explicit turn stop, it is continuation input by default. Do not close just because the situation is not named in this skill. Route continuation by its effect on the active flow: refresh status and continue, revise analysis or plan, reread a changed target, update next-flow candidates, open an approval boundary, handle a review or verification request, prepare a self-drive handoff, or return to the earliest safe phase. Questions, review requests, status checks, corrections, priority changes, and new task requests are examples only, not a closed taxonomy.
 
@@ -64,9 +64,19 @@ Preparation decides what this flow owns, why it exists, and what must be true be
 - Identify requested intent, requested action, current blocker, likely internal mode, approval boundary, preparation result, planned flow list, work boundary, expected risky actions, user-gated checkpoints, and verification expectation.
 - Use the planning tool once meaningful work begins. For multi-flow work, keep `000-plan.md` as the flow sequence and put detailed task steps in the active `001+` flow record.
 
-### Planned Flow Preparation
+### Operational Preparation And Planned Flows
 
-For user-message-driven preparation, prepare the whole planned flow list, not only the next edit.
+User-message intake and planned-flow design can be their own `operational-preparation` flow when they create or update session plan artifacts. This flow owns session intake, scope and non-goal notes, approval-boundary planning, the active flow record, and the planned flow list. It is not a pause, final answer, or hidden analysis step.
+
+Opening a question does not stop `turn-gate`. A scope lock, meaning clarification, approval question, or next-flow choice leaves the turn in active question-routing. Record the pending question and required next action in the active flow record.
+
+Keep operational preparation distinct from executable `change-unit` flows. A `change-unit` flow owns reviewable code, docs, fixtures, config, release-surface changes, or another artifact change that can be understood, reviewed, verified, and, if needed, committed together.
+
+Planned flows are not phase names and are not merely direct user-value items. Do not create planned flows named only `analysis`, `work`, `verification`, `reporting`, `final QA`, or `commit-readiness reporting`. A supporting component, domain logic layer, fixture update, or page assembly can be a planned flow when it is a cohesive reviewable or commit-sized change unit.
+
+Pure final QA, consistency checking, verification-result reporting, readiness reporting, and commit-readiness reporting are not planned flows unless they create or modify a distinct reviewable artifact. Keep them in the active change-unit flow's `verification` or `reporting`, or as a user-gated handoff.
+
+For user-message-driven preparation, prepare the whole planned flow list, not only the next edit:
 
 - Collect enough information for all planned flows: intent, scope, non-goals, acceptance signal, verification expectation, expected risky actions, and approval/user-gated checkpoints.
 - Ask expected risky-action questions up front when planned flows may involve destructive, irreversible, external, commit, push, PR, publish, or similar sensitive actions.
@@ -155,7 +165,8 @@ Maintain `.agents/sessions/{YYYYMMDD}/000-plan.md` and `.agents/sessions/{YYYYMM
 - Use `skills/turn-gate/templates/plan-template.md` for `000-plan.md`.
 - Use `skills/turn-gate/templates/flow-record-template.md` for flow records.
 - `000-plan.md` owns date-level history, user requests, flow index, planned flow sequence, transition criteria, and completed flow summaries.
-- Each `001+` file owns one flow's details: user request message, task, flow scope, current mode, question-routing mode, current core phase, `Continuity Guard`, preparation source/result, planned flow list, work boundary, non-goals, expected risky actions, approval-boundary status, verification expectation, work, verification, report, next-flow options, and residual risk.
+- `000-plan.md` planned flow sequence must distinguish `operational-preparation` flows from executable `change-unit` flows.
+- Each `001+` file owns one flow's details: user request message, task, flow type, flow scope, current mode, question-routing mode, current core phase, `Continuity Guard`, preparation source/result, planned flow list, work boundary, non-goals, expected risky actions, approval-boundary status, verification expectation, work, verification, report, next-flow options, and residual risk.
 - Update the flow record incrementally after preparation, work, verification, and reporting.
 
 ### Continuity Guard

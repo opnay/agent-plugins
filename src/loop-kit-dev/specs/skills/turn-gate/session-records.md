@@ -9,14 +9,23 @@
 - active turn-gated task마다 `.agents/sessions/{YYYYMMDD}/000-plan.md` 날짜 기준 plan과 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 상세 flow report 체계를 유지한다.
 - `000-plan.md`는 당일 작업의 히스토리, 사용자 요청 목록, flow index, 현재 계획, 완료 flow 요약을 소유한다.
 - `000-plan.md`의 현재 계획은 action checklist가 아니라 planned flow sequence여야 한다.
-- 각 planned flow에는 flow 목적, 왜 이 flow가 필요한지, 완료 기준, 다음 flow로 넘어가는 조건이 드러나야 한다.
+- session record에는 flow type을 구분할 수 있어야 한다: `operational-preparation` 또는 `change-unit`.
+- `operational-preparation` flow는 사용자 메시지 해석, scope lock, approval boundary 정리, planned flow list 설계를 소유하며, 산출물은 plan/session record다.
+- `change-unit` flow는 실제 코드, 문서, fixture, 설정, release surface처럼 검토 가능한 산출물 변경을 소유한다.
+- 사용자 메시지 기반 bootstrap을 기록할 때는 operational-preparation flow와 그 결과 planned change-unit flow list를 구분한다.
+- planned flow sequence는 phase checklist가 아니며, `분석`, `작업`, `검증`, `커밋 준비` 같은 진행 단계를 별도 flow로 나열하지 않는다.
+- 각 planned flow는 함께 이해하고 검토하고 검증하고 필요하면 커밋할 수 있는 응집된 변경 단위여야 한다. 최종 사용자에게 직접 보이는 가치 단위가 아니어도 된다.
+- 순수 최종 QA, 통합 검증, 정합성 점검, 검증 결과 보고, commit-readiness reporting은 별도 산출물 변경을 소유하지 않는 한 planned flow로 기록하지 않는다.
+- 그런 확인과 보고는 마지막 변경 단위 flow record의 `Verification`, `Result Report`, `Next Flow Options`, 또는 user-gated handoff 상태에 기록한다.
+- 회귀 테스트 fixture, snapshot baseline, 문서, 운영자 리포트 출력, validator 진단 출력처럼 검토 가능한 산출물을 만들거나 바꾸는 경우에는 그 산출물 변경을 planned flow로 기록할 수 있다.
+- 각 planned flow에는 flow type, flow 목적, 왜 이 경계가 필요한지, 완료 기준, 다음 flow로 넘어가는 조건이 드러나야 한다.
 - concrete task에서 만든 planned flow sequence에는 preparation source, preparation result, planned flow list가 드러나야 한다.
 - 각 flow는 기본적으로 `preparation -> work -> verification -> reporting` 단계를 가진다.
 - 사용자 메시지 기반 preparation이면 deep-interview result와 사용자 의도에 맞춘 flow list를 기록한다.
 - 비 사용자 메시지 기반 preparation이면 수정 범위, 현재 상태, 대상 파일, stale assumption, 실행 전 조건 확인 결과를 기록한다.
-- 압축했다면 어느 flow가 preparation/work/verification/reporting을 함께 소유하는지 설명한다.
+- 압축했다면 어느 flow가 preparation/work/verification/reporting을 함께 소유하는지 설명한다. 단, phase를 쪼갠 것을 flow sequence로 포장하지 않는다.
 - 세부 작업 단계는 해당 `001+` flow record의 plan/work/verification에 둔다.
-- `000-plan.md`는 "이 작업이 어떤 flow들의 흐름으로 진행되는지"를 소유하고, 각 flow record는 "그 flow 안에서 무엇을 했는지"를 소유한다.
+- `000-plan.md`는 "이 작업이 어떤 응집 변경 단위들의 흐름으로 진행되는지"를 소유하고, 각 flow record는 "그 flow 안에서 무엇을 했는지"를 소유한다.
 - `000-plan.md`는 증분 갱신하고, 완료된 작업도 삭제하지 않고 요약과 flow reference를 유지한다.
 
 ## Flow Record
@@ -27,7 +36,7 @@
 - slug는 영어 소문자와 `-`만 사용한다.
 - flow 기본 템플릿은 `skills/turn-gate/templates/flow-record-template.md`를 사용한다.
 - `000-plan.md` 기본 템플릿은 `skills/turn-gate/templates/plan-template.md`를 사용한다.
-- 최소 flow 기록 항목은 user request message, task, flow scope, current mode, question-routing mode, current core phase, preparation source/result, planned flow list, continuity guard, work, verification, report, next-flow options, residual risk다.
+- 최소 flow 기록 항목은 user request message, task, flow type, flow scope, current mode, question-routing mode, current core phase, preparation source/result, planned flow list, continuity guard, work, verification, report, next-flow options, residual risk다.
 - flow record는 phase 메모가 아니지만, `preparation`, `work`, `verification`, `reporting` 각 phase가 끝날 때마다 현재 상태로 갱신해야 한다.
 
 ## Continuity Guard
@@ -53,6 +62,9 @@
 
 - `000-plan.md`가 flow sequence와 transition criteria를 소유하고 있는가?
 - flow sequence가 preparation 결과에서 파생됐고 각 flow가 preparation/work/verification/reporting 구조를 유지하는가?
+- 사용자 메시지 해석과 flow list 설계가 operational-preparation flow로 기록되고, 실행용 planned flows와 섞이지 않았는가?
+- flow sequence가 phase list나 direct user-value list가 아니라 reviewable or commit-sized change-unit list인가?
+- 최종 QA/readiness/reporting만 수행하는 항목이 산출물 변경 없이 flow sequence에 들어가지 않았는가?
 - active flow record가 현재 phase까지 증분 갱신됐는가?
 - visible choices에 turn-end option이 없어도 record에는 turn-end option이 남았는가?
 - confirmed closure가 있다면 source explicit stop message가 같이 기록돼 있는가?

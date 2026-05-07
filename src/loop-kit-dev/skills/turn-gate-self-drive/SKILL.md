@@ -1,171 +1,149 @@
 ---
 name: turn-gate-self-drive
-description: Self-drive overlay for `turn-gate`. Use when a turn-gated task should keep progressing without waiting for user answers by routing blocked decisions to subagents while preserving the `turn-gate` continuity contract.
+description: Self-drive overlay for `turn-gate`. Use when a turn-gated task should keep progressing without waiting for user answers by routing bounded decisions to subagents while preserving the `turn-gate` continuity contract.
 ---
-
-# Turn Gate Self Drive
 
 ## Important
 
-Use this skill only as an overlay on the same-plugin `turn-gate` skill. First apply `turn-gate` as the base loop contract: keep the same turn alive, preserve the `Continuity Guard`, maintain flow records, run verification before reporting, and reopen the next flow unless the user explicitly ends the turn.
+Use this skill only as an overlay on the same plugin's `turn-gate` skill.
 
-Initial preparation is owned by `turn-gate`, not by this skill. Before self-drive begins, `turn-gate` must have collected the planned flow list, intent, scope, non-goals, acceptance signal, verification expectations, expected risky actions, approval boundaries, and user-gated checkpoints. This skill executes that prepared plan and routes bounded decisions; it does not invent missing scope or replace user approval.
+- Apply `turn-gate` first. This skill does not replace the base loop, core phases, session records, verification rules, or user-gated approval routing.
+- Use self-drive only after user-message-driven preparation has produced a planned flow list, work boundaries, non-goals, verification expectations, expected risk boundaries, and user-gated checkpoints.
+- The planned flow list is a list of cohesive change units, not a phase list. Do not create self-drive flows for analysis, work, verification, reporting, final QA, consistency checking, or commit-readiness reporting unless that item creates or modifies a distinct reviewable artifact or change unit.
+- Continue through prepared flows without asking the user again only when the next decision is bounded enough for a subagent question packet.
+- Stop self-drive and return to `turn-gate` user-gated question routing for unprepared scope gaps, new approval boundaries, destructive or irreversible action, external effects, commit, push, PR, publish, or safety/tool approval.
+- After the last planned change-unit flow ends, leave a commit-readiness gate report. This report is not commit execution approval and is not a new planned flow unless it owns a distinct artifact change.
+- Commit, push, PR, and publish are separate user-gated handoffs.
+- At every flow-end question-routing boundary, reread `turn-gate` and `turn-gate-self-drive` before forming the next flow question, scope question, self-drive packet, or user-gated approval question. This refresh is deterministic, not conditional on detecting context cleanup.
 
 ## Purpose
 
-Use `turn-gate-self-drive` when a `turn-gate` task should continue through a prepared planned flow list without repeatedly asking the user. The overlay sends bounded decision packets to subagents, consumes their answers as decision input, and returns to `turn-gate` user-gated question routing when the prepared agreement no longer covers the next action.
+Use `turn-gate-self-drive` when a turn-gated task should keep progressing through a prepared sequence without waiting for user answers at every bounded decision.
 
-This skill owns self-drive packet structure, answer handling, stale-answer handling, context-gap recovery, planned-flow sequence execution, deterministic flow-end rereads, and final commit-readiness reporting. It does not own `turn-gate` phase continuity, current-phase mode selection, direct user-gated next-flow operation, runtime approval policy, or commit/push/PR/publish execution.
+This skill owns self-drive question routing: how to package bounded questions for subagents, how to read their answers, how to recover after context gaps, how to treat stale answers, and how to return to user-gated routing at approval boundaries. The base `turn-gate` skill continues to own turn continuity, phase order, flow records, `Continuity Guard`, clean-context verification, result reporting, and next-flow reopening.
 
-## Use When
+## Entry Conditions
 
-- `turn-gate` is the governing loop.
-- The user requested autonomous continuation, self-driving progress, or no extra user questions between prepared flows.
-- `turn-gate` preparation already recorded the planned flow list and per-flow boundaries.
-- The next decision is bounded by recorded evidence, constraints, non-goals, verification expectations, and approval boundaries.
+Before self-drive starts, confirm the base `turn-gate` preparation has already recorded:
 
-Do not use self-drive for a flow whose scope, acceptance signal, verification expectation, risky-action treatment, or approval boundary is missing and would affect the result.
-
-## Planned Flow Execution
-
-Execute prepared flows in order. Before each flow starts:
-
-1. Re-read the active flow record and the prepared planned flow list.
-2. Confirm the flow's work boundary, non-goals, acceptance signal, verification expectation, expected risky actions, approval boundary, and user-gated checkpoints.
-3. Check whether the next action is inside the recorded agreement.
-4. Continue without asking the user only when the decision is bounded and evidence is sufficient.
-5. If a bounded decision is needed, create a self-drive packet and ask a subagent.
-6. Run the work, verification, reporting, and next-flow reopening under the base `turn-gate` contract.
-
-Expected risky actions are not automatic stop points. If the initial `turn-gate` preparation explicitly recorded a risky action as approved, not approved, or assigned to a handoff checkpoint, follow that recorded boundary. Stop self-drive only when the risk is outside the initial agreement, the evidence no longer matches the recorded boundary, or a new approval boundary appears.
-
-If the flow list reaches its last planned flow, run commit-readiness reporting as the final planned flow. Report whether the work is ready for a commit and what remains uncertain. Do not commit, stage for commit, push, open a PR, publish, or ask for execution approval as part of this self-drive flow. Commit/push/PR/publish are separate explicit user-gated handoffs.
-
-## Boundary Recheck
-
-At each flow start, before each subagent question, and before acting on each subagent answer, recheck:
-
+- user intent and active task scope
+- planned flow list made of cohesive reviewable change units
+- work boundary and non-goals for each planned flow
+- acceptance signals and verification expectations
+- expected risky work and approval boundaries
+- user-gated checkpoints
 - current `Continuity Guard`
-- active flow record
-- planned flow list position
-- recorded scope and non-goals
-- verification expectation
-- expected risky actions and their recorded treatment
-- approval boundaries and user-gated checkpoints
-- incoming user messages since the packet was created
 
-Return to same-plugin `turn-gate` user-gated question routing with `request_user_input` when you find:
+If this information is missing and the gap can change the result, do not invent a self-drive plan. Return to `turn-gate` preparation or user-gated question routing.
 
-- missing scope that changes the result
-- a risky action outside the initial agreement
-- a new destructive, irreversible, external-action, safety, platform, or tool approval boundary
-- an unplanned commit, push, PR, publish, or release decision
-- conflicting or superseding user input
-- evidence too weak to choose among materially different outcomes
+## Planned Flow Boundaries
 
-This is a routing fallback, not a terminal summary. Preserve the turn and ask the smallest question needed to continue.
+A self-driven planned flow is a cohesive change unit that can be understood, reviewed, verified, and, if needed, committed together. It does not need to be direct user-visible value. UI component scaffolding, logic layer work, integration assembly, fixture changes, documentation changes, and validator output changes can all be planned flows when each owns a distinct reviewable change unit.
 
-## Question Packet
+Do not promote core phases or status-only checks into planned flows. Pure final QA, consistency checking, verification-result reporting, and commit-readiness reporting belong in the last change-unit flow's verification/reporting or in a user-gated handoff, unless they create or modify a distinct artifact such as a regression fixture, snapshot baseline, documentation page, operator report output, or validator diagnostic output.
 
-Every self-drive subagent packet must be bounded enough to answer without hidden context. Include:
+When the last planned change-unit flow is complete, provide a commit-readiness gate report. State readiness, blockers, verification status, residual risk, and any unrelated changes that must stay out of commit scope. Do not ask for or imply commit execution approval inside that report. Commit, push, PR, and publish require a separate user-gated handoff through the base `turn-gate` approval boundary.
 
-- `question_id`
-- `phase`
-- `current_mode`
-- `flow_id`
-- `planned_flow_position`
-- `decision_needed`
-- `options`
-- `context`
-- `work_boundary`
-- `non_goals`
-- `acceptance_signal`
-- `verification_expectation`
-- `expected_risky_actions`
-- `approval_boundaries`
-- `user_gated_checkpoints`
-- `user_interventions`
-- `continuity_guard`
-- `constraints`
-- `fallback`
-- `expected_answer`
+## Self-Drive Packet
 
-The packet must tell the subagent to answer the bounded decision only, preserve turn continuity, flag context gaps, and provide a concrete next action rather than a completion summary.
+Use a subagent only for a bounded decision that can be answered without broad user judgment or privileged action.
 
-## Answer Contract
+Each self-drive packet must include:
 
-Every self-drive subagent answer must include:
+- the current `Continuity Guard`
+- active flow record path or summary
+- planned flow name and change-unit boundary
+- included scope and non-goals
+- relevant files, artifacts, or commands to inspect
+- the exact bounded question to answer
+- allowed actions and forbidden actions
+- verification expectation or pass/fail criteria when relevant
+- approval boundaries that must not be crossed
+- required output shape
+- stale-answer rule: user intervention after packet dispatch supersedes the answer unless the main agent revalidates it
 
-- `question_id`
-- `selected_option`
-- `decision`
-- `rationale`
-- `evidence`
-- `assumptions`
-- `confidence`
-- `context_gap`
-- `blockers`
-- `approval_boundary`
-- `expected_risky_action_match`
-- `superseded_by_user_input`
-- `continuity_check`
-- `next_action`
+Do not give a self-drive packet authority to edit outside its assigned scope, approve destructive or external action, bypass safety or tool approval, commit, push, create a PR, publish, or end the turn.
 
-Accept the answer only if it matches the active packet, is not superseded by newer user input, respects the recorded flow boundary, and includes a continuing `next_action`.
+## Subagent Answer Contract
 
-If `continuity_guard.user_explicit_stop` is false and no approval boundary is present, `continuity_check.terminal_summary_allowed` must be false. An answer that only reports completion is invalid. If an approval boundary is present, `next_action` must be `switch-to-user-gated-question`, and the main flow must return to same-plugin `turn-gate` question routing.
+A useful answer must provide the next action, not a terminal summary.
 
-## Context Gap Recovery
+Require the answer to include:
 
-Do not treat every missing detail as a user question. If the gap can be closed by repo search, file reads, logs, deterministic checks, or policy-allowed research inside the recorded boundary, recover the context and continue.
+- direct answer to the bounded question
+- evidence or files inspected
+- assumptions and uncertainty
+- whether the answer still fits the current `Continuity Guard`
+- recommended next action for the main flow
+- any condition that requires returning to user-gated question routing
 
-Ask the user only when the missing detail changes scope, non-goals, acceptance, verification, approval, external action, or risky-action treatment. Record the gap, recovery action, and result in the flow record.
+Treat missing evidence, broad speculation, or an answer that crosses the packet boundary as insufficient. Integrate the answer yourself; do not let it replace base `turn-gate` verification, approval, or reporting.
 
-## User Intervention
+## Stale Answers And User Intervention
 
-Any user message during self-drive is authoritative current loop input and outranks pending or returned subagent answers.
+The latest user message is authoritative.
 
-When user input arrives:
+If the user intervenes while a self-drive packet is pending:
 
-1. Refresh the `Continuity Guard`; keep `user_explicit_stop: false` unless the user explicitly ends the turn.
-2. Classify the input as explicit turn stop, current-flow correction, current-flow priority change, next-flow priority request, approval answer, or scope update.
-3. Mark any incompatible pending subagent answer as stale.
-4. Re-read affected targets before continuing if the input changes files, artifacts, scope, or state.
-5. Continue from the earliest safe phase under `turn-gate`, or route to user-gated questioning if the input creates a new boundary.
+- pause use of pending subagent answers
+- classify the user message through base `turn-gate` incoming-message handling
+- reread any changed target files or artifacts before relying on old assumptions
+- mark pending answers as superseded when the user message changes scope, priority, approval state, target, or next-flow candidates
+- use a pending answer only after revalidating it against the updated `Continuity Guard`, active flow record, and user message
 
-Do not call an intervention a pause, stop, or completion unless the user explicitly asks to end the turn.
+Never use a stale subagent answer to justify terminal closure, approval-sensitive action, or continuation that conflicts with the user's latest input.
 
-## Flow-End Deterministic Reread
+## Flow-End Refresh
 
-After each self-drive flow result report, and before asking or routing any next question, always refresh the contracts:
+At every boundary after a flow result is reported and before the next routing question is formed, deterministically refresh the runtime contracts:
 
-1. Re-read the same-plugin `turn-gate` skill.
-2. Re-read this `turn-gate-self-drive` skill.
-3. Recheck the current `Continuity Guard`, active flow record, pending next-flow candidates, planned flow position, and approval boundaries.
-4. Route the next step through the refreshed base `turn-gate` contract and this overlay contract.
+1. Reread the same plugin's `turn-gate` skill.
+2. Reread this `turn-gate-self-drive` skill.
+3. Recheck the active flow record's `Continuity Guard`.
+4. Recheck active flow boundary, pending next-flow candidates, pending or superseded questions, and approval boundaries.
+5. Only then form the next flow question, scope question, self-drive packet, or user-gated approval question.
 
-This reread is unconditional. Do not try to detect whether context cleanup or compaction happened. The purpose is to reload the base loop contract and overlay contract before next-flow questions, scope questions, self-drive packets, or user-gated approval questions.
+This is not a context-cleanup detector. You cannot reliably know whether compaction or cleanup happened, so the refresh is unconditional at every flow-end question-routing boundary. Its purpose is to reload the base loop contract and this overlay contract before the next routing decision.
 
-The reread does not authorize self-drive to bypass approval, destructive, irreversible, external-action, safety, commit, push, PR, publish, or release boundaries.
+The refresh does not grant new permissions. Approval, destructive or irreversible action, external effects, safety/tool decisions, commit, push, PR, and publish still require the base `turn-gate` user-gated handoff.
 
-## Confidence Rules
+## Approval Boundary Return
 
-- `high`: evidence supports the decision, assumptions are minor, expected risky actions match the recorded preparation, and no new approval boundary is present.
-- `medium`: gaps are recoverable inside the recorded boundary; continue after recording assumptions or running recovery.
-- `low`: the decision changes scope, crosses an unprepared risky-action boundary, needs explicit approval, or lacks enough evidence for a bounded choice; switch to same-plugin `turn-gate` user-gated question routing.
+When a decision is not bounded enough for self-drive, return to the base `turn-gate` user-gated question-routing path. Do not end the turn just because self-drive cannot continue.
 
-## Output
+Return immediately for:
 
-When using this skill in a self-drive flow, keep these items available in the flow record and final flow report:
+- missing scope that can change the result
+- new work outside the prepared planned flow list
+- destructive or irreversible action
+- external effects or network-facing publication
+- commit, push, PR, or publish
+- tool/runtime approval requirements
+- safety-sensitive decisions
+- stale or conflicting subagent answers
+- inaccessible session records or invalid `Continuity Guard`
 
-- `Base turn-gate contract`
-- `Prepared planned-flow boundary`
-- `Self-drive question packet`
-- `Subagent answer`
-- `Boundary recheck`
-- `Context gap recovery`
-- `User intervention handling`
-- `Continuity check`
-- `Recorded assumptions`
-- `Commit-readiness report` for the last planned flow
-- `Next action`
+The handoff question should state the current flow, the blocked decision, included scope, excluded scope, risk, and the next safe options.
+
+## Recovery From Context Gaps
+
+If context is incomplete, recover from durable records instead of guessing.
+
+Read the active `.agents/sessions/{YYYYMMDD}/000-plan.md`, active `001+` flow record, and the relevant target files. Reconstruct only the minimum state needed to continue: active flow, flow boundary, non-goals, verification expectation, pending next-flow candidates, approval boundaries, and `Continuity Guard`.
+
+If records are missing, stale, inaccessible, or contradictory, report the blocker through base `turn-gate` question routing. Do not silently continue self-drive from memory.
+
+## Review Checklist
+
+Before continuing self-drive, verify:
+
+- base `turn-gate` is active and still governs the turn
+- the planned flow list is made of cohesive change units, not phases
+- pure QA, consistency checking, verification-result reporting, or commit-readiness reporting has not become a planned flow without owning a distinct artifact change
+- the active flow has recorded work boundary, non-goals, verification expectation, and approval boundaries
+- the next decision is bounded enough for a self-drive packet
+- the packet includes `Continuity Guard`, allowed actions, forbidden actions, stale-answer handling, and required output shape
+- user intervention has been checked before using any pending answer
+- approval-sensitive decisions return to `turn-gate` user-gated question routing
+- flow-end deterministic refresh has reread both `turn-gate` and `turn-gate-self-drive`
+- the final change-unit flow ends with commit-readiness gate reporting, not commit execution approval

@@ -13,7 +13,11 @@
   - `turn-gate`의 가장 기본 flow는 `준비 -> 작업 -> 검증 -> 보고`여야 한다.
   - deep-interview, flow list design, 상태 파악, 수정 범위 파악, 질문 라우팅, 내부 mode 선택은 기본 flow 자체가 아니라 `준비` 안의 세부 작업이나 파생 작업이어야 한다.
   - 사용자 메시지에서 시작하는 준비는 deep-interview를 사용해 intent, scope, 성공 기준, approval boundary를 확인하고, 사용자 의도에 맞는 이후 flow list를 준비해야 한다.
-  - 예를 들어 "로그인 페이지를 만들자"라는 요청은 deep-interview로 페이지 구현에 필요한 컴포넌트, 디자인 시스템 사용 여부, 작업을 flow 단위로 나눌 기준을 확보한 뒤 작업으로 넘어가야 한다.
+  - 사용자 메시지를 받아 의도를 해석하고 flow list를 만드는 일 자체도 산출물을 가진 운영 flow가 될 수 있어야 한다. 이때 산출물은 session plan, flow record, planned flow list, scope/approval boundary다.
+  - 이 운영 flow와 실제 product/code/document 변경을 소유하는 flow는 구분되어야 한다.
+  - flow list는 `분석`, `작업`, `검증`, `커밋 준비` 같은 진행 phase를 나열하는 것이 아니어야 한다.
+  - flow는 반드시 최종 사용자에게 직접 보이는 가치 단위일 필요도 없다. 대신 함께 이해하고 검토하고 검증하고 필요하면 커밋할 수 있는 응집된 변경 단위여야 한다.
+  - 예를 들어 "로그인 페이지를 만들자"라는 요청의 직접 사용자 가치는 로그인 페이지 전체일 수 있지만, planned flow는 `로그인 UI/UX 컴포넌트 생성`, `로그인 로직 작성`, `로그인 페이지 조립`처럼 보이지 않는 준비성 작업을 포함한 커밋 가능 단위로 나눌 수 있어야 한다.
   - 비 사용자 메시지에서 시작하는 준비는 이미 준비된 flow에 대한 준비 과정이며, 필요한 수정 범위 파악, 현재 상태 파악, 대상 파일 재확인, 실행 전 조건 확인을 수행해야 한다.
   - 작업은 사용자가 요청한 실제 작업을 진행하는 단계이며, 파일 수정, 검증, 조사 같은 다양한 작업 유형을 포함할 수 있다.
   - 검증은 해당 flow에 대한 검증 단계이며, 파일 수정이 제대로 적용됐는지, 타입 오류가 없는지, 조사의 경우 다양한 관점에서 논리 비판을 수행했는지 확인해야 한다.
@@ -32,9 +36,11 @@
 - turn-gated 작업은 `.agents/sessions` 아래에 multi-flow 기록으로 남아야 한다.
   - 상위 계획은 `.agents/sessions/{YYYYMMDD}/000-plan.md`에 누적되길 원한다.
   - `000-plan.md`는 단순 현재 상태 로그가 아니라 여러 flow의 상위 계획과 흐름을 소유해야 한다.
+  - `000-plan.md`의 planned flow sequence는 phase checklist가 아니라 응집된 변경 단위들의 순서여야 한다.
+  - 사용자 메시지 해석과 planned flow list 설계가 필요한 경우, `000-plan.md`와 active flow record에는 이것이 `operational-preparation` flow인지, 이후 항목이 `change-unit` flow인지 드러나야 한다.
   - 개별 플로우 기록은 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 형식으로 남고 싶다.
   - `001+` 문서는 phase 메모가 아니라 flow 기록으로 남고 싶다.
-  - 예를 들어 "컴포넌트 오타가 있어. 수정하자" 같은 요청은 `컴포넌트 문구 점검`, `컴포넌트 문구 수정`, `commit-ready` 같은 flow sequence로 나뉘고, 각 flow는 자기 내부의 점검/수정/검증 하위 작업을 소유해야 한다.
+  - 예를 들어 "컴포넌트 오타가 있어. 수정하자" 같은 요청은 작은 변경이라면 하나의 `컴포넌트 문구 수정` flow로 충분할 수 있고, 그 flow 안에서 점검, 수정, 검증, 보고를 수행해야 한다. 별도 flow는 검토/커밋 가능한 변경 단위가 실제로 나뉠 때만 만든다.
 
 - 검증은 main agent의 same-context self-check가 아니라 clean-context subagent 검증이어야 한다.
   - 검증 단계는 main agent가 같은 context에서 직접 수행하지 않고, 무조건 clean context 상태의 subagent가 수행해야 한다.
@@ -49,10 +55,14 @@
 
 - 사용자 메시지 기반 준비가 끝난 뒤에는 계획된 여러 flow를 self-drive로 진행할 수 있어야 한다.
   - 사용자 메시지를 통한 preparation에서는 이후 flow list를 실행하는 데 필요한 intent, scope, non-goal, acceptance signal, approval boundary, verification expectation을 충분히 수집해야 한다.
+  - 이 준비는 질문으로 멈추는 것이 아니라 active question-routing을 포함하는 운영 flow로 계속 이어져야 한다.
   - 준비가 끝난 뒤 만들어진 여러 flow는 사용자가 명시적으로 수동 진행을 원하거나 approval boundary가 생기지 않는 한 `turn-gate-self-drive` overlay로 이어갈 수 있어야 한다.
   - 초기 preparation에서는 planned flow list 중 예상되는 destructive, irreversible, external action, commit, push, PR, publish 같은 위험 작업과 approval boundary를 미리 질문해 승인/비승인 또는 handoff 경계를 계획해야 한다.
   - self-drive가 여러 flow를 진행하는 동안 초기 협의 범위를 벗어난 위험 작업이나 새 approval boundary가 나타나면 자동 처리하지 않고 user-gated routing으로 다시 질문해야 한다.
   - 계획된 마지막 flow를 마치는 단계에서는 terminal summary가 아니라 commit-readiness gate 성격의 보고를 해야 하며, 이 보고는 commit execution approval과 구분되어야 한다.
+  - 다만 commit-readiness 보고 자체를 새 planned flow로 승격하길 원하는 것은 아니다.
+  - 순수 최종 QA, 정합성 점검, 검증 결과 보고, commit-readiness reporting은 별도 산출물 변경을 소유하지 않으면 마지막 변경 단위 flow의 verification/reporting 또는 user-gated handoff로 남아야 한다.
+  - 예외적으로 회귀 테스트 fixture, snapshot baseline, 문서, 운영자 리포트 출력, validator 진단 출력처럼 검토 가능한 산출물을 만들거나 바꾸는 경우에는 그 산출물 변경이 flow가 될 수 있다.
 
 - `turn-gate` 상세 규칙은 folder-based spec 구조로 유지하길 원한다.
   - `specs/skills/turn-gate/spec.md`를 기본 index로 둔다.

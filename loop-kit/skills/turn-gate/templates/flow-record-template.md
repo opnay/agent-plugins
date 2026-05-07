@@ -3,6 +3,10 @@
 This file is the detailed report for one user-request-driven flow.
 Update it incrementally after each completed phase. Do not wait until the end of the flow.
 Keep the date-level history and flow index in `000-plan.md`; keep the detailed evidence and phase report here.
+One flow is a cohesive reviewable or commit-sized change unit. It is not an analysis/work/verification/commit phase slice, and it does not need to be direct user-visible value.
+사용자 메시지 intake와 planned-flow design은 session plan, flow-list, scope, approval-boundary artifact를 소유할 때 operational-preparation flow가 될 수 있습니다.
+operational-preparation flow는 code, docs, fixtures, config, release-surface 변경을 소유하는 change-unit flow와 구분해야 합니다.
+Final QA, consistency checking, verification-result reporting, and commit-readiness reporting belong in this flow's verification/reporting sections unless they create or change a distinct reviewable artifact/change unit.
 
 ## Metadata
 
@@ -11,6 +15,7 @@ Keep the date-level history and flow index in `000-plan.md`; keep the detailed e
 - Slug: english-lower-slug
 - User request message: <original user message for this flow>
 - Task: <short task statement>
+- Flow type: operational-preparation | change-unit
 - Flow scope: <what this flow owns>
 - Parent plan: .agents/sessions/YYYYMMDD/000-plan.md
 - Current mode: deep-interview | autopilot | review-loop | ralph-loop | commit-readiness-gate | undecided
@@ -40,6 +45,8 @@ Keep the date-level history and flow index in `000-plan.md`; keep the detailed e
 - Preparation source: user-message | existing-flow | correction | next-flow
 - Preparation result:
 - Planned flow list:
+- Flow type:
+- Flow-boundary basis:
 - Current blocker:
 - Why this flow:
 - Why this mode:
