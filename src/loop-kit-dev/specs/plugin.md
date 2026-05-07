@@ -18,6 +18,7 @@
   - internal mode 선택 전 operation meaning resolution
   - `turn-gate` 내부의 loop mode 선택
   - user-gated question routing 유지
+  - 읽기 전용 bounded verifier subagent를 통한 clean-context verification
   - autonomous subagent question routing을 위한 별도 overlay skill 제공
   - `turn-gate/references/` 아래 local absorbed loop contract 유지
   - discovery, autonomous execution, refinement, review, readiness 성격의 current-phase work를 loop 안에서 처리
@@ -58,6 +59,7 @@
 - `turn-gate`는 internal mode를 local `references/`로 흡수해 사용하되, 그 reference는 관련 workflow skill spec과 동기화해 유지한다.
 - 복잡한 skill spec은 `specs/skills/<skill-name>/spec.md`를 기본 index로 두고, 세부 계약은 같은 folder 아래 sub-spec으로 분리할 수 있다.
 - `turn-gate`의 필수 운영 도구는 기본적으로 질문 도구 `request_user_input`와 계획 도구 `update_plan`이다.
+- `turn-gate`의 clean-context verification은 읽기 전용 bounded verifier subagent 실행을 포함하며, 이 검증 전용 실행은 `turn-gate` 활성 중 사전 허용된 계약으로 취급한다.
 - `turn-gate`의 phase model은 `준비 -> 작업 -> 검증 -> 보고`를 런타임 surface에 드러내야 하며, deep-interview alignment, flow list design, meaning resolution, current-state inspection은 preparation 세부 작업으로 설명해야 한다.
 - `turn-gate-self-drive`는 self-drive overlay로만 동작하며, base loop gate 자체는 `turn-gate`를 직접 따른다.
 - `turn-gate-self-drive` 도중 사용자 메시지가 들어오면 멈추지 않고 현재 플로우 조정 또는 다음 플로우 우선 등록으로 처리한다.

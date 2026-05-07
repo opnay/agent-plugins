@@ -6,6 +6,8 @@
   - 메인 플로우는 스킬 내부 체크리스트가 아니라 대화 응답 자체를 제어해야 한다.
   - 일반 목적 설명보다 높은 우선순위로 보이도록 skill body 앞부분의 `Important` 섹션에 드러나야 한다.
   - 활성화된 동안 응답은 loop continuation, question-routing, explicit user stop 처리 중 하나로 끝나야 하며, 일반적인 final summary로 턴을 닫으면 안 된다.
+  - incoming message 처리는 특정 상황 목록에 갇힌 closed taxonomy가 아니라, 명시적 turn stop이 아닌 모든 사용자 입력을 gated turn continuation으로 해석하는 포괄 규칙이어야 한다.
+  - 질문, 검토 요청, 상태 확인, 우선순위 변경, correction 같은 표현은 예시일 뿐이며, 예시에 없는 입력도 explicit stop이 아니면 보고 후 멈추는 근거가 될 수 없다.
 
 - `turn-gate`가 current-phase work에 맞는 내부 loop mode를 고르길 원한다.
   - `turn-gate`의 가장 기본 flow는 `준비 -> 작업 -> 검증 -> 보고`여야 한다.
@@ -36,6 +38,8 @@
 
 - 검증은 main agent의 same-context self-check가 아니라 clean-context subagent 검증이어야 한다.
   - 검증 단계는 main agent가 같은 context에서 직접 수행하지 않고, 무조건 clean context 상태의 subagent가 수행해야 한다.
+  - `turn-gate` 활성 상태에서는 읽기 전용 bounded verifier subagent 실행을 clean-context verification 계약의 일부로 미리 허용한 것으로 취급해야 한다.
+  - 이 사전 허용은 검증 전용이며, 파일 수정, scope 확장, destructive/external action, commit/push/PR/publish approval에는 적용되지 않는다.
   - main agent는 clean-context subagent 검증 요청을 구성하고, subagent 결과를 통합해 결과 보고와 다음 flow 판단으로 이어가야 한다.
 
 - 이후 flow/phase 설계는 필요할 때 조정 가능한 provisional design이어야 한다.

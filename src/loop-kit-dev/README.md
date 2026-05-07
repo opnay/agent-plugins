@@ -61,6 +61,7 @@ codex plugin marketplace upgrade
 - 이미 선택된 flow에서는 수정 범위, 현재 상태, 대상 파일, 검증 조건을 먼저 확인해야 하는 작업
 - 실행, 정제, 리뷰 처리, 커밋 준비 loop를 하나의 controller 안에서 골라야 하는 작업
 - 사용자 선택이 필요한 지점에서는 질문 도구를 써야 하는 작업
+- 읽기 전용 clean-context verifier subagent를 flow 검증 단계의 일부로 안정적으로 사용해야 하는 작업
 - 필요하면 `turn-gate-self-drive`로 bounded decision을 subagent question packet에 라우팅해야 하는 작업
 
 ## 엔트리포인트
@@ -77,7 +78,7 @@ codex plugin marketplace upgrade
 
 1. 준비: 사용자 메시지는 deep-interview alignment와 flow list로 정렬하고, 이미 선택된 flow는 현재 상태와 작업 범위를 확인합니다.
 2. 작업: 현재 flow가 소유한 실제 작업을 수행합니다.
-3. 검증: 수정 결과, 타입/테스트/파싱 신호, 또는 조사 결과의 논리적 취약점을 확인합니다.
+3. 검증: 읽기 전용 bounded verifier subagent가 수정 결과, 타입/테스트/파싱 신호, 또는 조사 결과의 논리적 취약점을 확인합니다.
 4. 보고: 이번 flow의 맥락을 정리하고 다음 flow 선택지를 명시적으로 다시 엽니다.
 5. 사용자가 종료를 요청하지 않으면 다음 flow의 준비로 계속 진행합니다.
 

@@ -26,12 +26,12 @@ deep-interview alignment, flow list design, meaning resolution, current-state in
   - 예: "turn-gate 켜줘", "Use turn-gate", `$loop-kit:turn-gate`만 온 경우에는 activation 완료 요약으로 닫지 않고 다음 scope 또는 next-flow 선택을 연다.
 - incoming message classification:
   - 모든 incoming message를 같은 loop-gated turn의 authoritative input으로 본다.
-  - explicit turn stop, status/progress check, current-flow correction, current-flow priority change, next-flow priority request 중 하나로 분류한다.
-  - status/progress check라면 현재 phase, blocker 또는 progress, 다음 concrete action을 짧게 보고한 뒤 active flow를 계속한다.
-  - current-flow correction 또는 current-flow priority change라면 현재 analysis/plan을 즉시 조정하고 가장 이른 안전한 phase부터 이어간다.
-  - correction이 target file, artifact, state를 바꾸면 이어가기 전에 해당 target을 다시 읽고 stale assumption을 재사용하지 않는다.
-  - next-flow priority request라면 flow record의 next-flow 후보 중 최우선으로 등록하고 다음 safe handoff point까지 이어간다.
-  - "status?", "진행 상황은?", "아니 그 파일 말고", "먼저 X", "다음엔 commit readiness 봐줘" 같은 입력은 explicit stop이 아니라 status/progress check, current-flow correction, current-flow priority change, next-flow priority request로 분류한다.
+  - 먼저 현재 메시지가 현재 turn 자체를 끝내려는 명시적 요청인지 판단한다.
+  - 명시적 turn stop이 아니면 어떤 형태의 입력이든 terminal close 근거가 아니라 continuation input이다.
+  - continuation input은 closed taxonomy에 맞추려고 하지 말고 현재 flow에 미치는 효과로 라우팅한다: 현재 상태를 보고하고 계속할지, analysis/plan을 수정할지, target을 다시 읽을지, 다음 flow 후보를 갱신할지, approval boundary를 열지, 검증/검토 작업으로 이어갈지를 결정한다.
+  - 질문, 검토 요청, 상태 확인, correction, 우선순위 변경, 다음 작업 요청은 continuation input의 예시일 뿐이며 exhaustive list가 아니다.
+  - continuation input이 target file, artifact, state를 바꾸면 이어가기 전에 해당 target을 다시 읽고 stale assumption을 재사용하지 않는다.
+  - continuation input이 다음 flow 요청이라면 flow record의 next-flow 후보 중 최우선으로 등록하고 다음 safe handoff point까지 이어간다.
 - preparation:
   - 이 flow에서 무엇을 할지, 왜 하는지, 어떤 조건에서 작업으로 넘어갈 수 있는지를 준비한다.
   - 사용자 메시지에서 시작하는 preparation은 deep-interview를 사용해 intent, scope, non-goal, success criteria, approval boundary, verification signal을 정렬한다.
@@ -66,6 +66,7 @@ deep-interview alignment, flow list design, meaning resolution, current-state in
 - explicit stop handling:
   - 사용자가 명시적으로 턴 종료를 요청한 경우에만 terminal summary가 가능하다.
   - "여기서 끝", "턴 종료", "이 turn은 그만", "stop the turn"처럼 현재 turn 자체를 끝내려는 의도가 분명한 입력만 explicit turn stop으로 분류한다.
+  - 명시적 종료 의도가 불분명하면 종료로 추정하지 말고 continuation input으로 처리하거나 user-gated clarification을 연다.
   - flow record의 `confirmed closure`는 특정 explicit stop 사용자 메시지와 함께 기록된 경우에만 유효하다.
   - closure source message가 없거나 현재 incoming message와 맞지 않는 stale closure 기록은 terminal close 근거로 쓰지 않는다.
   - closure source message와 `Continuity Guard` 기록은 `session-records.md`와 함께 유지한다.
