@@ -13,6 +13,8 @@
 - `operational-preparation` flow는 사용자 메시지 해석, scope lock, approval boundary 정리, planned flow list 설계를 소유하며, 산출물은 plan/session record다.
 - `change-unit` flow는 실제 코드, 문서, fixture, 설정, release surface처럼 검토 가능한 산출물 변경을 소유한다.
 - 사용자 메시지 기반 bootstrap을 기록할 때는 operational-preparation flow와 그 결과 planned change-unit flow list를 구분한다.
+- 실행이 아니라 판단, 설계, 범위 확인만 요청된 경우 실제 실행 flow와 구분한다. 이 경우 `operational-preparation` record는 후속 실행 후보, scope/non-goal, target ambiguity 판단, verification expectation을 기록하고 종료할 수 있다.
+- 운영 flow에 남긴 후속 실행 후보는 아직 시작된 `change-unit` flow가 아니다. 실제 실행으로 이어질 때만 별도 `001+` flow record 또는 다음 count의 `change-unit` record를 만든다.
 - planned flow sequence는 phase checklist가 아니며, `분석`, `작업`, `검증`, `커밋 준비` 같은 진행 단계를 별도 flow로 나열하지 않는다.
 - 각 planned flow는 함께 이해하고 검토하고 검증하고 필요하면 커밋할 수 있는 응집된 변경 단위여야 한다. 최종 사용자에게 직접 보이는 가치 단위가 아니어도 된다.
 - 순수 최종 QA, 통합 검증, 정합성 점검, 검증 결과 보고, commit-readiness reporting은 별도 산출물 변경을 소유하지 않는 한 planned flow로 기록하지 않는다.
@@ -20,6 +22,7 @@
 - 회귀 테스트 fixture, snapshot baseline, 문서, 운영자 리포트 출력, validator 진단 출력처럼 검토 가능한 산출물을 만들거나 바꾸는 경우에는 그 산출물 변경을 planned flow로 기록할 수 있다.
 - 각 planned flow에는 flow type, flow 목적, 왜 이 경계가 필요한지, 완료 기준, 다음 flow로 넘어가는 조건이 드러나야 한다.
 - concrete task에서 만든 planned flow sequence에는 preparation source, preparation result, planned flow list가 드러나야 한다.
+- 실행이 아니라 판단, 설계, 범위 확인이 목적인 경우에는 `planned flow list` 대신 `follow-up change-unit candidates`로 기록할 수 있다. 이렇게 기록한 후보는 실행 승인이 있거나 다음 flow로 선택되기 전까지 완료/진행 flow로 세지 않는다.
 - 각 flow는 기본적으로 `preparation -> work -> verification -> reporting` 단계를 가진다.
 - 사용자 메시지 기반 preparation이면 deep-interview result와 사용자 의도에 맞춘 flow list를 기록한다.
 - 비 사용자 메시지 기반 preparation이면 수정 범위, 현재 상태, 대상 파일, stale assumption, 실행 전 조건 확인 결과를 기록한다.
@@ -37,6 +40,7 @@
 - flow 기본 템플릿은 `skills/turn-gate/templates/flow-record-template.md`를 사용한다.
 - `000-plan.md` 기본 템플릿은 `skills/turn-gate/templates/plan-template.md`를 사용한다.
 - 최소 flow 기록 항목은 user request message, task, flow type, flow scope, current mode, question-routing mode, current core phase, preparation source/result, planned flow list, continuity guard, work, verification, report, next-flow options, residual risk다.
+- 운영 flow가 판단, 설계, 범위 확인에서 끝나는 경우 최소 기록 항목의 `planned flow list`는 `follow-up change-unit candidates`로 대체할 수 있으며, 각 후보에는 후보 type, 예상 산출물, 분리 또는 압축 근거, 예상 검증, user-gated handoff 조건을 남긴다.
 - flow record는 phase 메모가 아니지만, `preparation`, `work`, `verification`, `reporting` 각 phase가 끝날 때마다 현재 상태로 갱신해야 한다.
 
 ## Continuity Guard
@@ -63,6 +67,7 @@
 - `000-plan.md`가 flow sequence와 transition criteria를 소유하고 있는가?
 - flow sequence가 preparation 결과에서 파생됐고 각 flow가 preparation/work/verification/reporting 구조를 유지하는가?
 - 사용자 메시지 해석과 flow list 설계가 operational-preparation flow로 기록되고, 실행용 planned flows와 섞이지 않았는가?
+- 판단, 설계, 범위 확인용 운영 flow 기록이 실제 실행 flow record처럼 보이지 않도록 후속 후보와 handoff 조건을 구분했는가?
 - flow sequence가 phase list나 direct user-value list가 아니라 reviewable or commit-sized change-unit list인가?
 - 최종 QA/readiness/reporting만 수행하는 항목이 산출물 변경 없이 flow sequence에 들어가지 않았는가?
 - active flow record가 현재 phase까지 증분 갱신됐는가?

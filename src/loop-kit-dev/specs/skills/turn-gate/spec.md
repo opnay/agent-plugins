@@ -50,6 +50,7 @@
 - `verification.md`: mandatory clean-context subagent verification and non-pass handling
 - `question-routing.md`: `request_user_input`, next-flow reopening, fallback, visible/recorded turn-end option
 - `session-records.md`: `000-plan.md`, `001+` flow records, Continuity Guard, templates, `Next Flow Options`
+- `intent-senarios/`: runtime instruction이 아니라 flow boundary 의도를 회귀 평가하기 위한 spec-side fixture
 
 ## 핵심 처리 계약
 
@@ -59,6 +60,7 @@
 - skill body에는 `Core Loop` 또는 이에 준하는 단계별 실행 섹션이 있어야 하며, 최소한 preparation, work, verification, reporting, question-routing reopening을 각각 구분해 설명해야 한다.
 - skill body는 deep-interview, flow list design, meaning resolution, current-state inspection을 `preparation`의 세부 방식으로 설명해야 한다.
 - skill body는 사용자 메시지 해석과 planned flow list 설계가 plan/session record를 소유하는 `operational-preparation flow`가 될 수 있고, 그 결과 만들어지는 실행용 planned flows는 reviewable or commit-sized `change-unit flow`여야 한다고 설명해야 한다.
+- skill body는 사용자 메시지 해석 결과가 바로 실행으로 이어지지 않을 수 있고, 후속 실행 후보와 실제 실행 flow를 구분해야 한다는 일반 원칙만 설명한다. `intent-senarios/` fixture 이름이나 fixture 평가 절차는 runtime skill body에 직접 넣지 않는다.
 - skill body는 사용자 메시지 기반 preparation에서 scope가 비어 있거나 너무 넓거나 여러 결과물을 만들 수 있거나 성공 기준과 검증 경로를 바꿀 수 있으면 work 전에 질문으로 scope를 잠그도록 직접 설명해야 한다.
 - skill body는 질문 없이 추론한 scope라도 work boundary와 non-goal을 flow record에 남기도록 설명해야 한다.
 - skill body는 사용자 메시지 기반 preparation이 planned flow list 전체를 실행하는 데 필요한 intent, scope, non-goal, acceptance signal, verification expectation을 수집하고, 예상되는 위험 작업과 approval boundary를 질문해 self-drive로 진행 가능한 flow와 user-gated checkpoint를 구분하도록 설명해야 한다.
@@ -79,6 +81,7 @@
 - user-gated question routing과 계획 도구 `update_plan`를 필수 단계에서 실제로 사용했는가?
 - cross-flow 작업이라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 planned flow sequence, 각 flow의 완료 기준, 다음 flow 전환 조건을 최신 상태로 담고 있는가?
 - 사용자 메시지 해석과 flow list 설계가 필요했다면, 그 운영 준비가 별도 flow 또는 bootstrap record로 남고 결과 planned flows와 섞이지 않았는가?
+- spec-side fixture 평가 규칙이 runtime skill body로 직접 누출되지 않았는가?
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`가 현재 phase까지 증분 갱신됐는가?
 - `work -> verification -> result reporting` 순서를 실제로 유지했는가?
 - 기본 flow를 `준비 -> 작업 -> 검증 -> 보고`로 유지했는가?

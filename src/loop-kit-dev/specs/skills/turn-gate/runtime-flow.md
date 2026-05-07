@@ -50,6 +50,8 @@ flow는 함께 이해하고 검토하고 검증하고 필요하면 커밋할 수
   - 이 flow에서 무엇을 할지, 왜 하는지, 어떤 조건에서 작업으로 넘어갈 수 있는지를 준비한다.
   - 사용자 메시지에서 시작하는 preparation은 deep-interview를 사용해 intent, scope, non-goal, success criteria, approval boundary, verification signal을 정렬한다.
   - 사용자 메시지를 해석하고 planned flow list를 설계하는 준비는 필요하면 `operational-preparation flow`로 기록한다. 이 flow는 plan/session record 산출물을 소유하며, product/code 변경 단위 flow와 같은 층에 섞어 phase처럼 나열하지 않는다.
+  - 실제 product/code/document 변경 실행이 아직 선택되지 않은 경우, `operational-preparation flow`는 후속 `change-unit` 후보와 검증 기대를 기록하고 종료할 수 있다.
+  - 후속 후보는 실행 flow가 아니다. 후보를 실제로 수행하기 전에는 대상 파일 수정, fixture 갱신, release surface build, commit-readiness reporting을 같은 운영 flow의 작업으로 끌어오지 않는다.
   - 사용자 메시지의 scope가 비어 있거나 너무 넓거나 여러 결과물을 만들 수 있거나 성공 기준과 검증 경로를 바꿀 수 있으면, work로 넘어가기 전에 user-gated question-routing으로 scope를 먼저 잠근다.
   - 범위 잠금은 최소한 포함 범위, 제외 범위, 대상 파일/표면 또는 산출물, 완료 기준, 검증 신호 중 이번 flow 결과를 바꿀 항목을 다룬다.
   - scope가 충분하다고 추론하는 경우에도 그 추론한 work boundary와 non-goal을 flow record에 남겨야 하며, 추론이 틀리면 되돌리기 어려운 작업은 질문 없이 진행하지 않는다.
@@ -60,6 +62,7 @@ flow는 함께 이해하고 검토하고 검증하고 필요하면 커밋할 수
   - self-driven planned flow sequence가 끝나면 commit execution이 아니라 commit-readiness reporting handoff로 이어진다. commit-readiness reporting 자체는 산출물 변경을 소유하지 않는 한 새 planned flow로 만들지 않는다. commit execution, push, PR, publish는 별도 user-gated handoff다.
   - 사용자 메시지 기반 deep-interview 결과는 단순 질문 답변이 아니라 이후 flow list로 변환되어야 한다.
   - flow list 변환 자체가 산출물로 남는 경우, 그 산출물은 `operational-preparation flow`의 work/reporting 결과이고, 변환 결과 목록의 각 실행 항목은 `change-unit flow`다.
+  - 다만 사용자가 실행이 아니라 판단, 설계, 범위 확인만 요청한 경우 변환 결과 목록은 확정 planned sequence가 아니라 후속 실행 후보로 남을 수 있다. 이 경우 reporting은 "실제 실행 후보와 handoff 조건"을 정리하고, 실행 flow를 시작하지 않는다.
   - flow list design은 phase list design이 아니다. 하나의 flow가 `preparation -> work -> verification -> reporting` 전체를 소유하며, phase나 internal mode를 독립 flow로 승격하지 않는다.
   - flow boundary는 최종 사용자에게 보이는 가치만 기준으로 잡지 않는다. 보이지 않는 UI/UX component scaffolding, domain logic, integration assembly처럼 커밋 가능한 응집 변경 단위도 flow가 될 수 있다.
   - 최종 QA, 통합 검증, 정합성 점검, readiness 보고처럼 변경 산출물 없이 확인과 보고만 수행하는 항목은 flow list에 넣지 않는다. 해당 내용은 active flow의 verification/reporting에 기록한다.
@@ -103,6 +106,8 @@ flow는 함께 이해하고 검토하고 검증하고 필요하면 커밋할 수
 - 기본 flow가 `준비 -> 작업 -> 검증 -> 보고`로 한 번에 읽히는가?
 - planned flow sequence가 phase checklist가 아니라 응집된 변경 단위들의 순서로 읽히는가?
 - 사용자 메시지 해석과 planned flow list 설계가 필요한 경우, 그것이 운영 flow로 기록되고 실행용 change-unit flow 목록과 분리돼 있는가?
+- 실행이 아니라 판단, 설계, 범위 확인만 요청된 경우 후속 실행 후보를 기록하고 종료할 수 있음을 보존했는가?
+- 후속 후보를 실제 실행 flow나 phase list처럼 섞어 기록하지 않았는가?
 - flow boundary가 직접 사용자 가치만으로 좁혀져 보이지 않는 커밋 가능 준비 작업을 배제하지 않는가?
 - 최종 QA, 정합성 점검, readiness 보고가 별도 산출물 변경 없이 planned flow로 승격되지 않았는가?
 - 각 phase의 세부 판단이 적절한 child spec으로 위임되는가?
