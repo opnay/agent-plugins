@@ -17,7 +17,7 @@ Use this extension to enforce four things the base workflow does not cover stron
 
 1. independence of each skill as its own bounded artifact
 2. tighter scope control for what belongs inside one skill
-3. cleaner separation between skill-level and plugin-level guidance
+3. cleaner separation between skill-level and plugin usage guidance
 4. conditional rules for skills that ship inside plugins
 
 ## Added Rules
@@ -38,8 +38,8 @@ Apply this section only when the skill is meant to ship inside a plugin.
    - define the skills that belong inside that plugin second
 2. Do not design a plugin-owned skill in isolation first and retrofit the plugin around it later unless that migration is explicit.
 3. Place the skill under that plugin's `skills/<skill-name>` directory after the plugin boundary is clear.
-4. Put cross-skill usage guidance in the plugin's `<plugin>-guide`, not inside one sibling skill.
-5. If a plugin contains several user-facing skills, check whether it also needs a `<plugin>-guide` entrypoint skill before finalizing the skill set.
+4. Put cross-skill usage guidance in the plugin's manifest prompt, README, and plugin spec, not inside one sibling skill.
+5. Keep shipped skills limited to distinct execution surfaces.
 
 ## Review Pass
 
@@ -53,7 +53,7 @@ Before considering a skill done, check:
 If the skill ships inside a plugin, also check:
 
 - whether the plugin boundary was defined before the skill boundary
-- whether any guidance belongs in a `<plugin>-guide` entrypoint instead of this skill
+- whether any guidance belongs in manifest prompt, README, or plugin spec instead of this skill
 - whether the skill is leaking plugin-level concerns into a bounded skill
 - whether tool-use policy should live in a dedicated tool-use artifact instead of this skill
 
@@ -62,7 +62,7 @@ If the skill ships inside a plugin, also check:
 - `Skill boundary`
 - `Why this is a separate skill`
 - `Plugin relationship` when applicable
-- `Need for <plugin>-guide`
+- `Plugin usage guidance`
 - `Added resources`
 - `Validation path`
 - `Residual risk`
@@ -71,6 +71,6 @@ If the skill ships inside a plugin, also check:
 
 - Do not use plugin membership as an excuse for a weak or coupled skill boundary.
 - Do not let one skill absorb responsibilities that should become a separate skill.
-- Do not hide cross-skill usage guidance inside a bounded skill when it belongs in a `<plugin>-guide`.
+- Do not hide cross-skill usage guidance inside a bounded skill when it belongs in manifest prompt, README, or plugin spec.
 - Do not mix domain workflow guidance with reusable runtime tool policy when those can be separated cleanly.
 - Do not write execution guidance around third-person labels such as `Codex` or `the agent` when the instruction should be addressed directly to the skill reader.

@@ -1,6 +1,6 @@
 {
   "name": "rpg-kit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Subagent role orchestration kit for assigning bounded roles, spawning role-specific agents when allowed, and learning from their outputs.",
   "author": {
     "name": "opnay"
@@ -17,7 +17,7 @@
   "interface": {
     "displayName": "RPG Kit",
     "shortDescription": "Role-based subagent orchestration and learning guidance.",
-    "longDescription": "Provides a narrow plugin for deciding when role-assigned subagents are useful, defining role packets, spawning them only when the active runtime and user intent allow it, and reading their outputs as evidence for how subagents behave in practice.",
+    "longDescription": "Provides a narrow plugin for defining role packets, deciding when role-assigned subagents are useful, spawning them only when the active runtime and user intent allow it, and reading their outputs as evidence for how subagents behave in practice.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": [
@@ -26,7 +26,6 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Use RPG Kit to classify whether role-assigned subagents would help this task.",
       "Define bounded subagent roles, expected outputs, and integration rules before spawning any subagent.",
       "Use subagent-role when the task is specifically about role packets, role fit, or learning from role-assigned subagent behavior."
     ],

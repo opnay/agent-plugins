@@ -34,7 +34,7 @@
 ## 엔트리포인트 / 대표 표면
 
 - 대표 표면: `advance-codex-dev/skills/git-committer/SKILL.md`
-- 관련 상위 라우팅: `advance-codex-dev-guide`, `workflow-kit/commit-readiness-gate`
+- 호출 방식: 직접 호출하거나 manifest prompt의 안내를 따른다. release `workflow-kit`의 `commit-readiness-gate`와 개념적으로 연결된다.
 
 ## 핵심 처리 계약
 

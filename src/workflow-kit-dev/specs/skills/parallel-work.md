@@ -31,7 +31,7 @@
 ## 엔트리포인트 / 대표 표면
 
 - 대표 표면: `workflow-kit-dev/skills/parallel-work/SKILL.md`
-- 관련 상위 라우팅: `workflow-kit-dev-guide`
+- 호출 방식: 직접 호출하거나 manifest prompt의 안내를 따른다.
 
 ## 핵심 처리 계약
 
@@ -52,4 +52,4 @@
 
 ## 확장 원칙
 
-- independence 판단 기준이 바뀌면 guide skill과 함께 갱신한다.
+- independence 판단 기준이 바뀌면 plugin spec과 manifest prompt도 함께 갱신한다.

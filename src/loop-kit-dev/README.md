@@ -63,7 +63,6 @@ codex plugin marketplace upgrade
 
 ## 엔트리포인트
 
-- `loop-kit-dev-guide`: 현재 요청이 `loop-kit-dev`으로 시작할 작업인지 판단합니다.
 - `turn-gate`: 실제 작업을 진행하는 메인 controller입니다.
 - `turn-gate-self-drive`: `turn-gate`를 먼저 적용한 뒤 blocked question을 subagent question packet으로 라우팅하는 overlay입니다.
 
@@ -128,7 +127,6 @@ loop-kit-dev/
   specs/plugin.md
   specs/skills/
   skills/
-    loop-kit-dev-guide/
     turn-gate/
     turn-gate-self-drive/
 ```

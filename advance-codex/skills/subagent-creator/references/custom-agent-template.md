@@ -39,7 +39,7 @@ Do not widen into unrelated code cleanup.
 ## Field Guidance
 
 - `name`: stable spawning identity
-- `description`: human-facing routing guidance for when to use the agent
+- `description`: human-facing usage guidance for when to use the agent
 - `developer_instructions`: narrow operational contract for how the agent should behave
 - `nickname_candidates`: optional display-oriented aliases
 - `model`, `model_reasoning_effort`, `sandbox_mode`, `mcp_servers`, `skills.config`: optional overrides only when the role benefits from them

@@ -36,7 +36,7 @@
 ## 엔트리포인트 / 대표 표면
 
 - 대표 표면: `advance-codex-dev/skills/empirical-prompt-tuning/SKILL.md`
-- 관련 상위 라우팅: `advance-codex-dev-guide`
+- 호출 방식: 직접 호출하거나 manifest prompt의 안내를 따른다.
 
 ## 핵심 처리 계약
 
@@ -65,4 +65,4 @@
 ## 확장 원칙
 
 - scenario template이나 report template이 반복되면 reference 문서로 분리할 수 있다.
-- plugin-level routing 변경은 이 스킬 스펙이 아니라 `advance-codex-dev-guide`와 `plugin.md`에서 먼저 반영한다.
+- plugin 사용 기준 변경은 이 스킬 스펙이 아니라 `plugin.md`, README, manifest prompt에서 먼저 반영한다.

@@ -37,7 +37,7 @@
 ## 엔트리포인트 / 대표 표면
 
 - 대표 표면: `advance-codex-dev/skills/subagent-gate/SKILL.md`
-- 관련 상위 라우팅: `advance-codex-dev-guide`
+- 호출 방식: 직접 호출하거나 manifest prompt의 안내를 따른다.
 - 인접 skill:
   - `subagent-creator`: custom agent definition을 소유한다.
   - `empirical-prompt-tuning`: fixed scenario 기반 reusable instruction evaluation을 소유한다.

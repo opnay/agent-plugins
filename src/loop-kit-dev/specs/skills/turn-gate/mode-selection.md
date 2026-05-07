@@ -29,7 +29,7 @@
 - `loop-kit-dev`은 runtime orchestration 관점의 차이와 local absorbed references를 별도로 소유한다.
 - upstream contract와 `turn-gate` references의 문구가 어긋나면 같은 변경 단위에서 함께 갱신한다.
 - 새로운 internal mode는 기존 mode로 current-phase work를 소유할 수 없을 때만 추가한다.
-- internal mode set이나 mandatory tool rule이 바뀌면 `workflow-kit` upstream spec, `loop-kit-dev` plugin spec, `loop-kit-dev-guide`, `turn-gate`, `turn-gate/references/`를 함께 갱신한다.
+- internal mode set이나 mandatory tool rule이 바뀌면 `workflow-kit` upstream spec, `loop-kit-dev` plugin spec, manifest prompt, `turn-gate`, `turn-gate/references/`를 함께 갱신한다.
 
 ## Deep-Interview 원본 관계
 

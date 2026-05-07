@@ -35,7 +35,7 @@
 
 - 대표 표면: `advance-codex-dev/skills/agents-sessions/SKILL.md`
 - 관련 기본 플로우: `loop-kit:turn-gate`
-- 관련 상위 라우팅: `advance-codex-dev-guide`
+- 호출 방식: 직접 호출하거나 manifest prompt의 안내를 따른다.
 
 ## 핵심 처리 계약
 

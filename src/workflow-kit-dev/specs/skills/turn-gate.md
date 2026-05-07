@@ -80,7 +80,7 @@
 ## 엔트리포인트 / 대표 표면
 
 - 대표 표면: `workflow-kit-dev/skills/turn-gate/SKILL.md`
-- 관련 상위 라우팅: `workflow-kit-dev-guide`
+- 호출 방식: 직접 호출하거나 manifest prompt의 안내를 따른다.
 
 ## 핵심 처리 계약
 
@@ -183,9 +183,9 @@
 ## 독립성 원칙
 
 - 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 아니오.
-- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: 이 skill은 `workflow-kit-dev-guide` 또는 repository-local operating rule이 이미 turn continuity를 활성화한 문맥을 허용한다. 다만 turn-level loop gate contract 자체와 phase-specific workflow에 무엇을 위임하는지는 이 스펙에서 계속 명시적으로 읽혀야 한다.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: 이 skill은 repository-local operating rule이 이미 turn continuity를 활성화한 문맥을 허용한다. 다만 turn-level loop gate contract 자체와 phase-specific workflow에 무엇을 위임하는지는 이 스펙에서 계속 명시적으로 읽혀야 한다.
 
 ## 확장 원칙
 
 - 새로운 rule은 turn continuity와 next-flow question-routing gating을 더 명확하게 만들 때만 추가한다.
-- stage routing이나 default loop-gate rule이 바뀌면 `workflow-kit-dev-guide`와 `plugin.md`를 함께 갱신한다.
+- stage routing이나 default loop-gate rule이 바뀌면 `plugin.md`와 manifest prompt를 함께 갱신한다.

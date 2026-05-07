@@ -34,7 +34,7 @@
 - 사용자 스펙 의도: `loop-kit-dev/specs/skills/turn-gate/intent.md`
 - sub-spec directory: `loop-kit-dev/specs/skills/turn-gate/`
 - local runtime references: `loop-kit-dev/skills/turn-gate/references/*.md`
-- 관련 상위 라우팅: `loop-kit-dev-guide`
+- 호출 방식: 직접 호출하거나 manifest prompt의 안내를 따른다.
 
 ## 상세 계약 구조
 

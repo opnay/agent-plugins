@@ -33,7 +33,7 @@
 
 - 대표 표면: `workflow-kit-dev/skills/deep-interview/SKILL.md`
 - 보조 적응 문서: `workflow-kit-dev/specs/deep-interview-adaptation.md`
-- 관련 상위 라우팅: `workflow-kit-dev-guide`
+- 호출 방식: 직접 호출하거나 manifest prompt의 안내를 따른다.
 
 ## 핵심 처리 계약
 
@@ -55,4 +55,4 @@
 
 ## 확장 원칙
 
-- 적응 규칙이 바뀌면 `deep-interview-adaptation.md`, `workflow-kit-dev-guide`, 이 스펙을 함께 점검한다.
+- 적응 규칙이 바뀌면 `deep-interview-adaptation.md`, `plugin.md`, manifest prompt, 이 스펙을 함께 점검한다.

@@ -65,7 +65,7 @@
 
 - SDD 상세 규칙은 `docs/SDD.md`를 기준으로 합니다.
 - 플러그인 작업은 spec이 먼저 있고, skill/manifest 변경은 그 spec과 일치해야 합니다.
-- 플러그인 표면이 바뀌면 `README.md`, `specs/plugin.md`, 관련 skill spec, 관련 guide skill, `plugin.json`을 같은 변경 단위에서 함께 점검합니다.
+- 플러그인 표면이 바뀌면 `README.md`, `specs/plugin.md`, 관련 skill spec, `plugin.json`을 같은 변경 단위에서 함께 점검합니다.
 - change spec을 정식 규칙으로 승격하라는 요청은 repo-level 규칙, `docs/SDD.md`, 또는 해당 소유 spec으로 반영하고, change spec 자체만 고쳐서 끝내지 않습니다.
 - folder-based skill spec의 사용자 스펙 의도는 `intent.md`가 소유하고, `spec.md`와 child spec에는 반복하지 않습니다.
 
@@ -100,7 +100,7 @@
 - 일반 build는 `pnpm build:plugin <plugin-name> [--force]`를 사용합니다.
 - version bump가 필요한 release 승격은 `pnpm release:plugin <plugin-name> --bump <patch|minor|major> [--force]` 또는 `pnpm release:plugin <plugin-name> --version <version> [--force]`를 사용합니다.
 - dev source를 수정한 뒤에는 해당 plugin의 root release surface가 build 산출물로 갱신됐는지 확인합니다.
-- skill 책임, guide 라우팅, plugin boundary가 바뀌면 관련 skill spec, plugin spec, guide skill, upstream/downstream plugin surface를 같은 변경 단위에서 함께 점검합니다.
+- skill 책임, 사용 기준, plugin boundary가 바뀌면 관련 skill spec, plugin spec, upstream/downstream plugin surface를 같은 변경 단위에서 함께 점검합니다.
 
 ## Release 승격 워크플로
 
@@ -120,9 +120,9 @@
 - `advance-codex`의 대표 표면은 보통 skill, tool-use guidance, plugin, subagent입니다.
 - 명시적 의도가 없는 한, `advance-codex`를 무관한 워크플로나 cross-plugin 유틸리티 범위로 넓히지 않습니다.
 
-## 플러그인 엔트리 스킬 가이드
+## 플러그인 엔트리 표면
 
-여러 사용자 지향 skill을 가진 플러그인이라면, 엔트리포인트 skill 하나를 두는 쪽을 우선 고려합니다.
+여러 사용자 지향 skill을 가진 플러그인은 `plugin.json`의 설명과 `defaultPrompt`, `README.md`, `specs/plugin.md`에서 각 skill의 역할과 시작점을 분명히 드러냅니다.
 
 플러그인과 skill 설계는 위에서 아래로 진행해야 합니다.
 
@@ -136,7 +136,7 @@
 - 모든 플러그인은 하나의 일관된 번들로 독립적으로 이해 가능해야 합니다.
 - 모든 skill에 독립 실행 가능성을 일괄 강제하지 않습니다.
 - 대신 각 skill spec에서 그 skill이 독립성을 강제해야 하는지, sibling context를 허용하는지, 왜 그런지를 명시합니다.
-- skill이 플러그인에 속하더라도 책임은 분명해야 하며, sibling skill이나 guide가 소유해야 할 문맥을 숨은 전제로 끌어오지 않도록 spec에서 경계를 설명합니다.
+- skill이 플러그인에 속하더라도 책임은 분명해야 하며, sibling skill이나 숨은 사용 문맥을 전제로 끌어오지 않도록 spec에서 경계를 설명합니다.
 - 플러그인은 자기 목적을 설명하기 위해 무관한 외부 플러그인 구조에 기대면 안 됩니다.
 
 ## 플러그인 설치 스킬 식별자
@@ -147,44 +147,24 @@
 ## 플러그인 소속 스킬 변경 규칙
 
 - 플러그인에 속한 skill을 수정할 때는 해당 skill만 고립해서 보지 않습니다.
-- 먼저 그 skill이 플러그인 안에서 맡는 역할과 sibling skill, `<plugin>-guide`와의 관계를 확인합니다.
-- skill의 책임, 의미, 라우팅 기준이 바뀌면 관련 skill spec, guide skill, 인접 skill의 문구도 같은 변경 단위에서 함께 점검하고 필요하면 갱신합니다.
+- 먼저 그 skill이 플러그인 안에서 맡는 역할과 sibling skill과의 관계를 확인합니다.
+- skill의 책임, 의미, 사용 기준이 바뀌면 관련 skill spec, plugin spec, 인접 skill의 문구도 같은 변경 단위에서 함께 점검하고 필요하면 갱신합니다.
 - plugin-scoped skill 변경은 개별 skill 수정이면서 동시에 plugin surface 수정일 수 있음을 전제로 작업합니다.
 - 플러그인 관점의 영향이 있는데도 이를 skill 단독 수정으로 축소하지 않습니다.
 
-## `<plugin>-guide` 스킬 규칙
+## 플러그인 사용 표면 규칙
 
-플러그인을 만들 때는 해당 플러그인의 엔트리포인트 skill로 `<plugin>-guide`도 함께 만듭니다.
+다음 표면이 plugin usage guidance를 소유합니다.
 
-이 skill은 다음 역할을 해야 합니다.
+- `specs/plugin.md`: 플러그인 경계, 내장 skill 체계, 각 skill의 시작 기준
+- `README.md`: 사람이 읽는 사용 방법과 대표 호출 예시
+- `.codex-plugin/plugin.json`: 설치 후 노출되는 설명과 `defaultPrompt`
 
-- 플러그인을 효과적으로 사용하는 방법을 설명한다
-- 사용자나 에이전트를 올바른 내장 skill로 라우팅한다
-- 플러그인에 여러 기능이 있을 경우, 더 깊은 실행 전에 작업 유형을 분류한다
+plugin usage 표면을 바꿀 때는 다음을 함께 처리합니다.
 
-이 guide skill은 플러그인 범위에 속합니다.
-
-- 해당 플러그인 내부에 존재해야 합니다
-- 해당 플러그인의 사용성을 지원하기 위해 존재합니다
-- 플러그인의 독립적인 표면 일부로서 함께 유지보수해야 합니다
-
-다음 조건이면 엔트리포인트 skill을 사용합니다.
-
-- 플러그인에 서로 역할이 다른 skill이 둘 이상 있다
-- 사용자나 에이전트가 적절한 워크플로나 도메인 skill을 고르는 데 도움이 필요하다
-- 더 좁은 skill 선택 전에 작업 형태를 분류하는 편이 유리하다
-
-엔트리포인트 skill의 기대사항:
-
-- 더 깊은 실행 전에 작업을 분류할 것
-- 깨지기 쉬운 의존성을 하드코딩하지 않고 적절한 모드, 도메인, 워크플로로 안내할 것
-- 첫 진입점으로서 독립적으로 사용 가능할 것
-- 플러그인 엔트리포인트 skill에는 `<plugin>-guide` 명명 규칙을 사용할 것
-- 플러그인이 의도적으로 단일 목적이라면 모든 플러그인에 강제로 둘 필요는 없음
-
-실무적인 기준:
-
-- 플러그인이 분명한 단일 skill 범위를 넘어선다면, 특별한 이유가 없는 한 엔트리포인트 skill을 추가합니다
+- 남은 skill spec의 호출 방식 문구 갱신
+- `README.md`, `specs/plugin.md`, `plugin.json`의 호출 예시와 설명 갱신
+- build command로 root release surface 갱신
 
 ## 저장소 편집 규칙
 

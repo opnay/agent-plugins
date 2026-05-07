@@ -58,7 +58,7 @@ codex plugin marketplace upgrade
 `workflow-kit`은 planning, deep interview, review loop, commit readiness, turn gate 같은 일반 workflow taxonomy와 canonical workflow contract를 제공합니다.
 
 - 경로: `workflow-kit/`
-- 대표 엔트리포인트: `workflow-kit-guide`
+- 주요 실행 표면: `deep-interview`, `planner`, `autopilot`, `turn-gate`, `sequential-thinking`, `commit-readiness-gate`
 
 ### Advance Codex
 
@@ -66,7 +66,7 @@ codex plugin marketplace upgrade
 skill 작성, plugin 작성, empirical prompt tuning, session 관리, commit workflow, subagent 정의 같은 메타 작업을 다룹니다.
 
 - 경로: `advance-codex/`
-- 대표 엔트리포인트: `advance-codex-guide`
+- 주요 실행 표면: `plugin-creator`, `skill-creator`, `empirical-prompt-tuning`, `agents-sessions`, `git-committer`, `tool-use-guide`, `subagent-gate`, `subagent-creator`
 
 ### Loop Kit
 
@@ -74,7 +74,6 @@ skill 작성, plugin 작성, empirical prompt tuning, session 관리, commit wor
 `turn-gate`가 current-phase mode와 question-routing mode를 선택하고, 결과 보고 뒤 다음 플로우 선택지를 다시 엽니다.
 
 - 경로: `loop-kit/`
-- 대표 엔트리포인트: `loop-kit-guide`
 - 주요 실행 표면: `turn-gate`
 - 필수 준비: `default_mode_request_user_input`
 
@@ -84,7 +83,6 @@ skill 작성, plugin 작성, empirical prompt tuning, session 관리, commit wor
 역할은 단순 직함이 아니라 functional role, responsibility domain, background expertise, general expertise, decision style을 조합한 role specialty로 다룹니다.
 
 - 경로: `rpg-kit/`
-- 대표 엔트리포인트: `rpg-kit-guide`
 - 주요 실행 표면: `subagent-role`
 - 평가 설계: `src/rpg-kit-dev/specs/subagent-role-packet-evaluation.md`
 
@@ -119,7 +117,7 @@ src/<plugin-name>-dev/
 - 일반 개발 변경은 `src/<plugin-name>-dev`에 먼저 적용합니다.
 - 루트 release surface는 build command 산출물로만 갱신합니다.
 - 플러그인 변경은 spec-driven으로 다룹니다.
-- plugin surface가 바뀌면 `src/<plugin-name>-dev/README.md`, `src/<plugin-name>-dev/specs/plugin.md`, 관련 skill spec, 관련 guide skill, `plugin.json`, marketplace entry를 함께 점검합니다.
+- plugin surface가 바뀌면 `src/<plugin-name>-dev/README.md`, `src/<plugin-name>-dev/specs/plugin.md`, 관련 skill spec, `plugin.json`, marketplace entry를 함께 점검합니다.
 - 플러그인별 release version은 각 `.codex-plugin/plugin.json`의 `version`이 소유합니다.
 - 새 skill을 추가할 때는 먼저 plugin boundary와 sibling skill 관계를 확인합니다.
 - 하네스나 평가 설계는 결정론적인 fixture, 고정 시나리오, 명시적인 pass/fail 기준을 우선합니다.

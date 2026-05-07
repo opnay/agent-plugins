@@ -11,7 +11,7 @@
 ## 목적
 
 `skill-creator`는 canonical system `skill-creator` 위에 더 엄격한 skill boundary 규칙을 더하는 확장 스킬입니다.
-핵심은 각 skill을 independently usable한 bounded artifact로 설계하고, plugin-owned skill인 경우 plugin-level guidance와 섞이지 않게 하는 것입니다.
+핵심은 각 skill을 independently usable한 bounded artifact로 설계하고, plugin-owned skill인 경우 plugin usage guidance와 섞이지 않게 하는 것입니다.
 
 ## 경계
 
@@ -22,7 +22,7 @@
   - runtime-specific tool policy의 분리 필요성 판단
 - 제외:
   - canonical base scaffold 전체 대체
-  - plugin-level routing 정의
+  - plugin 사용 기준 정의
   - domain workflow 자체의 구현
 
 ## 처리하려는 작업 형태
@@ -34,12 +34,12 @@
 ## 엔트리포인트 / 대표 표면
 
 - 대표 표면: `advance-codex-dev/skills/skill-creator/SKILL.md`
-- 관련 상위 라우팅: `advance-codex-dev-guide`
+- 호출 방식: 직접 호출하거나 manifest prompt의 안내를 따른다.
 
 ## 핵심 처리 계약
 
 - 각 skill은 목적, 소유 범위, 비목표를 명확히 가져야 한다.
-- plugin 내부 skill이라도 cross-skill usage guidance는 `<plugin>-guide`에 둔다.
+- plugin 내부 skill이라도 cross-skill usage guidance는 manifest prompt, README, plugin spec에 둔다.
 - main bottleneck이 tool policy면 domain skill 안에 넣지 않고 별도 artifact를 고려한다.
 - behavioral guidance는 skill reader 관점에서 작성한다.
 
@@ -56,5 +56,5 @@
 
 ## 확장 원칙
 
-- skill packaging 규칙이 바뀌면 `plugin-creator`와 해당 plugin guide spec도 함께 점검한다.
+- skill packaging 규칙이 바뀌면 `plugin-creator`, plugin spec, manifest prompt도 함께 점검한다.
 - 새 규칙은 reusable skill quality를 높이는 경우에만 추가한다.

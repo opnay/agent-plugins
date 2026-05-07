@@ -58,7 +58,7 @@ This skill does not own:
 
 Before you dispatch anything, verify that the instruction advertises the same job it actually teaches.
 
-- read the trigger and usage promises in frontmatter or adjacent routing text
+- read the trigger and usage promises in frontmatter or adjacent usage text
 - read the body and confirm it truly covers that promised scope
 - fix description-body drift first, or the later evaluation can produce false confidence
 

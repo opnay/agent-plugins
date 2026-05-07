@@ -56,7 +56,7 @@ Future flow/phase design is provisional. Revisit it only when new evidence, chan
 
 Meaning resolution happens before routing, planning, or editing. Its job is to verify that the interpreted operation matches the user's intended operation.
 
-Use it when a user instruction contains an overloaded operation, structural target, or contextual reference whose interpretation would change the work. Common examples include merging a skill versus absorbing behavior into a phase, removing a user-facing surface versus removing a routing entry, changing a spec contract versus changing only a runtime guide, or editing "the section below" when multiple nearby sections could match.
+Use it when a user instruction contains an overloaded operation, structural target, or contextual reference whose interpretation would change the work. Common examples include merging a skill versus absorbing behavior into a phase, removing a user-facing surface versus removing a routing entry, changing a spec contract versus changing only runtime wording, or editing "the section below" when multiple nearby sections could match.
 
 Treat provenance, source URLs, and user-intent/spec-intent blocks as meaningful targets, not disposable conversation context. If "source", "original", "intent", or "below that" could point to either a provenance note, a user intent block, or the normative spec body, lock that target before editing.
 
@@ -64,7 +64,7 @@ During analysis, keep these fields explicit when relevant:
 
 - `Literal wording`: the user's exact ambiguous wording
 - `Interpreted operation`: the operation you are about to act on
-- `Operation target`: the affected unit, such as skill, spec, guide, plugin, phase, routing rule, release surface, or commit scope
+- `Operation target`: the affected unit, such as skill, spec, plugin, phase, routing rule, release surface, or commit scope
 - `Alternate interpretations`: other plausible meanings that would change the work
 - `Impact of ambiguity`: files, behavior, deletion, migration, or commit scope that would differ
 

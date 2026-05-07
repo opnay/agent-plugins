@@ -3,8 +3,8 @@
 ## 플러그인 목적
 
 `workflow-kit-dev`은 작업 lifecycle 전반을 다루는 workflow 플러그인입니다.
-핵심 책임은 들어온 요청에 대해 requirement discovery, sequential analysis, planning, execution, refinement, review, final gating, 그리고 사용자가 턴을 종료하자고 요청할때까지 턴을 닫지 않는 loop-gated continuity 중 현재 병목이 무엇인지 판단하고, 가장 맞는 workflow skill로 연결하는 것입니다.
-이 판단 전에는 사용자 지시어의 operation 의미가 skill, spec, guide, plugin, phase, routing rule, release surface 중 어디를 가리키는지 확인해야 하며, 해석에 따라 작업이 달라지면 meaning resolution 질문으로 먼저 잠급니다.
+핵심 책임은 requirement discovery, sequential analysis, planning, execution, refinement, review, final gating, 그리고 사용자가 턴을 종료하자고 요청할때까지 턴을 닫지 않는 loop-gated continuity를 각각의 workflow skill로 제공하는 것입니다.
+이 판단 전에는 사용자 지시어의 operation 의미가 skill, spec, plugin, phase, routing rule, release surface 중 어디를 가리키는지 확인해야 하며, 해석에 따라 작업이 달라지면 meaning resolution 질문으로 먼저 잠급니다.
 repository-local operating rule이 non-terminal turn을 요구하면, `turn-gate`를 turn-level loop gate로 유지한 채 현재 phase owner를 선택합니다.
 `turn-gate`가 활성화되면 현재 세션 동안 first-class loop gate rule로 취급합니다.
 bounded decision을 subagent question packet으로 라우팅해 자동 진행해야 하는 경우 `turn-gate-self-drive` overlay를 선택합니다.
@@ -37,17 +37,14 @@ bounded decision을 subagent question packet으로 라우팅해 자동 진행해
 - broad execution부터 review와 final gate까지 이어지는 lifecycle 작업
 - 결과 보고 뒤 다음 플로우 진행을 위한 question-routing 응답을 열어야 하는 지속적 turn workflow
 
-## 엔트리포인트 / 대표 표면
+## 대표 표면
 
-- 대표 엔트리포인트: `workflow-kit-dev-guide`
 - 대표 스펙: `workflow-kit-dev/specs/plugin.md`
 - skill 상세 스펙 위치: `workflow-kit-dev/specs/skills/*.md`
 - 보조 적응 문서: `workflow-kit-dev/specs/deep-interview-adaptation.md`
 
 ## 내장 skill 체계
 
-- `workflow-kit-dev-guide`: current bottleneck에 맞는 starting workflow와 handoff를 정한다.
-  - spec: `workflow-kit-dev/specs/skills/workflow-kit-dev-guide.md`
 - `sequential-thinking`: 복잡한 분석, 설계, 계획, 디버깅 문제를 단계적으로 풀고 필요하면 revision, branch, hypothesis verification을 수행한다.
   - spec: `workflow-kit-dev/specs/skills/sequential-thinking.md`
 - `deep-interview`: intent, scope, tradeoff, approval boundary를 질문으로 잠근다.
@@ -71,10 +68,10 @@ bounded decision을 subagent question packet으로 라우팅해 자동 진행해
 
 ## SDD 운영 원칙
 
-- plugin spec은 lifecycle stage model과 routing surface만 소유한다.
+- plugin spec은 lifecycle stage model과 skill composition만 소유한다.
 - 각 workflow의 처리 계약은 `specs/skills/` 아래 독립 문서로 분리한다.
-- stage model이나 handoff 규칙이 바뀌면 `workflow-kit-dev-guide`와 해당 skill spec, `plugin.md`를 같은 변경에서 갱신한다.
-- specialist plugin이 first stop이 되지 않도록 global routing boundary를 유지한다.
+- stage model이나 handoff 규칙이 바뀌면 해당 skill spec, `plugin.md`, manifest prompt를 같은 변경에서 갱신한다.
+- specialist plugin이 일반 workflow 책임을 흡수하지 않도록 global workflow boundary를 유지한다.
 
 ## 현재 구조 메모
 

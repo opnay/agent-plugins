@@ -34,7 +34,6 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Use $advance-codex:advance-codex-guide to decide whether this should become a skill, tool-use guidance layer, plugin, session folder convention, commit surface, subagent handoff gate, or subagent workflow.",
       "Use $advance-codex:plugin-creator to package a plugin and define the right bundled surfaces.",
       "Use $advance-codex:skill-creator to design a reusable Codex skill with the right references and guardrails.",
       "Use $advance-codex:empirical-prompt-tuning to evaluate and iteratively improve reusable instructions with fresh subagents, fixed scenarios, and caller-side metrics.",

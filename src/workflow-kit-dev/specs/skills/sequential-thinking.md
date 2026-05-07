@@ -40,7 +40,7 @@
 ## 엔트리포인트 / 대표 표면
 
 - 대표 표면: `workflow-kit-dev/skills/sequential-thinking/SKILL.md`
-- 관련 상위 라우팅: `workflow-kit-dev-guide`
+- 호출 방식: 직접 호출하거나 manifest prompt의 안내를 따른다.
 - 참조 모델: Sequential Thinking MCP의 반성적 문제 해결 방식
 - 원본 출처: `https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking`
 
@@ -131,9 +131,9 @@
 ## 독립성 원칙
 
 - 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 예.
-- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: 순차적 문제 해결 방식은 sibling 라우터 문맥 없이도 독립적으로 이해되고 실행돼야 한다. 다만 `deep-interview`, `planner`, 실행 workflow와의 인계 경계는 plugin guide와 함께 유지한다.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: 순차적 문제 해결 방식은 sibling 라우터 문맥 없이도 독립적으로 이해되고 실행돼야 한다. 다만 `deep-interview`, `planner`, 실행 workflow와의 인계 경계는 plugin spec과 manifest prompt에서 함께 유지한다.
 
 ## 확장 원칙
 
 - 순차적 사고 방식을 바꿀 때는 어떤 상태 전이, 수정, 분기, 검증 계약이 유지되는지 spec에 명시한다.
-- 이 skill의 인계 경계가 바뀌면 `workflow-kit-dev-guide`와 plugin spec을 함께 갱신한다.
+- 이 skill의 인계 경계가 바뀌면 plugin spec과 manifest prompt를 함께 갱신한다.

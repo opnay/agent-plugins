@@ -8,7 +8,6 @@ It does not make subagent use mandatory, and it does not replace the caller's re
 
 ## Surfaces
 
-- `rpg-kit-dev-guide`: entrypoint for deciding whether a task belongs in this plugin and routing to the right internal skill.
 - `subagent-role`: defines role-assigned subagent packets, spawn boundaries, answer contracts, and learning notes.
 
 ## Operating Model

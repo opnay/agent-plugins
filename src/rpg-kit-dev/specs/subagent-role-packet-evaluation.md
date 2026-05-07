@@ -11,8 +11,8 @@
 
 - `rpg-kit-dev/skills/subagent-role/SKILL.md`
 - `rpg-kit-dev/specs/skills/subagent-role.md`
-- `rpg-kit-dev/skills/rpg-kit-dev-guide/SKILL.md`
-- `rpg-kit-dev/specs/skills/rpg-kit-dev-guide.md`
+- `rpg-kit-dev/specs/plugin.md`
+- `rpg-kit-dev/.codex-plugin/plugin.json`
 
 ## 실패 모드
 

@@ -31,7 +31,7 @@
 ## 엔트리포인트 / 대표 표면
 
 - 대표 표면: `workflow-kit-dev/skills/autopilot/SKILL.md`
-- 관련 상위 라우팅: `workflow-kit-dev-guide`
+- 호출 방식: 직접 호출하거나 manifest prompt의 안내를 따른다.
 
 ## 핵심 처리 계약
 

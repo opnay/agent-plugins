@@ -28,9 +28,8 @@
 - 여러 subagent 결과를 비교하거나 caller-side decision으로 통합해야 하는 작업
 - subagent behavior를 관찰해 다음 orchestration 규칙을 개선하려는 작업
 
-## 엔트리포인트 / 대표 표면
+## 대표 표면
 
-- 대표 엔트리포인트: `rpg-kit-dev-guide`
 - 대표 실행 표면: `subagent-role`
 - 대표 스펙: `rpg-kit-dev/specs/plugin.md`
 - skill 상세 스펙 위치: `rpg-kit-dev/specs/skills/*.md`
@@ -38,8 +37,6 @@
 
 ## 내장 skill 체계
 
-- `rpg-kit-dev-guide`: 현재 작업이 `rpg-kit-dev`의 역할 기반 subagent orchestration 범위인지 판단하고 적절한 skill로 라우팅한다.
-  - spec: `rpg-kit-dev/specs/skills/rpg-kit-dev-guide.md`
 - `subagent-role`: 역할이 할당된 subagent를 위한 packet, spawn rule, answer contract, learning note를 정의한다.
   - spec: `rpg-kit-dev/specs/skills/subagent-role.md`
 
@@ -54,5 +51,5 @@
 
 ## 현재 구조 메모
 
-- 초기 버전은 `rpg-kit-dev-guide`와 `subagent-role` 두 skill만 포함한다.
+- 초기 실행 표면은 `subagent-role` 하나로 좁힌다.
 - 이 플러그인은 subagent orchestration을 배우는 킷이며, subagent runtime 자체를 제공하지 않는다.

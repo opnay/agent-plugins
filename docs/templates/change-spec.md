@@ -52,5 +52,5 @@
 
 ## 정식 규칙 승격 여부
 
-- normative spec 또는 guide로 승격할 지속 규칙:
+- normative spec 또는 runtime 문서로 승격할 지속 규칙:
 - change spec에만 남길 release/migration 이력:

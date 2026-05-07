@@ -77,7 +77,7 @@ Clarify these before drafting guidance:
 
 1. Identify the artifact that currently owns or is about to own the guidance:
    - skill
-   - plugin guide
+   - plugin spec, README, or manifest prompt
    - custom agent
    - adjacent runtime-facing helper artifact
 2. Identify whether the problem is:
@@ -88,7 +88,7 @@ Clarify these before drafting guidance:
    - wrong placement of runtime-specific guidance
 3. Decide whether the guidance belongs in:
    - a bounded tool-use skill
-   - a plugin entrypoint guide
+   - plugin usage text
    - a custom agent's behavioral instructions
    - a local patch inside an existing artifact
 
@@ -154,7 +154,7 @@ Output:
 ## Placement Rules
 
 - Put tool guidance in a dedicated artifact when it would otherwise leak runtime specifics into a domain skill.
-- Keep plugin-level routing guidance in the plugin guide unless the issue is specifically about tool policy.
+- Keep plugin usage guidance in the plugin spec, README, or manifest prompt unless the issue is specifically about tool policy.
 - Keep custom-agent operational behavior in the agent spec when the tool rules are inseparable from that role.
 - Do not create a new tool-use skill if one localized artifact-level patch is enough and remains cleanly bounded.
 

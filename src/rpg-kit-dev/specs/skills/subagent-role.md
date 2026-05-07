@@ -41,7 +41,7 @@
 ## 엔트리포인트 / 대표 표면
 
 - 대표 표면: `rpg-kit-dev/skills/subagent-role/SKILL.md`
-- 관련 상위 라우팅: `rpg-kit-dev-guide`
+- 호출 방식: 직접 호출하거나 manifest prompt의 안내를 따른다.
 
 ## 핵심 처리 계약
 
@@ -135,7 +135,7 @@
 ## 독립성 원칙
 
 - 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 예.
-- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: `subagent-role`은 guide 없이도 role packet과 answer contract를 작성할 수 있어야 한다. 다만 plugin-level routing은 `rpg-kit-dev-guide`가 소유한다.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: `subagent-role`은 role packet과 answer contract를 독립적으로 작성할 수 있어야 한다. plugin-level 선택 기준은 manifest prompt, README, plugin spec이 소유한다.
 
 ## 확장 원칙
 
