@@ -4,8 +4,9 @@ Use this mode when the current phase is broad end-to-end execution from a brief 
 
 ## Core Contract
 
-- Run a multi-phase delivery workflow from scope lock through implementation, QA, validation, and delivery.
+- Run a multi-phase delivery workflow from locked scope through implementation, QA, validation, and delivery.
 - Ask only blocking clarification questions; otherwise keep execution moving autonomously.
+- Do not start if the scope floor is unmet. Return to `deep-interview` or active question-routing when scope can change output, completion criteria, or verification.
 - Verify after meaningful edits with the checks that fit the changed surface.
 - Track QA issues when failures need iterative fixes.
 - Stop and report a root blocker if critical ambiguity prevents safe execution or the same QA failure repeats.
@@ -13,7 +14,7 @@ Use this mode when the current phase is broad end-to-end execution from a brief 
 ## Mode Boundary
 
 - Good fit: hands-off implementation, multi-phase feature work, requests that span requirements, code changes, tests, and validation.
-- Not a fit: brainstorming, planning-only requests, one small bounded fix, review-finding triage, or final commit readiness.
+- Not a fit: brainstorming, planning-only requests, one small bounded fix, review-finding triage, missing scope lock, or final commit readiness.
 
 ## Review Questions
 

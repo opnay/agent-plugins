@@ -24,8 +24,10 @@ Keep it incremental. Do not delete completed work; summarize completed flows and
    - User request:
    - Flow purpose:
    - Status: planned | active | complete | blocked
+   - Current core phase: preparation | work | verification | reporting
    - Completion criteria:
    - Next-flow trigger:
+   - Verification status: not-started | requested | pass | fail | blocked | insufficient | not-applicable
    - Summary:
 
 ## Planned Flow Sequence
@@ -33,6 +35,10 @@ Keep it incremental. Do not delete completed work; summarize completed flows and
 - Preparation source: user-message | existing-flow | correction | next-flow
 - Preparation result:
 - Flow-list basis:
+- Scope lock status: locked-by-question | inferred | not-needed | pending
+- Work boundary:
+- Non-goals:
+- Verification expectation:
 
 1. `<flow slug or title>`
    - Purpose:
@@ -62,9 +68,20 @@ Keep it incremental. Do not delete completed work; summarize completed flows and
 - Current core phase: preparation | work | verification | reporting
 - Latest decision:
 - Required next action:
+- Pending question state: none | pending | answered | aborted | superseded
 - Work boundary:
 - Verification expectation:
+- Verification status: not-started | requested | pass | fail | blocked | insufficient | not-applicable
 - Next planned flow:
+
+## Continuity Guard Snapshot
+
+- Turn-gate active: yes | no
+- Question-routing mode: user-gated | undecided
+- User explicit stop: yes | no
+- Terminal summary allowed: yes | no
+- Required next action:
+- Last refreshed phase:
 
 ## Completed Flow Summaries
 
@@ -73,6 +90,7 @@ Keep it incremental. Do not delete completed work; summarize completed flows and
 ## Explicit Turn-End Option
 
 - Record that the user can explicitly stop the turn even when the visible question UI cannot show a stop option.
+- Recorded turn-end option:
 
 ## Open Risks
 

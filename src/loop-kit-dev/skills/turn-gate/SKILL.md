@@ -13,6 +13,8 @@ description: Main loop controller for `loop-kit`. Keep one turn alive until the 
 - The core flow is exactly `preparation -> work -> verification -> reporting`. Next-flow question-routing is the continuation surface after reporting, not a fifth core phase.
 - Treat deep-interview alignment, flow-list design, meaning resolution, current-state inspection, target reread, scope lock, and approval-boundary checks as preparation details.
 - If the user only activates `turn-gate`, activate the gate, keep `user_explicit_stop=false`, update or create the session record, and open a scope or next-flow choice instead of inferring work or closing.
+- User-message-driven preparation has a scope floor: before work, lock scope by question when scope is missing, too broad, can produce multiple valid outputs, or can change success criteria or verification.
+- If scope is safely inferred, record the inferred work boundary and non-goals. Silent inference is never approval for destructive, external, commit, push, PR, publish, or similar sensitive work.
 - Use `request_user_input` when available for next-flow decisions, scope locks, mode narrowing, meaning clarification, blockers, and approval choices.
 - Maintain `.agents/sessions/{YYYYMMDD}/000-plan.md` and the active flow record, including `Continuity Guard`, preparation source/result, current core phase, work boundary, verification status, and `Next Flow Options`.
 - After `work`, request clean-context verification before result reporting. While `turn-gate` is active, a read-only bounded verifier subagent is pre-authorized as part of this verification contract only.
@@ -39,7 +41,7 @@ Activation, incoming message handling, next-flow reopening, and explicit stop ha
 
 Treat every incoming user message as authoritative input inside the same gated turn.
 
-First decide whether the message clearly asks to end the current turn itself. Only clear wording such as "end this turn", "stop the turn", "we are done here", or equivalent intent counts as explicit turn stop. If that intent is unclear, do not infer closure.
+First decide whether the message clearly asks to end the current turn itself. Only clear wording such as "end this turn", "stop the turn", "we are done here", "턴 종료", "여기서 끝", or equivalent intent counts as explicit turn stop. If that intent is unclear, do not infer closure.
 
 If the message is not an explicit turn stop, it is continuation input by default. Do not close just because the situation is not named in this skill. Route continuation by its effect on the active flow: refresh status and continue, revise analysis or plan, reread a changed target, update next-flow candidates, open an approval boundary, handle a review or verification request, or return to the earliest safe phase. Questions, review requests, status checks, corrections, priority changes, and new task requests are examples only, not a closed taxonomy.
 
@@ -50,6 +52,10 @@ If continuation changes a target file, artifact, or state, reread that target be
 Preparation decides what this flow owns, why it exists, and what must be true before work can proceed.
 
 - User-message-driven preparation uses deep-interview alignment to lock or infer intent, scope, non-goals, success criteria, approval boundary, and verification signal. Convert that result into a planned flow list.
+- Apply the scope floor before work: ask a user-gated scope-lock question when scope is missing, too broad, can produce multiple valid outputs, or can change success criteria or verification path.
+- A scope lock should cover the flow-changing subset of included scope, excluded scope, target files/surfaces/artifacts, completion criteria, and verification signal.
+- If scope is safe to infer without a question, record the inferred work boundary and non-goals in the flow record before work.
+- Scope inference is not approval. Destructive, irreversible, external, commit, push, PR, publish, or similar sensitive work still needs explicit approval.
 - Existing-flow or non-user-message preparation prepares an already selected flow. Inspect required change scope, current state, target files or artifacts, stale assumptions, available evidence, and execution conditions.
 - If operation or target ambiguity can change the flow list or work result, lock it through meaning resolution before flow-list design, mode selection, or editing.
 - Identify requested intent, requested action, current blocker, likely internal mode, approval boundary, preparation result, planned flow list, work boundary, and verification expectation.

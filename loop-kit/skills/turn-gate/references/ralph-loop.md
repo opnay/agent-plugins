@@ -8,11 +8,12 @@ Use this mode when the current phase is one bounded issue that should be improve
 - Prefer the smallest useful fix that can validate the current hypothesis.
 - Verify immediately after the fix.
 - Reassess whether another loop is justified before continuing.
+- If the issue boundary expands enough to change success criteria or verification, stop the loop and return to preparation or question-routing.
 
 ## Mode Boundary
 
 - Good fit: UI polish, bounded refactor stabilization, flaky issue reduction, one narrow quality problem.
-- Not a fit: broad delivery, multi-phase planning, or review triage across many findings.
+- Not a fit: broad delivery, multi-phase planning, review triage across many findings, or missing scope boundaries.
 
 ## Review Questions
 

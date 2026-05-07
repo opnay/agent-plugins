@@ -5,14 +5,15 @@ Use this mode when implementation is largely done and the current phase is to de
 ## Core Contract
 
 - Evaluate the intended change unit, not the whole repository.
-- Run final self-review and scoped verification.
+- Confirm the work boundary, unrelated-change exclusion, verification status, residual risk, and likely commit-message scope.
+- Run final review and scoped verification appropriate to a readiness call.
 - Report readiness, residual risk, and any minimum review recommendation together.
-- Keep commit execution itself outside this mode.
+- Keep commit execution itself outside this mode. A readiness request is not commit approval.
 
 ## Mode Boundary
 
 - Good fit: final readiness judgment after implementation and targeted verification.
-- Not a fit: broad implementation, planning, or commit-message/finalization work.
+- Not a fit: broad implementation, planning, commit execution, push, PR, publish, or commit-message finalization.
 
 ## Review Questions
 

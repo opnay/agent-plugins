@@ -35,6 +35,9 @@ deep-interview alignment, flow list design, meaning resolution, current-state in
 - preparation:
   - 이 flow에서 무엇을 할지, 왜 하는지, 어떤 조건에서 작업으로 넘어갈 수 있는지를 준비한다.
   - 사용자 메시지에서 시작하는 preparation은 deep-interview를 사용해 intent, scope, non-goal, success criteria, approval boundary, verification signal을 정렬한다.
+  - 사용자 메시지의 scope가 비어 있거나 너무 넓거나 여러 결과물을 만들 수 있거나 성공 기준과 검증 경로를 바꿀 수 있으면, work로 넘어가기 전에 user-gated question-routing으로 scope를 먼저 잠근다.
+  - 범위 잠금은 최소한 포함 범위, 제외 범위, 대상 파일/표면 또는 산출물, 완료 기준, 검증 신호 중 이번 flow 결과를 바꿀 항목을 다룬다.
+  - scope가 충분하다고 추론하는 경우에도 그 추론한 work boundary와 non-goal을 flow record에 남겨야 하며, 추론이 틀리면 되돌리기 어려운 작업은 질문 없이 진행하지 않는다.
   - 사용자 메시지 기반 deep-interview 결과는 단순 질문 답변이 아니라 이후 flow list로 변환되어야 한다.
   - 비 사용자 메시지에서 시작하는 preparation은 이미 준비된 flow의 실행 전 준비이며, 필요한 수정 범위, 현재 상태, 대상 파일, stale assumption, 실행 전 조건을 확인한다.
   - operation/target ambiguity가 flow list나 작업 결과를 바꿀 수 있으면 flow list design이나 work 전에 meaning resolution으로 먼저 잠근다.

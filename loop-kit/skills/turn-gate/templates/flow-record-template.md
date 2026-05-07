@@ -24,11 +24,15 @@ Keep the date-level history and flow index in `000-plan.md`; keep the detailed e
 - User explicit stop: yes | no
 - Terminal summary allowed: yes | no
 - Required next action:
-- Last refreshed phase:
+- Last refreshed phase: preparation | work | verification | reporting
+- Confirmed closure: yes | no
 - Closure source message: <required only when confirmed closure is recorded>
+- Closure recorded phase: <required only when confirmed closure is recorded>
 - Pending question state: none | pending | answered | aborted | superseded
 - Pending question id or summary:
+- Superseded question id or summary:
 - Verification status: not-started | requested | pass | fail | blocked | insufficient | not-applicable
+- Continuity note:
 
 ## Analysis
 
@@ -40,8 +44,12 @@ Keep the date-level history and flow index in `000-plan.md`; keep the detailed e
 - Why this flow:
 - Why this mode:
 - Why this question-routing mode:
+- Scope lock status: locked-by-question | inferred | not-needed | pending
 - Work boundary:
+- Non-goals:
+- Approval boundary:
 - Verification expectation:
+- Material judgment calls:
 
 ## Plan
 
@@ -57,8 +65,9 @@ Keep the date-level history and flow index in `000-plan.md`; keep the detailed e
 
 ## Verification
 
+- Verification packet or request id:
 - What was checked:
-- Result:
+- Result: not-started | requested | pass | fail | blocked | insufficient | not-applicable
 - Remaining uncertainty:
 - Contrary evidence or multi-angle critique:
 
@@ -68,6 +77,7 @@ Keep the date-level history and flow index in `000-plan.md`; keep the detailed e
 - Files changed:
 - Commit-ready state:
 - Next-flow context:
+- Blocker, if any:
 
 ## Next Flow Options
 
