@@ -65,7 +65,7 @@ flow는 함께 이해하고 검토하고 검증하고 필요하면 커밋할 수
   - 사용자 메시지 기반 preparation은 planned flow list 전체를 진행하는 데 필요한 정보가 무엇인지 확인하고, 이후 flow들이 추가 사용자 질문 없이 self-drive로 진행될 수 있을 만큼 intent, scope, non-goal, acceptance signal, approval boundary, verification expectation을 수집한다.
   - approval boundary, destructive/irreversible/external action, commit/push/PR/publish 결정처럼 예상되는 위험 작업은 초기 preparation에서 질문해 승인/비승인 또는 handoff 경계를 별도로 표시하고, self-drive가 자동 처리하지 못하는 user-gated checkpoint로 계획한다.
   - 이후 flow 진행 중 초기 협의 범위 밖의 위험 작업이나 새 approval boundary가 나타나면, self-drive는 자동 처리하지 않고 user-gated question-routing으로 다시 질문해야 한다.
-  - 사용자가 self-drive 진행을 원하거나 autonomous continuation이 적합한 경우, planned flow list의 실행은 같은 플러그인의 `turn-gate-self-drive` overlay로 넘길 수 있다.
+  - 사용자가 self-drive 진행을 원하거나 autonomous continuation이 적합한 경우, planned flow list의 실행은 `turn-gate/references/self-drive.md` 계약을 읽고 이어갈 수 있다.
   - self-driven planned flow sequence가 끝나면 commit execution이 아니라 commit-readiness reporting handoff로 이어진다. commit-readiness reporting 자체는 산출물 변경을 소유하지 않는 한 새 planned flow로 만들지 않는다. commit execution, push, PR, publish는 별도 user-gated handoff다.
   - 사용자 메시지 기반 deep-interview 결과는 단순 질문 답변이 아니라 이후 flow list로 변환되어야 한다.
   - flow list 변환 자체가 산출물로 남는 경우, 그 산출물은 `operational-preparation flow`의 work/reporting 결과이고, 변환 결과 목록의 각 실행 항목은 `change-unit flow`다.

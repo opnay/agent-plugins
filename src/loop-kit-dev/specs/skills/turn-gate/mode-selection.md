@@ -19,12 +19,14 @@
 - `ralph-loop`: 하나의 작은 fix-verify-reassess cycle이 현재 phase의 적절한 단위인 경우
 - `autopilot`: broad end-to-end delivery가 현재 phase의 핵심인 경우
 - `commit-readiness-gate`: 현재 변경 단위가 거의 끝났고 readiness 판단이 핵심인 경우
+- `self-drive`: 준비된 planned flow sequence를 사용자 추가 응답 없이 bounded subagent decision으로 이어갈 수 있는 경우
 
-여러 mode가 겹쳐 보이면 `deep-interview -> review-loop -> ralph-loop -> autopilot -> commit-readiness-gate` 순으로 더 이른 병목을 우선한다.
+여러 mode가 겹쳐 보이면 `deep-interview -> review-loop -> ralph-loop -> autopilot -> self-drive -> commit-readiness-gate` 순으로 더 이른 병목을 우선한다.
 
 ## Local References
 
 - local `references/`는 관련 workflow skill spec과 동기화된 absorbed operational contract로 유지한다.
+- `references/self-drive.md`는 별도 skill entrypoint가 아니라 `turn-gate` 내부 self-drive 실행 계약이다.
 - internal mode의 일반 의미가 바뀌면 먼저 해당 workflow skill spec에서 정리한다.
 - `loop-kit-dev`은 runtime orchestration 관점의 차이와 local absorbed references를 별도로 소유한다.
 - 관련 workflow skill spec과 `turn-gate` references의 문구가 어긋나면 같은 변경 단위에서 함께 갱신한다.

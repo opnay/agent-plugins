@@ -16,7 +16,7 @@ Use this mode when the current phase is requirement discovery rather than implem
 - Convert the discovery result into a planned flow list with flow boundaries, non-goals, acceptance signal, verification expectations, expected risky actions, and user-gated checkpoints.
 - If autonomous continuation is appropriate, prepare the self-drive handoff boundary: which flows can proceed under the initial agreement and which must return to user-gated question-routing.
 - Do not stop at advisory guidance when an actual question round is still needed.
-- Once clarity is sufficient, hand off to the next fitting mode, `turn-gate-self-drive`, or downstream workflow with the work boundary and non-goals intact.
+- Once clarity is sufficient, hand off to the next fitting mode, `self-drive`, or downstream workflow with the work boundary and non-goals intact.
 
 ## Mode Boundary
 

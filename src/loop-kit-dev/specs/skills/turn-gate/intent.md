@@ -60,7 +60,7 @@
 - 사용자 메시지 기반 준비가 끝난 뒤에는 계획된 여러 flow를 self-drive로 진행할 수 있어야 한다.
   - 사용자 메시지를 통한 preparation에서는 이후 flow list를 실행하는 데 필요한 intent, scope, non-goal, acceptance signal, approval boundary, verification expectation을 충분히 수집해야 한다.
   - 이 준비는 질문으로 멈추는 것이 아니라 active question-routing을 포함하는 운영 flow로 계속 이어져야 한다.
-  - 준비가 끝난 뒤 만들어진 여러 flow는 사용자가 명시적으로 수동 진행을 원하거나 approval boundary가 생기지 않는 한 `turn-gate-self-drive` overlay로 이어갈 수 있어야 한다.
+  - 준비가 끝난 뒤 만들어진 여러 flow는 사용자가 명시적으로 수동 진행을 원하거나 approval boundary가 생기지 않는 한 `turn-gate/references/self-drive.md` 계약으로 이어갈 수 있어야 한다.
   - 초기 preparation에서는 planned flow list 중 예상되는 destructive, irreversible, external action, commit, push, PR, publish 같은 위험 작업과 approval boundary를 미리 질문해 승인/비승인 또는 handoff 경계를 계획해야 한다.
   - self-drive가 여러 flow를 진행하는 동안 초기 협의 범위를 벗어난 위험 작업이나 새 approval boundary가 나타나면 자동 처리하지 않고 user-gated routing으로 다시 질문해야 한다.
   - 계획된 마지막 flow를 마치는 단계에서는 terminal summary가 아니라 commit-readiness gate 성격의 보고를 해야 하며, 이 보고는 commit execution approval과 구분되어야 한다.

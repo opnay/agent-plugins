@@ -46,7 +46,7 @@ Run each active flow through this order:
 4. reporting
 
 Next-flow reopening is the continuation surface after reporting, not a core phase.
-Activation, incoming message handling, explicit stop handling, self-drive handoff, and session record checks wrap the loop.
+Activation, incoming message handling, explicit stop handling, self-drive reference handling, and session record checks wrap the loop.
 
 Do not promote phase names such as analysis, work, verification, reporting, or readiness checking into separate planned flows.
 A flow is a cohesive reviewable or commit-sized unit; it does not have to be only a direct end-user value unit.
@@ -165,7 +165,7 @@ Destructive, irreversible, external, commit, push, PR, and publish actions requi
 Prior wording, inferred intent, or subagent output does not grant approval.
 If a new approval boundary appears after initial preparation, stop self-driven execution and ask.
 
-Self-driven planned flow execution may hand off to the `turn-gate-self-drive` overlay when autonomous continuation is appropriate.
+Self-driven planned flow execution may use `references/self-drive.md` when autonomous continuation is appropriate.
 When that sequence is done, report commit readiness rather than executing a commit.
 Commit, push, PR, and publish are separate user-gated handoffs.
 
@@ -181,6 +181,7 @@ Choose the earliest blocking mode that applies:
 - `ralph-loop`: one small fix-verify-reassess cycle is the right unit.
 - `autopilot`: broad end-to-end delivery is the current need.
 - `commit-readiness-gate`: the change unit is nearly complete and readiness judgment is the current need.
+- `self-drive`: prepared planned flows can continue through bounded subagent decisions without waiting for user answers.
 
 After selecting a mode, read the matching local file in `references/` and apply that contract before doing the work.
 External actions such as commit execution, push, PR, or publish are not internal modes.
