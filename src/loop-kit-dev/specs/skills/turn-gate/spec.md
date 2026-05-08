@@ -44,7 +44,18 @@
 
 - `intent.md`: `turn-gate`의 사용자 스펙 의도 기록
 - `runtime-flow.md`: activation부터 explicit stop까지 `turn-gate`의 전체 phase 흐름과 전환 조건
-- `internal-gates.md`: message intake, flow shaping, task policy, verification, reporting, continuation gate의 내부 전환 계약
+- `phase-preparation.md`: work 전 intent, scope, non-goal, approval boundary, verification expectation 정렬
+- `phase-work.md`: active flow 안에서 실제 작업을 수행하기 위한 work phase 계약
+- `phase-verification.md`: work 이후 clean-context verification과 non-pass 처리로 이어지는 verification phase 계약
+- `phase-reporting.md`: terminal close가 아니라 next-flow context를 정리하는 reporting phase 계약
+- `flow-boundaries.md`: `operational-preparation`, `change-unit`, planned flow boundary, 후속 후보와 active execution flow 구분
+- `internal-gates.md`: internal gate model overview and gate detail map
+- `gate-message-intake.md`: incoming user message classification and explicit stop detection
+- `gate-flow-shaping.md`: active flow shaping, follow-up candidate separation, completion criteria
+- `gate-task-policy.md`: flow-local task sequencing, local references, target rereads, command/edit/build/test policy
+- `gate-verification.md`: verification packet construction and pass/fail/blocked/insufficient routing
+- `gate-reporting.md`: result reporting as continuity context
+- `gate-continuation.md`: explicit stop check and next-flow reopening
 - `meaning-resolution.md`: operation/target ambiguity, provenance/intent block target locking, user-gated clarification
 - `mode-selection.md`: internal mode selection, local references, mode-vs-handoff, upstream SSOT 동기화
 - `skills/turn-gate/references/self-drive.md`: prepared planned flow sequence를 bounded subagent decision으로 이어가는 self-drive 실행 계약

@@ -10,16 +10,11 @@
 - `000-plan.md`는 당일 작업의 히스토리, 사용자 요청 목록, flow index, 현재 계획, 완료 flow 요약을 소유한다.
 - `000-plan.md`의 현재 계획은 action checklist가 아니라 planned flow sequence여야 한다.
 - session record에는 flow type을 구분할 수 있어야 한다: `operational-preparation` 또는 `change-unit`.
-- `operational-preparation` flow는 사용자 메시지 해석, scope lock, approval boundary 정리, planned flow list 설계를 소유하며, 산출물은 plan/session record다.
-- `change-unit` flow는 실제 코드, 문서, fixture, 설정, release surface처럼 검토 가능한 산출물 변경을 소유한다.
-- 사용자 메시지 기반 bootstrap을 기록할 때는 operational-preparation flow와 그 결과 planned change-unit flow list를 구분한다.
+- flow type, planned flow boundary, 후속 후보와 active execution flow의 구분은 `flow-boundaries.md`가 소유한다.
+- session record는 그 boundary 판단을 실제 `.agents/sessions/{YYYYMMDD}/000-plan.md`와 `001+` flow record에 어떻게 남기는지 소유한다.
+- 사용자 메시지 기반 bootstrap을 기록할 때는 operational-preparation flow와 그 결과 planned change-unit flow list 또는 후속 후보를 구분한다.
 - 실행이 아니라 판단, 설계, 범위 확인만 요청된 경우 실제 실행 flow와 구분한다. 이 경우 `operational-preparation` record는 후속 실행 후보, scope/non-goal, target ambiguity 판단, verification expectation을 기록하고 종료할 수 있다.
 - 운영 flow에 남긴 후속 실행 후보는 아직 시작된 `change-unit` flow가 아니다. 실제 실행으로 이어질 때만 별도 `001+` flow record 또는 다음 count의 `change-unit` record를 만든다.
-- planned flow sequence는 phase checklist가 아니며, `분석`, `작업`, `검증`, `커밋 준비` 같은 진행 단계를 별도 flow로 나열하지 않는다.
-- 각 planned flow는 함께 이해하고 검토하고 검증하고 필요하면 커밋할 수 있는 응집된 변경 단위여야 한다. 최종 사용자에게 직접 보이는 가치 단위가 아니어도 된다.
-- 순수 최종 QA, 통합 검증, 정합성 점검, 검증 결과 보고, commit-readiness reporting은 별도 산출물 변경을 소유하지 않는 한 planned flow로 기록하지 않는다.
-- 그런 확인과 보고는 마지막 변경 단위 flow record의 `Verification`, `Result Report`, `Next Flow Options`, 또는 user-gated handoff 상태에 기록한다.
-- 회귀 테스트 fixture, snapshot baseline, 문서, 운영자 리포트 출력, validator 진단 출력처럼 검토 가능한 산출물을 만들거나 바꾸는 경우에는 그 산출물 변경을 planned flow로 기록할 수 있다.
 - 각 planned flow에는 flow type, flow 목적, 왜 이 경계가 필요한지, 완료 기준, 다음 flow로 넘어가는 조건이 드러나야 한다.
 - concrete task에서 만든 planned flow sequence에는 preparation source, preparation result, planned flow list가 드러나야 한다.
 - 실행이 아니라 판단, 설계, 범위 확인이 목적인 경우에는 `planned flow list` 대신 `follow-up change-unit candidates`로 기록할 수 있다. 이렇게 기록한 후보는 실행 승인이 있거나 다음 flow로 선택되기 전까지 완료/진행 flow로 세지 않는다.
@@ -68,7 +63,7 @@
 - flow sequence가 preparation 결과에서 파생됐고 각 flow가 preparation/work/verification/reporting 구조를 유지하는가?
 - 사용자 메시지 해석과 flow list 설계가 operational-preparation flow로 기록되고, 실행용 planned flows와 섞이지 않았는가?
 - 판단, 설계, 범위 확인용 운영 flow 기록이 실제 실행 flow record처럼 보이지 않도록 후속 후보와 handoff 조건을 구분했는가?
-- flow sequence가 phase list나 direct user-value list가 아니라 reviewable or commit-sized change-unit list인가?
+- flow sequence가 `flow-boundaries.md`의 planned flow boundary 규칙에 맞게 기록됐는가?
 - 최종 QA/readiness/reporting만 수행하는 항목이 산출물 변경 없이 flow sequence에 들어가지 않았는가?
 - active flow record가 현재 phase까지 증분 갱신됐는가?
 - visible choices에 turn-end option이 없어도 record에는 turn-end option이 남았는가?
