@@ -1,4 +1,4 @@
-# turn-gate intent senarios
+# turn-gate intent scenarios
 
 이 폴더는 `turn-gate`가 의도한 flow boundary 의미를 유지하는지 확인하기 위한 intent 시나리오를 보관합니다.
 
