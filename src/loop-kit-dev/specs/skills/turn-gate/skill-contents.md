@@ -1,0 +1,100 @@
+# turn-gate skill-contents sub-spec
+
+## 목적
+
+이 문서는 `turn-gate` runtime `SKILL.md` 본문이 반드시 담아야 하는 실행 계약과 구성 기준을 소유합니다.
+`spec.md`는 skill 전체 index와 sibling spec map을 소유하고, 이 문서는 설치 후 실제로 읽히는 skill body의 내용 계약만 소유합니다.
+
+## 경계
+
+- 포함:
+  - `SKILL.md` body의 필수 section과 우선순위
+  - runtime body에 직접 남아야 하는 turn continuity, flow, gate, verification, reporting 계약
+  - runtime body에 넣지 않아야 하는 dev-only fixture와 spec-side 평가 절차
+- 제외:
+  - 전체 phase 전환 세부 계약 자체
+  - 각 internal gate의 세부 판단 규칙
+  - session record template의 정확한 필드 목록
+  - local runtime reference 문서의 상세 내용
+
+## Runtime Surface Role
+
+- `loop-kit-dev/skills/turn-gate/SKILL.md`는 이 스펙의 단순 요약본이 아니라 runtime에서 읽는 운영 표면이다.
+- skill body는 설치된 skill만 읽는 fresh runtime reader가 즉시 따를 수 있는 실행 지시여야 한다.
+- skill body를 짧게 다듬더라도 필수 단계와 금지 규칙을 한 문단으로 뭉개지 말고, 실행 중 빠르게 확인 가능한 형태로 유지한다.
+
+## Required Section Priority
+
+- skill body는 대화 응답 자체를 제어하는 conversation-level first-class rule을 `## Important` 섹션으로 앞부분에서 명시해야 한다.
+- `## Important` 섹션은 `Purpose`보다 먼저 위치해야 한다.
+- `## Important` 섹션은 최소한 다음 내용을 포함해야 한다.
+  - session-level activation
+  - terminal summary 금지
+  - required ending states
+  - `request_user_input` 기반 next-flow reopening
+  - session record 유지 의무
+
+## Core Loop Content
+
+- skill body에는 `Core Loop` 또는 이에 준하는 단계별 실행 섹션이 있어야 한다.
+- 이 실행 섹션은 최소한 다음 단계를 각각 구분해야 한다.
+  - preparation
+  - work
+  - verification
+  - reporting
+  - question-routing reopening
+- skill body에는 `runtime-flow.md`의 전체 흐름과 `mode-selection.md`의 local `references/` 읽기 규칙이 직접 남아 있어야 한다.
+
+## Internal Gate Content
+
+- skill body에는 internal gate 모델이 직접 드러나야 한다.
+- message intake gate는 사용자 메시지 분류만 소유하고 실행하지 않는다.
+- flow shaping gate는 active flow 생성/갱신과 completion criteria를 소유한다.
+- task policy gate는 flow 내부 실행 정책만 소유한다.
+- 개별 task 완료는 flow 완료나 turn closure를 결정할 수 없다.
+- reporting 뒤에는 explicit stop이 source-recorded되지 않는 한 continuation gate가 next-flow reopening으로 이어져야 한다.
+
+## Preparation Content
+
+- skill body는 deep-interview, flow list design, meaning resolution, current-state inspection을 `preparation`의 세부 방식으로 설명해야 한다.
+- skill body는 사용자 메시지 해석과 planned flow list 설계가 plan/session record를 소유하는 `operational-preparation flow`가 될 수 있다고 설명해야 한다.
+- skill body는 operational-preparation 결과로 만들어지는 실행용 planned flows가 reviewable or commit-sized `change-unit flow`여야 한다고 설명해야 한다.
+- skill body는 사용자 메시지 해석 결과가 바로 실행으로 이어지지 않을 수 있고, 후속 실행 후보와 실제 실행 flow를 구분해야 한다는 일반 원칙만 설명한다.
+- skill body는 사용자 메시지 기반 preparation에서 scope가 비어 있거나 너무 넓거나 여러 결과물을 만들 수 있거나 성공 기준과 검증 경로를 바꿀 수 있으면 work 전에 질문으로 scope를 잠그도록 직접 설명해야 한다.
+- skill body는 질문 없이 추론한 scope라도 work boundary와 non-goal을 flow record에 남기도록 설명해야 한다.
+
+## Self-Drive And Approval Content
+
+- skill body는 사용자 메시지 기반 preparation이 planned flow list 전체를 실행하는 데 필요한 intent, scope, non-goal, acceptance signal, verification expectation을 수집하도록 설명해야 한다.
+- skill body는 예상되는 위험 작업과 approval boundary를 질문해 `references/self-drive.md`로 진행 가능한 flow와 user-gated checkpoint를 구분하도록 설명해야 한다.
+- skill body는 초기 협의 범위 밖의 위험 작업이나 새 approval boundary가 이후 flow 중 나타나면 self-drive reference가 자동 처리하지 않고 다시 질문해야 한다고 설명해야 한다.
+- skill body는 self-driven planned flow sequence가 끝난 뒤 commit execution이 아니라 commit-readiness reporting handoff로 이어져야 한다고 설명해야 한다.
+- skill body는 commit-readiness reporting 자체가 산출물 변경을 소유하지 않는 한 planned flow boundary가 아니며, commit/push/PR/publish는 별도 승인 handoff임을 설명해야 한다.
+
+## Verification Content
+
+- skill body에는 clean-context verification이 full-history fork가 아니라 bounded verification packet이라는 점이 직접 남아 있어야 한다.
+- skill body에는 실패, 차단, 불충분 검증을 통과로 취급하지 않는 규칙이 직접 남아 있어야 한다.
+- skill body는 verifier packet에 필요한 최소 정보, edit permission 없음, scope expansion 금지, destructive/external work 금지, commit/push/PR/publish/release/version bump 금지를 설명해야 한다.
+
+## Reporting And Continuation Content
+
+- skill body에는 terminal summary 금지 규칙이 직접 남아 있어야 한다.
+- skill body에는 source message에 묶인 confirmed closure 규칙이 직접 남아 있어야 한다.
+- skill body에는 next-flow reopening, Continuity Guard 확인, user-gated question routing, explicit turn-end option 기록 규칙이 직접 남아 있어야 한다.
+- reporting은 완료 요약으로 턴을 닫는 단계가 아니라 다음 flow 진행을 위한 continuity context 정리로 설명해야 한다.
+
+## Runtime/Spec Boundary
+
+- runtime skill body는 설치 후 실제로 존재하는 `references/`와 `templates/`만 실행 중 읽기 대상으로 안내한다.
+- dev-only spec 경로는 runtime 사용자가 읽어야 하는 실행 지시로 쓰지 않는다.
+- dev-side fixture, 평가 시나리오, change history는 skill body의 행동 계약을 만드는 근거로만 사용하고, runtime body에는 일반 실행 규칙으로만 반영한다.
+- `intent-scenarios/` fixture 이름이나 fixture 평가 절차는 runtime skill body에 직접 넣지 않는다.
+
+## 검토 질문
+
+- skill body 앞부분에 `Important` 섹션이 있고 1급 규칙, terminal summary 금지, next-flow reopening이 먼저 드러나는가?
+- skill body가 `preparation -> work -> verification -> reporting -> next-flow reopening` 흐름을 실행 중 빠르게 확인 가능한 형태로 드러내는가?
+- internal gate 모델이 message intake, flow shaping, task policy, verification, reporting, continuation으로 직접 드러나는가?
+- spec-side fixture 평가 규칙이 runtime skill body로 직접 누출되지 않았는가?
+- runtime body가 설치 후 존재하지 않는 dev-only spec 파일을 읽으라고 지시하지 않는가?

@@ -44,6 +44,7 @@
 
 - `intent.md`: `turn-gate`의 사용자 스펙 의도 기록
 - `runtime-flow.md`: activation부터 explicit stop까지 `turn-gate`의 전체 phase 흐름과 전환 조건
+- `skill-contents.md`: runtime `SKILL.md` body의 필수 구성과 content boundary
 - `phase-preparation.md`: work 전 intent, scope, non-goal, approval boundary, verification expectation 정렬
 - `phase-work.md`: active flow 안에서 실제 작업을 수행하기 위한 work phase 계약
 - `phase-verification.md`: work 이후 clean-context verification과 non-pass 처리로 이어지는 verification phase 계약
@@ -67,27 +68,17 @@
 
 ## 핵심 처리 계약
 
-- `loop-kit-dev/skills/turn-gate/SKILL.md`는 이 스펙의 단순 요약본이 아니라 runtime에서 읽는 운영 표면이다.
-- skill body는 대화 응답 자체를 제어하는 conversation-level first-class rule을 `## Important` 섹션으로 앞부분에서 명시해야 한다.
-- `## Important` 섹션은 `Purpose`보다 먼저 위치해야 하며, session-level activation, terminal summary 금지, required ending states, `request_user_input` 기반 next-flow reopening, session record 유지 의무를 포함해야 한다.
-- skill body에는 `Core Loop` 또는 이에 준하는 단계별 실행 섹션이 있어야 하며, 최소한 preparation, work, verification, reporting, question-routing reopening을 각각 구분해 설명해야 한다.
-- skill body에는 internal gate 모델이 직접 드러나야 한다. message intake gate는 사용자 메시지 분류만 소유하고 실행하지 않으며, flow shaping gate는 active flow 생성/갱신과 completion criteria를 소유하고, task policy gate는 flow 내부 실행 정책만 소유한다. 개별 task 완료는 flow 완료나 turn closure를 결정할 수 없고, reporting 뒤에는 explicit stop이 source-recorded되지 않는 한 continuation gate가 next-flow reopening으로 이어져야 한다.
-- skill body는 deep-interview, flow list design, meaning resolution, current-state inspection을 `preparation`의 세부 방식으로 설명해야 한다.
-- skill body는 사용자 메시지 해석과 planned flow list 설계가 plan/session record를 소유하는 `operational-preparation flow`가 될 수 있고, 그 결과 만들어지는 실행용 planned flows는 reviewable or commit-sized `change-unit flow`여야 한다고 설명해야 한다.
-- skill body는 사용자 메시지 해석 결과가 바로 실행으로 이어지지 않을 수 있고, 후속 실행 후보와 실제 실행 flow를 구분해야 한다는 일반 원칙만 설명한다. `intent-scenarios/` fixture 이름이나 fixture 평가 절차는 runtime skill body에 직접 넣지 않는다.
-- skill body는 사용자 메시지 기반 preparation에서 scope가 비어 있거나 너무 넓거나 여러 결과물을 만들 수 있거나 성공 기준과 검증 경로를 바꿀 수 있으면 work 전에 질문으로 scope를 잠그도록 직접 설명해야 한다.
-- skill body는 질문 없이 추론한 scope라도 work boundary와 non-goal을 flow record에 남기도록 설명해야 한다.
-- skill body는 사용자 메시지 기반 preparation이 planned flow list 전체를 실행하는 데 필요한 intent, scope, non-goal, acceptance signal, verification expectation을 수집하고, 예상되는 위험 작업과 approval boundary를 질문해 `references/self-drive.md`로 진행 가능한 flow와 user-gated checkpoint를 구분하도록 설명해야 한다.
-- skill body는 초기 협의 범위 밖의 위험 작업이나 새 approval boundary가 이후 flow 중 나타나면 self-drive reference가 자동 처리하지 않고 다시 질문해야 한다고 설명해야 한다.
-- skill body는 self-driven planned flow sequence가 끝난 뒤 commit execution이 아니라 commit-readiness reporting handoff로 이어져야 하며, commit-readiness reporting 자체는 산출물 변경을 소유하지 않는 한 planned flow boundary가 아니고, commit/push/PR/publish는 별도 승인 handoff임을 설명해야 한다.
-- skill body에는 `runtime-flow.md`의 전체 흐름과 `mode-selection.md`의 local `references/` 읽기 규칙이 직접 남아 있어야 한다.
-- skill body에는 terminal summary 금지, source message에 묶인 confirmed closure, next-flow reopening, Continuity Guard 확인, user-gated question routing, explicit turn-end option 기록 규칙이 직접 남아 있어야 한다.
-- skill body에는 clean-context verification이 full-history fork가 아니라 bounded verification packet이라는 점과 실패/차단/불충분 검증을 통과로 취급하지 않는 규칙이 직접 남아 있어야 한다.
-- skill body를 짧게 다듬더라도 위 단계와 금지 규칙을 한 문단으로 뭉개지 말고, 실행 중 빠르게 확인 가능한 형태로 유지한다.
+- `turn-gate`는 대화 응답 자체를 제어하는 conversation-level first-class rule이다.
+- `loop-kit-dev/skills/turn-gate/SKILL.md`는 runtime에서 읽는 운영 표면이며, 본문 구성과 runtime/spec boundary는 `skill-contents.md`가 소유한다.
+- 전체 phase 흐름과 phase 간 전환은 `runtime-flow.md`가 소유한다.
+- phase 내부 세부 계약은 `phase-*` spec이 소유하고, internal gate 세부 계약은 `gate-*` spec이 소유한다.
+- session record와 Continuity Guard 계약은 `session-records.md`가 소유한다.
+- clean-context verification 계약은 `verification.md`가 소유한다.
 
 ## 검토 질문
 
 - 이번 응답이 turn continuity를 실제로 유지하고 있는가?
+- skill body 구성과 runtime/spec boundary 판단이 필요하면 `skill-contents.md`를 확인했는가?
 - skill body 앞부분에 `Important` 섹션이 있고 1급 규칙, terminal summary 금지, next-flow reopening이 먼저 드러나는가?
 - `runtime-flow.md`만 읽어도 전체 phase 흐름과 다음 상세 spec 위치를 알 수 있는가?
 - 사용자 표현에 구조적 다의성이 있으면 internal mode 선택 전에 meaning resolution 질문을 열었는가?
@@ -115,4 +106,4 @@
 ## 확장 원칙
 
 - `spec.md`는 top-level ownership과 routing map을 유지하고, 상세 계약이 커지면 같은 폴더 아래 sub-spec으로 내린다.
-- 새 sub-spec을 추가할 때는 `spec.md`의 상세 계약 구조와 plugin spec의 skill spec 위치 설명을 함께 갱신한다.
+- 새 sub-spec을 추가할 때는 `spec.md`의 상세 계약 구조와 필요하면 plugin spec의 skill spec 위치 설명을 함께 갱신한다.

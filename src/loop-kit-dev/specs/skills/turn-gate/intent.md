@@ -71,3 +71,4 @@
 - `turn-gate` 상세 규칙은 folder-based spec 구조로 유지하길 원한다.
   - `specs/skills/turn-gate/spec.md`를 기본 index로 둔다.
   - 세부 계약은 같은 폴더 아래 sub-spec으로 분리한다.
+  - `turn-gate` 수정에서 `skill-contents.md`라는 파일을 만들어 skill body 스펙을 옮기길 원한다.
