@@ -152,6 +152,15 @@
 - plugin-scoped skill 변경은 개별 skill 수정이면서 동시에 plugin surface 수정일 수 있음을 전제로 작업합니다.
 - 플러그인 관점의 영향이 있는데도 이를 skill 단독 수정으로 축소하지 않습니다.
 
+## 스킬 본문과 spec 표면 분리 규칙
+
+- `src/<plugin-name>-dev/specs/`는 개발 원본 계약이며, 설치되는 runtime skill 본문이 의존할 수 있는 표면이 아닙니다.
+- release surface에는 `specs/`가 포함되지 않는다는 전제로 skill 본문을 작성합니다.
+- skill 본문에는 설치 후 실제로 존재하지 않는 dev-only spec 경로를 "읽으라"는 실행 지시로 넣지 않습니다.
+- skill을 작성하거나 재생성할 때 spec은 대화 맥락과 작성 기준으로 사용하고, 결과물인 `SKILL.md`에는 runtime에서 접근 가능한 `references/`, `templates/`, 또는 본문 자체의 지시만 남깁니다.
+- 상세 계약이 runtime에서도 필요하면 dev spec을 직접 참조시키지 말고, 필요한 내용을 간결히 본문에 포함하거나 `skills/<skill-name>/references/`로 승격한 뒤 build 산출물에 포함되게 합니다.
+- dev source에서는 spec 파일이 보이더라도, root release plugin을 설치한 사용자가 같은 경로를 볼 수 있다고 가정하지 않습니다.
+
 ## 플러그인 사용 표면 규칙
 
 다음 표면이 plugin usage guidance를 소유합니다.

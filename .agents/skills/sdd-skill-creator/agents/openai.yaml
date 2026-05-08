@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDD Skill Creator"
+  short_description: "Create skills with spec-first SDD"
+  default_prompt: "Use $sdd-skill-creator to create or update a repository skill from its spec first."
