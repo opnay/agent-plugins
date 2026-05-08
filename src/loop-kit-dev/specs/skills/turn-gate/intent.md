@@ -11,6 +11,10 @@
 
 - `turn-gate`가 current-phase work에 맞는 내부 loop mode를 고르길 원한다.
   - `turn-gate`의 가장 기본 flow는 `준비 -> 작업 -> 검증 -> 보고`여야 한다.
+  - 이 기본 flow를 둘러싼 전환은 내부 gate로 설명되길 원한다.
+  - message intake gate는 사용자 메시지를 분류하지만 실행하지 않고, flow shaping gate는 active flow와 completion criteria를 만들거나 갱신하며, task policy gate는 flow 내부 실행 정책만 소유해야 한다.
+  - task policy는 flow 밖의 독립 계층이 아니며, 개별 task 완료가 flow 완료나 turn closure를 결정하면 안 된다.
+  - reporting 뒤에는 source-recorded explicit stop이 없는 한 continuation gate가 next-flow reopening으로 이어져야 한다.
   - deep-interview, flow list design, 상태 파악, 수정 범위 파악, 질문 라우팅, 내부 mode 선택은 기본 flow 자체가 아니라 `준비` 안의 세부 작업이나 파생 작업이어야 한다.
   - 사용자 메시지에서 시작하는 준비는 deep-interview를 사용해 intent, scope, 성공 기준, approval boundary를 확인하고, 사용자 의도에 맞는 이후 flow list를 준비해야 한다.
   - 사용자 메시지를 받아 의도를 해석하고 flow list를 만드는 일 자체도 산출물을 가진 운영 flow가 될 수 있어야 한다. 이때 산출물은 session plan, flow record, planned flow list, scope/approval boundary다.

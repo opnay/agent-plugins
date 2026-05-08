@@ -15,6 +15,11 @@
 
 activation, incoming message classification, next-flow reopening, explicit stop handling은 이 기본 flow를 둘러싼 lifecycle guard입니다.
 deep-interview alignment, flow list design, meaning resolution, current-state inspection, target reread, scope lock, approval boundary 확인은 기본적으로 `preparation` 안의 세부 작업입니다.
+이 lifecycle guard는 내부 gate로 적용됩니다.
+message intake gate는 사용자 메시지의 라우팅 사실을 분류하고, flow shaping gate는 active flow와 completion criteria를 만들거나 갱신하며, task policy gate는 flow 내부 실행 정책을 정합니다.
+task policy는 flow 밖의 독립 계층이 아니며, 개별 task 완료가 flow 완료나 turn closure를 결정할 수 없습니다.
+verification gate, reporting gate, continuation gate는 각각 검증 판정, 보고 맥락 정리, explicit stop 없는 next-flow reopening을 소유합니다.
+상세 gate 계약은 `internal-gates.md`가 소유합니다.
 
 `turn-gate`에는 두 층의 flow가 있습니다.
 첫째, `operational-preparation flow`는 사용자 메시지를 받아 intent, scope, non-goal, acceptance signal, verification expectation, approval boundary를 잠그고 planned flow list를 만드는 운영 flow입니다.
@@ -39,6 +44,7 @@ flow는 함께 이해하고 검토하고 검증하고 필요하면 커밋할 수
   - concrete task 없이 activation만 요청되면 work mode를 고르지 않고 next-flow 또는 scope selection을 연다.
   - 예: "turn-gate 켜줘", "Use turn-gate", `$loop-kit:turn-gate`만 온 경우에는 activation 완료 요약으로 닫지 않고 다음 scope 또는 next-flow 선택을 연다.
 - incoming message classification:
+  - 이 단계는 message intake gate를 통과한다.
   - 모든 incoming message를 같은 loop-gated turn의 authoritative input으로 본다.
   - 먼저 현재 메시지가 현재 turn 자체를 끝내려는 명시적 요청인지 판단한다.
   - 명시적 turn stop이 아니면 어떤 형태의 입력이든 terminal close 근거가 아니라 continuation input이다.
@@ -47,6 +53,7 @@ flow는 함께 이해하고 검토하고 검증하고 필요하면 커밋할 수
   - continuation input이 target file, artifact, state를 바꾸면 이어가기 전에 해당 target을 다시 읽고 stale assumption을 재사용하지 않는다.
   - continuation input이 다음 flow 요청이라면 flow record의 next-flow 후보 중 최우선으로 등록하고 다음 safe handoff point까지 이어간다.
 - preparation:
+  - 이 단계는 flow shaping gate를 통과해 active flow의 경계와 completion criteria를 정한다.
   - 이 flow에서 무엇을 할지, 왜 하는지, 어떤 조건에서 작업으로 넘어갈 수 있는지를 준비한다.
   - 사용자 메시지에서 시작하는 preparation은 deep-interview를 사용해 intent, scope, non-goal, success criteria, approval boundary, verification signal을 정렬한다.
   - 사용자 메시지를 해석하고 planned flow list를 설계하는 준비는 필요하면 `operational-preparation flow`로 기록한다. 이 flow는 plan/session record 산출물을 소유하며, product/code 변경 단위 flow와 같은 층에 섞어 phase처럼 나열하지 않는다.
@@ -74,23 +81,27 @@ flow는 함께 이해하고 검토하고 검증하고 필요하면 커밋할 수
   - 현재 flow의 active steps를 정하고, meaningful work가 시작되면 계획 도구를 사용해 현재 상태를 유지한다.
   - multi-flow decomposition과 session plan은 `session-records.md`가 소유한다.
 - work:
+  - 이 단계는 task policy gate를 통과해 현재 flow 내부 실행 정책을 정한다.
   - 사용자가 요청한 실제 작업을 진행한다.
   - 작업은 파일 수정, 조사, 검증 실행, 리뷰 finding 처리, 계획 작성처럼 다양한 형태일 수 있다.
   - work에 들어가기 전 current-phase work의 internal mode를 하나 선택한다.
   - mode selection과 local reference 읽기 규칙은 `mode-selection.md`가 소유한다.
 - verification:
+  - 이 단계는 verification gate를 통과한다.
   - 현재 flow의 work 결과를 검증한다.
   - 파일 수정이라면 적용 여부, 타입 오류, 테스트/빌드/린트 같은 해당 검증 경로를 확인한다.
   - 조사나 판단 작업이라면 다양한 관점에서 논리 비판과 반례 검토를 수행한다.
   - work 뒤 reporting 전에 clean-context verification을 수행한다.
   - 검증 packet, pass/fail/blocked/insufficient 처리, non-pass return path는 `verification.md`가 소유한다.
 - reporting:
+  - 이 단계는 reporting gate를 통과한다.
   - 결과 보고는 terminal response가 아니라 다음 flow 진행을 위한 context 정리다.
   - 이번 flow에서 무엇을 준비/작업/검증했는지, 남은 불확실성과 blocker가 무엇인지 정리한다.
   - residual uncertainty와 blocker가 있으면 사용자에게 보이게 포함한다.
   - 계획된 flow가 소진되면 질문 도구를 사용해 사용자에게 다음 flow나 작업을 받는다.
   - next-flow reopening 세부는 `question-routing.md`가 소유한다.
 - next-flow reopening:
+  - 이 단계는 continuation gate를 통과한다.
   - explicit stop이 없다면 결과 보고 뒤 active question-routing으로 다음 flow를 연다.
   - `request_user_input`, fallback, visible/recorded turn-end option은 `question-routing.md`가 소유한다.
 - explicit stop handling:

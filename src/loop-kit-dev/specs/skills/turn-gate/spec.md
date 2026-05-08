@@ -44,6 +44,7 @@
 
 - `intent.md`: `turn-gate`의 사용자 스펙 의도 기록
 - `runtime-flow.md`: activation부터 explicit stop까지 `turn-gate`의 전체 phase 흐름과 전환 조건
+- `internal-gates.md`: message intake, flow shaping, task policy, verification, reporting, continuation gate의 내부 전환 계약
 - `meaning-resolution.md`: operation/target ambiguity, provenance/intent block target locking, user-gated clarification
 - `mode-selection.md`: internal mode selection, local references, mode-vs-handoff, upstream SSOT 동기화
 - `approval-boundary.md`: destructive, irreversible, external-action, commit/publish approval boundary
@@ -58,6 +59,7 @@
 - skill body는 대화 응답 자체를 제어하는 conversation-level first-class rule을 `## Important` 섹션으로 앞부분에서 명시해야 한다.
 - `## Important` 섹션은 `Purpose`보다 먼저 위치해야 하며, session-level activation, terminal summary 금지, required ending states, `request_user_input` 기반 next-flow reopening, session record 유지 의무를 포함해야 한다.
 - skill body에는 `Core Loop` 또는 이에 준하는 단계별 실행 섹션이 있어야 하며, 최소한 preparation, work, verification, reporting, question-routing reopening을 각각 구분해 설명해야 한다.
+- skill body에는 internal gate 모델이 직접 드러나야 한다. message intake gate는 사용자 메시지 분류만 소유하고 실행하지 않으며, flow shaping gate는 active flow 생성/갱신과 completion criteria를 소유하고, task policy gate는 flow 내부 실행 정책만 소유한다. 개별 task 완료는 flow 완료나 turn closure를 결정할 수 없고, reporting 뒤에는 explicit stop이 source-recorded되지 않는 한 continuation gate가 next-flow reopening으로 이어져야 한다.
 - skill body는 deep-interview, flow list design, meaning resolution, current-state inspection을 `preparation`의 세부 방식으로 설명해야 한다.
 - skill body는 사용자 메시지 해석과 planned flow list 설계가 plan/session record를 소유하는 `operational-preparation flow`가 될 수 있고, 그 결과 만들어지는 실행용 planned flows는 reviewable or commit-sized `change-unit flow`여야 한다고 설명해야 한다.
 - skill body는 사용자 메시지 해석 결과가 바로 실행으로 이어지지 않을 수 있고, 후속 실행 후보와 실제 실행 flow를 구분해야 한다는 일반 원칙만 설명한다. `intent-senarios/` fixture 이름이나 fixture 평가 절차는 runtime skill body에 직접 넣지 않는다.
@@ -81,6 +83,8 @@
 - user-gated question routing과 계획 도구 `update_plan`를 필수 단계에서 실제로 사용했는가?
 - cross-flow 작업이라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 planned flow sequence, 각 flow의 완료 기준, 다음 flow 전환 조건을 최신 상태로 담고 있는가?
 - 사용자 메시지 해석과 flow list 설계가 필요했다면, 그 운영 준비가 별도 flow 또는 bootstrap record로 남고 결과 planned flows와 섞이지 않았는가?
+- message intake, flow shaping, task policy, verification, reporting, continuation gate가 서로의 권한을 침범하지 않는가?
+- task policy 결과가 flow completion이나 turn closure를 직접 승인하는 구조가 남아 있지 않은가?
 - spec-side fixture 평가 규칙이 runtime skill body로 직접 누출되지 않았는가?
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`가 현재 phase까지 증분 갱신됐는가?
 - `work -> verification -> result reporting` 순서를 실제로 유지했는가?

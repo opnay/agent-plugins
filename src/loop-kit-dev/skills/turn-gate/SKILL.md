@@ -8,10 +8,10 @@ description: Main loop controller for `loop-kit`. Keep one turn alive until the 
 ## Important
 
 When this skill is active, `turn-gate` is a session-level first-class operating rule for the conversation itself.
-Do not close the turn with a terminal summary unless the user explicitly asks to end the current turn.
+Do not close the turn with a terminal summary unless the current user message explicitly asks to end the current turn.
 
 Every non-stop user message is continuation input.
-Treat questions, corrections, status checks, review requests, priority changes, and next-task requests as input that can update the active flow, reopen preparation, refresh a target, or route to a user-gated decision.
+Treat questions, corrections, status checks, review requests, priority changes, handoff results, and next-task requests as input that can update the active flow, reopen preparation, refresh a target, or route to a user-gated decision.
 If the user intent to stop is unclear, do not infer closure.
 
 Required ending states are:
@@ -19,6 +19,7 @@ Required ending states are:
 - active work continues into the next safe phase;
 - active question-routing is open;
 - a blocker is reported with the next required user decision;
+- a planned self-drive handoff is prepared;
 - explicit turn stop is confirmed from the current user message.
 
 After each result report, reopen the next flow with `request_user_input` when structured choices are possible and the tool is available.
@@ -33,7 +34,7 @@ Stale or source-less closure notes do not authorize terminal summary.
 ## Purpose
 
 Use `turn-gate` as the main loop controller for work that should continue within one turn until the user explicitly stops it.
-The skill keeps continuity, chooses one internal mode for current-phase work, records the flow, verifies work before reporting, and routes the user to the next flow instead of ending by default.
+The skill keeps continuity, passes each transition through internal gates, chooses one internal mode for current-phase work, records the flow, verifies work before reporting, and routes the user to the next flow instead of ending by default.
 
 ## Core Loop
 
@@ -43,28 +44,95 @@ Run each active flow through this order:
 2. work
 3. verification
 4. reporting
-5. next-flow reopening
 
-Activation, incoming message classification, explicit stop handling, and session record checks wrap the loop.
+Next-flow reopening is the continuation surface after reporting, not a core phase.
+Activation, incoming message handling, explicit stop handling, self-drive handoff, and session record checks wrap the loop.
+
 Do not promote phase names such as analysis, work, verification, reporting, or readiness checking into separate planned flows.
 A flow is a cohesive reviewable or commit-sized unit; it does not have to be only a direct end-user value unit.
 Final QA, integration checking, consistency checking, verification result reporting, and commit-readiness reporting are not separate planned flows unless they create or change a reviewable artifact of their own.
 
-## Incoming Message Classification
+## Internal Gates
 
-First decide whether the current user message explicitly ends the current turn.
-Only clear messages such as ending this turn or stopping the turn count as explicit stop.
+`turn-gate` uses internal gates as transition checks.
+These gates are not separate user-facing skills and do not replace the core loop.
+Each gate owns only its routing condition and may not infer terminal closure without an explicit stop message.
 
-If it is not explicit stop:
+### Message Intake Gate
 
-- keep `turn-gate` active;
-- treat the message as authoritative continuation input;
-- decide whether it changes the active flow, next-flow candidates, scope, target, priority, approval boundary, or verification needs;
-- reread any target file, artifact, or state changed by the message before continuing;
-- avoid relying on stale assumptions from an earlier phase.
+Classify the current incoming user message.
 
-If the message is only activation without a concrete task, do not pick a work mode.
-Open scope selection or next-flow choice instead.
+- Decide whether the message explicitly stops the current turn.
+- If it is not explicit stop, treat it as continuation input.
+- Identify whether it is a new task, correction, review, status check, approval-sensitive request, handoff result, next-task request, or another continuation shape.
+- Mark operation or target ambiguity, scope gaps, and possible approval boundaries.
+
+This gate does not execute work, finalize flow completion criteria, or decide turn closure.
+
+### Flow Shaping Gate
+
+Create or update the active flow from the message intake result.
+
+- Decide whether to create a new flow, update the current flow, continue reporting, or open question-routing.
+- Classify the flow as `operational-preparation`, `change-unit`, user-gated handoff, reporting context, or question-routing state.
+- Record the flow boundary, completion criteria, verification expectation, and next-flow reopening condition.
+- Keep follow-up `change-unit` candidates separate from active execution flows.
+
+This gate prevents task lists, phase checklists, and direct-user-value-only slices from becoming invalid planned flows.
+
+### Task Policy Gate
+
+Choose the execution policy inside the selected flow.
+Task policy is internal to a flow; it is not a separate layer or independent planned flow.
+
+- Choose the task sequence, local references, target rereads, commands, edits, builds, checks, or handoffs needed for this flow.
+- Confirm approval-sensitive work such as commit execution is inside the recorded approval boundary.
+- Use the plan tool once meaningful work begins.
+
+Individual task completion cannot decide flow completion or turn closure.
+For example, a successful `git commit` still needs the commit flow's recorded confirmation, reporting, and next-flow reopening conditions.
+
+### Verification Gate
+
+Verify the current flow's work before reporting.
+
+- Build a bounded clean-context verification packet when work was performed.
+- Classify verification as `pass`, `fail`, `blocked`, or `insufficient`.
+- For `fail` or `insufficient`, return to the earliest safe gate before successful reporting.
+- For `blocked`, report the blocker through active question-routing.
+
+This gate does not approve risky actions, choose the next flow, or close the turn.
+
+### Reporting Gate
+
+Report the flow result as continuity context.
+
+- Include what was prepared, what work was done, how it was verified, what remains uncertain, and what approval boundaries remain.
+- Surface material routing judgment calls.
+- Refresh the session record and `Continuity Guard` before reporting.
+
+Reporting is not terminal closure.
+
+### Continuation Gate
+
+Route the conversation after reporting.
+
+- Check whether the current user message source-recorded explicit stop.
+- If explicit stop is absent, continue into active question-routing, loop continuation, planned self-drive handoff, or blocker decision.
+- Use `request_user_input` when structured choices are possible and the tool is available.
+- Record a turn-end option in `Next Flow Options`, even when the visible prompt omits it.
+
+This gate does not infer commit, push, PR, publish, or turn-stop approval from task results, prior wording, stale records, or source-less closure notes.
+
+## Incoming Messages
+
+Treat every incoming user message as authoritative input inside the same gated turn.
+Only clear wording such as "end this turn", "stop the turn", "we are done here", "턴 종료", "여기서 끝", or equivalent intent counts as explicit turn stop.
+If that intent is unclear, route the message as continuation input or ask a narrow clarification.
+
+If continuation changes a target file, artifact, or state, reread that target before acting and do not reuse stale assumptions.
+If continuation asks for a next flow, record it as the highest-priority next-flow candidate and continue to the next safe handoff point.
+If the message is only activation without a concrete task, do not pick a work mode; open scope selection or next-flow choice instead.
 
 ## Preparation
 
@@ -90,6 +158,7 @@ For non-user-message-based preparation, confirm the existing flow's target, curr
 If operation or target ambiguity can change the flow list or work result, resolve meaning before flow design or work.
 Meaning resolution locks what the user meant.
 Approval boundary separately decides whether a risky action may run.
+Ambiguous verbs such as merge, absorb, move, promote, formalize, remove, delete, exclude, and equivalent wording in the user's language need meaning resolution when they can change artifact ownership, deletion behavior, output inclusion, migration scope, or approval boundaries.
 
 Risky actions remain user-gated.
 Destructive, irreversible, external, commit, push, PR, and publish actions require exact target, expected effect, risk, recovery possibility, included scope, and excluded scope before execution or handoff.
@@ -102,8 +171,8 @@ Commit, push, PR, and publish are separate user-gated handoffs.
 
 ## Work
 
-Before work starts, select exactly one internal mode for the current phase.
-If the mode is not clear, narrow it through a short analysis or active question-routing.
+Before work starts, pass through the task policy gate and select exactly one internal mode for the current phase.
+If the mode is not clear, narrow it through short analysis or active question-routing.
 
 Choose the earliest blocking mode that applies:
 
@@ -117,8 +186,9 @@ After selecting a mode, read the matching local file in `references/` and apply 
 External actions such as commit execution, push, PR, or publish are not internal modes.
 They are user-gated handoff workflows.
 
-Use the plan tool once meaningful work begins.
-Keep only one current step in progress and update it as phases move.
+Commit execution is task policy inside an approved commit handoff flow.
+Commit completion does not end the turn.
+After commit confirmation, report the commit result and reopen next-flow routing unless the user explicitly stopped the turn.
 
 ## Verification
 
@@ -135,7 +205,7 @@ If verification needs any of those, stop and route back to the user.
 
 Classify verification as `pass`, `fail`, `blocked`, or `insufficient`.
 Do not treat `fail`, `blocked`, or `insufficient` as pass.
-For `fail` or `insufficient`, return to the earliest safe phase before reporting successful completion.
+For `fail` or `insufficient`, return to the earliest safe gate before reporting successful completion.
 For `blocked`, report the blocker through active question-routing.
 
 ## Reporting
@@ -150,7 +220,7 @@ Before reporting:
 - confirm whether the current user message explicitly stopped the turn;
 - confirm verification status is not being overstated.
 
-If explicit stop is absent, continue into next-flow reopening after the report.
+If explicit stop is absent, pass through the continuation gate after the report.
 
 ## Next-Flow Reopening
 
@@ -218,7 +288,10 @@ If closure state is stale or source-less, reset terminal summary permission to n
 
 - Is `turn-gate` still a first-class rule for this conversation?
 - Did the current user message explicitly stop the turn?
-- Is the current response ending in active work, active question-routing, a blocker decision, or confirmed closure?
+- Did message intake classify the message without executing work?
+- Did flow shaping define or update the active flow and keep candidates separate from active execution flows?
+- Did task policy stay inside the flow instead of deciding flow completion or turn closure?
+- Is the current response ending in active work, active question-routing, planned self-drive handoff, a blocker decision, or confirmed closure?
 - Did preparation distinguish execution candidates from active execution flows?
 - Did the flow sequence avoid phase-only entries and direct-user-value-only filtering?
 - Did final QA or readiness-only work stay inside verification/reporting or a user-gated handoff unless it changed a reviewable artifact?
