@@ -134,40 +134,6 @@ continuation gate는 reporting 이후의 전환을 결정합니다.
 
 continuation gate는 task 결과와 reporting 결과를 turn 종료로 해석하지 않습니다.
 
-## Commit Completion Example
-
-사용자 메시지:
-
-```text
-일단 커밋하자.
-```
-
-gate 흐름:
-
-- message intake gate: explicit stop 아님, commit approval-sensitive request, push/PR/publish 제외
-- flow shaping gate: `commit-current-approved-diff` handoff flow, completion criteria에 commit hash 확인과 next-flow reopening 포함
-- task policy gate: status 확인, intended diff 확인, commit message 작성, `git commit`, `git log -1`
-- verification gate: commit hash와 working tree 상태 확인
-- reporting gate: commit result와 남은 approval boundary 보고
-- continuation gate: explicit stop이 없으므로 next-flow question-routing으로 이어감
-
-## Login Page Example
-
-사용자 메시지:
-
-```text
-로그인 페이지 만들자.
-```
-
-gate 흐름:
-
-- message intake gate: 새 작업 요청, explicit stop 아님, scope 부족 가능성
-- flow shaping gate: route/auth/design/verification 기준이 부족하면 `operational-preparation` flow로 정리
-- task policy gate: scope lock 질문, repository surface inspection, follow-up candidate 정리 같은 운영 task 정책
-- verification gate: flow 후보와 질문이 사용자 intent에 맞는지 점검
-- reporting gate: 후속 `change-unit` 후보와 handoff 조건 보고
-- continuation gate: 실행할 후보 선택이나 scope lock 질문으로 이어감
-
 ## Review Questions
 
 - message intake gate가 실행이나 flow completion을 직접 결정하지 않는가?
