@@ -18,15 +18,15 @@ When this skill is active, `turn-gate` is a conversation-level operating rule fo
 
 ## Purpose
 
-Use `turn-gate` when work must continue inside one turn until the user explicitly stops it. The skill keeps the loop structured as:
+Use `turn-gate` when work must continue inside one turn until the user explicitly stops it. The skill keeps each flow structured as:
 
 1. preparation
 2. work
 3. verification
 4. reporting
-5. continuation through next-flow reopening
+5. next-flow
 
-Reporting is continuity context for the next flow. It is not permission to stop.
+Reporting is continuity context for the next flow. It is not permission to stop. After reporting, the `next-flow` phase decides whether to reopen user-gated routing or honor a source-recorded explicit stop.
 
 ## Phase Start Messages
 
@@ -38,9 +38,16 @@ Canonical labels:
 - `[work]`
 - `[verification]`
 - `[reporting]`
-- `[continuation]`
+- `[next-flow]`
 
 This prefix is an operational marker for phase-start messages only. Do not mechanically add it to flow records, artifact bodies, command output summaries, or every sentence in question choices. If you are giving a general explanation without starting a phase, do not force a prefix.
+
+Use these priority rules when a message could fit more than one label:
+
+- Activation-only with no concrete task starts as `[preparation]` to establish scope; switch to `[next-flow]` only when opening the actual next-flow choices.
+- Mid-work status questions use the active phase, usually `[work]`; use `[reporting]` only for a status report that intentionally summarizes flow context.
+- Session-record access blockers use the phase where they are found: `[reporting]` before result reporting, `[next-flow]` before reopening choices.
+- Report-only evaluation requests may collect evidence without editing, but still keep the turn open and use `[next-flow]` after the report.
 
 ## Core Loop
 
@@ -103,7 +110,7 @@ Reporting summarizes the active flow for continuity, not closure.
 - Ignore stale closure state, source-less `confirmed closure`, or old `terminal summary allowed: yes` records.
 - If stale closure state is found, reset the guard to continuation state and record why.
 
-### 5. Continuation
+### 5. Next-Flow
 
 After reporting, reopen the next flow unless there is a source-recorded explicit stop.
 
@@ -123,7 +130,6 @@ Use internal gates to decide transitions. Do not expose them as separate user-fa
 - Task policy gate: decide execution policy inside the selected flow only.
 - Verification gate: integrate work results as pass, fail, blocked, or insufficient.
 - Reporting gate: convert flow results into continuity context.
-- Continuation gate: confirm no explicit stop exists and reopen the next flow.
 
 No gate may infer terminal closure without an explicit user stop. Individual task completion cannot decide flow completion or turn closure by itself.
 
@@ -147,7 +153,7 @@ Maintain `.agents/sessions/{YYYYMMDD}/` records for active turn-gated work.
 - Use `templates/plan-template.md` and `templates/flow-record-template.md` when creating records.
 - Flow record filenames use `{count-pad3}-{eng-lower-slug}.md`, for example `001-update-parser.md`.
 - Record flow type as `operational-preparation` or `change-unit`.
-- Each flow normally carries preparation, work, verification, and reporting.
+- Each flow normally carries preparation, work, verification, reporting, and next-flow.
 - Update flow records incrementally at phase boundaries instead of waiting for the flow to finish.
 - Keep completed work in the plan; summarize it and retain the flow reference.
 

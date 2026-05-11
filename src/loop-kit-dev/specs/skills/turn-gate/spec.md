@@ -49,6 +49,7 @@
 - `phase-work.md`: active flow 안에서 실제 작업을 수행하기 위한 work phase 계약
 - `phase-verification.md`: work 이후 clean-context verification과 non-pass 처리로 이어지는 verification phase 계약
 - `phase-reporting.md`: terminal close가 아니라 next-flow context를 정리하는 reporting phase 계약
+- `phase-next-flow.md`: explicit stop 확인과 다음 flow reopening을 수행하는 next-flow phase 계약
 - `flow-boundaries.md`: `operational-preparation`, `change-unit`, planned flow boundary, 후속 후보와 active execution flow 구분
 - `internal-gates.md`: internal gate model overview and gate detail map
 - `gate-message-intake.md`: incoming user message classification and explicit stop detection
@@ -56,7 +57,6 @@
 - `gate-task-policy.md`: flow-local task sequencing, local references, target rereads, command/edit/build/test policy
 - `gate-verification.md`: verification packet construction and pass/fail/blocked/insufficient routing
 - `gate-reporting.md`: result reporting as continuity context
-- `gate-continuation.md`: explicit stop check and next-flow reopening
 - `meaning-resolution.md`: operation/target ambiguity, provenance/intent block target locking, user-gated clarification
 - `mode-selection.md`: internal mode selection, local references, mode-vs-handoff, upstream SSOT 동기화
 - `skills/turn-gate/references/self-drive.md`: prepared planned flow sequence를 bounded subagent decision으로 이어가는 self-drive 실행 계약
@@ -88,12 +88,12 @@
 - user-gated question routing과 계획 도구 `update_plan`를 필수 단계에서 실제로 사용했는가?
 - cross-flow 작업이라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 planned flow sequence, 각 flow의 완료 기준, 다음 flow 전환 조건을 최신 상태로 담고 있는가?
 - 사용자 메시지 해석과 flow list 설계가 필요했다면, 그 운영 준비가 별도 flow 또는 bootstrap record로 남고 결과 planned flows와 섞이지 않았는가?
-- message intake, flow shaping, task policy, verification, reporting, continuation gate가 서로의 권한을 침범하지 않는가?
+- message intake, flow shaping, task policy, verification, reporting이 phase 전환 권한을 침범하지 않는가?
 - task policy 결과가 flow completion이나 turn closure를 직접 승인하는 구조가 남아 있지 않은가?
 - spec-side fixture 평가 규칙이 runtime skill body로 직접 누출되지 않았는가?
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`가 현재 phase까지 증분 갱신됐는가?
 - `work -> verification -> result reporting` 순서를 실제로 유지했는가?
-- 기본 flow를 `준비 -> 작업 -> 검증 -> 보고`로 유지했는가?
+- 기본 flow를 `준비 -> 작업 -> 검증 -> 보고 -> next-flow`로 유지했는가?
 - 사용자 메시지 기반 준비와 비 사용자 메시지 기반 준비를 구분했는가?
 - direct loop entrypoint를 사용자 표면으로 다시 열지 않았는가?
 - self-drive가 별도 skill entrypoint가 아니라 `turn-gate/references/self-drive.md`로 적용되는가?

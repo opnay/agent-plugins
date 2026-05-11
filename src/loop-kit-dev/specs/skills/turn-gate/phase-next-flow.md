@@ -1,10 +1,10 @@
-# turn-gate gate-continuation sub-spec
+# turn-gate phase-next-flow sub-spec
 
 ## 목적
 
-이 문서는 continuation gate의 전환 계약을 소유합니다.
+이 문서는 `turn-gate` core loop의 `next-flow` phase 세부 계약을 소유합니다.
 
-continuation gate는 reporting 이후의 전환을 결정합니다.
+`next-flow` phase는 reporting 이후 explicit stop 여부를 확인하고, stop이 없으면 다음 flow를 여는 사용자 라우팅을 수행합니다.
 
 ## 소유
 
@@ -19,9 +19,9 @@ continuation gate는 reporting 이후의 전환을 결정합니다.
 - commit/push/PR/publish 승인 추론
 - stale closure 또는 source-less closure를 terminal close 근거로 사용
 
-continuation gate는 task 결과와 reporting 결과를 turn 종료로 해석하지 않습니다.
+`next-flow` phase는 task 결과와 reporting 결과를 turn 종료로 해석하지 않습니다.
 
 ## 검토 질문
 
-- continuation gate가 explicit stop 없는 흐름을 next-flow reopening 또는 active question-routing으로 이어가는가?
+- `next-flow` phase가 explicit stop 없는 흐름을 next-flow reopening 또는 active question-routing으로 이어가는가?
 - stale closure를 terminal close 근거로 사용하지 않는가?
