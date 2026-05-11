@@ -63,10 +63,10 @@ codex plugin marketplace upgrade
 ### Advance Codex
 
 `advance-codex`는 Codex 활용 체계를 더 깊게 관리하기 위한 플러그인입니다.
-skill 작성, plugin 작성, empirical prompt tuning, session 관리, commit workflow, subagent 정의 같은 메타 작업을 다룹니다.
+skill 작성, plugin 작성, skill scenario testing, session 관리, commit workflow, subagent 정의 같은 메타 작업을 다룹니다.
 
 - 경로: `advance-codex/`
-- 주요 실행 표면: `plugin-creator`, `skill-creator`, `empirical-prompt-tuning`, `agents-sessions`, `git-committer`, `tool-use-guide`, `subagent-gate`, `subagent-creator`
+- 주요 실행 표면: `plugin-creator`, `skill-creator`, `skill-scenario-testing`, `agents-sessions`, `git-committer`, `tool-use-guide`, `subagent-gate`, `subagent-creator`
 
 ### Loop Kit
 

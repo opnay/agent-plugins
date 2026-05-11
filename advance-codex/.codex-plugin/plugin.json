@@ -1,7 +1,7 @@
 {
   "name": "advance-codex",
   "version": "0.1.1",
-  "description": "Capability plugin for strengthening Codex surfaces across skills, prompt evaluation, session folder conventions, commits, plugins, tool-use guidance, and subagent systems.",
+  "description": "Capability plugin for strengthening Codex surfaces across skills, scenario testing, session folder conventions, commits, plugins, tool-use guidance, and subagent systems.",
   "author": {
     "name": "opnay"
   },
@@ -24,8 +24,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Advance Codex",
-    "shortDescription": "Strengthen skills, prompt evaluation, session folder conventions, commits, tool-use guidance, plugins, and Codex subagent systems.",
-    "longDescription": "Provides skills for strengthening Codex surfaces: shaping reusable skills, empirically evaluating reusable instructions, defining session folder conventions, finalizing Codex-made changes into stable commits, isolating tool-use policy, packaging plugins, preparing bounded subagent handoffs, and designing reliable subagent workflows and custom agents.",
+    "shortDescription": "Strengthen skills, scenario testing, session folder conventions, commits, tool-use guidance, plugins, and Codex subagent systems.",
+    "longDescription": "Provides skills for strengthening Codex surfaces: shaping reusable skills, testing reusable instructions with fixed scenarios and fresh executors, defining session folder conventions, finalizing Codex-made changes into stable commits, isolating tool-use policy, packaging plugins, preparing bounded subagent handoffs, and designing reliable subagent workflows and custom agents.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": [
@@ -36,7 +36,7 @@
     "defaultPrompt": [
       "Use $advance-codex:plugin-creator to package a plugin and define the right bundled surfaces.",
       "Use $advance-codex:skill-creator to design a reusable Codex skill with the right references and guardrails.",
-      "Use $advance-codex:empirical-prompt-tuning to evaluate and iteratively improve reusable instructions with fresh subagents, fixed scenarios, and caller-side metrics.",
+      "Use $advance-codex:skill-scenario-testing to test reusable instructions with fresh subagents, fixed scenarios, and caller-side metrics before reporting evidence-backed findings.",
       "Use $advance-codex:agents-sessions to define when artifacts belong under date-based .agents/sessions/{YYYYMMDD} instead of source, spec, or release surfaces.",
       "Use $advance-codex:git-committer to turn Codex-made changes into a task-scoped commit with strong verification and commit-message hygiene.",
       "Use $advance-codex:tool-use-guide to design reusable guidance for selecting and sequencing tools without burying tool policy inside a domain skill.",

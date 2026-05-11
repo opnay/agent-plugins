@@ -3,13 +3,13 @@
 ## 플러그인 목적
 
 `advance-codex-dev`는 Codex 활용 방식을 더 명시적이고 재사용 가능하게 설계하는 플러그인입니다.
-핵심 책임은 skill, reusable tool policy, plugin bundle, custom agent, empirical instruction evaluation, session folder convention, change finalization 같은 Codex 활용 산출물을 각각의 좁은 skill 표면으로 제공하는 것입니다.
+핵심 책임은 skill, reusable tool policy, plugin bundle, custom agent, skill scenario testing, session folder convention, change finalization 같은 Codex 활용 산출물을 각각의 좁은 skill 표면으로 제공하는 것입니다.
 
 ## 플러그인 경계와 비목표
 
 - 포함:
   - skill 설계와 개편을 위한 creator-oriented guidance
-  - reusable instruction을 fresh executor evidence로 검증하는 empirical workflow
+  - reusable instruction을 fresh executor와 고정 시나리오로 테스트하고 분석 보고하는 workflow
   - tool selection, sequencing, ask-vs-infer, escalation policy 분리
   - installable plugin boundary와 bundled skill coherence 설계
   - custom agent 정의와 usage guidance
@@ -25,7 +25,7 @@
 
 - 새 skill, plugin, custom agent를 만들거나 기존 것을 재설계하는 작업
 - subagent를 호출하기 전 종료 조건과 context packet을 gate로 잠그는 작업
-- reusable instruction 품질을 경험적 평가로 끌어올리는 작업
+- reusable instruction을 clean-context scenario로 테스트하고 evidence 중심으로 분석하는 작업
 - domain workflow와 분리된 tool-use policy를 설계하는 작업
 - `.agents/sessions` 폴더 경계나 commit workflow처럼 Codex 사용 자체의 운영 품질을 안정화하는 작업
 
@@ -39,8 +39,8 @@
 
 - `skill-creator`: canonical `skill-creator` 위에 bounded skill 설계와 plugin-owned skill 규칙을 덧붙인다.
   - spec: `advance-codex-dev/specs/skills/skill-creator.md`
-- `empirical-prompt-tuning`: reusable instruction을 fresh subagent와 고정 시나리오로 검증하고 반복 개선한다.
-  - spec: `advance-codex-dev/specs/skills/empirical-prompt-tuning.md`
+- `skill-scenario-testing`: reusable instruction을 fresh subagent와 고정 시나리오로 테스트하고 evidence 중심으로 분석 보고한다.
+  - spec: `advance-codex-dev/specs/skills/skill-scenario-testing.md`
 - `tool-use-guide`: domain artifact에서 분리되어야 하는 reusable tool policy를 설계한다.
   - spec: `advance-codex-dev/specs/skills/tool-use-guide.md`
 - `plugin-creator`: top-down plugin boundary와 manifest-aligned packaging 규칙을 강화한다.
@@ -60,7 +60,7 @@
 - 각 skill의 목적, 처리 계약, 독립성 원칙은 반드시 별도 `specs/skills/<skill-name>.md`에 둔다.
 - skill 책임이 바뀌면 해당 skill spec과 `plugin.md`를 같은 변경 단위로 갱신한다.
 - skill 선택 기준이 바뀌면 `plugin.md`, manifest prompt, 관련 creator skill spec을 함께 점검한다.
-- empirical workflow나 tool-use policy처럼 독립 관심사로 분리된 계약은 다시 sibling skill 안으로 흡수하지 않는다.
+- scenario testing workflow나 tool-use policy처럼 독립 관심사로 분리된 계약은 다시 sibling skill 안으로 흡수하지 않는다.
 
 ## 현재 구조 메모
 
