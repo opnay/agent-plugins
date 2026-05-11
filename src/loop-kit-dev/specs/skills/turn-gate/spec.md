@@ -64,6 +64,8 @@
 - `verification.md`: mandatory clean-context subagent verification and non-pass handling
 - `question-routing.md`: `request_user_input`, next-flow reopening, fallback, visible/recorded turn-end option
 - `session-records.md`: `000-plan.md`, `001+` flow records, Continuity Guard, templates, `Next Flow Options`
+- `templates/plan.md`: `000-plan.md` template structure, date-level snapshot/index ownership, plan/flow deduplication
+- `templates/flow.md`: `001+` flow record template structure, flow-local contract/evidence/report ownership, safety fields
 - `intent-scenarios/`: runtime instruction이 아니라 flow boundary 의도를 회귀 평가하기 위한 spec-side fixture
 
 ## 핵심 처리 계약

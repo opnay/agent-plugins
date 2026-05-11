@@ -8,16 +8,21 @@ A flow does not need to be direct user-visible value; supporting component, logi
 operational-preparation flow는 code, docs, fixtures, config, release-surface 변경을 소유하는 change-unit flow와 구분합니다.
 Final QA, consistency checking, verification-result reporting, and commit-readiness reporting are not planned flows unless they create or change a distinct reviewable artifact/change unit.
 Keep it incremental. Do not delete completed work; summarize completed flows and keep their links.
+Do not duplicate each flow's detailed scope, non-goals, approval boundary, evidence, or verification detail here. Keep those details in the `001+` flow record and keep this plan as a date-level index and snapshot.
 
 ## Date
 
 - YYYY-MM-DD
 
-## Daily Work History
+## Daily Snapshot
 
 - Summary:
 - Latest user request:
 - Latest decision:
+- Active flow:
+- Required next action:
+- Pending question state: none | pending | answered | aborted | superseded
+- Verification status: not-started | requested | pass | fail | blocked | insufficient | not-applicable
 
 ## User Requests Today
 
@@ -30,7 +35,7 @@ Keep it incremental. Do not delete completed work; summarize completed flows and
    - Flow type: operational-preparation | change-unit
    - Flow purpose:
    - Status: planned | active | complete | blocked
-   - Current core phase: preparation | work | verification | reporting
+   - Current phase: preparation | work | verification | reporting | next-flow
    - Completion criteria:
    - Next-flow trigger:
    - Verification status: not-started | requested | pass | fail | blocked | insufficient | not-applicable
@@ -44,14 +49,7 @@ Keep it incremental. Do not delete completed work; summarize completed flows and
 - Flow-type rule: operational-preparation owns session/plan artifacts; change-unit owns reviewable code/doc/fixture/config/release changes
 - Flow-boundary basis: cohesive reviewable or commit-sized change unit; not phase checklist; direct user-visible value not required; pure final QA/readiness/reporting is not a flow without a distinct artifact/change unit
 - Scope lock status: locked-by-question | inferred | not-needed | pending
-- Work boundary:
-- Non-goals:
-- Acceptance signal:
-- Verification expectation:
-- Expected risky actions:
-- Approval boundary summary:
 - Self-drive eligibility: eligible | partial | not-eligible | undecided
-- User-gated checkpoints:
 - Final readiness handoff: commit-readiness reporting | other | not-applicable
 
 1. `<flow slug or title>`
@@ -59,60 +57,36 @@ Keep it incremental. Do not delete completed work; summarize completed flows and
    - Purpose:
    - Why this flow boundary:
    - Owns:
-   - Core phase coverage: preparation | work | verification | reporting
+   - Core phase coverage: preparation | work | verification | reporting | next-flow
    - Completion criteria:
    - Next-flow trigger:
-   - Verification expectation:
-   - Expected risky actions:
-   - Approval boundary: approved | not-approved | deferred | handoff-required | none
 2. `<flow slug or title>`
    - Flow type: operational-preparation | change-unit
    - Purpose:
    - Why this flow boundary:
    - Owns:
-   - Core phase coverage: preparation | work | verification | reporting
+   - Core phase coverage: preparation | work | verification | reporting | next-flow
    - Completion criteria:
    - Next-flow trigger:
-   - Verification expectation:
-   - Expected risky actions:
-   - Approval boundary: approved | not-approved | deferred | handoff-required | none
 3. `<flow slug or title>`
    - Flow type: operational-preparation | change-unit
    - Purpose:
    - Why this flow boundary:
    - Owns:
-   - Core phase coverage: preparation | work | verification | reporting
+   - Core phase coverage: preparation | work | verification | reporting | next-flow
    - Completion criteria:
    - Next-flow trigger:
-   - Verification expectation:
-   - Expected risky actions:
-   - Approval boundary: approved | not-approved | deferred | handoff-required | none
 
-## Current Status
+### Follow-up Change-Unit Candidates
 
-- Active flow:
-- Current core phase: preparation | work | verification | reporting
-- Latest decision:
-- Required next action:
-- Pending question state: none | pending | answered | aborted | superseded
-- Work boundary:
-- Non-goals:
-- Acceptance signal:
-- Verification expectation:
-- Verification status: not-started | requested | pass | fail | blocked | insufficient | not-applicable
-- Expected risky actions:
-- Approval boundary status:
-- User-gated checkpoints:
-- Next planned flow:
+Use this subsection only when the current flow produced possible future implementation units that are not selected or approved yet. These candidates are not active or completed flows.
 
-## Continuity Guard Snapshot
-
-- Turn-gate active: yes | no
-- Question-routing mode: user-gated | self-drive-handoff | undecided
-- User explicit stop: yes | no
-- Terminal summary allowed: yes | no
-- Required next action:
-- Last refreshed phase:
+1. `<candidate title>`
+   - Candidate type: change-unit
+   - Expected artifact:
+   - Separation or compression rationale:
+   - Expected verification:
+   - User-gated handoff condition:
 
 ## Completed Flow Summaries
 
@@ -120,7 +94,7 @@ Keep it incremental. Do not delete completed work; summarize completed flows and
 
 ## Explicit Turn-End Option
 
-- Record that the user can explicitly stop the turn even when the visible question UI cannot show a stop option.
+- Record only the date-level availability that the user can explicitly stop the turn even when the visible question UI cannot show a stop option. Keep detailed next-flow options in the active flow record.
 - Recorded turn-end option:
 
 ## Open Risks

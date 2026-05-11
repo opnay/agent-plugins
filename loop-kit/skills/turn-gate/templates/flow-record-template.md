@@ -2,11 +2,12 @@
 
 This file is the detailed report for one user-request-driven flow.
 Update it incrementally after each completed phase. Do not wait until the end of the flow.
-Keep the date-level history and flow index in `000-plan.md`; keep the detailed evidence and phase report here.
+Keep the date-level history, active snapshot, planned flow sequence, and flow index in `000-plan.md`; keep the detailed flow contract, evidence, verification, and report here.
 One flow is a cohesive reviewable or commit-sized change unit. It is not an analysis/work/verification/commit phase slice, and it does not need to be direct user-visible value.
 사용자 메시지 intake와 planned-flow design은 session plan, flow-list, scope, approval-boundary artifact를 소유할 때 operational-preparation flow가 될 수 있습니다.
 operational-preparation flow는 code, docs, fixtures, config, release-surface 변경을 소유하는 change-unit flow와 구분해야 합니다.
 Final QA, consistency checking, verification-result reporting, and commit-readiness reporting belong in this flow's verification/reporting sections unless they create or change a distinct reviewable artifact/change unit.
+Do not duplicate detailed flow contract fields in both `000-plan.md` and this flow record. If a value is copied into `000-plan.md`, keep it as a short snapshot and treat this flow record as canonical.
 
 ## Metadata
 
@@ -18,9 +19,7 @@ Final QA, consistency checking, verification-result reporting, and commit-readin
 - Flow type: operational-preparation | change-unit
 - Flow scope: <what this flow owns>
 - Parent plan: .agents/sessions/YYYYMMDD/000-plan.md
-- Current mode: deep-interview | autopilot | review-loop | ralph-loop | commit-readiness-gate | undecided
-- Question-routing mode: user-gated | self-drive-handoff | undecided
-- Current core phase: preparation | work | verification | reporting
+- Current phase: preparation | work | verification | reporting | next-flow
 
 ## Continuity Guard
 
@@ -29,7 +28,7 @@ Final QA, consistency checking, verification-result reporting, and commit-readin
 - User explicit stop: yes | no
 - Terminal summary allowed: yes | no
 - Required next action:
-- Last refreshed phase: preparation | work | verification | reporting
+- Last refreshed phase: preparation | work | verification | reporting | next-flow
 - Confirmed closure: yes | no
 - Closure source message: <required only when confirmed closure is recorded>
 - Closure recorded phase: <required only when confirmed closure is recorded>
@@ -39,18 +38,15 @@ Final QA, consistency checking, verification-result reporting, and commit-readin
 - Verification status: not-started | requested | pass | fail | blocked | insufficient | not-applicable
 - Continuity note:
 
-## Analysis
+If closure is source-less or stale, reset `User explicit stop: no` and `Terminal summary allowed: no`, then note the stale state in `Continuity note`.
+
+## Flow Contract
 
 - User request:
 - Preparation source: user-message | existing-flow | correction | next-flow
 - Preparation result:
-- Planned flow list:
-- Flow type:
-- Flow-boundary basis:
+- Boundary rationale:
 - Current blocker:
-- Why this flow:
-- Why this mode:
-- Why this question-routing mode:
 - Scope lock status: locked-by-question | inferred | not-needed | pending
 - Work boundary:
 - Non-goals:
@@ -62,7 +58,7 @@ Final QA, consistency checking, verification-result reporting, and commit-readin
 - Verification expectation:
 - Material judgment calls:
 
-## Expected Risky Actions
+## Optional Risky Actions
 
 1. <destructive | irreversible | external | commit | push | PR | publish | other>
    - Exact target:
@@ -74,17 +70,19 @@ Final QA, consistency checking, verification-result reporting, and commit-readin
    - Initial agreement: approved | not-approved | deferred | handoff-required | not-applicable
    - Self-drive handling: covered-by-initial-agreement | return-to-user-gated-question-routing
 
-## Plan
+Keep this section. If no risky action applies, write `not-applicable` and do not expand the checklist. If a risky action is possible but not approved, expand the checklist and record `Initial agreement` as `not-approved`, `deferred`, or `handoff-required`.
 
-1. <first action>
-2. <next action>
-3. <next action>
+## Execution Log
 
-## Work
-
-- Change or action:
-- Files or surfaces touched:
-- Evidence or command output summary:
+- Plan:
+  1. <first action>
+  2. <next action>
+  3. <next action>
+- Work:
+  - Change or action:
+  - Changed surfaces:
+- Evidence:
+  - Command or output summary:
 
 ## Verification
 
@@ -94,13 +92,11 @@ Final QA, consistency checking, verification-result reporting, and commit-readin
 - Remaining uncertainty:
 - Contrary evidence or multi-angle critique:
 
-## Result Report
+## Report
 
 - Outcome:
-- Files changed:
 - Commit-readiness report:
 - Commit execution approval: not-requested | requested-separately | not-applicable
-- Next-flow context:
 - Blocker, if any:
 
 ## Next Flow Options
