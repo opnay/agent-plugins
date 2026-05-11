@@ -14,6 +14,7 @@
   - installable plugin boundary와 bundled skill coherence 설계
   - custom agent 정의와 usage guidance
   - subagent runtime handoff의 종료 시점, 최소 맥락, 위임 경계 설계
+  - reviewable work unit 동안 worker subagent를 운영하고 작업 단위 종료 시 close/dispose하는 생애주기 설계
   - `.agents/sessions` 폴더의 기본 용도와 `turn-gate` 정렬 plan/flow record 골격 정의
   - task-scoped commit finalization discipline
 - 제외:
@@ -25,6 +26,7 @@
 
 - 새 skill, plugin, custom agent를 만들거나 기존 것을 재설계하는 작업
 - subagent를 호출하기 전 종료 조건과 context packet을 gate로 잠그는 작업
+- reviewable work unit 동안 worker subagent를 spawn, operate, verify, close/dispose하는 작업
 - reusable instruction을 clean-context scenario로 테스트하고 evidence 중심으로 분석하는 작업
 - domain workflow와 분리된 tool-use policy를 설계하는 작업
 - `.agents/sessions` 폴더 경계나 commit workflow처럼 Codex 사용 자체의 운영 품질을 안정화하는 작업
@@ -49,6 +51,8 @@
   - spec: `advance-codex-dev/specs/skills/subagent-creator.md`
 - `subagent-gate`: subagent 호출 전 종료 시점, 최소 context packet, 위임 경계, 결과 계약을 잠근다.
   - spec: `advance-codex-dev/specs/skills/subagent-gate.md`
+- `subagent-work`: reviewable work unit 동안 worker subagent를 생성, 운영, 검증, 종료하는 엄격한 lifecycle을 제공한다.
+  - spec: `advance-codex-dev/specs/skills/subagent-work.md`
 - `agents-sessions`: `.agents/sessions` 폴더의 기본 용도와 `turn-gate` 정렬 plan/flow record 골격을 정의한다.
   - spec: `advance-codex-dev/specs/skills/agents-sessions.md`
 - `git-committer`: 검증 가능한 task-scoped commit finalization 규율을 제공한다.
