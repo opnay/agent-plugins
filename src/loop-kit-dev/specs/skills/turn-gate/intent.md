@@ -57,6 +57,11 @@
   - 이후 loop에서 다시 분석 단계나 계획 단계로 돌아오면, 이전 flow/phase 설계를 고정값처럼 취급하지 말고 필요할 때만 다시 설계하길 원한다.
   - 검증 단계는 그 재설계를 직접 수행하는 단계라기보다, 이후 flow/phase 재설계가 필요한지 여부를 드러내는 단계이길 원한다.
 
+- 각 phase를 시작하는 사용자-facing 말은 `[<phase-name>]` 형식으로 시작해야 한다.
+  - phase가 새로 시작됨을 대화에서 바로 구분할 수 있길 원한다.
+  - phase 이름은 `preparation`, `work`, `verification`, `reporting`, `continuation`처럼 runtime에서 쓰는 canonical phase label을 사용하길 원한다.
+  - 이 prefix는 phase 시작 메시지에 붙는 운영 표식이며, flow record나 결과물 본문 안의 모든 문장에 붙이는 요구가 아니다.
+
 - 사용자 메시지 기반 준비가 끝난 뒤에는 계획된 여러 flow를 self-drive로 진행할 수 있어야 한다.
   - 사용자 메시지를 통한 preparation에서는 이후 flow list를 실행하는 데 필요한 intent, scope, non-goal, acceptance signal, approval boundary, verification expectation을 충분히 수집해야 한다.
   - 이 준비는 질문으로 멈추는 것이 아니라 active question-routing을 포함하는 운영 flow로 계속 이어져야 한다.

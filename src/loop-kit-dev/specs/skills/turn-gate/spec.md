@@ -71,6 +71,7 @@
 - `turn-gate`는 대화 응답 자체를 제어하는 conversation-level first-class rule이다.
 - `loop-kit-dev/skills/turn-gate/SKILL.md`는 runtime에서 읽는 운영 표면이며, 본문 구성과 runtime/spec boundary는 `skill-contents.md`가 소유한다.
 - 전체 phase 흐름과 phase 간 전환은 `runtime-flow.md`가 소유한다.
+- phase 시작 사용자-facing 메시지의 `[<phase-name>]` prefix 계약은 `runtime-flow.md`와 `skill-contents.md`가 소유한다.
 - phase 내부 세부 계약은 `phase-*` spec이 소유하고, internal gate 세부 계약은 `gate-*` spec이 소유한다.
 - session record와 Continuity Guard 계약은 `session-records.md`가 소유한다.
 - clean-context verification 계약은 `verification.md`가 소유한다.
@@ -81,6 +82,7 @@
 - skill body 구성과 runtime/spec boundary 판단이 필요하면 `skill-contents.md`를 확인했는가?
 - skill body 앞부분에 `Important` 섹션이 있고 1급 규칙, terminal summary 금지, next-flow reopening이 먼저 드러나는가?
 - `runtime-flow.md`만 읽어도 전체 phase 흐름과 다음 상세 spec 위치를 알 수 있는가?
+- phase 시작 사용자-facing 메시지 prefix 규칙이 runtime-visible 계약으로 반영돼 있는가?
 - 사용자 표현에 구조적 다의성이 있으면 internal mode 선택 전에 meaning resolution 질문을 열었는가?
 - current-phase work에 맞는 internal mode를 하나로 좁혔는가?
 - user-gated question routing과 계획 도구 `update_plan`를 필수 단계에서 실제로 사용했는가?

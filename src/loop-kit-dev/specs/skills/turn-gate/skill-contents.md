@@ -44,6 +44,9 @@
   - reporting
   - question-routing reopening
 - skill body에는 `runtime-flow.md`의 전체 흐름과 `mode-selection.md`의 local `references/` 읽기 규칙이 직접 남아 있어야 한다.
+- skill body에는 phase 시작을 알리는 사용자-facing 메시지가 `[<phase-name>]` 접두사로 시작해야 한다는 규칙이 직접 남아 있어야 한다.
+- skill body의 phase prefix 규칙은 canonical labels `preparation`, `work`, `verification`, `reporting`, `continuation`을 제시해야 한다.
+- skill body는 이 prefix가 phase-start message에 적용되는 운영 표식이며, flow record, output artifact, command summary, question option 전체 문장에 기계적으로 붙이는 규칙이 아님을 설명해야 한다.
 
 ## Internal Gate Content
 
@@ -95,6 +98,7 @@
 
 - skill body 앞부분에 `Important` 섹션이 있고 1급 규칙, terminal summary 금지, next-flow reopening이 먼저 드러나는가?
 - skill body가 `preparation -> work -> verification -> reporting -> next-flow reopening` 흐름을 실행 중 빠르게 확인 가능한 형태로 드러내는가?
+- phase 시작을 알리는 사용자-facing 메시지가 `[<phase-name>]`으로 시작해야 한다는 규칙이 runtime body에 직접 드러나는가?
 - internal gate 모델이 message intake, flow shaping, task policy, verification, reporting, continuation으로 직접 드러나는가?
 - spec-side fixture 평가 규칙이 runtime skill body로 직접 누출되지 않았는가?
 - runtime body가 설치 후 존재하지 않는 dev-only spec 파일을 읽으라고 지시하지 않는가?
