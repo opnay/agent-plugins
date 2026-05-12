@@ -9,12 +9,17 @@ Use this phase protocol when the current phase is one bounded issue that should 
 - Verify immediately after the fix.
 - Reassess whether another loop is justified before continuing.
 - If the issue boundary expands enough to change success criteria, non-goals, verification, expected risky actions, or approval boundaries, stop the loop and return to preparation or question-routing.
-- Do not execute destructive, irreversible, external, commit, push, PR, publish, or similar sensitive work unless the exact boundary was already approved in initial preparation or is approved through user-gated question-routing.
+- Do not execute destructive, irreversible, external, commit, push, PR, publish, release, version bump, or similar sensitive work unless the exact boundary was already approved in initial preparation or is approved through user-gated question-routing.
 
 ## Protocol Boundary
 
-- Good fit: UI polish, bounded refactor stabilization, flaky issue reduction, one narrow quality problem.
+- Good fit: UI polish, bounded refactor stabilization, flaky issue reduction, or one narrow quality problem.
 - Not a fit: broad delivery, multi-phase planning, review triage across many findings, missing scope boundaries, unresolved risky-action approval, or final commit execution.
+
+## Handoff
+
+- After one cycle, report verification results and residual risk or justify the next bounded cycle.
+- If the loop expands, split it into a new flow or return to user-gated question-routing.
 
 ## Review Questions
 

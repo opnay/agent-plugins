@@ -1,28 +1,23 @@
-# Turn-Gate Multi-Flow Plan Template
+---
+summary: ""
+latest_user_request: ""
+latest_decision: ""
+active_flow: ""
+required_next_action: ""
+pending_question_state: "none | pending | answered | aborted | superseded"
+verification_status: "not-started | requested | pass | fail | blocked | insufficient | not-applicable"
+preparation_source: "user-message | existing-flow | correction | next-flow"
+scope_lock_status: "locked-by-question | inferred | not-needed | pending"
+final_readiness_handoff: "commit-readiness reporting | other | not-applicable"
+---
 
-This file is the date-scoped multi-flow plan for turn-gated work.
-Use it to show how the user's request decomposes into planned flows, why each flow exists, and when the work should move to the next flow.
-Planned flows are cohesive reviewable or commit-sized change units, not phase checklists.
-A flow does not need to be direct user-visible value; supporting component, logic, or integration work can be a flow when it is a coherent change unit.
-사용자 메시지 intake와 planned-flow design은 session plan, flow-list, scope, approval-boundary artifact를 소유할 때 operational-preparation flow가 될 수 있습니다.
-operational-preparation flow는 code, docs, fixtures, config, release-surface 변경을 소유하는 change-unit flow와 구분합니다.
-Final QA, consistency checking, verification-result reporting, and commit-readiness reporting are not planned flows unless they create or change a distinct reviewable artifact/change unit.
-Keep it incremental. Do not delete completed work; summarize completed flows and keep their links.
-Do not duplicate each flow's detailed scope, non-goals, approval boundary, evidence, or verification detail here. Keep those details in the `001+` flow record and keep this plan as a date-level index and snapshot.
+# Turn-Gate Multi-Flow Plan
 
-## Date
+This file is the date-scoped multi-flow plan for turn-gated work. Use it as an index and active snapshot, not as the canonical detail record for each flow.
 
-- YYYY-MM-DD
+Planned flows are cohesive reviewable or commit-sized change units, not phase checklists. A flow does not need to be direct user-visible value. User-message intake and planned-flow design can be an `operational-preparation` flow when they own session plan, flow list, scope, or approval-boundary artifacts.
 
-## Daily Snapshot
-
-- Summary:
-- Latest user request:
-- Latest decision:
-- Active flow:
-- Required next action:
-- Pending question state: none | pending | answered | aborted | superseded
-- Verification status: not-started | requested | pass | fail | blocked | insufficient | not-applicable
+Do not duplicate each flow's detailed scope, non-goals, approval boundary, evidence, or verification detail here. Keep those details in the `001+` flow record.
 
 ## User Requests Today
 
@@ -52,22 +47,6 @@ Do not duplicate each flow's detailed scope, non-goals, approval boundary, evide
 - Final readiness handoff: commit-readiness reporting | other | not-applicable
 
 1. `<flow slug or title>`
-   - Flow type: operational-preparation | change-unit
-   - Purpose:
-   - Why this flow boundary:
-   - Owns:
-   - Core phase coverage: preparation | work | verification | reporting | next-flow
-   - Completion criteria:
-   - Next-flow trigger:
-2. `<flow slug or title>`
-   - Flow type: operational-preparation | change-unit
-   - Purpose:
-   - Why this flow boundary:
-   - Owns:
-   - Core phase coverage: preparation | work | verification | reporting | next-flow
-   - Completion criteria:
-   - Next-flow trigger:
-3. `<flow slug or title>`
    - Flow type: operational-preparation | change-unit
    - Purpose:
    - Why this flow boundary:

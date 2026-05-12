@@ -1,44 +1,34 @@
-# Turn-Gate Flow Report Template
+---
+task: "<short task statement>"
+flow_type: "operational-preparation | change-unit"
+flow_scope: "<what this flow owns>"
+current_phase: "preparation | work | verification | reporting | next-flow"
+turn_gate_active: "yes | no"
+question_routing_mode: "user-gated | pending-question | blocked | undecided"
+user_explicit_stop: "yes | no"
+terminal_summary_allowed: "yes | no"
+required_next_action: ""
+last_refreshed_phase: "preparation | work | verification | reporting | next-flow"
+confirmed_closure: "yes | no"
+closure_source_message: ""
+closure_recorded_phase: ""
+pending_question_state: "none | pending | answered | aborted | superseded"
+pending_question_id_or_summary: ""
+superseded_question_id_or_summary: ""
+verification_status: "not-started | requested | pass | fail | blocked | insufficient | not-applicable"
+continuity_note: ""
+preparation_source: "user-message | existing-flow | correction | next-flow"
+scope_lock_status: "locked-by-question | inferred | not-needed | pending"
+user_request_summary: ""
+---
 
-This file is the detailed report for one user-request-driven flow.
-Update it incrementally after each completed phase. Do not wait until the end of the flow.
-Keep the date-level history, active snapshot, planned flow sequence, and flow index in `000-plan.md`; keep the detailed flow contract, evidence, verification, and report here.
-One flow is a cohesive reviewable or commit-sized change unit. It is not an analysis/work/verification/commit phase slice, and it does not need to be direct user-visible value.
-사용자 메시지 intake와 planned-flow design은 session plan, flow-list, scope, approval-boundary artifact를 소유할 때 operational-preparation flow가 될 수 있습니다.
-operational-preparation flow는 code, docs, fixtures, config, release-surface 변경을 소유하는 change-unit flow와 구분해야 합니다.
-Final QA, consistency checking, verification-result reporting, and commit-readiness reporting belong in this flow's verification/reporting sections unless they create or change a distinct reviewable artifact/change unit.
-Do not duplicate detailed flow contract fields in both `000-plan.md` and this flow record. If a value is copied into `000-plan.md`, keep it as a short snapshot and treat this flow record as canonical.
+# Turn-Gate Flow Report
 
-## Metadata
+This file is the canonical detail record for one user-request-driven flow. Update it incrementally after each completed phase.
 
-- Date: YYYY-MM-DD
-- Record path: .agents/sessions/YYYYMMDD/001-english-lower-slug.md
-- Slug: english-lower-slug
-- User request message: <original user message for this flow>
-- Task: <short task statement>
-- Flow type: operational-preparation | change-unit
-- Flow scope: <what this flow owns>
-- Parent plan: .agents/sessions/YYYYMMDD/000-plan.md
-- Current phase: preparation | work | verification | reporting | next-flow
+Keep date-level history, active snapshot, planned flow sequence, and flow index in `000-plan.md`. Keep detailed flow contract, evidence, verification, report, `Continuity Guard`, next-flow options, and residual risk here.
 
-## Continuity Guard
-
-- Turn-gate active: yes | no
-- Question-routing mode: user-gated | pending-question | blocked | undecided
-- User explicit stop: yes | no
-- Terminal summary allowed: yes | no
-- Required next action:
-- Last refreshed phase: preparation | work | verification | reporting | next-flow
-- Confirmed closure: yes | no
-- Closure source message: <required only when confirmed closure is recorded>
-- Closure recorded phase: <required only when confirmed closure is recorded>
-- Pending question state: none | pending | answered | aborted | superseded
-- Pending question id or summary:
-- Superseded question id or summary:
-- Verification status: not-started | requested | pass | fail | blocked | insufficient | not-applicable
-- Continuity note:
-
-If closure is source-less or stale, reset `User explicit stop: no` and `Terminal summary allowed: no`, then note the stale state in `Continuity note`.
+One flow is a cohesive reviewable or commit-sized change unit. It is not an analysis/work/verification/commit phase slice, and it does not need to be direct user-visible value. User-message intake and planned-flow design can be an `operational-preparation` flow when they own session plan, flow list, scope, or approval-boundary artifacts.
 
 ## Flow Contract
 
@@ -59,7 +49,11 @@ If closure is source-less or stale, reset `User explicit stop: no` and `Terminal
 
 ## Optional Risky Actions
 
-1. <destructive | irreversible | external | commit | push | PR | publish | other>
+not-applicable
+
+If a risky action is possible but not approved, replace `not-applicable` with:
+
+1. <destructive | irreversible | external | commit | push | PR | publish | release | version-bump | other>
    - Exact target:
    - Expected effect:
    - Risk:
@@ -69,14 +63,11 @@ If closure is source-less or stale, reset `User explicit stop: no` and `Terminal
    - Initial agreement: approved | not-approved | deferred | handoff-required | not-applicable
    - Question-routing handling: covered-by-initial-agreement | return-to-user-gated-question-routing | handoff-required
 
-Keep this section. If no risky action applies, write `not-applicable` and do not expand the checklist. If a risky action is possible but not approved, expand the checklist and record `Initial agreement` as `not-approved`, `deferred`, or `handoff-required`.
-
 ## Execution Log
 
 - Plan:
   1. <first action>
   2. <next action>
-  3. <next action>
 - Work:
   - Change or action:
   - Changed surfaces:

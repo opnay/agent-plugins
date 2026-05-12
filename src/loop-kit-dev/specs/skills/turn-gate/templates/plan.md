@@ -32,14 +32,33 @@
 
 `plan-template.md`는 다음 구조를 유지합니다.
 
-1. `Date`
-2. `Daily Snapshot`
-3. `User Requests Today`
-4. `Flow Index`
-5. `Planned Flow Sequence`
-6. `Completed Flow Summaries`
-7. `Explicit Turn-End Option`
-8. `Open Risks`
+1. YAML frontmatter
+2. `User Requests Today`
+3. `Flow Index`
+4. `Planned Flow Sequence`
+5. `Completed Flow Summaries`
+6. `Explicit Turn-End Option`
+7. `Open Risks`
+
+## Frontmatter 규격
+
+`plan-template.md`는 Markdown YAML frontmatter로 date-level snapshot과 routing 상태를 먼저 드러냅니다.
+파일 경로가 `.agents/sessions/{YYYYMMDD}/000-plan.md`이므로 `date`와 `record_path`는 frontmatter에 반복하지 않습니다.
+
+frontmatter에는 다음 필드를 둡니다.
+
+- `summary`
+- `latest_user_request`
+- `latest_decision`
+- `active_flow`
+- `required_next_action`
+- `pending_question_state`
+- `verification_status`
+- `preparation_source`
+- `scope_lock_status`
+- `final_readiness_handoff`
+
+`preparation_result`, `flow_list_basis`, `flow_type_rule`, `flow_boundary_basis`처럼 길어지기 쉬운 판단 근거는 `Planned Flow Sequence` 본문에 둡니다.
 
 ## 중복 방지 규칙
 
