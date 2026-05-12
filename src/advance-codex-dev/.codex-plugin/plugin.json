@@ -35,7 +35,7 @@
     ],
     "defaultPrompt": [
       "Use $advance-codex-dev:plugin-creator to package a plugin and define the right bundled surfaces.",
-      "Use $advance-codex-dev:skill-creator to design a reusable Codex skill with the right references and guardrails.",
+      "Use $advance-codex-dev:skill-creator to design a reusable Codex skill with the right references, guardrails, and description trigger metadata.",
       "Use $advance-codex-dev:skill-scenario-testing to test reusable instructions with fresh subagents, fixed scenarios, and caller-side metrics before reporting evidence-backed findings.",
       "Use $advance-codex-dev:agents-sessions to define when artifacts belong under date-based .agents/sessions/{YYYYMMDD} instead of source, spec, or release surfaces.",
       "Use $advance-codex-dev:git-committer to turn Codex-made changes into a task-scoped commit with strong verification and commit-message hygiene.",

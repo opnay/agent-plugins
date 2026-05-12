@@ -39,7 +39,7 @@
 
 ## 내장 skill 체계
 
-- `skill-creator`: canonical `skill-creator` 위에 bounded skill 설계와 plugin-owned skill 규칙을 덧붙인다.
+- `skill-creator`: canonical `skill-creator` 위에 bounded skill 설계, plugin-owned skill 규칙, passive skill description trigger metadata 규칙을 덧붙인다.
   - spec: `advance-codex-dev/specs/skills/skill-creator.md`
 - `skill-scenario-testing`: reusable instruction을 fresh subagent와 고정 시나리오로 테스트하고 evidence 중심으로 분석 보고한다.
   - spec: `advance-codex-dev/specs/skills/skill-scenario-testing.md`

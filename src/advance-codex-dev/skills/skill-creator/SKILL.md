@@ -1,6 +1,6 @@
 ---
 name: skill-creator
-description: Extension for the canonical system `skill-creator`. Use whenever you would use `skill-creator`; read the base system skill and this plugin skill together so the base workflow is paired with tighter skill boundaries, stronger scope control, and conditional guidance for skills that ship inside plugins.
+description: Extension for the canonical system `skill-creator`. Use whenever you would use `skill-creator`; read the base system skill and this plugin skill together so the base workflow is paired with stricter skill boundaries, plugin-owned skill guidance, and trigger description metadata rules. skill creation, skill update, skill boundary, plugin-owned skill, description metadata, passive trigger
 ---
 
 # Skill Creator
@@ -9,68 +9,96 @@ description: Extension for the canonical system `skill-creator`. Use whenever yo
 
 This skill is an extension over the canonical system `skill-creator`.
 Whenever the canonical `skill-creator` applies, use this skill alongside it.
-Read the system skill first and treat it as the base workflow, then use this skill to make stronger design decisions about skill boundary, scope, and packaging.
+Read the system skill first and treat it as the base workflow, then use this skill to enforce stricter boundaries for reusable skills, especially skills owned by a plugin.
 
 ## Extension Goals
 
-Use this extension to enforce four things the base workflow does not cover strongly enough:
+Use this extension to enforce five things the base workflow does not cover strongly enough:
 
-1. independence of each skill as its own bounded artifact
-2. tighter scope control for what belongs inside one skill
-3. cleaner separation between skill-level and plugin usage guidance
-4. conditional rules for skills that ship inside plugins
+1. explicit skill ownership and non-goals
+2. removal of hidden sibling-skill context
+3. clean separation between plugin usage guidance and skill-level behavior
+4. separation of runtime-specific tool policy from domain workflow guidance
+5. trigger-oriented frontmatter descriptions, especially for passive skills
 
-## Added Rules
+## Boundary Rules
 
-1. Every skill must remain independently understandable and usable for its own bounded job.
-2. Keep the skill boundary explicit: what the skill owns, what it does not own, and what should stay outside it.
-3. Do not let one skill rely on hidden behavioral context from sibling skills or nearby artifacts.
-4. Keep companion skills lean. Add only the extra rules, references, or assets that materially improve behavior over the base system skill.
-5. If the main problem is reusable tool-selection or tool-escalation policy, prefer a dedicated tool-use artifact over stuffing runtime-specific rules into a domain skill.
-6. Write behavioral guidance from the point of view of the skill reader. Prefer `you` and `your`; do not describe the acting subject as `Codex`, `the agent`, or another third-person runtime label unless you are naming the product, file path, or external documentation.
+When creating or revising a skill:
 
-## Skills Inside Plugins
+- Define the skill's owned job before writing workflow steps.
+- State what the skill does not own when that boundary could be confused.
+- Keep each skill understandable as a bounded artifact without assuming hidden context from sibling skills.
+- Put cross-skill or plugin-wide usage guidance in the plugin's usage surfaces, not inside a sibling skill unless it directly affects that skill's own behavior.
+- Do not use a skill body to compensate for unclear plugin packaging or manifest guidance.
+- If the main issue is tool selection, tool sequencing, or escalation policy, consider a separate tool-use guidance artifact instead of burying tool policy in a domain skill.
 
-Apply this section only when the skill is meant to ship inside a plugin.
+## Plugin-Owned Skills
 
-1. Follow top-down design order:
-   - define the plugin boundary first
-   - define the skills that belong inside that plugin second
-2. Do not design a plugin-owned skill in isolation first and retrofit the plugin around it later unless that migration is explicit.
-3. Place the skill under that plugin's `skills/<skill-name>` directory after the plugin boundary is clear.
-4. Put cross-skill usage guidance in the plugin's manifest prompt, README, and plugin spec, not inside one sibling skill.
-5. Keep shipped skills limited to distinct execution surfaces.
+For a skill bundled inside a plugin, design the plugin boundary first and the individual skill boundary second.
+The skill may mention how it fits the plugin only when that helps the reader apply the skill correctly.
+Avoid instructions that require the reader to know sibling skills, development specs, repository-only paths, or unpublished context at runtime.
+
+Before finalizing a plugin-owned skill, check:
+
+- why this behavior belongs in this skill rather than another plugin surface
+- whether the skill remains useful when read by itself
+- whether plugin-level guidance has been kept out of the skill body
+- whether sibling-skill references are optional navigation rather than hidden prerequisites
+- whether any runtime-only tool policy should be extracted
+
+## Description Metadata
+
+Treat frontmatter `description` as trigger metadata that is read before the skill body.
+The description should first give a short human-readable explanation of what the skill does and when it should be used.
+Write it as selection guidance for the skill reader, not as project history or session context.
+
+For passive skills that should apply even when the user does not explicitly request the skill, append a comma-separated list of plain tokens at the end of the `description`.
+These are matching tokens, not literal hashtags, so do not prefix them with `#`.
+
+Use passive trigger tokens for:
+
+- inputs where the user is unlikely to name the skill directly
+- workflows that should be selected from artifact names, task phrases, or common synonyms
+- reusable guardrails that must activate from natural user wording
+
+Do not force passive trigger tokens onto:
+
+- active or direct-call skills the user is expected to request by name
+- skills with already narrow and reliable trigger wording
+- descriptions where extra tokens would broaden selection into unrelated work
+
+Good passive token lists include the expressions that should actually select the skill: likely user phrases, artifact names, workflow names, and common synonyms.
+Keep them narrow.
+For example, use a tail like `skill creation, skill update, passive trigger, description metadata` rather than broad words that would match unrelated tasks.
 
 ## Review Pass
 
 Before considering a skill done, check:
 
-- what the skill owns and what it does not own
-- whether the skill can be invoked independently without hidden context
-- whether the skill is repeating general-purpose system guidance instead of adding new value
-- whether behavioral instructions are written from the point of view of the skill reader instead of a third-person runtime label
-
-If the skill ships inside a plugin, also check:
-
-- whether the plugin boundary was defined before the skill boundary
-- whether any guidance belongs in manifest prompt, README, or plugin spec instead of this skill
-- whether the skill is leaking plugin-level concerns into a bounded skill
-- whether tool-use policy should live in a dedicated tool-use artifact instead of this skill
+- whether the `description` can select the skill before the body is loaded
+- whether a passive skill has useful comma-separated plain tokens at the end of the `description`
+- whether those passive tokens omit `#`
+- whether active or already-narrow skills avoid unnecessary token tails
+- whether the skill body is written for a runtime reader rather than for a repository change session
+- whether development-only specs or unpublished paths have been kept out of runtime instructions
+- whether ownership, non-goals, and plugin boundaries are clear
 
 ## Output Contract
 
+When this extension materially changes the result, include:
+
 - `Skill boundary`
-- `Why this is a separate skill`
-- `Plugin relationship` when applicable
-- `Plugin usage guidance`
-- `Added resources`
+- `Non-goals`
+- `Plugin ownership`
+- `Description trigger behavior`
+- `Runtime-only guidance removed or avoided`
 - `Validation path`
 - `Residual risk`
 
 ## Guardrails
 
-- Do not use plugin membership as an excuse for a weak or coupled skill boundary.
-- Do not let one skill absorb responsibilities that should become a separate skill.
-- Do not hide cross-skill usage guidance inside a bounded skill when it belongs in manifest prompt, README, or plugin spec.
-- Do not mix domain workflow guidance with reusable runtime tool policy when those can be separated cleanly.
-- Do not write execution guidance around third-person labels such as `Codex` or `the agent` when the instruction should be addressed directly to the skill reader.
+- Do not replace the canonical `skill-creator` workflow; extend it.
+- Do not write skill bodies that depend on hidden sibling context.
+- Do not put plugin usage guidance into a skill unless the skill itself owns that behavior.
+- Do not add `#` before passive description matching tokens.
+- Do not use broad passive tokens to make a skill trigger everywhere.
