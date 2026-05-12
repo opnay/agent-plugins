@@ -10,6 +10,7 @@
     - 독립 완결 [선택]
   - worker subagent는 언제 close/dispose하는 규칙이 좋을까요?
     - 작업 단위 기준 [선택]
+- `subagent-work`는 passive skill이므로, frontmatter `description` 끝에 `#` 없는 쉼표 구분 plain trigger token 목록을 둔다.
 
 ---
 
@@ -51,6 +52,7 @@
 
 - 대표 표면: `advance-codex-dev/skills/subagent-work/SKILL.md`
 - 호출 방식: 메인 thread context window를 아끼기 위해 하나의 reviewable work unit을 worker subagent에게 맡기려 할 때 호출한다.
+- passive trigger: 사용자가 skill 이름을 명시하지 않아도 worker subagent lifecycle, reviewable work unit, subagent close/dispose, compact handoff 같은 표현이 나오면 선택될 수 있어야 한다.
 
 ## 핵심 처리 계약
 
@@ -62,6 +64,8 @@
 - 메인 thread는 worker 결과를 그대로 최종 결과로 취급하지 않고 changed paths, assumptions, validation, residual risk를 검토한다.
 - work unit이 끝나면 worker를 close/dispose하고, 이어지는 작업에는 compact handoff summary를 사용해 새 worker를 연다.
 - worker가 또 다른 subagent를 spawn할 수 있는 환경이라도 nested delegation은 명시된 assigned scope 안에서만 허용하며, approval-sensitive action을 하위 subagent로 우회하지 않는다.
+- runtime `description`은 기본 사용 조건 뒤에 `#` 없는 쉼표 구분 plain token 목록을 붙여 passive selection을 돕는다.
+- token 목록은 worker subagent lifecycle, reviewable work unit, subagent handoff, close dispose, compact handoff처럼 실제 적용되어야 하는 표현에 한정한다.
 
 ## 생애주기 규칙
 
@@ -99,6 +103,7 @@
 - worker가 멈춰야 하는 approval, ambiguity, conflict, failure 조건이 명시됐는가?
 - worker 결과를 main thread가 통합 검토할 수 있는 output contract가 있는가?
 - 다음 작업 단위로 넘어가기 전에 worker를 닫고 compact handoff를 남기는가?
+- passive skill description 끝에 `#` 없는 쉼표 구분 plain token 목록이 있는가?
 
 ## 독립성 원칙
 

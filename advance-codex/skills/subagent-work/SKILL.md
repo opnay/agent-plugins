@@ -1,6 +1,6 @@
 ---
 name: subagent-work
-description: Run a reviewable work unit through a strict worker subagent lifecycle, from defining scope and spawning with a complete handoff packet through sync, verification, integration review, compact handoff, and close/dispose.
+description: Run a reviewable work unit through a strict worker subagent lifecycle, from defining scope and spawning with a complete handoff packet through sync, verification, integration review, compact handoff, and close/dispose. worker subagent, subagent lifecycle, reviewable work unit, subagent handoff, close dispose, compact handoff
 ---
 
 # Subagent Work
