@@ -64,7 +64,7 @@ verification gate와 reporting gate는 각각 검증 판정과 보고 맥락 정
 - work:
   - 이 단계는 task policy gate를 통과해 현재 flow 내부 실행 정책을 정한다.
   - 사용자가 요청한 실제 작업을 진행한다.
-  - current-phase work의 internal mode 선택과 local reference 읽기 규칙은 `mode-selection.md`가 소유한다.
+  - implicit default state, explicit `self-drive` mode, phase protocol 선택, local reference 읽기 규칙은 `phase-protocols/routes.md`가 소유한다.
   - 세부 계약은 `phase-work.md`가 소유한다.
 - verification:
   - 이 단계는 verification gate를 통과한다.

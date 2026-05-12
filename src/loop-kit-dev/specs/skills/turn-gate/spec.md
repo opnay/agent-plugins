@@ -2,7 +2,7 @@
 
 ## 목적
 
-`loop-kit-dev`의 `turn-gate`는 turn continuity를 유지하면서 current-phase work에 맞는 내부 loop mode를 선택해 실행하는 메인 loop controller입니다.
+`loop-kit-dev`의 `turn-gate`는 turn continuity를 유지하면서 기본적으로 implicit operating state로 동작하고, 필요할 때 explicit `self-drive` mode와 current-phase work에 맞는 phase protocol을 적용하는 메인 loop controller입니다.
 이 skill이 활성화되면 `turn-gate` 메인 플로우는 대화 응답 자체의 1급 제어 규칙이 되며, 사용자의 explicit stop 전까지 결과 보고를 terminal response로 닫지 않습니다.
 
 ## 경계
@@ -11,7 +11,7 @@
   - turn-level continuity 유지
   - `preparation -> work -> verification -> reporting -> next-flow question-routing response` 구조 유지
   - 사용자 메시지의 operation 의미 해독
-  - current-phase work의 internal mode selection
+  - implicit default state, explicit `self-drive` mode, phase protocol selection
   - 결과 보고 뒤 explicit choice 기반 next-flow reopening
   - session record와 Continuity Guard 유지
 - 제외:
@@ -58,7 +58,14 @@
 - `gate-verification.md`: verification packet construction and pass/fail/blocked/insufficient routing
 - `gate-reporting.md`: result reporting as continuity context
 - `meaning-resolution.md`: operation/target ambiguity, provenance/intent block target locking, user-gated clarification
-- `mode-selection.md`: internal mode selection, local references, mode-vs-handoff, upstream SSOT 동기화
+- `modes/default.md`: implicit default operating state 계약
+- `modes/self-drive.md`: prepared planned flow sequence 자율 진행 mode 계약
+- `phase-protocols/routes.md`: implicit default state, explicit `self-drive` mode, phase protocol selection, local references, mode-vs-handoff
+- `phase-protocols/deep-interview.md`: requirement discovery와 scope lock protocol 계약
+- `phase-protocols/review-loop.md`: review/QA/self-review finding 처리 protocol 계약
+- `phase-protocols/ralph-loop.md`: bounded fix-verify-reassess cycle protocol 계약
+- `phase-protocols/autopilot.md`: locked-scope end-to-end execution protocol 계약
+- `phase-protocols/commit-readiness-gate.md`: commit readiness judgment protocol 계약
 - `skills/turn-gate/references/self-drive.md`: prepared planned flow sequence를 bounded subagent decision으로 이어가는 self-drive 실행 계약
 - `approval-boundary.md`: destructive, irreversible, external-action, commit/publish approval boundary
 - `verification.md`: mandatory clean-context subagent verification and non-pass handling
@@ -71,6 +78,9 @@
 ## 핵심 처리 계약
 
 - `turn-gate`는 대화 응답 자체를 제어하는 conversation-level first-class rule이다.
+- `turn-gate`는 implicit default operating state와 explicit `self-drive` mode의 관계를 소유한다.
+- `deep-interview`, `review-loop`, `ralph-loop`, `autopilot`, `commit-readiness-gate` 같은 이름은 standalone mode가 아니라 기본 상태 또는 `self-drive` 안에서 필요한 상황별 phase protocol로 취급한다.
+- phase protocol routing은 `phase-protocols/routes.md`가 소유하고, 상세 계약은 나머지 `phase-protocols/*.md`가 소유한다.
 - `loop-kit-dev/skills/turn-gate/SKILL.md`는 runtime에서 읽는 운영 표면이며, 본문 구성과 runtime/spec boundary는 `skill-contents.md`가 소유한다.
 - 전체 phase 흐름과 phase 간 전환은 `runtime-flow.md`가 소유한다.
 - phase 시작 사용자-facing 메시지의 `[<phase-name>]` prefix 계약은 `runtime-flow.md`와 `skill-contents.md`가 소유한다.
@@ -85,8 +95,9 @@
 - skill body 앞부분에 `Important` 섹션이 있고 1급 규칙, terminal summary 금지, next-flow reopening이 먼저 드러나는가?
 - `runtime-flow.md`만 읽어도 전체 phase 흐름과 다음 상세 spec 위치를 알 수 있는가?
 - phase 시작 사용자-facing 메시지 prefix 규칙이 runtime-visible 계약으로 반영돼 있는가?
-- 사용자 표현에 구조적 다의성이 있으면 internal mode 선택 전에 meaning resolution 질문을 열었는가?
-- current-phase work에 맞는 internal mode를 하나로 좁혔는가?
+- 사용자 표현에 구조적 다의성이 있으면 mode 또는 phase protocol 선택 전에 meaning resolution 질문을 열었는가?
+- current flow가 기본 상태인지 `self-drive`인지 먼저 좁혔는가?
+- deep-interview/review-loop 같은 phase protocol을 mode처럼 기록하지 않았는가?
 - user-gated question routing과 계획 도구 `update_plan`를 필수 단계에서 실제로 사용했는가?
 - cross-flow 작업이라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 planned flow sequence, 각 flow의 완료 기준, 다음 flow 전환 조건을 최신 상태로 담고 있는가?
 - 사용자 메시지 해석과 flow list 설계가 필요했다면, 그 운영 준비가 별도 flow 또는 bootstrap record로 남고 결과 planned flows와 섞이지 않았는가?

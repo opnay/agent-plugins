@@ -22,7 +22,7 @@
 `turn-gate`에서 planned flow는 phase가 아니라 응집된 변경 단위입니다.
 
 `분석`, `작업`, `검증`, `보고`, `커밋 준비` 같은 단계명은 flow boundary가 될 수 없습니다.
-이 항목들은 각 flow 내부의 core phase 또는 internal mode로 남아야 합니다.
+이 항목들은 각 flow 내부의 core phase 또는 phase protocol로 남아야 합니다.
 
 flow가 반드시 최종 사용자에게 직접 보이는 가치 단위일 필요는 없습니다.
 flow는 함께 이해하고 검토하고 검증하고 필요하면 커밋할 수 있는 변경 묶음이어야 합니다.

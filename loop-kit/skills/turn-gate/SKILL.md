@@ -14,7 +14,7 @@ When this skill is active, `turn-gate` is a conversation-level operating rule fo
 - End each completed flow in one of these states: next-flow reopening, user-gated blocker, or source-recorded explicit turn stop.
 - After reporting, reopen the next flow with `request_user_input` when structured choices are possible and the tool is available.
 - Maintain session records throughout the turn, including the plan, flow records, `Continuity Guard`, verification status, and `Next Flow Options`.
-- Read only installed runtime materials during execution: local `references/` files for selected internal modes and local `templates/` files for session records.
+- Read only installed runtime materials during execution: local `references/` files for selected phase protocols or self-drive and local `templates/` files for session records.
 
 ## Purpose
 
@@ -71,20 +71,21 @@ Before work begins, shape the active flow and lock enough context to proceed.
 
 ### 2. Work
 
-Before entering work, choose one internal mode for the current-phase work and read its local runtime reference.
+Before entering work, apply the base `turn-gate` behavior unless self-drive is explicitly available, then choose the phase protocol that matches the current-phase work and read its local runtime reference.
 
-Internal mode choices:
+Phase protocol choices:
 
 - `deep-interview`: requirements, unclear intent, missing scope, or unresolved approval lines block work.
 - `review-loop`: review feedback, QA findings, or self-review findings are the main issue.
 - `ralph-loop`: one small fix-verify-reassess cycle is the right unit.
 - `autopilot`: broad end-to-end delivery is the current unit.
-- `self-drive`: a prepared planned flow sequence can continue by bounded subagent decision.
 - `commit-readiness-gate`: the change unit is nearly complete and readiness judgment is the main task.
 
-If modes overlap, prefer the earliest blocker in this order: `deep-interview`, `review-loop`, `ralph-loop`, `autopilot`, `self-drive`, `commit-readiness-gate`.
+Use `self-drive` only when a prepared planned flow sequence can continue by bounded subagent decision.
 
-Read the matching file under `references/` before applying that mode. External actions such as commit execution, push, PR creation, publish, release, or version bump are not internal modes; they are user-gated handoffs.
+If phase protocols overlap, prefer the earliest blocker in this order: `deep-interview`, `review-loop`, `ralph-loop`, `autopilot`, `commit-readiness-gate`.
+
+Read the matching file under `references/` before applying that protocol or self-drive. External actions such as commit execution, push, PR creation, publish, release, or version bump are not phase protocols or self-drive actions; they are user-gated handoffs.
 
 ### 3. Verification
 

@@ -9,13 +9,13 @@
   - incoming message 처리는 특정 상황 목록에 갇힌 closed taxonomy가 아니라, 명시적 turn stop이 아닌 모든 사용자 입력을 gated turn continuation으로 해석하는 포괄 규칙이어야 한다.
   - 질문, 검토 요청, 상태 확인, 우선순위 변경, correction 같은 표현은 예시일 뿐이며, 예시에 없는 입력도 explicit stop이 아니면 보고 후 멈추는 근거가 될 수 없다.
 
-- `turn-gate`가 current-phase work에 맞는 내부 loop mode를 고르길 원한다.
+- `turn-gate`가 current-phase work에 맞는 mode와 phase protocol을 고르길 원한다.
   - `turn-gate`의 가장 기본 flow는 `준비 -> 작업 -> 검증 -> 보고 -> next-flow`여야 한다.
   - 이 기본 flow를 둘러싼 전환은 내부 gate로 설명되길 원한다.
   - message intake gate는 사용자 메시지를 분류하지만 실행하지 않고, flow shaping gate는 active flow와 completion criteria를 만들거나 갱신하며, task policy gate는 flow 내부 실행 정책만 소유해야 한다.
   - task policy는 flow 밖의 독립 계층이 아니며, 개별 task 완료가 flow 완료나 turn closure를 결정하면 안 된다.
   - reporting 뒤에는 source-recorded explicit stop이 없는 한 `next-flow` phase가 next-flow reopening으로 이어져야 한다.
-  - deep-interview, flow list design, 상태 파악, 수정 범위 파악, 질문 라우팅, 내부 mode 선택은 기본 flow 자체가 아니라 `준비` 안의 세부 작업이나 파생 작업이어야 한다.
+  - deep-interview, flow list design, 상태 파악, 수정 범위 파악, 질문 라우팅, mode와 phase protocol 선택은 기본 flow 자체가 아니라 `준비` 안의 세부 작업이나 파생 작업이어야 한다.
   - 사용자 메시지에서 시작하는 준비는 deep-interview를 사용해 intent, scope, 성공 기준, approval boundary를 확인하고, 사용자 의도에 맞는 이후 flow list를 준비해야 한다.
   - 사용자 메시지를 받아 의도를 해석하고 flow list를 만드는 일 자체도 산출물을 가진 운영 flow가 될 수 있어야 한다. 이때 산출물은 session plan, flow record, planned flow list, scope/approval boundary다.
   - 이 운영 flow와 실제 product/code/document 변경을 소유하는 flow는 구분되어야 한다.
@@ -27,9 +27,9 @@
   - 검증은 해당 flow에 대한 검증 단계이며, 파일 수정이 제대로 적용됐는지, 타입 오류가 없는지, 조사의 경우 다양한 관점에서 논리 비판을 수행했는지 확인해야 한다.
   - 보고는 turn 종료가 아니라 다음 flow 진행을 위한 이번 flow의 맥락 정리 단계여야 한다.
   - 계획된 flow가 소진되면 보고 단계에서 질문 도구를 사용해 사용자에게 다음 flow나 작업을 받아야 한다.
-  - requirement discovery 성격의 `deep-interview`도 내부 mode로 흘러가길 원한다.
-  - `autopilot`, `ralph-loop`, `review-loop`, readiness gate 같은 loop는 사용자가 직접 고르지 않고 `turn-gate` 안에서 선택되길 원한다.
-  - 내부 loop mode의 canonical contract는 `workflow-kit`이 SSOT로 계속 소유하길 원한다.
+  - requirement discovery 성격의 `deep-interview`도 사용자가 직접 고르지 않고 `turn-gate` 안에서 phase protocol로 적용되길 원한다.
+  - `autopilot`, `ralph-loop`, `review-loop`, readiness gate 같은 loop 성격의 계약은 사용자가 직접 고르지 않고 `turn-gate` 안에서 phase protocol로 선택되길 원한다.
+  - phase protocol의 일반 의미는 `workflow-kit`이 SSOT로 계속 소유하길 원한다.
   - 실행 시에는 `turn-gate` skill의 local `references/` 아래로 흡수된 contract를 읽는 구조이길 원한다.
 
 - 질문, 계획, 다음 플로우 선택은 user-gated 운영으로 드러나야 한다.
@@ -77,3 +77,14 @@
 - `turn-gate` 상세 규칙은 folder-based spec 구조로 유지하길 원한다.
   - `specs/skills/turn-gate/spec.md`를 기본 index로 둔다.
   - 세부 계약은 같은 폴더 아래 sub-spec으로 분리한다.
+
+- `turn-gate`의 mode taxonomy는 implicit default state와 explicit `self-drive`를 중심으로 정리하길 원한다.
+  - `specs/skills/turn-gate/intent-scenarios`와 같은 위치에 `modes/` 폴더를 두고 `default.md`, `self-drive.md` 두 mode spec을 둔다.
+  - `deep-interview`, `review-loop` 같은 이름은 mode가 아니라 상황별로 적용되는 phase protocol 또는 phase 세부 규격으로 취급한다.
+  - 이번 변경은 runtime reference 파일 배치를 바꾸지 않고 spec만 변경한다.
+- `default`는 스킬을 기본으로 사용하는 상태 자체를 의미하고, skill body에는 "default mode"라는 표현 없이 기본 동작으로 남기길 원한다.
+
+- `turn-gate`의 phase protocol 상세 계약은 별도 spec으로 풀어두길 원한다.
+  - `deep-interview`, `review-loop`, `ralph-loop`, `autopilot`, `commit-readiness-gate` 다섯 가지를 모두 구현한다.
+  - 이 상세 spec은 `modes/`가 아니라 `phase-protocols/` 아래에 둔다.
+  - runtime reference 파일 이동은 포함하지 않는다.

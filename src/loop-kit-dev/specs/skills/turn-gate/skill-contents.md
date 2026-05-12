@@ -43,7 +43,7 @@
   - verification
   - reporting
   - next-flow
-- skill body에는 `runtime-flow.md`의 전체 흐름과 `mode-selection.md`의 local `references/` 읽기 규칙이 직접 남아 있어야 한다.
+- skill body에는 `runtime-flow.md`의 전체 흐름과 `phase-protocols/routes.md`의 local `references/` 읽기 규칙이 직접 남아 있어야 한다.
 - skill body에는 phase 시작을 알리는 사용자-facing 메시지가 `[<phase-name>]` 접두사로 시작해야 한다는 규칙이 직접 남아 있어야 한다.
 - skill body의 phase prefix 규칙은 canonical phase labels `preparation`, `work`, `verification`, `reporting`, `next-flow`를 제시해야 한다.
 - skill body는 reporting 뒤 다음 flow를 여는 단계를 `next-flow` phase로 설명해야 한다.

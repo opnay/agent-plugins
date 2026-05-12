@@ -3,7 +3,7 @@
 ## 플러그인 목적
 
 `loop-kit-dev`은 `turn-gate`를 메인 표면으로 삼는 loop-oriented workflow 플러그인입니다.
-핵심 책임은 하나의 턴을 사용자가 턴을 종료하자고 요청할때까지 닫지 않고 유지하면서, 각 flow를 `준비 -> 작업 -> 검증 -> 보고`로 이어가고, 현재 phase의 메인 작업에 맞는 내부 loop mode를 `turn-gate` 안에서 선택해 실행하는 것입니다.
+핵심 책임은 하나의 턴을 사용자가 턴을 종료하자고 요청할때까지 닫지 않고 유지하면서, 각 flow를 `준비 -> 작업 -> 검증 -> 보고`로 이어가고, 기본 상태 또는 explicit `self-drive` mode 안에서 현재 phase에 필요한 protocol을 선택해 실행하는 것입니다.
 여기서 flow는 `분석`, `작업`, `커밋` 같은 진행 phase가 아니며, 반드시 최종 사용자에게 직접 보이는 가치 단위도 아닙니다.
 flow는 함께 이해하고 검토하고 검증하고 필요하면 커밋할 수 있는 응집된 변경 단위입니다.
 예를 들어 "로그인 페이지 만들기"라는 큰 요청은 하나의 사용자 가치처럼 보일 수 있지만, planned flow는 `로그인 UI/UX 컴포넌트 생성`, `로그인 로직 작성`, `로그인 페이지 조립`처럼 커밋 단위로도 나뉠 수 있는 변경 묶음이어야 합니다.
@@ -13,7 +13,7 @@ flow는 함께 이해하고 검토하고 검증하고 필요하면 커밋할 수
 사용자 메시지 기반 준비는 planned flow list 전체를 실행하는 데 필요한 정보와 예상 위험 작업, approval boundary를 먼저 질문해 수집해야 하며, 사용자가 autonomous continuation을 원하면 이후 flow들은 `turn-gate` 내부 `references/self-drive.md` 계약으로 진행할 수 있습니다.
 이때 prepared planned flow sequence가 끝나면 마지막 변경 단위 flow의 reporting 또는 별도 user-gated handoff에서 commit-readiness를 보고하며, 실제 commit, push, PR, publish는 별도 user-gated handoff로 남깁니다.
 commit-readiness reporting 자체는 산출물 변경을 소유하지 않는 한 planned flow boundary가 아닙니다.
-내부 mode 선택 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, phase, routing rule, release surface 중 무엇을 가리키는지 확인하고, 해석에 따라 작업이 달라지면 meaning resolution 질문으로 먼저 잠급니다.
+mode와 phase protocol 선택 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, phase, routing rule, release surface 중 무엇을 가리키는지 확인하고, 해석에 따라 작업이 달라지면 meaning resolution 질문으로 먼저 잠급니다.
 이 플러그인은 `workflow-kit`의 일반 workflow skill 의미를 참조하되, turn-gate runtime contract와 session continuity는 자체 runtime-oriented surface로 소유합니다.
 
 ## 플러그인 경계와 비목표
@@ -27,8 +27,8 @@ commit-readiness reporting 자체는 산출물 변경을 소유하지 않는 한
   - deep-interview alignment와 flow list design을 preparation 세부 작업으로 유지
   - 사용자 메시지 기반 준비에서 planned flow list 전체에 필요한 정보, 예상 위험 작업, user-gated checkpoint 수집
   - prepared planned flow list의 self-drive reference 실행과 마지막 변경 단위 flow 이후 commit-readiness reporting handoff
-  - internal mode 선택 전 operation meaning resolution
-  - `turn-gate` 내부의 loop mode 선택
+  - mode와 phase protocol 선택 전 operation meaning resolution
+  - `turn-gate`의 implicit default state와 explicit `self-drive` mode 선택
   - user-gated question routing 유지
   - 읽기 전용 bounded verifier subagent를 통한 clean-context verification
   - autonomous subagent question routing을 위한 `turn-gate/references/self-drive.md` 제공
@@ -47,7 +47,7 @@ commit-readiness reporting 자체는 산출물 변경을 소유하지 않는 한
 - 사용자 메시지 해석, scope lock, approval boundary 정리, planned flow list 작성 자체가 plan/session record 산출물을 만드는 운영 flow로 남아야 하는 작업
 - 이미 선택된 flow에서 수정 범위, 현재 상태, 대상 파일, 검증 조건을 먼저 확인해야 하는 작업
 - 사용자 지시어가 여러 구조 단위를 가리켜 current-phase work를 고르기 전에 의미를 잠가야 하는 작업
-- 현재 phase의 작업이 requirement discovery, autonomous execution, refinement, review handling, readiness pass 중 하나로 좁혀지는 작업
+- 현재 phase의 작업이 requirement discovery, refinement, review handling, readiness pass 같은 phase protocol 중 하나로 좁혀지는 작업
 - loop continuity가 top-level governing contract인 작업
 
 ## 대표 표면
@@ -60,7 +60,7 @@ commit-readiness reporting 자체는 산출물 변경을 소유하지 않는 한
 
 ## 내장 skill 체계
 
-- `turn-gate`: turn continuity를 유지하고 각 flow를 `준비 -> 작업 -> 검증 -> 보고`로 진행하며 current-phase work에 맞는 내부 loop mode를 고른다.
+- `turn-gate`: turn continuity를 유지하고 각 flow를 `준비 -> 작업 -> 검증 -> 보고`로 진행하며 기본 상태 또는 explicit `self-drive` mode 안에서 필요한 phase protocol을 적용한다.
   - self-drive가 적합한 경우 `turn-gate/references/self-drive.md`를 읽고 bounded decision을 subagent question packet으로 라우팅한다.
   - spec: `loop-kit-dev/specs/skills/turn-gate/spec.md`
 
@@ -68,8 +68,9 @@ commit-readiness reporting 자체는 산출물 변경을 소유하지 않는 한
 
 - `workflow-kit`은 일반 workflow skill 의미를 제공한다.
 - `loop-kit-dev`은 turn-gate 사용자 표면, runtime loop orchestration, session continuity contract를 소유한다.
-- `turn-gate`는 internal mode를 local `references/`로 흡수해 사용하되, 그 reference는 관련 workflow skill spec과 동기화해 유지한다.
+- `turn-gate`는 runtime phase protocol을 local `references/`로 흡수해 사용하되, 그 reference는 관련 workflow skill spec과 동기화해 유지한다.
 - 복잡한 skill spec은 `specs/skills/<skill-name>/spec.md`를 기본 index로 두고, 세부 계약은 같은 folder 아래 sub-spec으로 분리할 수 있다.
+- `turn-gate`의 mode/protocol 선택 기준과 routing은 `specs/skills/turn-gate/phase-protocols/routes.md`가 소유하고, phase protocol 상세 계약은 같은 폴더의 개별 protocol spec이 소유한다.
 - `turn-gate`의 필수 운영 도구는 기본적으로 질문 도구 `request_user_input`와 계획 도구 `update_plan`이다.
 - `turn-gate`의 clean-context verification은 읽기 전용 bounded verifier subagent 실행을 포함하며, 이 검증 전용 실행은 `turn-gate` 활성 중 사전 허용된 계약으로 취급한다.
 - `turn-gate`의 phase model은 `준비 -> 작업 -> 검증 -> 보고`를 런타임 surface에 드러내야 하며, deep-interview alignment, flow list design, meaning resolution, current-state inspection은 preparation 세부 작업으로 설명해야 한다.
@@ -79,13 +80,14 @@ commit-readiness reporting 자체는 산출물 변경을 소유하지 않는 한
 - self-drive 중 초기 협의 범위 밖의 위험 작업이나 새 approval boundary가 나타나면 다시 user-gated question routing으로 질문한다.
 - self-driven planned flow sequence가 끝난 뒤에는 commit execution이 아니라 commit-readiness reporting handoff를 수행하며, commit/push/PR/publish는 별도 user-gated handoff다.
 - self-drive 도중 사용자 메시지가 들어오면 멈추지 않고 현재 플로우 조정 또는 다음 플로우 우선 등록으로 처리한다.
-- 새로운 내부 loop mode가 필요하면 해당 workflow skill의 일반 의미를 `workflow-kit`에 정의하거나 갱신한 뒤 `loop-kit-dev`의 runtime reference에 반영한다.
+- 새로운 phase protocol이 필요하면 해당 workflow skill의 일반 의미를 `workflow-kit`에 정의하거나 갱신한 뒤 `loop-kit-dev`의 runtime reference에 반영한다.
+- 새로운 explicit mode는 기본 상태나 `self-drive`로 current flow를 소유할 수 없을 때만 추가한다.
 - `loop-kit-dev`에서는 `autopilot`, `ralph-loop`, `review-loop`, `commit-readiness-gate`를 직접 호출 가능한 사용자 엔트리포인트로 늘리지 않는다.
-- `turn-gate`의 phase model이나 session continuity rule이 바뀌면 `loop-kit-dev` spec, skill body, manifest prompt를 같은 변경 단위에서 점검한다. Internal mode 의미가 바뀐 경우에만 관련 `workflow-kit` skill spec을 함께 점검한다.
+- `turn-gate`의 phase model이나 session continuity rule이 바뀌면 `loop-kit-dev` spec, skill body, manifest prompt를 같은 변경 단위에서 점검한다. Phase protocol 의미가 바뀐 경우에만 관련 `workflow-kit` skill spec을 함께 점검한다.
 
 ## 현재 구조 메모
 
 - 이 플러그인은 intentionally narrow한 operational package다.
 - `turn-gate`가 메인 실행 표면이다.
-- 내부 loop mode의 일반 의미는 `src/workflow-kit-dev/specs/skills/deep-interview.md`, `src/workflow-kit-dev/specs/skills/autopilot.md`, `src/workflow-kit-dev/specs/skills/ralph-loop.md`, `src/workflow-kit-dev/specs/skills/review-loop.md`, `src/workflow-kit-dev/specs/skills/commit-readiness-gate.md`를 기준으로 보고, `turn-gate/references/`에는 그 실행용 absorbed contract를 둔다.
+- deep-interview, autopilot, ralph-loop, review-loop, commit-readiness-gate의 일반 의미는 mode가 아니라 phase protocol로 보고, `turn-gate/references/`에는 그 실행용 absorbed contract를 둔다.
 - autonomous subagent question routing은 direct skill entrypoint가 아니라 `turn-gate/references/self-drive.md`의 책임으로 둔다.
