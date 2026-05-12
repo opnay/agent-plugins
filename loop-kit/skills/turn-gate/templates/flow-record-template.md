@@ -24,7 +24,7 @@ Do not duplicate detailed flow contract fields in both `000-plan.md` and this fl
 ## Continuity Guard
 
 - Turn-gate active: yes | no
-- Question-routing mode: user-gated | self-drive-handoff | undecided
+- Question-routing mode: user-gated | pending-question | blocked | undecided
 - User explicit stop: yes | no
 - Terminal summary allowed: yes | no
 - Required next action:
@@ -54,7 +54,6 @@ If closure is source-less or stale, reset `User explicit stop: no` and `Terminal
 - Expected risky actions:
 - Approval boundary:
 - User-gated checkpoints:
-- Self-drive eligibility:
 - Verification expectation:
 - Material judgment calls:
 
@@ -68,7 +67,7 @@ If closure is source-less or stale, reset `User explicit stop: no` and `Terminal
    - Included scope:
    - Excluded scope:
    - Initial agreement: approved | not-approved | deferred | handoff-required | not-applicable
-   - Self-drive handling: covered-by-initial-agreement | return-to-user-gated-question-routing
+   - Question-routing handling: covered-by-initial-agreement | return-to-user-gated-question-routing | handoff-required
 
 Keep this section. If no risky action applies, write `not-applicable` and do not expand the checklist. If a risky action is possible but not approved, expand the checklist and record `Initial agreement` as `not-approved`, `deferred`, or `handoff-required`.
 

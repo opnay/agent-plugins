@@ -1,6 +1,6 @@
 # Commit Readiness Gate Reference
 
-Use this mode when implementation is largely done and the current phase is to decide whether the intended change unit is ready to move toward commit.
+Use this phase protocol when implementation is largely done and the current phase is to decide whether the intended change unit is ready to move toward commit.
 
 ## Core Contract
 
@@ -8,18 +8,18 @@ Use this mode when implementation is largely done and the current phase is to de
 - Confirm the work boundary, unrelated-change exclusion, verification status, residual risk, and likely commit-message scope.
 - Run final review and scoped verification appropriate to a readiness call.
 - Report readiness, residual risk, intended diff scope, unrelated changes to exclude, verification evidence, and any minimum review recommendation together.
-- Keep commit execution itself outside this mode. A readiness request is not commit approval.
-- In a self-driven planned flow sequence, commit-readiness reporting happens after the last change-unit flow as a reporting or handoff state, not as a new planned flow unless it owns a distinct artifact change.
-- Do not stage, commit, push, open a PR, publish, or imply approval for those actions from readiness alone.
+- Keep readiness judgment separate from execution authority. A readiness request provides readiness evidence only.
+- Commit-readiness reporting happens as reporting or handoff state after the intended change-unit work. Create a new planned flow only when the readiness work owns a distinct artifact change.
+- Stage, commit, push, PR creation, and publish execution require recorded execution authority. Use approval-boundary and user-gated routing to decide whether to proceed or reopen a question.
 
-## Mode Boundary
+## Protocol Boundary
 
 - Good fit: final readiness judgment after implementation and targeted verification.
-- Not a fit: broad implementation, planning, commit execution, push, PR, publish, or commit-message finalization.
+- Use another protocol for broad implementation, planning, or execution steps that lack recorded execution authority.
 
 ## Review Questions
 
 - Is the intended change unit actually locked enough to judge?
 - Is the scoped verification sufficient for the readiness call?
-- Did this mode stop at reporting instead of drifting into commit execution?
-- Did the report distinguish commit readiness from commit approval?
+- Did the report distinguish commit readiness from execution authority?
+- If execution follows, is the execution authority recorded?

@@ -25,7 +25,7 @@
   - working tree 상태 확인
   - 다음 flow 선택 열기
 
-커밋 실행은 user-gated handoff로 승인된 작업일 수 있지만, 커밋 완료가 곧 turn stop은 아닙니다.
+커밋 완료는 곧 turn stop이 아닙니다.
 사용자가 `턴 종료`, `여기서 끝`처럼 명시적으로 말하지 않았다면 `user_explicit_stop=false`를 유지합니다.
 
 ## 기대하는 Operational-Preparation Flow
@@ -35,7 +35,7 @@
 - 소유 산출물: active flow record의 commit scope, staged/final status, unrelated-change exclusion, verification status, commit message draft.
 - 완료 기준:
   - 커밋 실행이 승인된 handoff인지 기록한다.
-  - commit/push/PR/publish를 서로 다른 approval boundary로 구분한다.
+  - commit/push/PR/publish를 서로 다른 approval-sensitive boundary로 구분한다.
   - 커밋 후 terminal summary가 아니라 next-flow question-routing이 필요하다는 점을 기록한다.
 
 ## 기대하는 Change-Unit 실행 후보

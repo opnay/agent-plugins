@@ -9,14 +9,14 @@
 ## 소유
 
 - source-recorded explicit stop이 있는지 확인한다.
-- explicit stop이 없으면 active question-routing, loop continuation, planned self-drive handoff, blocker decision 중 하나로 이어간다.
+- explicit stop이 없으면 active question-routing, loop continuation, blocker decision 중 하나로 이어간다.
 - `request_user_input` 사용 가능성과 fallback 필요성을 판단한다.
 - session record의 `Next Flow Options`에 explicit turn-end option을 남긴다.
 
 ## 비소유
 
 - 새로운 work를 질문 없이 확장
-- commit/push/PR/publish 승인 추론
+- commit/push/PR/publish 승인을 추론해 실행하기
 - stale closure 또는 source-less closure를 terminal close 근거로 사용
 
 `next-flow` phase는 task 결과와 reporting 결과를 turn 종료로 해석하지 않습니다.

@@ -83,7 +83,7 @@ Flow 0: 로그인 버튼 문구 수정 범위 확인
 - intent scenario 자체는 Flow 0에서 끝낸다.
 - target ambiguity가 없으면 후속 실행 후보를 단일 change-unit으로 판단한다.
 - target ambiguity가 있으면 질문을 열되 active question-routing과 pending question state를 기록한다.
-- 문구 수정 외 release, commit, push, PR은 별도 승인 없이 포함하지 않는다.
+- 문구 수정 외 release, commit, push, PR은 initial agreement 또는 user-gated approval 없이 포함하지 않는다.
 - snapshot 또는 fixture 갱신이 실제로 필요할 때만 같은 change-unit의 산출물로 포함한다.
 
 ## 수용 신호

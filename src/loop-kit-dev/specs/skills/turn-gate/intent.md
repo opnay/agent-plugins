@@ -49,7 +49,7 @@
 - 검증은 main agent의 same-context self-check가 아니라 clean-context subagent 검증이어야 한다.
   - 검증 단계는 main agent가 같은 context에서 직접 수행하지 않고, 무조건 clean context 상태의 subagent가 수행해야 한다.
   - `turn-gate` 활성 상태에서는 읽기 전용 bounded verifier subagent 실행을 clean-context verification 계약의 일부로 미리 허용한 것으로 취급해야 한다.
-  - 이 사전 허용은 검증 전용이며, 파일 수정, scope 확장, destructive/external action, commit/push/PR/publish approval에는 적용되지 않는다.
+  - 이 사전 허용은 검증 전용이며, 파일 수정, scope 확장, destructive/external action, commit/push/PR/publish approval 생성에는 적용되지 않는다.
   - main agent는 clean-context subagent 검증 요청을 구성하고, subagent 결과를 통합해 결과 보고와 다음 flow 판단으로 이어가야 한다.
 
 - 이후 flow/phase 설계는 필요할 때 조정 가능한 provisional design이어야 한다.
@@ -63,13 +63,10 @@
   - 보고 뒤 다음 flow 질문을 여는 전환은 `continuation`이 아니라 `next-flow` phase로 드러내길 원한다.
   - 이 prefix는 phase 시작 메시지에 붙는 운영 표식이며, flow record나 결과물 본문 안의 모든 문장에 붙이는 요구가 아니다.
 
-- 사용자 메시지 기반 준비가 끝난 뒤에는 계획된 여러 flow를 self-drive로 진행할 수 있어야 한다.
+- 사용자 메시지 기반 준비가 끝난 뒤에는 계획된 여러 flow를 실행 가능한 change-unit 후보로 남길 수 있어야 한다.
   - 사용자 메시지를 통한 preparation에서는 이후 flow list를 실행하는 데 필요한 intent, scope, non-goal, acceptance signal, approval boundary, verification expectation을 충분히 수집해야 한다.
   - 이 준비는 질문으로 멈추는 것이 아니라 active question-routing을 포함하는 운영 flow로 계속 이어져야 한다.
-  - 준비가 끝난 뒤 만들어진 여러 flow는 사용자가 명시적으로 수동 진행을 원하거나 approval boundary가 생기지 않는 한 `turn-gate/references/self-drive.md` 계약으로 이어갈 수 있어야 한다.
-  - 초기 preparation에서는 planned flow list 중 예상되는 destructive, irreversible, external action, commit, push, PR, publish 같은 위험 작업과 approval boundary를 미리 질문해 승인/비승인 또는 handoff 경계를 계획해야 한다.
-  - self-drive가 여러 flow를 진행하는 동안 초기 협의 범위를 벗어난 위험 작업이나 새 approval boundary가 나타나면 자동 처리하지 않고 user-gated routing으로 다시 질문해야 한다.
-  - 계획된 마지막 flow를 마치는 단계에서는 terminal summary가 아니라 commit-readiness gate 성격의 보고를 해야 하며, 이 보고는 commit execution approval과 구분되어야 한다.
+  - 계획된 마지막 flow를 마치는 단계에서는 commit-readiness gate 성격의 보고를 남기고, commit execution approval 근거를 별도로 기록해야 한다.
   - 다만 commit-readiness 보고 자체를 새 planned flow로 승격하길 원하는 것은 아니다.
   - 순수 최종 QA, 정합성 점검, 검증 결과 보고, commit-readiness reporting은 별도 산출물 변경을 소유하지 않으면 마지막 변경 단위 flow의 verification/reporting 또는 user-gated handoff로 남아야 한다.
   - 예외적으로 회귀 테스트 fixture, snapshot baseline, 문서, 운영자 리포트 출력, validator 진단 출력처럼 검토 가능한 산출물을 만들거나 바꾸는 경우에는 그 산출물 변경이 flow가 될 수 있다.
@@ -78,8 +75,8 @@
   - `specs/skills/turn-gate/spec.md`를 기본 index로 둔다.
   - 세부 계약은 같은 폴더 아래 sub-spec으로 분리한다.
 
-- `turn-gate`의 mode taxonomy는 implicit default state와 explicit `self-drive`를 중심으로 정리하길 원한다.
-  - `specs/skills/turn-gate/intent-scenarios`와 같은 위치에 `modes/` 폴더를 두고 `default.md`, `self-drive.md` 두 mode spec을 둔다.
+- `turn-gate`의 기본 상태는 implicit default state로 정리하길 원한다.
+  - `specs/skills/turn-gate/intent-scenarios`와 같은 위치에 `modes/` 폴더를 두고 기본 상태 spec을 둔다.
   - `deep-interview`, `review-loop` 같은 이름은 mode가 아니라 상황별로 적용되는 phase protocol 또는 phase 세부 규격으로 취급한다.
   - 이번 변경은 runtime reference 파일 배치를 바꾸지 않고 spec만 변경한다.
 - `default`는 스킬을 기본으로 사용하는 상태 자체를 의미하고, skill body에는 "default mode"라는 표현 없이 기본 동작으로 남기길 원한다.

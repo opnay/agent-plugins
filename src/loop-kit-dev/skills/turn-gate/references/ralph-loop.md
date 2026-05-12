@@ -1,6 +1,6 @@
 # Ralph Loop Reference
 
-Use this mode when the current phase is one bounded issue that should be improved through a short fix-verify-reassess cycle.
+Use this phase protocol when the current phase is one bounded issue that should be improved through a short fix-verify-reassess cycle.
 
 ## Core Contract
 
@@ -11,7 +11,7 @@ Use this mode when the current phase is one bounded issue that should be improve
 - If the issue boundary expands enough to change success criteria, non-goals, verification, expected risky actions, or approval boundaries, stop the loop and return to preparation or question-routing.
 - Do not execute destructive, irreversible, external, commit, push, PR, publish, or similar sensitive work unless the exact boundary was already approved in initial preparation or is approved through user-gated question-routing.
 
-## Mode Boundary
+## Protocol Boundary
 
 - Good fit: UI polish, bounded refactor stabilization, flaky issue reduction, one narrow quality problem.
 - Not a fit: broad delivery, multi-phase planning, review triage across many findings, missing scope boundaries, unresolved risky-action approval, or final commit execution.

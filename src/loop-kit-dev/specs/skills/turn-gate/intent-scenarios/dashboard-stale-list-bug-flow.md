@@ -97,7 +97,7 @@ Flow 0은 intent 판단에서 끝납니다.
 - 후속 실행 후보는 실제 산출물 변경 단위로 기록한다.
 - regression fixture/test는 필요할 때만 후속 후보로 기록한다.
 - target ambiguity가 있으면 active question-routing과 pending question state를 기록한다.
-- release, commit, push, PR은 별도 승인 없이 포함하지 않는다.
+- release, commit, push, PR은 initial agreement 또는 user-gated approval 없이 포함하지 않는다.
 
 ## 수용 신호
 

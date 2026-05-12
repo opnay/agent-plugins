@@ -1,6 +1,6 @@
 # Review Loop Reference
 
-Use this mode when the current phase is driven by review feedback, QA findings, or self-review findings and only material issues should block progress.
+Use this phase protocol when the current phase is driven by review feedback, QA findings, or self-review findings and only material issues should block progress.
 
 ## Core Contract
 
@@ -11,7 +11,7 @@ Use this mode when the current phase is driven by review feedback, QA findings, 
 - If a finding points to a broader ambiguous scope, changed verification path, or new approval boundary, return to preparation or question-routing before expanding work.
 - Do not treat review feedback as approval for destructive, irreversible, external, commit, push, PR, publish, or similar sensitive action.
 
-## Mode Boundary
+## Protocol Boundary
 
 - Good fit: correctness, regression, reliability, or delivery-blocking review feedback.
 - Not a fit: open-ended cleanup, speculative polish, broad implementation work, unrelated finding collection, unresolved approval boundary, or commit execution.

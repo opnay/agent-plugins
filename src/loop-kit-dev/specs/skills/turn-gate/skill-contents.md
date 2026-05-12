@@ -68,13 +68,14 @@
 - skill body는 사용자 메시지 기반 preparation에서 scope가 비어 있거나 너무 넓거나 여러 결과물을 만들 수 있거나 성공 기준과 검증 경로를 바꿀 수 있으면 work 전에 질문으로 scope를 잠그도록 직접 설명해야 한다.
 - skill body는 질문 없이 추론한 scope라도 work boundary와 non-goal을 flow record에 남기도록 설명해야 한다.
 
-## Self-Drive And Approval Content
+## Approval Content
 
 - skill body는 사용자 메시지 기반 preparation이 planned flow list 전체를 실행하는 데 필요한 intent, scope, non-goal, acceptance signal, verification expectation을 수집하도록 설명해야 한다.
-- skill body는 예상되는 위험 작업과 approval boundary를 질문해 `references/self-drive.md`로 진행 가능한 flow와 user-gated checkpoint를 구분하도록 설명해야 한다.
-- skill body는 초기 협의 범위 밖의 위험 작업이나 새 approval boundary가 이후 flow 중 나타나면 self-drive reference가 자동 처리하지 않고 다시 질문해야 한다고 설명해야 한다.
-- skill body는 self-driven planned flow sequence가 끝난 뒤 commit execution이 아니라 commit-readiness reporting handoff로 이어져야 한다고 설명해야 한다.
-- skill body는 commit-readiness reporting 자체가 산출물 변경을 소유하지 않는 한 planned flow boundary가 아니며, commit/push/PR/publish는 별도 승인 handoff임을 설명해야 한다.
+- skill body는 `turn-gate`의 기본 loop, phase protocol routing, approval-sensitive execution boundary를 독립적으로 설명해야 한다.
+- skill body는 approval-sensitive action의 exact target, expected effect, risk, rollback or recovery 가능성, 포함/제외 scope, 종료 지점이 기록돼야 한다고 설명해야 한다.
+- skill body는 readiness reporting과 execution authority를 분리해 설명해야 한다.
+- skill body는 self-drive가 명시적으로 요청된 prepared sequence에 대해서는 `references/self-drive.md`를 읽어야 한다는 discoverability를 제공해야 한다.
+- skill body는 self-drive 세부 조건을 반복하지 않고, 해당 reference를 읽으면 그 overlay 계약이 준비된 sequence의 진행 판단을 소유한다고만 설명해야 한다.
 
 ## Verification Content
 

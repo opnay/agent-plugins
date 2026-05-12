@@ -7,32 +7,21 @@ description: Keep a Codex turn open across preparation, work, verification, repo
 
 ## Important
 
-When this skill is active, `turn-gate` is a conversation-level operating rule for the current turn.
+When this skill is active, treat it as a conversation-level first-class rule for the current session. Do not close the turn with a terminal summary unless the user explicitly asks to end this turn.
 
-- Do not close the turn with a terminal summary unless the user explicitly asks to stop this turn.
-- Treat every non-stop user message as continuation input for the same turn.
-- End each completed flow in one of these states: next-flow reopening, user-gated blocker, or source-recorded explicit turn stop.
-- After reporting, reopen the next flow with `request_user_input` when structured choices are possible and the tool is available.
-- Maintain session records throughout the turn, including the plan, flow records, `Continuity Guard`, verification status, and `Next Flow Options`.
-- Read only installed runtime materials during execution: local `references/` files for selected phase protocols or self-drive and local `templates/` files for session records.
+The required flow is `preparation -> work -> verification -> reporting -> next-flow`. After reporting, reopen the next flow with `request_user_input` when that tool is available. Keep `.agents/sessions/{YYYYMMDD}/` records current, including the active flow record and its `Continuity Guard`.
+
+Valid ending states are limited to an explicit user stop, an active user-gated next-flow question, or a blocker that prevents the loop from safely continuing. A plain follow-up sentence is not a substitute for next-flow reopening.
 
 ## Purpose
 
-Use `turn-gate` when work must continue inside one turn until the user explicitly stops it. The skill keeps each flow structured as:
+Use `turn-gate` as an independent loop controller. It keeps one turn alive while the work moves through scoped preparation, execution, clean-context verification, continuity reporting, and explicit next-flow selection.
 
-1. preparation
-2. work
-3. verification
-4. reporting
-5. next-flow
+The default state is implicit: do not ask the user to choose a named mode. Treat `deep-interview`, `review-loop`, `ralph-loop`, `autopilot`, and `commit-readiness-gate` as phase protocols used inside the current flow, not as standalone modes.
 
-Reporting is continuity context for the next flow. It is not permission to stop. After reporting, the `next-flow` phase decides whether to reopen user-gated routing or honor a source-recorded explicit stop.
+## Phase Messages
 
-## Phase Start Messages
-
-When you tell the user that a phase is starting, or when a progress update begins with the start of a phase, the user-facing message must start with the canonical phase label.
-
-Canonical labels:
+When you send a user-facing message that starts a phase or reports progress while starting a phase, begin it with one canonical prefix:
 
 - `[preparation]`
 - `[work]`
@@ -40,139 +29,79 @@ Canonical labels:
 - `[reporting]`
 - `[next-flow]`
 
-This prefix is an operational marker for phase-start messages only. Do not mechanically add it to flow records, artifact bodies, command output summaries, or every sentence in question choices. If you are giving a general explanation without starting a phase, do not force a prefix.
-
-Use these priority rules when a message could fit more than one label:
-
-- Activation-only with no concrete task starts as `[preparation]` to establish scope; switch to `[next-flow]` only when opening the actual next-flow choices.
-- Mid-work status questions use the active phase, usually `[work]`; use `[reporting]` only for a status report that intentionally summarizes flow context.
-- Session-record access blockers use the phase where they are found: `[reporting]` before result reporting, `[next-flow]` before reopening choices.
-- Report-only evaluation requests may collect evidence without editing, but still keep the turn open and use `[next-flow]` after the report.
+Use the prefix only for phase-start user messages. Do not mechanically add it to flow records, output artifacts, command summaries, or every sentence in a question option. For activation-only requests, start with `[preparation]` to set scope; use `[next-flow]` only when opening an actual next-flow choice. For status questions, use the current active phase label unless you are deliberately summarizing flow context.
 
 ## Core Loop
 
-### 1. Preparation
+1. Preparation
+   - Classify incoming user messages first. Only a clear request to stop this turn allows closure; all other messages are continuation input.
+   - Lock intent, scope, non-goals, acceptance signal, verification expectation, and approval boundary before work.
+   - Use user-gated questions when scope is empty, too broad, structurally ambiguous, able to produce multiple artifacts, or likely to change success criteria or verification.
+   - If you infer scope without a question, record the work boundary and non-goals.
+   - Treat requirement discovery, flow list design, meaning resolution, current-state inspection, target reread, and scope lock as preparation work.
+   - User-message interpretation or planned-flow design can be an `operational-preparation` flow. Execution-ready planned flows should be reviewable or commit-sized `change-unit` flows.
 
-Before work begins, shape the active flow and lock enough context to proceed.
+2. Work
+   - Execute only inside the active flow boundary.
+   - Reread any target file, artifact, or state changed by a new user message before continuing.
+   - Keep follow-up candidates separate from the active execution flow until the user or the recorded plan selects them.
+   - Use the relevant local `references/*.md` only when a phase protocol is needed:
+     - `references/deep-interview.md` for requirement discovery and scope lock blockers.
+     - `references/review-loop.md` for review, QA, or self-review findings.
+     - `references/ralph-loop.md` for a bounded fix-verify-reassess cycle.
+     - `references/autopilot.md` for broad locked-scope execution.
+     - `references/commit-readiness-gate.md` for commit readiness judgment.
+   - If the user explicitly requests self-drive or a prepared autonomous sequence, read `references/self-drive.md`; after that, continuation decisions for that prepared sequence are owned by that reference's overlay contract.
 
-- Classify the incoming user message first: explicit turn stop or continuation input.
-- If it is not an explicit stop, keep the turn open.
-- Identify intent, scope, non-goals, acceptance signal, verification expectation, and approval boundary.
-- Distinguish user-message-based preparation from preparation for an already selected flow.
-- Use deep-interview, flow-list design, meaning resolution, and current-state inspection as preparation techniques.
-- If the scope is empty, too broad, able to produce multiple materially different results, or able to change success criteria or verification paths, ask before work.
-- If you infer the scope without a question, record the work boundary and non-goals in the flow record.
-- If operation or target meaning is structurally ambiguous, lock meaning before execution.
-- If user-message interpretation and planned flow design are themselves the work, treat them as an `operational-preparation` flow.
-- Planned execution flows produced by preparation should be reviewable or commit-sized `change-unit` flows.
-- Keep follow-up candidates separate from the active execution flow.
-- For a prepared planned flow sequence that can continue without more user input, read `references/self-drive.md` and apply its limits.
-- Once meaningful work starts, use the plan tool to track phase state.
+3. Verification
+   - After work and before successful reporting, run clean-context verification with a bounded verifier subagent.
+   - Do not fork the full conversation. Send only the target, user intent, changed files or artifacts, checks to run, pass/fail criteria, and stop conditions.
+   - The verifier is read-only: no edits, no scope expansion, no destructive or external action, and no commit, push, PR, publish, release, or version bump.
+   - Integrate the verifier result as `pass`, `fail`, `blocked`, or `insufficient`.
+   - Treat `fail`, `blocked`, and `insufficient` as non-pass. Return to the earliest safe phase or open user-gated blocker routing; do not describe non-pass verification as completion.
 
-### 2. Work
+4. Reporting
+   - Report as continuity context, not as turn closure.
+   - Include material judgment calls that affected routing, phase selection, approval, or verification.
+   - Update and reread the active flow record's `Continuity Guard` before reporting and before next-flow reopening.
+   - A terminal summary is allowed only when the current user message clearly asks to end this turn or the flow record has a source-recorded explicit stop that matches the current message.
 
-Before entering work, apply the base `turn-gate` behavior unless self-drive is explicitly available, then choose the phase protocol that matches the current-phase work and read its local runtime reference.
-
-Phase protocol choices:
-
-- `deep-interview`: requirements, unclear intent, missing scope, or unresolved approval lines block work.
-- `review-loop`: review feedback, QA findings, or self-review findings are the main issue.
-- `ralph-loop`: one small fix-verify-reassess cycle is the right unit.
-- `autopilot`: broad end-to-end delivery is the current unit.
-- `commit-readiness-gate`: the change unit is nearly complete and readiness judgment is the main task.
-
-Use `self-drive` only when a prepared planned flow sequence can continue by bounded subagent decision.
-
-If phase protocols overlap, prefer the earliest blocker in this order: `deep-interview`, `review-loop`, `ralph-loop`, `autopilot`, `commit-readiness-gate`.
-
-Read the matching file under `references/` before applying that protocol or self-drive. External actions such as commit execution, push, PR creation, publish, release, or version bump are not phase protocols or self-drive actions; they are user-gated handoffs.
-
-### 3. Verification
-
-After work and before reporting, perform clean-context verification.
-
-- Use a read-only bounded verifier subagent for clean-context verification.
-- Do not fork the full conversation history as the verifier context.
-- Provide only the bounded packet: verifier identity or request id, target, user intent, changed files or artifacts, checks or commands to run, pass/fail criteria, no-edit instruction, and stop condition.
-- The verifier must not edit files, expand scope, perform destructive or external actions, or commit, push, open PRs, publish, release, or bump versions.
-- Integrate the verifier result as `pass`, `fail`, `blocked`, or `insufficient`.
-- Treat `fail`, `blocked`, and `insufficient` as non-pass.
-- For `fail` or `insufficient`, return to the earliest safe phase before result reporting.
-- For `blocked`, or if verifier tooling is unavailable, open user-gated question routing. Do not report blocked verification as successful completion.
-
-### 4. Reporting
-
-Reporting summarizes the active flow for continuity, not closure.
-
-- State what was prepared, changed or completed, and verified.
-- Include residual uncertainty and blockers if they exist.
-- Update and read the active flow record's `Continuity Guard` before reporting.
-- Only allow a terminal summary when the current user message or a source-recorded confirmed closure explicitly stops the turn.
-- Ignore stale closure state, source-less `confirmed closure`, or old `terminal summary allowed: yes` records.
-- If stale closure state is found, reset the guard to continuation state and record why.
-
-### 5. Next-Flow
-
-After reporting, reopen the next flow unless there is a source-recorded explicit stop.
-
-- Use `request_user_input` for structured next-flow choices when available.
-- Choices should be narrow and directly connected to the just-reported result.
-- If `request_user_input` is unavailable, use plain text fallback, state that the tool is unavailable, list the open choices, and keep the state as active question routing.
-- A generic closing phrase is not next-flow reopening.
-- If visible choices cannot include a turn-end option, still tell the user they can explicitly stop the turn.
-- Always record a turn-end option in the flow record's `Next Flow Options`.
+5. Next-flow
+   - If there is no explicit stop, reopen the loop after reporting.
+   - Use `request_user_input` when available and offer narrow choices tied to the just-reported result.
+   - If the tool is unavailable, state that fact, list the choices in plain text, and leave the record in active question-routing state.
+   - Always record a turn-end option in `Next Flow Options`, even when it is not visible among the displayed choices.
 
 ## Internal Gates
 
-Use internal gates to decide transitions. Do not expose them as separate user-facing skills.
+- Message intake gate classifies the incoming user message and explicit stop status. It does not execute work.
+- Flow shaping gate creates or updates the active flow and completion criteria.
+- Task policy gate controls execution inside the current flow only.
+- Verification gate decides whether verification passed, failed, was blocked, or was insufficient.
+- Reporting gate packages the result as continuity context and leads into `next-flow`.
 
-- Message intake gate: classify explicit stop vs continuation input. It does not execute work.
-- Flow shaping gate: create or update the active flow, follow-up candidates, and completion criteria.
-- Task policy gate: decide execution policy inside the selected flow only.
-- Verification gate: integrate work results as pass, fail, blocked, or insufficient.
-- Reporting gate: convert flow results into continuity context.
-
-No gate may infer terminal closure without an explicit user stop. Individual task completion cannot decide flow completion or turn closure by itself.
+Individual task completion cannot decide flow completion or turn closure. Reporting must lead to `next-flow` unless explicit stop is source-recorded.
 
 ## Approval Boundary
 
-Meaning resolution and action approval are different decisions.
+Separate meaning resolution from execution approval. A locked target or inferred intent does not authorize destructive, irreversible, external, publish, push, PR, commit, release, or version-bump actions.
 
-- Lock operation and target meaning before asking for risky action approval when both are uncertain.
-- Destructive, irreversible, external, commit, push, PR, publish, release, and version-bump actions require user-gated approval before execution.
-- Approval-sensitive prompts must include exact target, expected effect, risk, rollback or recovery possibility, and included/excluded scope.
-- Subagent judgment, inferred intent, and nearby prior wording cannot substitute for approval.
-- A readiness request is not commit approval.
-- Commit, push, PR, publish, release, and version-bump execution belong to separately approved handoff workflows.
+Before approval-sensitive work, record the exact target, expected effect, risk, rollback or recovery path, included and excluded scope, and the intended stop point. Readiness reporting is evidence only; it is not execution authority.
+
+If approval is missing, ask a user-gated question before work. If target ambiguity and approval-sensitive action appear together, lock the target first, then ask for action approval.
 
 ## Session Records
 
-Maintain `.agents/sessions/{YYYYMMDD}/` records for active turn-gated work.
+Maintain `.agents/sessions/{YYYYMMDD}/000-plan.md` and `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` for active turn-gated work.
 
-- Keep `000-plan.md` as the date-scoped flow sequence, user request history, current plan, and completed-flow summary.
-- Keep `001+` flow records as detailed reports for individual flows.
-- Use `templates/plan-template.md` and `templates/flow-record-template.md` when creating records.
-- Flow record filenames use `{count-pad3}-{eng-lower-slug}.md`, for example `001-update-parser.md`.
-- Record flow type as `operational-preparation` or `change-unit`.
-- Each flow normally carries preparation, work, verification, reporting, and next-flow.
-- Update flow records incrementally at phase boundaries instead of waiting for the flow to finish.
-- Keep completed work in the plan; summarize it and retain the flow reference.
+Use `templates/plan-template.md` for the plan record and `templates/flow-record-template.md` for flow records when creating new records. Keep `000-plan.md` as the flow-sequence snapshot and index. Keep detailed scope, non-goals, approval boundary, evidence, verification detail, report, residual risk, `Continuity Guard`, and `Next Flow Options` in the `001+` flow record.
 
-The `Continuity Guard` must include turn-gate active state, question-routing mode, user explicit stop status, terminal summary permission, required next action, last refreshed phase, and verification status when relevant.
+Update the active flow record at the end of each phase. The `Continuity Guard` must show whether `turn-gate` is active, question-routing state, explicit stop status, terminal summary permission, required next action, last refreshed phase, and current verification status when verification is required.
 
-Before reporting and next-flow reopening, refresh the `Continuity Guard`. Missing records may be reconstructed, then written back. Inaccessible records are blockers, not permission to close the turn.
+If records are inaccessible, do not silently reconstruct and close. Report the blocker with the phase prefix appropriate to where it was found and keep terminal summary disallowed.
 
-## Runtime References
+## Stop Rule
 
-During execution, only read installed runtime files that exist with this skill:
+Only the user can explicitly end the turn. Treat questions, corrections, status checks, review requests, priority changes, and new task requests as continuation input unless the user clearly says to stop the current turn.
 
-- `references/deep-interview.md`
-- `references/review-loop.md`
-- `references/ralph-loop.md`
-- `references/autopilot.md`
-- `references/self-drive.md`
-- `references/commit-readiness-gate.md`
-- `templates/plan-template.md`
-- `templates/flow-record-template.md`
-
-Do not instruct runtime users to read development-only specification files. If detailed behavior is needed at runtime, it must be present in this skill body or in the installed `references/` or `templates/` files.
+Examples of explicit stop intent include "여기서 끝", "턴 종료", "이 turn은 그만", and "stop the turn". If stop intent is unclear, keep the loop active or ask a user-gated clarification.

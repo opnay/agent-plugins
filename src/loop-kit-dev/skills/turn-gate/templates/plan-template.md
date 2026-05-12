@@ -49,7 +49,6 @@ Do not duplicate each flow's detailed scope, non-goals, approval boundary, evide
 - Flow-type rule: operational-preparation owns session/plan artifacts; change-unit owns reviewable code/doc/fixture/config/release changes
 - Flow-boundary basis: cohesive reviewable or commit-sized change unit; not phase checklist; direct user-visible value not required; pure final QA/readiness/reporting is not a flow without a distinct artifact/change unit
 - Scope lock status: locked-by-question | inferred | not-needed | pending
-- Self-drive eligibility: eligible | partial | not-eligible | undecided
 - Final readiness handoff: commit-readiness reporting | other | not-applicable
 
 1. `<flow slug or title>`

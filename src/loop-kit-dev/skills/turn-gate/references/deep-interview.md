@@ -1,6 +1,6 @@
 # Deep Interview Reference
 
-Use this mode when the current phase is requirement discovery rather than implementation, refinement, review handling, or readiness judgment.
+Use this phase protocol when the current phase is requirement discovery rather than implementation, refinement, review handling, or readiness judgment.
 
 ## Core Contract
 
@@ -14,11 +14,10 @@ Use this mode when the current phase is requirement discovery rather than implem
 - If scope is safely inferred, record the inferred work boundary and non-goals before handoff.
 - Silent inference is not approval for destructive, irreversible, external, commit, push, PR, publish, or similar sensitive work.
 - Convert the discovery result into a planned flow list with flow boundaries, non-goals, acceptance signal, verification expectations, expected risky actions, and user-gated checkpoints.
-- If autonomous continuation is appropriate, prepare the self-drive handoff boundary: which flows can proceed under the initial agreement and which must return to user-gated question-routing.
 - Do not stop at advisory guidance when an actual question round is still needed.
-- Once clarity is sufficient, hand off to the next fitting mode, `self-drive`, or downstream workflow with the work boundary and non-goals intact.
+- Once clarity is sufficient, hand off to the next fitting phase protocol or downstream workflow with the work boundary and non-goals intact.
 
-## Mode Boundary
+## Protocol Boundary
 
 - Good fit: unclear requirements, direction checks, proposal shaping, greenfield setup alignment, missing scope boundaries, unresolved approval lines, ambiguous success criteria, or missing planned-flow acceptance signals.
 - Not a fit: generic operation/target ambiguity cleanup without real requirement discovery, read-only planning, implementation itself, approval execution, or final commit execution.

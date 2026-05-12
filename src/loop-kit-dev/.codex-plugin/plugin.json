@@ -1,7 +1,7 @@
 {
   "name": "loop-kit-dev",
   "version": "0.1.1",
-  "description": "[DEV] Turn-gated loop plugin that keeps one turn alive until explicit user stop and selects the right internal loop mode from turn-gate.",
+  "description": "[DEV] Turn-gated loop plugin that keeps one turn alive until explicit user stop and applies phase protocols from turn-gate.",
   "author": {
     "name": "opnay"
   },
@@ -18,8 +18,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Loop Kit Dev",
-    "shortDescription": "[DEV] Turn-gated continuity with internal execution, refinement, review, and readiness loops driven from one main surface.",
-    "longDescription": "[DEV] Provides a narrow operational plugin where turn-gate is the main user-facing surface. It keeps one turn alive until the user explicitly ends the work, runs each flow through preparation, work, verification, and reporting, records user-message intake and planned-flow design as an operational-preparation flow when it owns session plan, flow-list, scope, or approval-boundary artifacts, treats execution planned flows as cohesive reviewable or commit-sized change units rather than phase checklists, and uses local turn-gate references, including self-drive, for bounded autonomous continuation and final commit-readiness reporting handoff.",
+    "shortDescription": "[DEV] Turn-gated continuity with execution, refinement, review, and readiness phase protocols driven from one main surface.",
+    "longDescription": "[DEV] Provides a narrow operational plugin where turn-gate is the main user-facing surface. It keeps one turn alive until the user explicitly ends the work, runs each flow through preparation, work, verification, and reporting, records user-message intake and planned-flow design as an operational-preparation flow when it owns session plan, flow-list, scope, or approval-boundary artifacts, and treats execution planned flows as cohesive reviewable or commit-sized change units rather than phase checklists. Self-drive is a separate overlay reference for prepared autonomous sequences.",
     "developerName": "opnay",
     "category": "Productivity",
     "capabilities": [
@@ -36,10 +36,10 @@
       "Treat user-message intake and planned-flow design as an operational-preparation flow when it owns session plan, flow-list, scope, or approval-boundary artifacts.",
       "Collect enough information during user-message preparation to execute planned flows with clear boundaries, non-goals, verification expectations, expected risky actions, and user-gated approval checkpoints.",
       "For existing-flow preparation, inspect scope, current state, target files, and verification expectations before work.",
-      "Use turn-gate as the main controller and choose the right internal loop for the current phase.",
-      "Handle this as a turn-gated loop where autonomous execution, refinement, review, and readiness modes are selected inside turn-gate.",
-      "Use turn-gate's self-drive reference when prepared planned flows should continue through bounded subagent decisions without waiting for me.",
-      "When self-driving a planned flow sequence, report commit-readiness after the last change-unit flow; do not treat it as a new planned flow or commit execution approval.",
+      "Use turn-gate as the main controller and choose the right phase protocol for the current phase.",
+      "Handle this as a turn-gated loop where refinement, review, and readiness are phase protocols for the current phase.",
+      "Keep turn-gate's loop contract independent from self-drive overlay behavior.",
+      "When a prepared sequence explicitly uses self-drive, apply the self-drive overlay contract instead of repeating its conditions in turn-gate.",
       "Do not expose direct loop entrypoints; drive the work through turn-gate."
     ],
     "brandColor": "#1D6E6E"

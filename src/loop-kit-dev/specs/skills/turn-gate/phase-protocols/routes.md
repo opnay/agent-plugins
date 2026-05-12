@@ -2,24 +2,21 @@
 
 ## 목적
 
-이 문서는 `turn-gate`의 implicit default operating state, explicit `self-drive` mode, phase protocol routing을 소유합니다.
+이 문서는 `turn-gate`의 implicit default operating state와 phase protocol routing을 소유합니다.
 상세 protocol 계약은 같은 폴더의 개별 protocol spec이 소유합니다.
 
 ## 핵심 계약
 
 - `turn-gate`의 기본 동작은 별도 mode label을 선택하지 않는 implicit default operating state다.
 - 이 기본 상태는 일반적인 `preparation -> work -> verification -> reporting -> next-flow` 흐름을 소유한다.
-- `self-drive`는 사용자 메시지 기반 preparation이 만든 planned flow sequence를 bounded autonomous continuation으로 이어갈 때만 명시적으로 적용하는 mode다.
 - `deep-interview`, `review-loop`, `ralph-loop`, `autopilot`, `commit-readiness-gate`는 mode가 아니라 phase protocol이다.
 - phase protocol은 현재 operating state 안에서 phase를 어떻게 수행할지 정하는 보조 계약이며, operating state 선택 자체를 대체하지 않는다.
-- commit execution, push, PR 같은 external action은 mode나 phase protocol이 아니라 user-gated handoff workflow다.
+- commit execution, push, PR 같은 external action은 approval-sensitive execution step 또는 handoff workflow로 다룬다.
 
 ## Operating State 선택 기준
 
-- implicit default operating state: 대부분의 turn-gated work에 적용한다. 단일 flow 실행, 질문 기반 scope lock, 일반 파일 수정, 조사, 검증, 보고, next-flow reopening을 포함한다.
-- `self-drive`: prepared planned flow sequence가 있고, 초기 scope/approval boundary/verification expectation이 충분하며, 사용자 추가 응답 없이 bounded subagent decision으로 다음 flow를 이어갈 수 있을 때 적용한다.
-
-`self-drive` 조건이 명확하지 않거나 approval boundary가 새로 생기면 implicit default operating state로 돌아가 user-gated question routing을 연다.
+implicit default operating state는 모든 일반 turn-gated work에 적용한다.
+단일 flow 실행, 질문 기반 scope lock, 일반 파일 수정, 조사, 검증, 보고, next-flow reopening을 포함한다.
 
 ## Protocol 선택 기준
 
@@ -36,10 +33,9 @@
 
 - local `references/`는 runtime에서 읽을 수 있는 absorbed operational contract로 유지한다.
 - runtime reference 파일명은 mode 이름과 일대일 대응할 필요가 없다.
-- `references/self-drive.md`는 별도 skill entrypoint가 아니라 `turn-gate` 내부 self-drive mode 실행 계약이다.
 - phase protocol의 일반 의미가 바뀌면 관련 workflow skill spec 또는 해당 phase protocol spec에서 정리한다.
 - 관련 workflow skill spec과 `turn-gate` references의 문구가 어긋나면 같은 변경 단위에서 함께 갱신한다.
-- 새로운 explicit mode는 implicit default state나 `self-drive`로 current flow를 소유할 수 없을 때만 추가한다.
+- 새로운 phase protocol은 implicit default state의 phase routing으로 표현할 수 없을 때만 추가한다.
 - operating state set이나 mandatory tool rule이 바뀌면 `loop-kit-dev` plugin spec, manifest prompt, `turn-gate`, `turn-gate/references/`를 함께 점검한다.
 
 ## Provenance Note
@@ -50,9 +46,9 @@
 
 ## 검토 질문
 
-- current flow가 implicit default state인지 `self-drive`인지 좁혀졌는가?
+- current flow가 implicit default state 안에서 어떤 phase protocol이 필요한지 좁혀졌는가?
 - deep-interview/review-loop 같은 phase protocol을 mode로 기록하지 않았는가?
 - protocol 세부 계약을 `routes.md`에 중복하지 않고 개별 protocol spec으로 보냈는가?
 - mode 또는 protocol 선택 전 meaning resolution 또는 approval boundary가 필요한데 건너뛰지 않았는가?
-- external action을 mode처럼 취급하지 않았는가?
-- selected operating state와 필요한 phase protocol의 local reference를 읽고 적용했는가?
+- external action을 approval-sensitive execution step 또는 user-gated handoff로 다뤘는가?
+- implicit default state와 필요한 phase protocol의 local reference를 읽고 적용했는가?

@@ -15,9 +15,8 @@
 - 추론한 scope로 진행하는 경우에도 work boundary와 non-goal을 flow record에 남긴다.
 - planned flow boundary, `operational-preparation`, `change-unit`, 후속 후보와 active execution flow 구분은 `flow-boundaries.md`를 따른다.
 - operation/target ambiguity는 work 전에 `meaning-resolution.md`로 잠근다.
-- destructive, irreversible, external, commit/push/PR/publish 같은 위험 작업은 `approval-boundary.md`의 user-gated checkpoint로 둔다.
+- destructive, irreversible, external, commit/push/PR/publish 같은 위험 작업은 `approval-boundary.md`의 approval-sensitive checkpoint로 둔다.
 - session plan, flow record, Continuity Guard 기록 방식은 `session-records.md`를 따른다.
-- prepared planned flow sequence를 사용자 추가 응답 없이 이어갈 수 있는 경우에만 `turn-gate/references/self-drive.md`를 읽고 넘긴다.
 - meaningful work가 시작되면 계획 도구를 사용해 현재 phase 상태를 유지한다.
 
 ## 검토 질문

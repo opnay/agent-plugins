@@ -3,7 +3,7 @@
 ## 목적
 
 `deep-interview` phase protocol은 `turn-gate`의 `preparation`에서 요구사항 발견과 scope lock이 실제 병목일 때 적용하는 세부 규격입니다.
-이 protocol은 mode가 아니며, implicit default state 또는 explicit `self-drive` mode 안에서 work 진입 전 불확실성을 줄이는 역할을 합니다.
+이 protocol은 mode가 아니며, implicit default state 안에서 work 진입 전 불확실성을 줄이는 역할을 합니다.
 
 ## 적합 기준
 
@@ -26,12 +26,11 @@
 - bounded choices로 잠글 수 있는 질문은 `request_user_input`을 우선한다.
 - 질문 없이 추론한 scope라도 flow record에 work boundary와 non-goal을 남긴다.
 - planned flow list가 필요하면 각 flow의 boundary, non-goal, verification expectation, expected risky action, user-gated checkpoint를 함께 정리한다.
-- self-drive가 가능해 보이면 어떤 flow가 초기 합의 안에서 진행 가능하고 어떤 지점에서 user-gated question-routing으로 돌아와야 하는지 구분한다.
 - 위험 작업 승인은 silent inference로 대체하지 않는다.
 
 ## Handoff
 
-- 충분히 잠긴 뒤에는 `phase-protocols/routes.md`로 돌아가 현재 flow mode와 다음 phase protocol을 선택한다.
+- 충분히 잠긴 뒤에는 `phase-protocols/routes.md`로 돌아가 다음 phase protocol을 선택한다.
 - scope가 여전히 넓거나 approval boundary가 불명확하면 work로 넘어가지 않고 user-gated question-routing을 유지한다.
 
 ## 검토 질문

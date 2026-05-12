@@ -3,7 +3,7 @@
 ## 목적
 
 `autopilot` phase protocol은 scope가 잠긴 요청을 end-to-end로 구현, QA, 검증, 보고까지 밀고 가야 할 때 적용하는 세부 규격입니다.
-이 protocol은 mode가 아니며, implicit default state 또는 explicit `self-drive` mode 안에서 broad execution을 다루는 phase-level 계약입니다.
+이 protocol은 mode가 아니며, implicit default state 안에서 broad execution을 다루는 phase-level 계약입니다.
 
 ## 적합 기준
 

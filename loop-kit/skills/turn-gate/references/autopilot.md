@@ -1,6 +1,6 @@
 # Autopilot Reference
 
-Use this mode when the current phase is broad end-to-end execution from a locked request to a verified result.
+Use this phase protocol when the current phase is broad end-to-end execution from a locked request to a verified result.
 
 ## Core Contract
 
@@ -13,7 +13,7 @@ Use this mode when the current phase is broad end-to-end execution from a locked
 - Track QA issues when failures need iterative fixes.
 - Stop and report a root blocker if critical ambiguity prevents safe execution or the same QA failure repeats.
 
-## Mode Boundary
+## Protocol Boundary
 
 - Good fit: hands-off implementation, multi-phase feature work, requests that span requirements, code changes, tests, and validation after scope is locked.
 - Not a fit: brainstorming, planning-only requests, one small bounded fix, review-finding triage, missing scope lock, unresolved approval boundary, or final commit readiness.
