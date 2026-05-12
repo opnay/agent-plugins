@@ -5,7 +5,7 @@
 `self-drive` mode는 사용자 메시지 기반 preparation이 만든 planned flow sequence에 autonomous continuation을 적용하는 mode입니다.
 이 mode는 별도 installed skill entrypoint가 아니라 명시적으로 적용되는 독립 overlay 계약입니다.
 이 문서는 self-drive의 endpoint, stop boundary, execution authority, user-gated 복귀 조건을 소유하는 spec-side SSOT입니다.
-`references/self-drive.md`를 읽는 순간 해당 prepared sequence에는 self-drive mode가 turn-gate 기본 routing보다 우선 적용됩니다.
+명시적으로 self-drive가 적용된 prepared sequence에서는 `references/self-drive.md`의 runtime 계약이 turn-gate 기본 routing보다 우선 적용됩니다.
 이후 진행 판단은 self-drive 계약이 소유하며, `turn-gate` 본체는 explicit stop 처리, 안전/도구 승인 한계, session record, 보고 형식처럼 self-drive가 재사용하는 최소 loop 기반만 제공합니다.
 
 ## 계약

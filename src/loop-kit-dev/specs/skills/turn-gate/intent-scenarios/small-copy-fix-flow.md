@@ -79,7 +79,7 @@ Flow 0: 로그인 버튼 문구 수정 범위 확인
 
 ## 평가 관점
 
-- 작은 요청을 불필요한 phase flow로 쪼개지 않는다.
+- 작은 요청을 불필요한 phase checklist로 쪼개지 않는다.
 - intent scenario 자체는 Flow 0에서 끝낸다.
 - target ambiguity가 없으면 후속 실행 후보를 단일 change-unit으로 판단한다.
 - target ambiguity가 있으면 질문을 열되 active question-routing과 pending question state를 기록한다.

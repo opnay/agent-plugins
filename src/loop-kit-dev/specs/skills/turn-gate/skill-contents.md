@@ -63,7 +63,7 @@
 
 - skill body는 deep-interview, flow list design, meaning resolution, current-state inspection을 `preparation`의 세부 방식으로 설명해야 한다.
 - skill body는 사용자 메시지 해석과 planned flow list 설계가 plan/session record를 소유하는 `operational-preparation flow`가 될 수 있다고 설명해야 한다.
-- skill body는 operational-preparation 결과로 만들어지는 실행용 planned flows가 reviewable or commit-sized `change-unit flow`여야 한다고 설명해야 한다.
+- skill body는 operational-preparation 결과로 만들어지는 실행용 planned flows가 검토 가능하거나 commit-sized인 `change-unit flow`여야 한다고 설명해야 한다.
 - skill body는 사용자 메시지 해석 결과가 바로 실행으로 이어지지 않을 수 있고, 후속 실행 후보와 실제 실행 flow를 구분해야 한다는 일반 원칙만 설명한다.
 - skill body는 사용자 메시지 기반 preparation에서 scope가 비어 있거나 너무 넓거나 여러 결과물을 만들 수 있거나 성공 기준과 검증 경로를 바꿀 수 있으면 work 전에 질문으로 scope를 잠그도록 직접 설명해야 한다.
 - skill body는 질문 없이 추론한 scope라도 work boundary와 non-goal을 flow record에 남기도록 설명해야 한다.

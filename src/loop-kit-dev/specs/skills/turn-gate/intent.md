@@ -1,7 +1,7 @@
 ## 사용자 스펙 의도
 
 - `turn-gate` 활성화는 세션 단위의 1급 응답 규칙이어야 한다.
-  - 하나의 턴을 사용자가 턴을 종료하자고 요청할때까지 닫지 않고 유지하고 싶다.
+  - 하나의 턴을 사용자가 턴을 종료하자고 요청할 때까지 닫지 않고 유지하고 싶다.
   - 이 스킬을 사용한다는 것은 이 세션 동안 이 스킬을 1급 규칙으로 사용한다는 의미다.
   - 메인 플로우는 스킬 내부 체크리스트가 아니라 대화 응답 자체를 제어해야 한다.
   - 일반 목적 설명보다 높은 우선순위로 보이도록 skill body 앞부분의 `Important` 섹션에 드러나야 한다.
@@ -9,13 +9,13 @@
   - incoming message 처리는 특정 상황 목록에 갇힌 closed taxonomy가 아니라, 명시적 turn stop이 아닌 모든 사용자 입력을 gated turn continuation으로 해석하는 포괄 규칙이어야 한다.
   - 질문, 검토 요청, 상태 확인, 우선순위 변경, correction 같은 표현은 예시일 뿐이며, 예시에 없는 입력도 explicit stop이 아니면 보고 후 멈추는 근거가 될 수 없다.
 
-- `turn-gate`가 current-phase work에 맞는 mode와 phase protocol을 고르길 원한다.
+- `turn-gate`가 current-phase work에 맞는 operating state와 phase protocol을 고르길 원한다.
   - `turn-gate`의 가장 기본 flow는 `준비 -> 작업 -> 검증 -> 보고 -> next-flow`여야 한다.
   - 이 기본 flow를 둘러싼 전환은 내부 gate로 설명되길 원한다.
   - message intake gate는 사용자 메시지를 분류하지만 실행하지 않고, flow shaping gate는 active flow와 completion criteria를 만들거나 갱신하며, task policy gate는 flow 내부 실행 정책만 소유해야 한다.
   - task policy는 flow 밖의 독립 계층이 아니며, 개별 task 완료가 flow 완료나 turn closure를 결정하면 안 된다.
   - reporting 뒤에는 source-recorded explicit stop이 없는 한 `next-flow` phase가 next-flow reopening으로 이어져야 한다.
-  - deep-interview, flow list design, 상태 파악, 수정 범위 파악, 질문 라우팅, mode와 phase protocol 선택은 기본 flow 자체가 아니라 `준비` 안의 세부 작업이나 파생 작업이어야 한다.
+  - deep-interview, flow list design, 상태 파악, 수정 범위 파악, 질문 라우팅, operating state와 phase protocol 선택은 기본 flow 자체가 아니라 `준비` 안의 세부 작업이나 파생 작업이어야 한다.
   - 사용자 메시지에서 시작하는 준비는 deep-interview를 사용해 intent, scope, 성공 기준, approval boundary를 확인하고, 사용자 의도에 맞는 이후 flow list를 준비해야 한다.
   - 사용자 메시지를 받아 의도를 해석하고 flow list를 만드는 일 자체도 산출물을 가진 운영 flow가 될 수 있어야 한다. 이때 산출물은 session plan, flow record, planned flow list, scope/approval boundary다.
   - 이 운영 flow와 실제 product/code/document 변경을 소유하는 flow는 구분되어야 한다.
@@ -26,7 +26,7 @@
   - 작업은 사용자가 요청한 실제 작업을 진행하는 단계이며, 파일 수정, 검증, 조사 같은 다양한 작업 유형을 포함할 수 있다.
   - 검증은 해당 flow에 대한 검증 단계이며, 파일 수정이 제대로 적용됐는지, 타입 오류가 없는지, 조사의 경우 다양한 관점에서 논리 비판을 수행했는지 확인해야 한다.
   - 보고는 turn 종료가 아니라 다음 flow 진행을 위한 이번 flow의 맥락 정리 단계여야 한다.
-  - 계획된 flow가 소진되면 보고 단계에서 질문 도구를 사용해 사용자에게 다음 flow나 작업을 받아야 한다.
+  - 계획된 flow가 소진되면 보고 뒤 `next-flow` phase에서 질문 도구를 사용해 사용자에게 다음 flow나 작업을 받아야 한다.
   - requirement discovery 성격의 `deep-interview`도 사용자가 직접 고르지 않고 `turn-gate` 안에서 phase protocol로 적용되길 원한다.
   - `autopilot`, `ralph-loop`, `review-loop`, readiness gate 같은 loop 성격의 계약은 사용자가 직접 고르지 않고 `turn-gate` 안에서 phase protocol로 선택되길 원한다.
   - phase protocol의 일반 의미는 `workflow-kit`이 SSOT로 계속 소유하길 원한다.
@@ -42,8 +42,8 @@
   - `000-plan.md`는 단순 현재 상태 로그가 아니라 여러 flow의 상위 계획과 흐름을 소유해야 한다.
   - `000-plan.md`의 planned flow sequence는 phase checklist가 아니라 응집된 변경 단위들의 순서여야 한다.
   - 사용자 메시지 해석과 planned flow list 설계가 필요한 경우, `000-plan.md`와 active flow record에는 이것이 `operational-preparation` flow인지, 이후 항목이 `change-unit` flow인지 드러나야 한다.
-  - 개별 플로우 기록은 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 형식으로 남고 싶다.
-  - `001+` 문서는 phase 메모가 아니라 flow 기록으로 남고 싶다.
+  - 개별 플로우 기록은 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 형식으로 남기길 원한다.
+  - `001+` 문서는 phase 메모가 아니라 flow 기록으로 남기길 원한다.
   - 예를 들어 "컴포넌트 오타가 있어. 수정하자" 같은 요청은 작은 변경이라면 하나의 `컴포넌트 문구 수정` flow로 충분할 수 있고, 그 flow 안에서 점검, 수정, 검증, 보고를 수행해야 한다. 별도 flow는 검토/커밋 가능한 변경 단위가 실제로 나뉠 때만 만든다.
 
 - 검증은 main agent의 same-context self-check가 아니라 clean-context subagent 검증이어야 한다.

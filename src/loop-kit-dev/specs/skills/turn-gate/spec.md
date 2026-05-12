@@ -24,7 +24,7 @@
 
 - 사용자가 턴을 종료하자고 요청하기 전까지 한 턴 안에서 여러 phase를 이어가야 하는 작업
 - requirement discovery, autonomous execution, refinement, review-driven correction, readiness checking 같은 current-phase work가 번갈아 나타나는 작업
-- 사용자 메시지 기반 준비와 비 사용자 메시지 기반 준비를 구분하고, 준비 뒤 작업, 검증, 보고로 이어져야 하는 작업
+- 사용자 메시지에서 시작한 preparation과 기존 flow 실행 전 preparation을 구분하고, 준비 뒤 작업, 검증, 보고로 이어져야 하는 작업
 - 결과 보고 뒤 clean stop이 아니라 다음 플로우 선택이 기본이어야 하는 작업
 - 사용자 지시어가 여러 구조 단위를 가리켜 작업 전에 target 또는 operation을 잠가야 하는 작업
 
@@ -59,7 +59,7 @@
 - `gate-reporting.md`: result reporting as continuity context
 - `meaning-resolution.md`: operation/target ambiguity, provenance/intent block target locking, user-gated clarification
 - `modes/default.md`: implicit default operating state 계약
-- `phase-protocols/routes.md`: implicit default state, phase protocol selection, local references, mode-vs-handoff
+- `phase-protocols/routes.md`: implicit default state, phase protocol selection, local references, operating-state-vs-handoff
 - `phase-protocols/deep-interview.md`: requirement discovery와 scope lock protocol 계약
 - `phase-protocols/review-loop.md`: review/QA/self-review finding 처리 protocol 계약
 - `phase-protocols/ralph-loop.md`: bounded fix-verify-reassess cycle protocol 계약
@@ -104,7 +104,7 @@
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`가 현재 phase까지 증분 갱신됐는가?
 - `work -> verification -> result reporting` 순서를 실제로 유지했는가?
 - 기본 flow를 `준비 -> 작업 -> 검증 -> 보고 -> next-flow`로 유지했는가?
-- 사용자 메시지 기반 준비와 비 사용자 메시지 기반 준비를 구분했는가?
+- 사용자 메시지에서 시작한 preparation과 기존 flow 실행 전 preparation을 구분했는가?
 - direct loop entrypoint를 사용자 표면으로 다시 열지 않았는가?
 - 결과 보고 뒤 explicit next-flow choice를 실제로 열었는가?
 - 결과 보고 직전에 `Continuity Guard`를 갱신했고 terminal summary 가능 여부를 확인했는가?
@@ -112,7 +112,7 @@
 ## 독립성 원칙
 
 - 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 아니오.
-- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: 이 skill은 `workflow-kit`의 일반 workflow skill 의미와 `loop-kit-dev`의 narrow runtime packaging을 전제로 한다. 다만 turn continuity와 mode selection rule 자체는 이 index spec에서 명시적으로 읽혀야 한다.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: 이 skill은 `workflow-kit`의 일반 workflow skill 의미와 `loop-kit-dev`의 narrow runtime packaging을 전제로 한다. 다만 turn continuity와 operating state/phase protocol selection rule 자체는 이 index spec에서 명시적으로 읽혀야 한다.
 
 ## 확장 원칙
 

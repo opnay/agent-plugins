@@ -6,7 +6,7 @@
 
 ## 핵심 계약
 
-- analysis 단계에서는 mode 또는 phase protocol 선택이나 작업 실행 전에 사용자 메시지의 operation 의미를 먼저 해독한다.
+- preparation에서는 operating state 또는 phase protocol 선택이나 작업 실행 전에 사용자 메시지의 operation 의미를 먼저 해독한다.
 - `merge`, `absorb`, `move`, `promote`, `formalize`, `remove`, `delete`, `exclude`, `split`, `route`, `phase`, `surface`, `skill`, `spec`, `contract` 또는 `병합`, `흡수`, `녹여`, `옮겨`, `승격`, `정식 규칙화`, `제거`, `삭제`, `빼`, `산출물 제외`처럼 여러 구조 단위를 가리킬 수 있는 표현은 바로 하나의 작업으로 단정하지 않는다.
 - `그`, `그 밑`, `그건`, `그거`, `위`, `아래`, `현재 것`처럼 주변 문맥의 여러 대상을 가리킬 수 있는 지시 표현도 해석에 따라 작업이 달라지면 meaning resolution 대상으로 본다.
 - source URL, provenance note, `사용자 스펙 의도` 또는 spec intent block은 대화 맥락처럼 버릴 수 있는 텍스트가 아니라 작업 target이 될 수 있다.
@@ -20,7 +20,7 @@
 - meaning resolution 질문도 user-gated이며, 구조적 선택지를 줄 수 있으면 `request_user_input`으로 잠근다.
 - meaning resolution 질문은 `deep-interview`가 소유하는 requirement discovery가 아니라, 현재 지시어의 operation 또는 target을 잠그는 current-flow clarification이다.
 - 질문은 넓은 freeform 질문이 아니라 "여기서 병합은 skill/spec surface를 합치는 뜻인가, `turn-gate` phase로 흡수하는 뜻인가" 또는 "여기서 옮긴다는 것은 원본 삭제를 포함하는가, 아니면 요약 반영만 뜻하는가"처럼 다의어가 가리키는 구조 단위를 직접 잠그는 형태여야 한다.
-- meaning resolution이 필요한 경우 flow record의 analysis에는 literal wording, interpreted operation, operation target, alternate interpretations, impact of ambiguity를 남긴다.
+- meaning resolution이 필요한 경우 flow record의 `Flow Contract` 또는 `Material judgment calls`에는 literal wording, interpreted operation, operation target, alternate interpretations, impact of ambiguity를 남긴다.
 
 ## 검토 질문
 

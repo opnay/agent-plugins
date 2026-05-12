@@ -10,7 +10,7 @@
 - implicit default state는 `preparation -> work -> verification -> reporting -> next-flow` core loop를 그대로 수행한다.
 - 사용자 메시지 기반 preparation, 기존 flow 기반 preparation, scope lock, meaning resolution, 일반 파일 수정, 조사, 검증, 보고, next-flow reopening을 포함한다.
 - `deep-interview`, `review-loop`, `ralph-loop`, `autopilot`, `commit-readiness-gate` 같은 phase protocol은 기본 상태에서 phase를 수행하는 세부 규격으로 적용한다.
-- phase protocol은 mode가 아니며, flow record의 mode taxonomy를 대체하지 않는다.
+- phase protocol은 mode가 아니며, flow type, operating state, phase protocol 기록을 대체하지 않는다.
 - external action, destructive action, commit, push, PR, publish, release, version bump는 기본 상태에서도 approval-sensitive execution으로 다루며, 필요한 approval boundary가 없으면 user-gated handoff로 남긴다.
 
 ## 검토 질문

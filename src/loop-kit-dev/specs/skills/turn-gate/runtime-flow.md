@@ -15,12 +15,13 @@
 5. next-flow
 
 activation, incoming message classification, explicit stop handling은 이 기본 flow를 둘러싼 lifecycle guard입니다.
-deep-interview alignment, flow list design, meaning resolution, current-state inspection, target reread, scope lock, approval boundary 확인은 기본적으로 `preparation` 안의 세부 작업입니다.
 이 lifecycle guard는 내부 gate로 적용됩니다.
 message intake gate는 사용자 메시지의 라우팅 사실을 분류하고, flow shaping gate는 active flow와 completion criteria를 만들거나 갱신하며, task policy gate는 flow 내부 실행 정책을 정합니다.
 task policy는 flow 밖의 독립 계층이 아니며, 개별 task 완료가 flow 완료나 turn closure를 결정할 수 없습니다.
 verification gate와 reporting gate는 각각 검증 판정과 보고 맥락 정리를 소유합니다.
 상세 gate 계약은 `internal-gates.md`가 소유합니다.
+
+deep-interview alignment, flow list design, meaning resolution, current-state inspection, target reread, scope lock, approval boundary 확인은 기본적으로 `preparation` 안의 세부 작업입니다.
 
 `operational-preparation flow`, `change-unit flow`, planned flow boundary, 후속 후보와 active execution flow의 구분은 `flow-boundaries.md`가 소유합니다.
 이 문서는 phase 순서와 전환 조건만 직접 소유하고, flow taxonomy 판단이 필요하면 `flow-boundaries.md`로 위임합니다.
@@ -45,7 +46,7 @@ verification gate와 reporting gate는 각각 검증 판정과 보고 맥락 정
 
 - activation:
   - `turn-gate`가 호출되면 conversation-level first-class operating rule로 활성화한다.
-  - concrete task 없이 activation만 요청되면 work mode를 고르지 않고 next-flow 또는 scope selection을 연다.
+  - concrete task 없이 activation만 요청되면 work로 들어가지 않고 next-flow 또는 scope selection을 연다.
   - activation-only의 첫 사용자-facing 응답은 기본적으로 `[preparation]` scope setup이며, 바로 선택지를 여는 별도 메시지는 `[next-flow]`를 사용할 수 있다.
   - 예: "turn-gate 켜줘", "Use turn-gate", `$loop-kit:turn-gate`만 온 경우에는 activation 완료 요약으로 닫지 않고 다음 scope 또는 next-flow 선택을 연다.
 - incoming message classification:
