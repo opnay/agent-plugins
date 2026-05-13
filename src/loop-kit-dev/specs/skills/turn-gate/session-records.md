@@ -9,7 +9,7 @@
 ## 기록 구조
 
 - active turn-gated task마다 `.agents/sessions/{YYYYMMDD}/000-plan.md` 날짜 기준 plan과 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 상세 flow report 체계를 유지한다.
-- `000-plan.md`는 당일 작업의 히스토리, 사용자 요청 목록, flow index, 현재 snapshot, planned flow sequence, 완료 flow 요약을 소유한다. 세부 형식은 `templates/plan.md`가 소유한다.
+- `000-plan.md`는 당일 작업의 히스토리, 사용자 요청 목록, flow index, 현재 snapshot, planned flow sequence, 완료 flow 요약을 소유하되 bounded date-level index로 유지한다. 세부 형식은 `templates/plan.md`가 소유한다.
 - `000-plan.md`는 각 flow의 상세 scope, non-goal, approval boundary, evidence, verification detail을 반복하지 않는다. 필요한 경우 짧은 snapshot만 복사하고, canonical detail은 해당 `001+` flow record가 소유한다.
 - `000-plan.md`의 현재 계획은 action checklist가 아니라 planned flow sequence여야 한다.
 - session record에는 flow type을 구분할 수 있어야 한다: `operational-preparation` 또는 `change-unit`.
@@ -29,6 +29,10 @@
 - 세부 작업 단계는 해당 `001+` flow record의 execution log와 verification에 둔다.
 - `000-plan.md`는 "이 작업이 어떤 응집 변경 단위들의 흐름으로 진행되는지"를 소유하고, 각 flow record는 "그 flow 안에서 무엇을 했는지"를 소유한다.
 - `000-plan.md`는 증분 갱신하고, 완료된 작업도 삭제하지 않고 요약과 flow reference를 유지한다.
+- `000-plan.md`의 `Flow Index`와 `Completed Flow Summaries`는 flow당 한 줄의 compact entry로 유지한다. 상세 목적, 완료 기준, 검증 근거, next-flow 후보, residual risk는 해당 flow record로 위임한다.
+- `Planned Flow Sequence`에는 현재 선택됐거나 미래에 실행할 planned flow만 둔다. 완료된 flow는 `Flow Index`와 `Completed Flow Summaries`의 compact entry로만 남긴다.
+- `Open Risks`에는 active date-level risk만 둔다. 완료됐거나 flow-local인 risk는 해당 flow record에 남기고 plan에서 반복하지 않는다.
+- `User Requests Today`는 최근 요청 중심의 routing context로 유지할 수 있으며, 오래된 요청의 canonical detail은 각 flow record가 소유한다.
 
 ## Flow Record
 
@@ -62,13 +66,16 @@
 
 - flow record의 `Next Flow Options`에는 사용자 표시 질문에 턴 종료 선택지가 보이지 않는 경우에도 명시적인 turn-end option이 포함되어야 한다.
 - `Next Flow Options`는 flow record가 소유한다. `000-plan.md`는 선택 결과나 active next flow만 snapshot으로 반영한다.
-- 완료된 작업은 삭제하지 않고 요약과 flow reference를 유지한다.
+- 완료된 작업은 삭제하지 않고 한 줄 요약과 flow reference를 유지한다.
 - `000-plan.md`는 날짜 기준 증분 계획과 flow-sequence artifact로, `001+`는 flow 단위 상세 보고서로 취급한다.
 
 ## 검토 질문
 
 - `000-plan.md`가 flow sequence와 transition criteria를 소유하고 있는가?
 - `000-plan.md`가 상세 flow contract와 verification evidence를 반복하지 않고 snapshot/index만 유지하는가?
+- `000-plan.md`의 index와 completed summaries가 flow당 한 줄 compact entry로 유지되는가?
+- `Planned Flow Sequence`에 완료된 flow의 stale 계획이 남지 않는가?
+- `Open Risks`가 active date-level risk만 담고 flow-local risk를 반복하지 않는가?
 - flow record가 scope, non-goals, approval boundary, evidence, verification detail의 canonical owner인가?
 - template 형식 세부 판단이 `templates/plan.md`와 `templates/flow.md`로 위임되는가?
 - flow sequence가 preparation 결과에서 파생됐고 각 flow가 preparation/work/verification/reporting/next-flow 구조를 유지하는가?

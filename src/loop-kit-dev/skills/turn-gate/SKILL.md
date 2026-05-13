@@ -101,6 +101,8 @@ Maintain `.agents/sessions/{YYYYMMDD}/000-plan.md` and `.agents/sessions/{YYYYMM
 
 Use `templates/plan-template.md` for the plan record and `templates/flow-record-template.md` for flow records when creating new records. Keep `000-plan.md` as the date-level flow-sequence snapshot and index. Keep detailed scope, non-goals, approval boundary, evidence, verification detail, report, residual risk, `Continuity Guard`, and `Next Flow Options` in the `001+` flow record.
 
+`000-plan.md` is a bounded date-level index and active snapshot, not the canonical detail record for each flow. It keeps recent routing context, active flow pointers, compact flow index entries, selected current or future planned flows, one-line completed flow summaries, and active date-level risks. Detailed scope, evidence, verification, flow-local risks, and completion rationale belong in the linked `001+` flow record.
+
 Update the active flow record at the end of each phase. The `Continuity Guard` must show whether `turn-gate` is active, question-routing state, explicit stop status, terminal summary permission, required next action, last refreshed phase, closure source when present, pending or superseded question state, verification status, and continuity notes.
 
 If records are inaccessible, do not silently reconstruct and close. Report the blocker with the phase prefix appropriate to where it was found and keep terminal summary disallowed.

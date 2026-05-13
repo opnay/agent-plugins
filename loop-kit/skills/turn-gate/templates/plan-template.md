@@ -21,22 +21,19 @@ Do not duplicate each flow's detailed scope, non-goals, approval boundary, evide
 
 ## User Requests Today
 
+Keep this section focused on recent routing context. Older request detail is canonically owned by the relevant `001+` flow records.
+
 1. <user request summary and time/order>
 
 ## Flow Index
 
-1. `.agents/sessions/YYYYMMDD/001-english-lower-slug.md`
-   - User request:
-   - Flow type: operational-preparation | change-unit
-   - Flow purpose:
-   - Status: planned | active | complete | blocked
-   - Current phase: preparation | work | verification | reporting | next-flow
-   - Completion criteria:
-   - Next-flow trigger:
-   - Verification status: not-started | requested | pass | fail | blocked | insufficient | not-applicable
-   - Summary:
+Use one compact entry per flow. Do not repeat detailed scope, completion criteria, evidence, verification detail, or next-flow options here.
+
+- `.agents/sessions/YYYYMMDD/001-english-lower-slug.md` | operational-preparation | complete | verification: not-applicable | <short outcome>
 
 ## Planned Flow Sequence
+
+Keep only current or future selected flows here. Do not retain completed flow detail in this section after the flow completes; move it to `Flow Index` and `Completed Flow Summaries` as compact entries.
 
 - Preparation source: user-message | existing-flow | correction | next-flow
 - Preparation result:
@@ -68,7 +65,9 @@ Use this subsection only when the current flow produced possible future implemen
 
 ## Completed Flow Summaries
 
-- `<flow filename>`: <short retained summary>
+Keep every completed flow as a one-line link/outcome entry. Do not expand this into detailed reports; the linked `001+` flow record owns detailed scope, evidence, verification, and residual risk.
+
+- `.agents/sessions/YYYYMMDD/001-english-lower-slug.md`: <short outcome>
 
 ## Explicit Turn-End Option
 
@@ -77,4 +76,6 @@ Use this subsection only when the current flow produced possible future implemen
 
 ## Open Risks
 
-- <risk or uncertainty>
+Keep only active date-level risks here. Completed or flow-local risks belong in the relevant `001+` flow record.
+
+- <active date-level risk or uncertainty>

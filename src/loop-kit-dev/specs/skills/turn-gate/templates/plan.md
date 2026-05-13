@@ -4,7 +4,7 @@
 
 이 문서는 `turn-gate`의 `skills/turn-gate/templates/plan-template.md` 형식 계약을 소유합니다.
 
-`000-plan.md`는 날짜 단위 session artifact입니다. 각 flow의 상세 증거 기록이 아니라, 당일 흐름을 이어가기 위한 index와 snapshot입니다.
+`000-plan.md`는 날짜 단위 session artifact입니다. 각 flow의 상세 증거 기록이 아니라, 당일 흐름을 이어가기 위한 bounded index와 snapshot입니다.
 
 ## 소유
 
@@ -68,13 +68,20 @@ frontmatter에는 다음 필드를 둡니다.
 - plan의 `Required next action`은 active turn routing을 위한 짧은 pointer이며, 상세 blocker/risk 설명을 반복하지 않습니다.
 - plan의 `Explicit Turn-End Option`은 전체 next-flow options가 아니라 사용자가 명시적으로 turn을 끝낼 수 있다는 date-level availability snapshot입니다.
 - 실행이 아니라 판단, 설계, 범위 확인만 수행한 경우에는 `Planned Flow Sequence` 안에 `Follow-up Change-Unit Candidates`로 라벨링된 후보 목록을 둘 수 있습니다. 이 후보는 선택 또는 승인 전까지 active/completed flow로 세지 않습니다.
-- completed flow는 삭제하지 않고 one-line summary와 flow record link로 유지합니다.
+- `Flow Index`는 flow당 한 줄 compact entry로 유지합니다. 각 entry는 flow number/path, flow type, current status or phase, verification status, short outcome만 포함합니다.
+- `Completed Flow Summaries`는 삭제하지 않고 모든 completed flow를 one-line summary와 flow record link로 유지합니다.
+- `Planned Flow Sequence`는 current/future selected flow만 담고, completed flow의 stale plan detail을 남기지 않습니다.
+- `User Requests Today`는 routing에 필요한 최근 요청 context를 중심으로 유지할 수 있으며, 오래된 요청의 canonical detail은 flow record로 위임합니다.
+- `Open Risks`는 active date-level risk만 담고, completed 또는 flow-local risk는 해당 flow record에 둡니다.
+- 더 강한 capping이나 section removal은 template contract 변경이므로 이 bounded policy에서 암묵적으로 수행하지 않습니다.
 
 ## 검토 질문
 
 - plan이 date-level index와 active snapshot으로 읽히는가?
 - plan이 flow record의 상세 scope/evidence/verification을 반복하지 않는가?
+- flow index와 completed summaries가 flow당 한 줄 compact entry로 유지되는가?
 - planned flow sequence가 phase checklist가 아니라 cohesive flow list인가?
+- planned flow sequence에 completed flow의 stale detail이 남지 않는가?
 - 후속 후보가 planned/active/completed flow와 구분되어 라벨링되는가?
 - active flow pointer와 required next action이 다음 진행에 충분한가?
 - completed flow summaries가 상세 보고가 아니라 링크 가능한 요약인가?
