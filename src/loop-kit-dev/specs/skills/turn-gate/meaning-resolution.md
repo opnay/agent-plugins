@@ -7,6 +7,7 @@
 ## 핵심 계약
 
 - preparation에서는 operating state 또는 phase protocol 선택이나 작업 실행 전에 사용자 메시지의 operation 의미를 먼저 해독한다.
+- 작업 의미가 필요한 경우 preparation에서 이 문서의 계약에 따라 operation과 target을 잠근다.
 - `merge`, `absorb`, `move`, `promote`, `formalize`, `remove`, `delete`, `exclude`, `split`, `route`, `phase`, `surface`, `skill`, `spec`, `contract` 또는 `병합`, `흡수`, `녹여`, `옮겨`, `승격`, `정식 규칙화`, `제거`, `삭제`, `빼`, `산출물 제외`처럼 여러 구조 단위를 가리킬 수 있는 표현은 바로 하나의 작업으로 단정하지 않는다.
 - `그`, `그 밑`, `그건`, `그거`, `위`, `아래`, `현재 것`처럼 주변 문맥의 여러 대상을 가리킬 수 있는 지시 표현도 해석에 따라 작업이 달라지면 meaning resolution 대상으로 본다.
 - source URL, provenance note, `사용자 스펙 의도` 또는 spec intent block은 대화 맥락처럼 버릴 수 있는 텍스트가 아니라 작업 target이 될 수 있다.

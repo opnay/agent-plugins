@@ -14,9 +14,9 @@
 4. reporting
 5. next-flow
 
-activation, incoming message classification, explicit stop handling은 이 기본 flow를 둘러싼 lifecycle guard입니다.
+activation과 explicit stop handling은 이 기본 flow를 둘러싼 lifecycle guard입니다.
 이 lifecycle guard는 내부 gate로 적용됩니다.
-message intake gate는 사용자 메시지의 라우팅 사실을 분류하고, flow shaping gate는 active flow와 completion criteria를 만들거나 갱신하며, task policy gate는 flow 내부 실행 정책을 정합니다.
+flow shaping gate는 active flow와 completion criteria를 만들거나 갱신하며, task policy gate는 flow 내부 실행 정책을 정합니다.
 task policy는 flow 밖의 독립 계층이 아니며, 개별 task 완료가 flow 완료나 turn closure를 결정할 수 없습니다.
 verification gate와 reporting gate는 각각 검증 판정과 보고 맥락 정리를 소유합니다.
 상세 gate 계약은 `internal-gates.md`가 소유합니다.
@@ -49,15 +49,6 @@ deep-interview alignment, flow list design, meaning resolution, current-state in
   - concrete task 없이 activation만 요청되면 work로 들어가지 않고 next-flow 또는 scope selection을 연다.
   - activation-only의 첫 사용자-facing 응답은 기본적으로 `[preparation]` scope setup이며, 바로 선택지를 여는 별도 메시지는 `[next-flow]`를 사용할 수 있다.
   - 예: "turn-gate 켜줘", "Use turn-gate", `$loop-kit:turn-gate`만 온 경우에는 activation 완료 요약으로 닫지 않고 다음 scope 또는 next-flow 선택을 연다.
-- incoming message classification:
-  - 이 단계는 message intake gate를 통과한다.
-  - 모든 incoming message를 같은 loop-gated turn의 authoritative input으로 본다.
-  - 먼저 현재 메시지가 현재 turn 자체를 끝내려는 명시적 요청인지 판단한다.
-  - 명시적 turn stop이 아니면 어떤 형태의 입력이든 terminal close 근거가 아니라 continuation input이다.
-  - continuation input은 closed taxonomy에 맞추려고 하지 말고 현재 flow에 미치는 효과로 라우팅한다: 현재 상태를 보고하고 계속할지, analysis/plan을 수정할지, target을 다시 읽을지, 다음 flow 후보를 갱신할지, approval boundary를 열지, 검증/검토 작업으로 이어갈지를 결정한다.
-  - 질문, 검토 요청, 상태 확인, correction, 우선순위 변경, 다음 작업 요청은 continuation input의 예시일 뿐이며 exhaustive list가 아니다.
-  - continuation input이 target file, artifact, state를 바꾸면 이어가기 전에 해당 target을 다시 읽고 stale assumption을 재사용하지 않는다.
-  - continuation input이 다음 flow 요청이라면 flow record의 next-flow 후보 중 최우선으로 등록하고 다음 safe handoff point까지 이어간다.
 - preparation:
   - 이 단계는 flow shaping gate를 통과해 active flow의 경계와 completion criteria를 정한다.
   - work로 넘어가기 전 intent, scope, non-goal, acceptance signal, verification expectation, approval boundary를 정렬한다.

@@ -6,13 +6,13 @@
   - 메인 플로우는 스킬 내부 체크리스트가 아니라 대화 응답 자체를 제어해야 한다.
   - 일반 목적 설명보다 높은 우선순위로 보이도록 skill body 앞부분의 `Important` 섹션에 드러나야 한다.
   - 활성화된 동안 응답은 loop continuation, question-routing, explicit user stop 처리 중 하나로 끝나야 하며, 일반적인 final summary로 턴을 닫으면 안 된다.
-  - incoming message 처리는 특정 상황 목록에 갇힌 closed taxonomy가 아니라, 명시적 turn stop이 아닌 모든 사용자 입력을 gated turn continuation으로 해석하는 포괄 규칙이어야 한다.
-  - 질문, 검토 요청, 상태 확인, 우선순위 변경, correction 같은 표현은 예시일 뿐이며, 예시에 없는 입력도 explicit stop이 아니면 보고 후 멈추는 근거가 될 수 없다.
+  - 사용자 메시지의 작업 의미, target, approval sensitivity, next-flow 필요성은 preparation과 각 하위 계약이 해석해야 하며, 별도 사용자 메시지 라우팅 layer를 두지 않는다.
+  - explicit turn stop 여부는 terminal summary 허용 조건으로만 다루며, 사용자 메시지 종류별 taxonomy나 라우팅 표면을 만들지 않는다.
 
 - `turn-gate`가 current-phase work에 맞는 operating state와 phase protocol을 고르길 원한다.
   - `turn-gate`의 가장 기본 flow는 `준비 -> 작업 -> 검증 -> 보고 -> next-flow`여야 한다.
   - 이 기본 flow를 둘러싼 전환은 내부 gate로 설명되길 원한다.
-  - message intake gate는 사용자 메시지를 분류하지만 실행하지 않고, flow shaping gate는 active flow와 completion criteria를 만들거나 갱신하며, task policy gate는 flow 내부 실행 정책만 소유해야 한다.
+  - flow shaping gate는 active flow와 completion criteria를 만들거나 갱신하며, task policy gate는 flow 내부 실행 정책만 소유해야 한다.
   - task policy는 flow 밖의 독립 계층이 아니며, 개별 task 완료가 flow 완료나 turn closure를 결정하면 안 된다.
   - reporting 뒤에는 source-recorded explicit stop이 없는 한 `next-flow` phase가 next-flow reopening으로 이어져야 한다.
   - deep-interview, flow list design, 상태 파악, 수정 범위 파악, 질문 라우팅, operating state와 phase protocol 선택은 기본 flow 자체가 아니라 `준비` 안의 세부 작업이나 파생 작업이어야 한다.

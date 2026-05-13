@@ -4,7 +4,7 @@
 
 이 문서는 flow shaping gate의 전환 계약을 소유합니다.
 
-flow shaping gate는 message intake 결과를 active flow에 반영합니다.
+flow shaping gate는 현재 사용자 요청과 flow 상태를 active flow에 반영합니다.
 
 ## 소유
 

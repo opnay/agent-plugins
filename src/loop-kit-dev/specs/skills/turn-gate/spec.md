@@ -10,7 +10,8 @@
 - 포함:
   - turn-level continuity 유지
   - `preparation -> work -> verification -> reporting -> next-flow question-routing response` 구조 유지
-  - 사용자 메시지의 operation 의미 해독
+  - explicit stop lifecycle handling
+  - preparation에서 사용자 메시지의 operation 의미 해독
   - implicit default state and phase protocol selection
   - 결과 보고 뒤 explicit choice 기반 next-flow reopening
   - session record와 Continuity Guard 유지
@@ -52,7 +53,6 @@
 - `phase-next-flow.md`: explicit stop 확인과 다음 flow reopening을 수행하는 next-flow phase 계약
 - `flow-boundaries.md`: `operational-preparation`, `change-unit`, planned flow boundary, 후속 후보와 active execution flow 구분
 - `internal-gates.md`: internal gate model overview and gate detail map
-- `gate-message-intake.md`: incoming user message classification and explicit stop detection
 - `gate-flow-shaping.md`: active flow shaping, follow-up candidate separation, completion criteria
 - `gate-task-policy.md`: flow-local task sequencing, local references, target rereads, command/edit/build/test policy
 - `gate-verification.md`: verification packet construction and pass/fail/blocked/insufficient routing
@@ -98,7 +98,7 @@
 - user-gated question routing과 계획 도구 `update_plan`를 필수 단계에서 실제로 사용했는가?
 - cross-flow 작업이라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 planned flow sequence, 각 flow의 완료 기준, 다음 flow 전환 조건을 최신 상태로 담고 있는가?
 - 사용자 메시지 해석과 flow list 설계가 필요했다면, 그 운영 준비가 별도 flow 또는 bootstrap record로 남고 결과 planned flows와 섞이지 않았는가?
-- message intake, flow shaping, task policy, verification, reporting이 phase 전환 권한을 침범하지 않는가?
+- flow shaping, task policy, verification, reporting이 phase 전환 권한을 침범하지 않는가?
 - task policy 결과가 flow completion이나 turn closure를 직접 승인하는 구조가 남아 있지 않은가?
 - spec-side fixture 평가 규칙이 runtime skill body로 직접 누출되지 않았는가?
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`가 현재 phase까지 증분 갱신됐는가?

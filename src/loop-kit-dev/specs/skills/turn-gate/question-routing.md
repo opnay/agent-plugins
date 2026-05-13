@@ -11,8 +11,8 @@
 - result reporting 뒤 explicit stop이 없다면 active question-routing으로 next-flow를 다시 연다.
 - next-flow choices는 방금 보고한 결과와 직접 연결된 좁은 선택지여야 한다.
 - plain text follow-up이나 generic closing phrase는 next-flow reopening을 대체하지 못한다.
-- 사용자의 follow-up 질문, 검토 요청, 보완 요청, 다른 작업 요청은 next-flow reopening 또는 loop continuation의 입력이며, 그 종류가 이 문서에 이름 붙어 있지 않다는 이유로 terminal close할 수 없다.
-- 질문 라우팅의 예시는 exhaustive list가 아니며, 핵심 판단 기준은 `explicit stop인가, 아니면 continuation인가`이다.
+- 사용자 follow-up은 explicit stop이 아니면 preparation 또는 next-flow reopening 계약에서 해석한다.
+- 이 문서는 사용자 메시지 종류별 taxonomy를 소유하지 않는다. 핵심 판단 기준은 사용자가 현재 turn을 명시적으로 끝냈는지 여부다.
 - result report에는 routing 또는 phase selection에 영향을 준 material judgment call이 있으면 함께 드러낸다.
 
 ## Fallback

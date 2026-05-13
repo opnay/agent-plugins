@@ -4,7 +4,7 @@
 
 이 문서는 `turn-gate` core loop의 `next-flow` phase 세부 계약을 소유합니다.
 
-`next-flow` phase는 reporting 이후 explicit stop 여부를 확인하고, stop이 없으면 다음 flow를 여는 사용자 라우팅을 수행합니다.
+`next-flow` phase는 reporting 이후 explicit stop 여부를 확인하고, stop이 없으면 다음 flow 선택지를 엽니다.
 
 ## 소유
 

@@ -10,7 +10,6 @@ gate는 외부에 노출되는 별도 skill이나 phase가 아니라, 현재 입
 `turn-gate`는 layer를 사용자 표면으로 노출하지 않습니다.
 대신 내부 gate를 통과하며 다음 행동을 결정합니다.
 
-- message intake gate
 - flow shaping gate
 - task policy gate
 - verification gate
@@ -21,8 +20,7 @@ gate는 외부에 노출되는 별도 skill이나 phase가 아니라, 현재 입
 
 ## Gate 상세 문서
 
-- `gate-message-intake.md`: incoming user message의 explicit stop 여부와 continuation input 분류
-- `gate-flow-shaping.md`: message intake 결과를 active flow, 후보, completion criteria로 반영
+- `gate-flow-shaping.md`: 현재 요청과 flow 상태를 active flow, 후보, completion criteria로 반영
 - `gate-task-policy.md`: 선택된 flow 안에서 command, edit, build, test, handoff 같은 실행 정책 결정
 - `gate-verification.md`: work 결과를 pass/fail/blocked/insufficient로 통합하고 non-pass 경로 결정
 - `gate-reporting.md`: flow 결과를 다음 진행을 위한 continuity context로 정리
