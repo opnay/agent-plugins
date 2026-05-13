@@ -40,24 +40,24 @@
 
 ## 상세 계약 구조
 
-`turn-gate`의 사용자 스펙 의도, 전체 흐름, 세부 계약은 같은 folder 아래 sibling spec 문서로 분리합니다.
+`turn-gate`의 사용자 스펙 의도, 전체 흐름, 세부 계약은 같은 skill spec folder 아래 ownership-based child folder로 분리합니다.
 이 파일은 top-level ownership, whole-flow overview, sibling contract map을 소유합니다.
 
 - `intent.md`: `turn-gate`의 사용자 스펙 의도 기록
-- `runtime-flow.md`: activation부터 explicit stop까지 `turn-gate`의 전체 phase 흐름과 전환 조건
-- `skill-contents.md`: runtime `SKILL.md` body의 필수 구성과 content boundary
-- `phase-preparation.md`: work 전 intent, scope, non-goal, approval boundary, verification expectation 정렬
-- `phase-work.md`: active flow 안에서 실제 작업을 수행하기 위한 work phase 계약
-- `phase-verification.md`: work 이후 clean-context verification과 non-pass 처리로 이어지는 verification phase 계약
-- `phase-reporting.md`: terminal close가 아니라 next-flow context를 정리하는 reporting phase 계약
-- `phase-next-flow.md`: explicit stop 확인과 다음 flow reopening을 수행하는 next-flow phase 계약
-- `flow-boundaries.md`: `operational-preparation`, `change-unit`, planned flow boundary, 후속 후보와 active execution flow 구분
-- `internal-gates.md`: internal gate model overview and gate detail map
-- `gate-flow-shaping.md`: active flow shaping, follow-up candidate separation, completion criteria
-- `gate-task-policy.md`: flow-local task sequencing, local references, target rereads, command/edit/build/test policy
-- `gate-verification.md`: verification packet construction and pass/fail/blocked/insufficient routing
-- `gate-reporting.md`: result reporting as continuity context
-- `meaning-resolution.md`: operation/target ambiguity, provenance/intent block target locking, user-gated clarification
+- `core/runtime-flow.md`: activation부터 explicit stop까지 `turn-gate`의 전체 phase 흐름과 전환 조건
+- `core/skill-contents.md`: runtime `SKILL.md` body의 필수 구성과 content boundary
+- `phases/preparation.md`: work 전 intent, scope, non-goal, approval boundary, verification expectation 정렬
+- `phases/work.md`: active flow 안에서 실제 작업을 수행하기 위한 work phase 계약
+- `phases/verification.md`: work 이후 clean-context verification과 non-pass 처리로 이어지는 verification phase 계약
+- `phases/reporting.md`: terminal close가 아니라 next-flow context를 정리하는 reporting phase 계약
+- `phases/next-flow.md`: explicit stop 확인과 다음 flow reopening을 수행하는 next-flow phase 계약
+- `core/flow-boundaries.md`: `operational-preparation`, `change-unit`, planned flow boundary, 후속 후보와 active execution flow 구분
+- `gates/internal-gates.md`: internal gate model overview and gate detail map
+- `gates/flow-shaping.md`: active flow shaping, follow-up candidate separation, completion criteria
+- `gates/task-policy.md`: flow-local task sequencing, local references, target rereads, command/edit/build/test policy
+- `gates/verification.md`: verification packet construction and pass/fail/blocked/insufficient routing
+- `gates/reporting.md`: result reporting as continuity context
+- `core/meaning-resolution.md`: operation/target ambiguity, provenance/intent block target locking, user-gated clarification
 - `modes/default.md`: implicit default operating state 계약
 - `phase-protocols/routes.md`: implicit default state, phase protocol selection, local references, operating-state-vs-handoff
 - `phase-protocols/deep-interview.md`: requirement discovery와 scope lock protocol 계약
@@ -65,10 +65,10 @@
 - `phase-protocols/ralph-loop.md`: bounded fix-verify-reassess cycle protocol 계약
 - `phase-protocols/autopilot.md`: locked-scope end-to-end execution protocol 계약
 - `phase-protocols/commit-readiness-gate.md`: commit readiness judgment protocol 계약
-- `approval-boundary.md`: destructive, irreversible, external-action, commit/publish approval boundary
-- `verification.md`: mandatory clean-context subagent verification and non-pass handling
-- `question-routing.md`: `request_user_input`, next-flow reopening, fallback, visible/recorded turn-end option
-- `session-records.md`: `000-plan.md`, `001+` flow records, Continuity Guard, templates, `Next Flow Options`
+- `core/approval-boundary.md`: destructive, irreversible, external-action, commit/publish approval boundary
+- `records/verification.md`: mandatory clean-context subagent verification and non-pass handling
+- `records/question-routing.md`: `request_user_input`, next-flow reopening, fallback, visible/recorded turn-end option
+- `records/session-records.md`: `000-plan.md`, `001+` flow records, Continuity Guard, templates, `Next Flow Options`
 - `templates/plan.md`: `000-plan.md` template structure, date-level snapshot/index ownership, plan/flow deduplication
 - `templates/flow.md`: `001+` flow record template structure, flow-local contract/evidence/report ownership, safety fields
 - `intent-scenarios/`: runtime instruction이 아니라 flow boundary 의도를 회귀 평가하기 위한 spec-side fixture
@@ -79,19 +79,19 @@
 - `turn-gate`는 implicit default operating state와 phase protocol routing을 독립적으로 소유한다.
 - `deep-interview`, `review-loop`, `ralph-loop`, `autopilot`, `commit-readiness-gate` 같은 이름은 standalone mode가 아니라 현재 상태에서 필요한 상황별 phase protocol로 취급한다.
 - phase protocol routing은 `phase-protocols/routes.md`가 소유하고, 상세 계약은 나머지 `phase-protocols/*.md`가 소유한다.
-- `loop-kit-dev/skills/turn-gate/SKILL.md`는 runtime에서 읽는 운영 표면이며, 본문 구성과 runtime/spec boundary는 `skill-contents.md`가 소유한다.
-- 전체 phase 흐름과 phase 간 전환은 `runtime-flow.md`가 소유한다.
-- phase 시작 사용자-facing 메시지의 `[<phase-name>(/<phase-protocol>)]` prefix 계약은 `runtime-flow.md`와 `skill-contents.md`가 소유한다.
-- phase 내부 세부 계약은 `phase-*` spec이 소유하고, internal gate 세부 계약은 `gate-*` spec이 소유한다.
-- session record와 Continuity Guard 계약은 `session-records.md`가 소유한다.
-- clean-context verification 계약은 `verification.md`가 소유한다.
+- `loop-kit-dev/skills/turn-gate/SKILL.md`는 runtime에서 읽는 운영 표면이며, 본문 구성과 runtime/spec boundary는 `core/skill-contents.md`가 소유한다.
+- 전체 phase 흐름과 phase 간 전환은 `core/runtime-flow.md`가 소유한다.
+- phase 시작 사용자-facing 메시지의 `[<phase-name>(/<phase-protocol>)]` prefix 계약은 `core/runtime-flow.md`와 `core/skill-contents.md`가 소유한다.
+- phase 내부 세부 계약은 `phases/*` spec이 소유하고, internal gate 세부 계약은 `gates/*` spec이 소유한다.
+- session record와 Continuity Guard 계약은 `records/session-records.md`가 소유한다.
+- clean-context verification 계약은 `records/verification.md`가 소유한다.
 
 ## 검토 질문
 
 - 이번 응답이 turn continuity를 실제로 유지하고 있는가?
-- skill body 구성과 runtime/spec boundary 판단이 필요하면 `skill-contents.md`를 확인했는가?
+- skill body 구성과 runtime/spec boundary 판단이 필요하면 `core/skill-contents.md`를 확인했는가?
 - skill body 앞부분에 `Important` 섹션이 있고 1급 규칙, terminal summary 금지, next-flow reopening이 먼저 드러나는가?
-- `runtime-flow.md`만 읽어도 전체 phase 흐름과 다음 상세 spec 위치를 알 수 있는가?
+- `core/runtime-flow.md`만 읽어도 전체 phase 흐름과 다음 상세 spec 위치를 알 수 있는가?
 - phase 시작 사용자-facing 메시지 prefix 규칙이 runtime-visible 계약으로 반영돼 있는가?
 - 사용자 표현에 구조적 다의성이 있으면 mode 또는 phase protocol 선택 전에 meaning resolution 질문을 열었는가?
 - deep-interview/review-loop 같은 phase protocol을 mode처럼 기록하지 않았는가?

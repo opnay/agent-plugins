@@ -13,7 +13,7 @@
 - `000-plan.md`는 각 flow의 상세 scope, non-goal, approval boundary, evidence, verification detail을 반복하지 않는다. 필요한 경우 짧은 snapshot만 복사하고, canonical detail은 해당 `001+` flow record가 소유한다.
 - `000-plan.md`의 현재 계획은 action checklist가 아니라 planned flow sequence여야 한다.
 - session record에는 flow type을 구분할 수 있어야 한다: `operational-preparation` 또는 `change-unit`.
-- flow type, planned flow boundary, 후속 후보와 active execution flow의 구분은 `flow-boundaries.md`가 소유한다.
+- flow type, planned flow boundary, 후속 후보와 active execution flow의 구분은 `core/flow-boundaries.md`가 소유한다.
 - session record는 그 boundary 판단을 실제 `.agents/sessions/{YYYYMMDD}/000-plan.md`와 `001+` flow record에 어떻게 남기는지 소유한다.
 - 사용자 메시지 기반 bootstrap을 기록할 때는 operational-preparation flow와 그 결과 planned change-unit flow list 또는 후속 후보를 구분한다.
 - 실행이 아니라 판단, 설계, 범위 확인만 요청된 경우 실제 실행 flow와 구분한다. 이 경우 `operational-preparation` record는 후속 실행 후보, scope/non-goal, target ambiguity 판단, verification expectation을 기록하고 종료할 수 있다.
@@ -81,7 +81,7 @@
 - flow sequence가 preparation 결과에서 파생됐고 각 flow가 preparation/work/verification/reporting/next-flow 구조를 유지하는가?
 - 사용자 메시지 해석과 flow list 설계가 operational-preparation flow로 기록되고, 실행용 planned flows와 섞이지 않았는가?
 - 판단, 설계, 범위 확인용 운영 flow 기록이 실제 실행 flow record처럼 보이지 않도록 후속 후보와 handoff 조건을 구분했는가?
-- flow sequence가 `flow-boundaries.md`의 planned flow boundary 규칙에 맞게 기록됐는가?
+- flow sequence가 `core/flow-boundaries.md`의 planned flow boundary 규칙에 맞게 기록됐는가?
 - 기존 session history를 자동 migration하지 않고 향후 기록에 새 template을 적용하는가?
 - 최종 QA/readiness/reporting만 수행하는 항목이 산출물 변경 없이 flow sequence에 들어가지 않았는가?
 - active flow record가 현재 phase까지 증분 갱신됐는가?

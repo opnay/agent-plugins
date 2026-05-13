@@ -1,4 +1,4 @@
-# turn-gate gate-flow-shaping sub-spec
+# turn-gate flow-shaping gate sub-spec
 
 ## 목적
 

@@ -1,4 +1,4 @@
-# turn-gate phase-next-flow sub-spec
+# turn-gate next-flow phase sub-spec
 
 ## 목적
 

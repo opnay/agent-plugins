@@ -1,4 +1,4 @@
-# turn-gate gate-task-policy sub-spec
+# turn-gate task-policy gate sub-spec
 
 ## 목적
 

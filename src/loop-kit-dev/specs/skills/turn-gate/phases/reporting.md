@@ -1,4 +1,4 @@
-# turn-gate phase-reporting sub-spec
+# turn-gate reporting phase sub-spec
 
 ## 목적
 
@@ -11,7 +11,7 @@
 - 이번 flow에서 무엇을 준비/작업/검증했는지, 남은 불확실성과 blocker가 무엇인지 정리한다.
 - residual uncertainty와 blocker가 있으면 사용자에게 보이게 포함한다.
 - 계획된 flow가 소진되면 다음 flow나 작업을 받을 수 있도록 next-flow phase로 넘긴다.
-- 질문 도구 사용과 next-flow reopening 세부는 `question-routing.md`가 소유한다.
+- 질문 도구 사용과 next-flow reopening 세부는 `records/question-routing.md`가 소유한다.
 
 ## 검토 질문
 

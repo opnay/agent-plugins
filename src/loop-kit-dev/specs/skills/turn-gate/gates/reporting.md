@@ -1,4 +1,4 @@
-# turn-gate gate-reporting sub-spec
+# turn-gate reporting gate sub-spec
 
 ## 목적
 

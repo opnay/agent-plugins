@@ -3,7 +3,7 @@
 ## 목적
 
 이 문서는 `work` 이후 clean-context subagent verification과 non-pass handling 계약을 소유합니다.
-result reporting과 next-flow reopening 세부 계약은 `question-routing.md`가 소유합니다.
+result reporting과 next-flow reopening 세부 계약은 `records/question-routing.md`가 소유합니다.
 
 ## Clean-Context Verification
 

@@ -26,7 +26,7 @@
 - 사용자가 명시적으로 턴을 종료하자고 요청하지 않으면 clean stop을 기본 경로로 두지 않는다.
 - 사용자에게 보이는 선택지가 3개 이상이라 턴 종료 선택지를 표시하지 못하는 경우에도 visible prompt에는 명시적 stop 요청이 가능하다는 사실을 드러낸다.
 - flow record의 `Next Flow Options`에는 별도 turn-end option을 항상 기록한다.
-- explicit stop 처리와 closure source 기록은 `runtime-flow.md`와 `session-records.md`가 함께 소유한다.
+- explicit stop 처리와 closure source 기록은 `core/runtime-flow.md`와 `records/session-records.md`가 함께 소유한다.
 
 ## 검토 질문
 

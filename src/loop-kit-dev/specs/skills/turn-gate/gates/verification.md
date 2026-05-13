@@ -1,4 +1,4 @@
-# turn-gate gate-verification sub-spec
+# turn-gate verification gate sub-spec
 
 ## 목적
 

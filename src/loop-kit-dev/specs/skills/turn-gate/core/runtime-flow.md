@@ -19,12 +19,12 @@ activation과 explicit stop handling은 이 기본 flow를 둘러싼 lifecycle g
 flow shaping gate는 active flow와 completion criteria를 만들거나 갱신하며, task policy gate는 flow 내부 실행 정책을 정합니다.
 task policy는 flow 밖의 독립 계층이 아니며, 개별 task 완료가 flow 완료나 turn closure를 결정할 수 없습니다.
 verification gate와 reporting gate는 각각 검증 판정과 보고 맥락 정리를 소유합니다.
-상세 gate 계약은 `internal-gates.md`가 소유합니다.
+상세 gate 계약은 `gates/internal-gates.md`가 소유합니다.
 
 deep-interview alignment, flow list design, meaning resolution, current-state inspection, target reread, scope lock, approval boundary 확인은 기본적으로 `preparation` 안의 세부 작업입니다.
 
-`operational-preparation flow`, `change-unit flow`, planned flow boundary, 후속 후보와 active execution flow의 구분은 `flow-boundaries.md`가 소유합니다.
-이 문서는 phase 순서와 전환 조건만 직접 소유하고, flow taxonomy 판단이 필요하면 `flow-boundaries.md`로 위임합니다.
+`operational-preparation flow`, `change-unit flow`, planned flow boundary, 후속 후보와 active execution flow의 구분은 `core/flow-boundaries.md`가 소유합니다.
+이 문서는 phase 순서와 전환 조건만 직접 소유하고, flow taxonomy 판단이 필요하면 `core/flow-boundaries.md`로 위임합니다.
 
 이 문서는 각 phase의 순서와 전환을 소유하고, phase 내부의 세부 판단은 대응 child spec으로 위임합니다.
 
@@ -55,41 +55,41 @@ deep-interview alignment, flow list design, meaning resolution, current-state in
 - preparation:
   - 이 단계는 flow shaping gate를 통과해 active flow의 경계와 completion criteria를 정한다.
   - work로 넘어가기 전 intent, scope, non-goal, acceptance signal, verification expectation, approval boundary를 정렬한다.
-  - 세부 계약은 `phase-preparation.md`가 소유한다.
+  - 세부 계약은 `phases/preparation.md`가 소유한다.
 - work:
   - 이 단계는 task policy gate를 통과해 현재 flow 내부 실행 정책을 정한다.
   - 사용자가 요청한 실제 작업을 진행한다.
   - implicit default state, phase protocol 선택, local reference 읽기 규칙은 `phase-protocols/routes.md`가 소유한다.
-  - 세부 계약은 `phase-work.md`가 소유한다.
+  - 세부 계약은 `phases/work.md`가 소유한다.
 - verification:
   - 이 단계는 verification gate를 통과한다.
   - 현재 flow의 work 결과를 검증한다.
-  - 검증 packet, pass/fail/blocked/insufficient 처리, non-pass return path는 `verification.md`가 소유한다.
-  - 세부 계약은 `phase-verification.md`가 소유한다.
+  - 검증 packet, pass/fail/blocked/insufficient 처리, non-pass return path는 `records/verification.md`가 소유한다.
+  - 세부 계약은 `phases/verification.md`가 소유한다.
 - reporting:
   - 이 단계는 reporting gate를 통과한다.
   - 결과 보고는 terminal response가 아니라 다음 flow 진행을 위한 context 정리다.
-  - next-flow reopening 세부는 `question-routing.md`가 소유한다.
-  - 세부 계약은 `phase-reporting.md`가 소유한다.
+  - next-flow reopening 세부는 `records/question-routing.md`가 소유한다.
+  - 세부 계약은 `phases/reporting.md`가 소유한다.
 
 - next-flow reopening:
   - 이 단계는 `next-flow` phase다.
   - explicit stop이 없다면 결과 보고 뒤 active question-routing으로 다음 flow를 연다.
-  - `request_user_input`, fallback, visible/recorded turn-end option은 `question-routing.md`가 소유한다.
-  - 세부 계약은 `phase-next-flow.md`가 소유한다.
+  - `request_user_input`, fallback, visible/recorded turn-end option은 `records/question-routing.md`가 소유한다.
+  - 세부 계약은 `phases/next-flow.md`가 소유한다.
 - explicit stop handling:
   - 사용자가 명시적으로 턴 종료를 요청한 경우에만 terminal summary가 가능하다.
   - "여기서 끝", "턴 종료", "이 turn은 그만", "stop the turn"처럼 현재 turn 자체를 끝내려는 의도가 분명한 입력만 explicit turn stop으로 분류한다.
   - 명시적 종료 의도가 불분명하면 종료로 추정하지 말고 continuation input으로 처리하거나 user-gated clarification을 연다.
   - flow record의 `confirmed closure`는 특정 explicit stop 사용자 메시지와 함께 기록된 경우에만 유효하다.
   - closure source message가 없거나 현재 incoming message와 맞지 않는 stale closure 기록은 terminal close 근거로 쓰지 않는다.
-  - closure source message와 `Continuity Guard` 기록은 `session-records.md`와 함께 유지한다.
+  - closure source message와 `Continuity Guard` 기록은 `records/session-records.md`와 함께 유지한다.
 
 ## 검토 질문
 
 - 기본 flow가 `준비 -> 작업 -> 검증 -> 보고 -> next-flow`로 한 번에 읽히는가?
-- flow taxonomy 판단이 `flow-boundaries.md`로 위임되는가?
-- phase 세부 계약이 `phase-preparation.md`, `phase-work.md`, `phase-verification.md`, `phase-reporting.md`, `phase-next-flow.md`로 위임되는가?
+- flow taxonomy 판단이 `core/flow-boundaries.md`로 위임되는가?
+- phase 세부 계약이 `phases/preparation.md`, `phases/work.md`, `phases/verification.md`, `phases/reporting.md`, `phases/next-flow.md`로 위임되는가?
 - 각 phase의 세부 판단이 적절한 child spec으로 위임되는가?
 - reporting이 terminal close가 아니라 next-flow reopening으로 이어지는가?
 - explicit stop 없이 흐름이 닫히는 경로가 남아 있지 않은가?

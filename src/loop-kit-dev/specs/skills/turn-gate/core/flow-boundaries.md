@@ -4,7 +4,7 @@
 
 이 문서는 `turn-gate`에서 planned flow가 무엇인지, 어떤 단위가 flow가 아닌지, `operational-preparation`과 `change-unit`을 어떻게 구분하는지 소유합니다.
 
-`runtime-flow.md`는 phase 순서와 전환 조건을 소유하고, 이 문서는 flow boundary와 flow taxonomy를 소유합니다.
+`core/runtime-flow.md`는 phase 순서와 전환 조건을 소유하고, 이 문서는 flow boundary와 flow taxonomy를 소유합니다.
 
 ## Flow 종류
 
@@ -58,7 +58,7 @@ flow list 변환 자체가 산출물로 남는 경우, 그 산출물은 `operati
 
 ## Session Record와의 관계
 
-`session-records.md`는 위 boundary를 어떻게 `.agents/sessions/{YYYYMMDD}/000-plan.md`와 개별 flow record에 기록하는지 소유합니다.
+`records/session-records.md`는 위 boundary를 어떻게 `.agents/sessions/{YYYYMMDD}/000-plan.md`와 개별 flow record에 기록하는지 소유합니다.
 
 따라서 session record는 다음을 드러내야 합니다.
 

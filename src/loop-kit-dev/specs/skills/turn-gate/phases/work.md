@@ -1,4 +1,4 @@
-# turn-gate phase-work sub-spec
+# turn-gate work phase sub-spec
 
 ## 목적
 
