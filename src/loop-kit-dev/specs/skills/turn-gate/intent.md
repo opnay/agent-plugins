@@ -51,6 +51,9 @@
   - `turn-gate` 활성 상태에서는 읽기 전용 bounded verifier subagent 실행을 clean-context verification 계약의 일부로 미리 허용한 것으로 취급해야 한다.
   - 이 사전 허용은 검증 전용이며, 파일 수정, scope 확장, destructive/external action, commit/push/PR/publish approval 생성에는 적용되지 않는다.
   - main agent는 clean-context subagent 검증 요청을 구성하고, subagent 결과를 통합해 결과 보고와 다음 flow 판단으로 이어가야 한다.
+  - clean-context subagent 검증은 유지하되, 단순한 질문 답변이나 이미 work 도중 실행한 검증을 무조건 다시 실행하는 과한 검증은 줄여야 한다.
+  - verifier는 work 중 이미 수행된 command/check 증거를 검토할 수 있어야 하며, 같은 검사를 다시 실행하는 것은 증거가 불충분하거나 stale하거나 실패 의심이 있을 때로 제한해야 한다.
+  - 조사나 판단 작업의 verifier packet은 불필요한 command 실행보다 source/evidence readback, 논리 반례 검토, 사용자 의도 부합성 확인에 초점을 둬야 한다.
 
 - 이후 flow/phase 설계는 필요할 때 조정 가능한 provisional design이어야 한다.
   - 분석 단계와 계획 단계는 현재 플로우만이 아니라 이후 이어질 flow/phase 후보까지 필요하면 미리 설계하길 원한다.

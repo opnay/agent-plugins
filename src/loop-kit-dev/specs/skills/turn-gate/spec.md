@@ -55,7 +55,7 @@
 - `gates/internal-gates.md`: internal gate model overview and gate detail map
 - `gates/flow-shaping.md`: active flow shaping, follow-up candidate separation, completion criteria
 - `gates/task-policy.md`: flow-local task sequencing, local references, target rereads, command/edit/build/test policy
-- `gates/verification.md`: verification packet construction and pass/fail/blocked/insufficient routing
+- `gates/verification.md`: minimum-sufficient verification packet construction and pass/fail/blocked/insufficient routing
 - `gates/reporting.md`: result reporting as continuity context
 - `core/meaning-resolution.md`: operation/target ambiguity, provenance/intent block target locking, user-gated clarification
 - `modes/default.md`: implicit default operating state 계약
@@ -66,7 +66,7 @@
 - `phase-protocols/autopilot.md`: locked-scope end-to-end execution protocol 계약
 - `phase-protocols/commit-readiness-gate.md`: commit readiness judgment protocol 계약
 - `core/approval-boundary.md`: destructive, irreversible, external-action, commit/publish approval boundary
-- `records/verification.md`: mandatory clean-context subagent verification and non-pass handling
+- `records/verification.md`: mandatory clean-context subagent verification, minimum-sufficient packet sizing, and non-pass handling
 - `records/question-routing.md`: `request_user_input`, next-flow reopening, fallback, visible/recorded turn-end option
 - `records/session-records.md`: `000-plan.md`, `001+` flow records, Continuity Guard, templates, `Next Flow Options`
 - `templates/plan.md`: `000-plan.md` template structure, date-level snapshot/index ownership, plan/flow deduplication
