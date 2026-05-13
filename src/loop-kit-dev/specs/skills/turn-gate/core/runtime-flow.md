@@ -33,8 +33,7 @@ deep-interview alignment, flow list design, meaning resolution, current-state in
 `turn-gate`가 사용자에게 phase 시작을 알리거나 phase 시작과 함께 진행 상황을 말할 때, 그 사용자-facing 메시지는 `[<phase-name>(/<phase-protocol>)]` 접두사로 시작해야 합니다.
 
 - canonical phase label은 `preparation`, `work`, `verification`, `reporting`, `next-flow`를 사용합니다.
-- `(/<phase-protocol>)` segment는 optional입니다. 현재 phase에 특정 phase protocol이 적용되지 않으면 생략합니다.
-- phase protocol이 적용되는 phase-start message에서는 slash suffix를 사용합니다.
+- `(/<phase-protocol>)` segment는 optional notation이며, phase protocol 사용 시 slash suffix로 표기해야 합니다.
 - 예: `[preparation]`, `[work]`, `[verification]`, `[reporting]`, `[next-flow]`, `[preparation/deep-interview]`, `[work/ralph-loop]`, `[verification/review-loop]`, `[reporting/commit-readiness-gate]`
 - 실제 출력에는 literal parenthesis를 쓰지 않습니다. `(<...>)`는 optional segment notation입니다.
 - 이 규칙은 phase가 시작되는 대화 메시지에 적용합니다.

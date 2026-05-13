@@ -37,8 +37,8 @@ Activation without a concrete task opens scope setup or next-flow selection; it 
 When you tell the user that a phase is starting, start that user-facing message with `[<phase-name>(/<phase-protocol>)]`.
 
 - Canonical phase labels are `preparation`, `work`, `verification`, `reporting`, and `next-flow`.
-- The `(/<phase-protocol>)` segment is optional notation only. In actual output, use a slash suffix without literal parentheses.
-- Valid examples include `[preparation]`, `[work]`, `[verification]`, `[reporting]`, `[next-flow]`, `[preparation/deep-interview]`, `[work/ralph-loop]`, and `[reporting/commit-readiness-gate]`.
+- The `(/<phase-protocol>)` segment is optional notation only. In actual output, use a slash suffix without literal parentheses, and show it whenever a phase protocol is used.
+- Valid examples include `[preparation]`, `[work]`, `[verification]`, `[reporting]`, `[next-flow]`, `[preparation/deep-interview]`, `[work/ralph-loop]`, `[verification/review-loop]`, and `[reporting/commit-readiness-gate]`.
 - Apply the prefix to phase-start messages, not to every command summary, artifact body, flow record line, or question option.
 - For activation-only requests with no concrete task, start with `[preparation]` for scope setup. Use `[next-flow]` only when opening actual next-flow choices.
 - For status questions, use the current active phase. During work, this is usually `[work]`.

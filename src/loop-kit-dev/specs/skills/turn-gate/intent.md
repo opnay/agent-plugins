@@ -62,6 +62,7 @@
   - phase 이름은 `preparation`, `work`, `verification`, `reporting`, `next-flow`처럼 core phase label을 사용하길 원한다.
   - phase protocol segment인 `(/<phase-protocol>)`는 생략 가능하길 원한다.
   - phase protocol이 적용될 때는 `[work/ralph-loop]`처럼 slash suffix로 드러내길 원한다.
+  - optional notation이더라도 phase protocol 사용 시 protocol suffix를 표기하길 원한다.
   - 실제 메시지에는 optional notation의 literal parenthesis를 쓰지 않길 원한다.
   - 보고 뒤 다음 flow 질문을 여는 전환은 `continuation`이 아니라 `next-flow` phase로 드러내길 원한다.
   - 이 prefix는 phase 시작 메시지에 붙는 운영 표식이며, flow record나 결과물 본문 안의 모든 문장에 붙이는 요구가 아니다.

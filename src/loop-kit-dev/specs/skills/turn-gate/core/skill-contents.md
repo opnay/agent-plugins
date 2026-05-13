@@ -47,7 +47,8 @@
 - skill body에는 `core/runtime-flow.md`의 전체 흐름과 `phase-protocols/routes.md`의 local `references/` 읽기 규칙이 직접 남아 있어야 한다.
 - skill body에는 phase 시작을 알리는 사용자-facing 메시지가 `[<phase-name>(/<phase-protocol>)]` 접두사로 시작해야 한다는 규칙이 직접 남아 있어야 한다.
 - skill body의 phase prefix 규칙은 canonical phase labels `preparation`, `work`, `verification`, `reporting`, `next-flow`를 제시해야 한다.
-- skill body의 phase prefix 규칙은 `(/<phase-protocol>)` segment가 optional이고, 실제 출력에서는 literal parenthesis가 아니라 slash suffix를 사용한다는 점을 설명해야 한다.
+- skill body의 phase prefix 규칙은 `(/<phase-protocol>)` segment가 optional notation이며, phase protocol 사용 시 slash suffix로 표기해야 한다는 점을 설명해야 한다.
+- skill body의 phase prefix 규칙은 실제 출력에서 literal parenthesis를 쓰지 않는다는 점을 설명해야 한다.
 - skill body의 phase prefix 예시는 phase-only form과 phase/protocol form을 모두 포함해야 한다.
 - skill body는 reporting 뒤 다음 flow를 여는 단계를 `next-flow` phase로 설명해야 한다.
 - skill body는 activation-only, mid-work status, session-record blocker, report-only evaluation처럼 여러 phase label이 가능해 보이는 상황의 우선순위를 설명해야 한다.
