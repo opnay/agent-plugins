@@ -1,53 +1,58 @@
 # Session Records
 
-Maintain date-scoped session records for active turn-gated work:
+Maintain records under `.agents/sessions/{YYYYMMDD}/` for active turn-gated tasks.
 
-- `.agents/sessions/{YYYYMMDD}/000-plan.md`
-- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`
+Use:
 
-Use [plan-template.md](../templates/plan-template.md) and [flow-record-template.md](../templates/flow-record-template.md).
+- `000-plan.md` as the date-level bounded plan, flow index, and current routing snapshot;
+- `{count-pad3}-{eng-lower-slug}.md` as the canonical detail record for one flow.
 
-## Plan Record
+Use `templates/plan-template.md` and `templates/flow-record-template.md` as starting structures.
 
-`000-plan.md` is a bounded date-level index and active snapshot. It owns:
+## Plan Ownership
 
-- latest user request and decision;
-- active flow pointer;
-- required next action;
-- user request history;
-- flow index;
-- planned flow sequence;
-- completed flow summaries;
-- active date-level risks;
-- explicit turn-end option availability.
+`000-plan.md` owns:
 
-Do not copy detailed flow contract, approval boundary, command evidence, or verification details into the plan. Those belong in the flow record.
+- latest user request and decision snapshot;
+- active flow pointer and required next action;
+- recent user request history;
+- one-line flow index;
+- current and future planned flow sequence;
+- one-line completed flow summaries;
+- active date-level open risks;
+- date-level note that the user can explicitly end the turn.
 
-`Planned Flow Sequence` must list cohesive flow units, not phase checklists. Completed flows move to compact index and summary entries.
+It does not own detailed flow scope, non-goals, approval boundary, evidence, verification detail, per-flow residual risk, or canonical Continuity Guard state.
 
-## Flow Record
+## Flow Record Ownership
 
-Each `001+` record is the canonical detail artifact for one flow. Create or update it incrementally after each phase.
-
-It owns:
+Each `001+` flow record owns:
 
 - original user request;
 - task, flow type, scope, and parent plan;
 - current phase;
 - Continuity Guard;
-- Flow Contract;
-- Optional Risky Actions;
-- Execution Log;
-- Verification;
-- Report;
-- Next Flow Options;
-- Residual Risk.
+- flow contract;
+- optional risky actions;
+- execution log;
+- verification detail;
+- report;
+- next-flow options;
+- residual risk.
 
-Flow type is `operational-preparation` or `change-unit`. An `operational-preparation` flow may end with follow-up `change-unit` candidates rather than active execution flows.
+Update the flow record after each phase instead of waiting for final completion.
+
+## Flow Types
+
+Use `operational-preparation` when the flow interprets a request, locks scope, designs a planned flow list, or records approvals without starting product/code/document execution.
+
+Use `change-unit` when the flow owns a cohesive reviewable or commit-sized artifact change.
+
+Keep follow-up change-unit candidates separate from active execution until the user selects or approves them.
 
 ## Continuity Guard
 
-Keep the Continuity Guard current, especially before reporting and next-flow reopening. It must show:
+The Continuity Guard must track:
 
 - turn-gate active;
 - question-routing mode;
@@ -59,14 +64,15 @@ Keep the Continuity Guard current, especially before reporting and next-flow reo
 - closure source message;
 - closure recorded phase;
 - pending question state;
-- pending or superseded question summary;
+- pending question id or summary;
+- superseded question id or summary;
 - verification status;
 - continuity note.
 
-Valid verification statuses are `not-started`, `requested`, `pass`, `fail`, `blocked`, and `insufficient`.
+Only a source-recorded explicit stop can make terminal summary allowed. If closure source is missing or stale, reset `user explicit stop` to `no`, reset `terminal summary allowed` to `no`, and note the stale closure.
 
-Only a source-recorded explicit stop can allow terminal close. Source-less closure or stale `terminal_summary_allowed: yes` must be repaired to `user explicit stop: no` and `terminal summary allowed: no`, with a note.
+If records are inaccessible, report a blocker. Do not silently reconstruct records or treat missing state as permission to close.
 
 ## Next Flow Options
 
-The flow record's `Next Flow Options` must include an explicit turn-end option even when the visible user prompt does not show one. The plan may store only the selected result or active next-flow pointer.
+The flow record owns detailed next-flow options. Even when visible choices omit a turn-end option, record an explicit turn-end option. Reflect only the selected result or active next-flow pointer in `000-plan.md`.

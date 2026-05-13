@@ -57,9 +57,12 @@
   - 이후 loop에서 다시 분석 단계나 계획 단계로 돌아오면, 이전 flow/phase 설계를 고정값처럼 취급하지 말고 필요할 때만 다시 설계하길 원한다.
   - 검증 단계는 그 재설계를 직접 수행하는 단계라기보다, 이후 flow/phase 재설계가 필요한지 여부를 드러내는 단계이길 원한다.
 
-- 각 phase를 시작하는 사용자-facing 말은 `[<phase-name>]` 형식으로 시작해야 한다.
+- 각 phase를 시작하는 사용자-facing 말은 `[<phase-name>(/<phase-protocol>)]` 형식으로 시작해야 한다.
   - phase가 새로 시작됨을 대화에서 바로 구분할 수 있길 원한다.
   - phase 이름은 `preparation`, `work`, `verification`, `reporting`, `next-flow`처럼 core phase label을 사용하길 원한다.
+  - phase protocol segment인 `(/<phase-protocol>)`는 생략 가능하길 원한다.
+  - phase protocol이 적용될 때는 `[work/ralph-loop]`처럼 slash suffix로 드러내길 원한다.
+  - 실제 메시지에는 optional notation의 literal parenthesis를 쓰지 않길 원한다.
   - 보고 뒤 다음 flow 질문을 여는 전환은 `continuation`이 아니라 `next-flow` phase로 드러내길 원한다.
   - 이 prefix는 phase 시작 메시지에 붙는 운영 표식이며, flow record나 결과물 본문 안의 모든 문장에 붙이는 요구가 아니다.
 

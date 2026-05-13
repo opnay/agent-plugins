@@ -45,8 +45,10 @@
   - reporting
   - next-flow
 - skill body에는 `runtime-flow.md`의 전체 흐름과 `phase-protocols/routes.md`의 local `references/` 읽기 규칙이 직접 남아 있어야 한다.
-- skill body에는 phase 시작을 알리는 사용자-facing 메시지가 `[<phase-name>]` 접두사로 시작해야 한다는 규칙이 직접 남아 있어야 한다.
+- skill body에는 phase 시작을 알리는 사용자-facing 메시지가 `[<phase-name>(/<phase-protocol>)]` 접두사로 시작해야 한다는 규칙이 직접 남아 있어야 한다.
 - skill body의 phase prefix 규칙은 canonical phase labels `preparation`, `work`, `verification`, `reporting`, `next-flow`를 제시해야 한다.
+- skill body의 phase prefix 규칙은 `(/<phase-protocol>)` segment가 optional이고, 실제 출력에서는 literal parenthesis가 아니라 slash suffix를 사용한다는 점을 설명해야 한다.
+- skill body의 phase prefix 예시는 phase-only form과 phase/protocol form을 모두 포함해야 한다.
 - skill body는 reporting 뒤 다음 flow를 여는 단계를 `next-flow` phase로 설명해야 한다.
 - skill body는 activation-only, mid-work status, session-record blocker, report-only evaluation처럼 여러 phase label이 가능해 보이는 상황의 우선순위를 설명해야 한다.
 - skill body는 이 prefix가 phase-start message에 적용되는 운영 표식이며, flow record, output artifact, command summary, question option 전체 문장에 기계적으로 붙이는 규칙이 아님을 설명해야 한다.
@@ -101,7 +103,7 @@
 
 - skill body 앞부분에 `Important` 섹션이 있고 1급 규칙, terminal summary 금지, next-flow reopening이 먼저 드러나는가?
 - skill body가 `preparation -> work -> verification -> reporting -> next-flow` 흐름을 실행 중 빠르게 확인 가능한 형태로 드러내되 기존 routing 중심 구조를 반복하지 않는가?
-- phase 시작을 알리는 사용자-facing 메시지가 `[<phase-name>]`으로 시작해야 한다는 규칙이 runtime body에 직접 드러나는가?
+- phase 시작을 알리는 사용자-facing 메시지가 `[<phase-name>(/<phase-protocol>)]`으로 시작해야 하고 protocol segment가 optional이라는 규칙이 runtime body에 직접 드러나는가?
 - runtime body가 internal gate model이나 사용자 메시지 intake/routing layer를 사용자-facing 구조로 다시 열지 않는가?
 - spec-side fixture 평가 규칙이 runtime skill body로 직접 누출되지 않았는가?
 - runtime body가 설치 후 존재하지 않는 dev-only spec 파일을 읽으라고 지시하지 않는가?

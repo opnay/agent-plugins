@@ -4,7 +4,7 @@ flow_type: ""
 flow_scope: ""
 current_phase: "preparation"
 turn_gate_active: true
-question_routing_mode: "none"
+question_routing_mode: "active"
 user_explicit_stop: false
 terminal_summary_allowed: false
 required_next_action: ""
@@ -19,6 +19,7 @@ verification_status: "not-started"
 continuity_note: ""
 preparation_source: ""
 scope_lock_status: ""
+user_request_summary: ""
 ---
 
 # Flow Record
@@ -26,7 +27,8 @@ scope_lock_status: ""
 ## Flow Contract
 
 - User request:
-- Preparation source/result:
+- Preparation source:
+- Preparation result:
 - Boundary rationale:
 - Current blocker:
 - Scope lock status:
@@ -41,28 +43,45 @@ scope_lock_status: ""
 
 ## Optional Risky Actions
 
-not-applicable
+Status: not-applicable
+
+- Exact action:
+- Target:
+- Expected effect:
+- Risk:
+- Rollback or recovery path:
+- Included scope:
+- Excluded scope:
+- Initial agreement:
+- End point:
 
 ## Execution Log
 
-- pending
+- TBD
 
 ## Verification
 
 - Status: not-started
+- Verifier:
+- Packet:
+- Checks:
 - Evidence:
 - Result:
 
 ## Report
 
-- pending
+- Prepared:
+- Worked:
+- Verified:
+- Changed surfaces:
+- Blockers:
 
 ## Next Flow Options
 
-- Continue with the next selected flow.
-- Open a blocker or clarification decision.
-- Explicitly stop the current turn.
+- Next useful flow:
+- Blocker decision:
+- Explicit turn-end option:
 
 ## Residual Risk
 
-- none recorded
+- TBD

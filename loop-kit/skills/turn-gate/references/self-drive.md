@@ -1,34 +1,35 @@
 # Self-Drive Overlay
 
-Self-drive is an explicit overlay for a prepared planned flow sequence. It is not a separate installed skill entrypoint and not the default behavior.
+Use this reference only when the user explicitly asks for autonomous continuation across a prepared planned flow sequence.
 
-Apply self-drive only after preparation has recorded:
+Self-drive is an overlay on `turn-gate`, not a separate installed skill entrypoint. It can apply only after preparation has recorded:
 
 - planned flow sequence;
 - scope and non-goals;
 - acceptance signal;
-- approval boundary;
 - verification expectation;
-- stopping point or handoff condition.
+- approval boundary;
+- expected risky actions;
+- user-gated checkpoint and endpoint conditions.
 
-While self-drive applies, its continuation rule controls movement through the prepared sequence. Each flow still runs `preparation -> work -> verification -> reporting -> next-flow`.
+## Priority
+
+While self-drive applies, its continuation rules take priority over default next-flow questioning and ordinary phase protocol selection. Each planned flow still runs through preparation, work, verification, reporting, and next-flow internally.
 
 ## Execution Authority
 
-Self-drive can continue without asking after each flow only inside the prepared sequence and recorded approval boundary.
+Self-drive may continue without asking only inside the prepared sequence and recorded approval boundary.
 
-It may execute approval-sensitive actions only when the initial agreement recorded exact action, target, expected effect, risk, recovery path, included and excluded scope, and stopping point.
+It may execute approval-sensitive actions only when the initial agreement records exact action, target, expected effect, risk, recovery path, included/excluded scope, and end point.
 
-Commit, push, PR, publish, release, and version bump are approval-sensitive execution steps. If they were not explicitly included with a clear endpoint, return to user-gated question-routing.
-
-## Return To Question-Routing
-
-Return to the default user-gated path when:
+Return to user-gated question routing when:
 
 - a new risky action appears;
-- scope expands beyond the prepared sequence;
-- the endpoint becomes unclear;
-- verification is `blocked` or `insufficient`;
-- a user decision is needed to choose among valid next flows.
+- scope or non-goal changes;
+- the endpoint is unclear;
+- repeated critical failure suggests a root blocker;
+- commit, push, PR, publish, release, or version bump was not explicitly approved with exact boundaries.
 
-When the prepared sequence ends, do not close by default. Continue to the recorded endpoint, commit-readiness handoff, or next-flow reopening.
+## Ending
+
+When the prepared sequence ends, do not close by default. Continue to the recorded endpoint, commit-readiness reporting handoff, blocker decision, or next-flow reopening. Terminal closure still requires a source-recorded explicit stop.

@@ -81,7 +81,7 @@
 - phase protocol routing은 `phase-protocols/routes.md`가 소유하고, 상세 계약은 나머지 `phase-protocols/*.md`가 소유한다.
 - `loop-kit-dev/skills/turn-gate/SKILL.md`는 runtime에서 읽는 운영 표면이며, 본문 구성과 runtime/spec boundary는 `skill-contents.md`가 소유한다.
 - 전체 phase 흐름과 phase 간 전환은 `runtime-flow.md`가 소유한다.
-- phase 시작 사용자-facing 메시지의 `[<phase-name>]` prefix 계약은 `runtime-flow.md`와 `skill-contents.md`가 소유한다.
+- phase 시작 사용자-facing 메시지의 `[<phase-name>(/<phase-protocol>)]` prefix 계약은 `runtime-flow.md`와 `skill-contents.md`가 소유한다.
 - phase 내부 세부 계약은 `phase-*` spec이 소유하고, internal gate 세부 계약은 `gate-*` spec이 소유한다.
 - session record와 Continuity Guard 계약은 `session-records.md`가 소유한다.
 - clean-context verification 계약은 `verification.md`가 소유한다.

@@ -8,31 +8,31 @@ pending_question_state: "none"
 verification_status: "not-started"
 preparation_source: ""
 scope_lock_status: ""
-final_readiness_handoff: "not-applicable"
+final_readiness_handoff: ""
 ---
 
 # Session Plan
 
 ## User Requests Today
 
-- pending
+- TBD
 
 ## Flow Index
 
-- pending
+- TBD
 
 ## Planned Flow Sequence
 
-- pending
+- TBD
 
 ## Completed Flow Summaries
 
-- none
+- TBD
 
 ## Explicit Turn-End Option
 
-- The user can explicitly stop the current turn.
+- User may explicitly ask to end the turn. Terminal closure is allowed only when that stop request is source-recorded.
 
 ## Open Risks
 
-- none
+- TBD
