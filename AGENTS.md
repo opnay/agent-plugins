@@ -93,7 +93,7 @@
 - 플러그인 수정 요청은 먼저 해당 dev source의 spec을 확인하고 필요한 spec 변경을 반영합니다.
 - 실제 skill 본문 변경은 spec 변경 또는 spec 확인 이후에 진행합니다.
 - skill spec을 수정할 때는 해당 dev plugin의 `src/<plugin-name>-dev/changes/<version>.md` change spec에 변경사항을 기록합니다.
-- skill spec을 수정했고 실제 skill 본문의 문구 작성이 필요한 경우, main agent가 기존 skill 파일을 직접 고쳐 이어붙이지 않고 대상 skill 폴더를 삭제한 뒤 subagent에게 수정된 spec 기준의 skill 본문 재생성을 요청합니다.
+- skill spec을 수정했고 실제 skill 본문의 문구 작성이 필요한 경우, main agent가 변경된 spec을 먼저 검토하고, 대상 skill 폴더를 삭제한 뒤 subagent에게 clean context로 spec 기준의 skill 본문 재생성을 요청합니다.
 - skill 본문 수정 요청은 기존 본문 패치가 아니라 삭제 후 spec 기준 재생성 흐름으로 다룹니다.
 - subagent에는 담당 파일과 책임 범위를 명시하고, 다른 작업자가 같은 저장소에서 작업 중일 수 있음을 알려 충돌을 피하게 합니다.
 - subagent 결과를 그대로 신뢰하지 말고, main agent가 spec 정합성, plugin surface 영향, release surface 반영 여부를 최종 확인합니다.
@@ -185,6 +185,10 @@ plugin usage 표면을 바꿀 때는 다음을 함께 처리합니다.
 - 메타데이터나 경로만 손보면 되는 경우, 스캐폴드 재생성보다 작고 직접적인 수정을 선호합니다.
 - 플러그인을 이동했다면 같은 변경 안에서 마켓플레이스 경로도 함께 갱신합니다.
 - 스캐폴드 도구가 `./plugins/<plugin-name>`를 생성했다면 마무리 전에 `./<plugin-name>`로 옮깁니다.
+
+## 용어 상세
+
+- clean context: 이전 대화나 흐름의 임시 맥락을 전제로 삼지 않고, 필요한 기준, 대상, 제약, 검증 조건만 다시 주어 새 맥락에서 시작하는 방식입니다.
 
 ## 문서 맵
 
