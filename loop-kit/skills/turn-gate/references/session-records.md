@@ -18,11 +18,14 @@ Use `templates/plan-template.md` and `templates/flow-record-template.md` as star
 - recent user request history;
 - one-line flow index;
 - current and future planned flow sequence;
+- self-drive sequence-level snapshot when self-drive is active;
 - one-line completed flow summaries;
 - active date-level open risks;
 - date-level note that the user can explicitly end the turn.
 
 It does not own detailed flow scope, non-goals, approval boundary, evidence, verification detail, per-flow residual risk, or canonical Continuity Guard state.
+
+When self-drive is active, keep sequence-level state in `000-plan.md` as a conditional note near the planned flow sequence or active routing snapshot: sequence objective, planned flow list, active flow index, allowed autonomous actions, prohibited autonomous actions, approval-sensitive checkpoints, endpoint, blocker return conditions, and progress note. Do not add self-drive-only fields to every general template by default.
 
 ## Flow Record Ownership
 
@@ -33,6 +36,7 @@ Each `001+` flow record owns:
 - current phase;
 - Continuity Guard;
 - flow contract;
+- self-drive flow-local sequence snapshot when self-drive is active;
 - optional risky actions;
 - execution log;
 - verification detail;
@@ -41,6 +45,8 @@ Each `001+` flow record owns:
 - residual risk.
 
 Update the flow record after each phase instead of waiting for final completion.
+
+When self-drive is active, the flow record should mirror only flow-local sequence position, local progress note, next handoff, and blocker return condition in the most natural existing section. Do not add a self-drive-only template section by default, and do not duplicate the full sequence contract in every flow record.
 
 ## Flow Types
 

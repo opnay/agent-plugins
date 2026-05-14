@@ -10,6 +10,7 @@
 
 - active turn-gated task마다 `.agents/sessions/{YYYYMMDD}/000-plan.md` 날짜 기준 plan과 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 상세 flow report 체계를 유지한다.
 - `000-plan.md`는 당일 작업의 히스토리, 사용자 요청 목록, flow index, 현재 snapshot, planned flow sequence, 완료 flow 요약을 소유하되 bounded date-level index로 유지한다. 세부 형식은 `templates/plan.md`가 소유한다.
+- self-drive가 active인 경우 `000-plan.md`는 일반 template에 전용 필드를 상시 노출하지 않고 sequence-level note를 소유한다: sequence objective, planned flow list, active flow index, allowed autonomous actions, prohibited autonomous actions, approval-sensitive checkpoints, endpoint, blocker return conditions, progress note.
 - `000-plan.md`는 각 flow의 상세 scope, non-goal, approval boundary, evidence, verification detail을 반복하지 않는다. 필요한 경우 짧은 snapshot만 복사하고, canonical detail은 해당 `001+` flow record가 소유한다.
 - `000-plan.md`의 현재 계획은 action checklist가 아니라 planned flow sequence여야 한다.
 - session record에는 flow type을 구분할 수 있어야 한다: `operational-preparation` 또는 `change-unit`.
@@ -43,6 +44,7 @@
 - flow 기본 템플릿은 `skills/turn-gate/templates/flow-record-template.md`를 사용한다.
 - `000-plan.md` 기본 템플릿은 `skills/turn-gate/templates/plan-template.md`를 사용한다.
 - 최소 flow 기록 항목은 user request message, task, flow type, flow scope, current phase, continuity guard, flow contract, execution log, verification, report, next-flow options, residual risk다. 세부 형식은 `templates/flow.md`가 소유한다.
+- self-drive가 active인 경우 각 flow record는 기본 template에 전용 section을 상시 노출하지 않고, 전체 sequence를 반복하지 않으며, 자기 flow의 sequence position, local progress note, next handoff, blocker return condition만 가장 자연스러운 기존 section에 flow-local snapshot으로 남긴다.
 - 같은 정보를 `000-plan.md`와 flow record에 상세 반복하지 않는다. `000-plan.md`에 복사되는 값은 active snapshot 또는 flow index summary로만 유지한다.
 - 운영 flow가 판단, 설계, 범위 확인에서 끝나는 경우 최소 기록 항목의 `planned flow list`는 `follow-up change-unit candidates`로 대체할 수 있으며, 각 후보에는 후보 type, 예상 산출물, 분리 또는 압축 근거, 예상 검증, user-gated handoff 조건을 남긴다.
 - flow record는 phase 메모가 아니지만, `preparation`, `work`, `verification`, `reporting`, `next-flow` 각 phase가 끝날 때마다 현재 상태로 갱신해야 한다.
@@ -86,6 +88,7 @@
 - 기존 session history를 자동 migration하지 않고 향후 기록에 새 template을 적용하는가?
 - 최종 QA/readiness/reporting만 수행하는 항목이 산출물 변경 없이 flow sequence에 들어가지 않았는가?
 - active flow record가 현재 phase까지 증분 갱신됐는가?
+- self-drive가 active라면 `000-plan.md`가 sequence-level state를 소유하고 active flow record가 flow-local sequence snapshot만 소유하는가?
 - visible choices에 turn-end option이 없어도 record에는 turn-end option이 남았는가?
 - confirmed closure가 있다면 source explicit stop message가 같이 기록돼 있는가?
 - pending 또는 superseded question state가 현재 required next action을 오염시키지 않는가?

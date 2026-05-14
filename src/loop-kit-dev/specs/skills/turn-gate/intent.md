@@ -95,3 +95,16 @@
   - `deep-interview`, `review-loop`, `ralph-loop`, `autopilot`, `commit-readiness-gate` 다섯 가지를 모두 구현한다.
   - 이 상세 spec은 `modes/`가 아니라 `phase-protocols/` 아래에 둔다.
   - runtime reference 파일 이동은 포함하지 않는다.
+
+- self-drive로 긴 planned flow sequence를 이어갈 때 sequence 기록 구조가 명시적이길 원한다.
+  - 다음 flow 후보 질문에서 `Self-drive sequence record`를 1순위 후보로 확인했다.
+    - 다음 flow로 무엇을 진행할까요?
+      - `None of the above`, 추가 메시지: `1순위가 뭐야?`
+    - 이 1순위 후보로 다음 flow를 잠글까요?
+      - `범위 잠금` 선택
+  - self-drive가 active일 때는 sequence objective, planned flow list, active flow index, 허용/금지 autonomous action, approval-sensitive checkpoint, endpoint, blocker return condition, progress note가 기록돼야 한다.
+  - 이 기록은 긴 자율 작업에서 어디까지 왔고, 어디까지 자동 진행 가능한지, 어디서 사용자 승인이나 질문으로 돌아가야 하는지 판단할 수 있어야 한다.
+  - self-drive 전용 기록 필드는 일반 template에 상시 노출하지 않길 원한다.
+    - 다음 flow로 무엇을 진행할까요?
+      - `None of the above`, 추가 메시지: `템플릿에 들어가면, 일반 상황에서도 작성해야된다고 인지할 수 있어서, 스킬의 self-drive.md 로 풀어버리는게 나을거같아.`
+  - 일반 flow template에 self-drive 전용 섹션이 보이면 self-drive가 아닌 상황에서도 작성해야 한다고 오해할 수 있으므로, self-drive 전용 record shape는 runtime `references/self-drive.md`에서 조건부 guidance로 설명해야 한다.

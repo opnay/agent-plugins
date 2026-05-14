@@ -68,6 +68,7 @@ frontmatter에는 다음 필드를 둡니다.
 - plan의 `Required next action`은 active turn routing을 위한 짧은 pointer이며, 상세 blocker/risk 설명을 반복하지 않습니다.
 - plan의 `Explicit Turn-End Option`은 전체 next-flow options가 아니라 사용자가 명시적으로 turn을 끝낼 수 있다는 date-level availability snapshot입니다.
 - 실행이 아니라 판단, 설계, 범위 확인만 수행한 경우에는 `Planned Flow Sequence` 안에 `Follow-up Change-Unit Candidates`로 라벨링된 후보 목록을 둘 수 있습니다. 이 후보는 선택 또는 승인 전까지 active/completed flow로 세지 않습니다.
+- self-drive 전용 record shape는 기본 plan template에 노출하지 않습니다. self-drive가 active인 경우에만 `references/self-drive.md`의 runtime guidance를 따라 `Planned Flow Sequence` 안이나 가까운 별도 note에 sequence objective, planned flow list, active flow index, allowed/prohibited autonomous actions, approval-sensitive checkpoints, endpoint, blocker return conditions, progress note를 짧게 기록합니다.
 - `Flow Index`는 flow당 한 줄 compact entry로 유지합니다. 각 entry는 flow number/path, flow type, current status or phase, verification status, short outcome만 포함합니다.
 - `Completed Flow Summaries`는 삭제하지 않고 모든 completed flow를 one-line summary와 flow record link로 유지합니다.
 - `Planned Flow Sequence`는 current/future selected flow만 담고, completed flow의 stale plan detail을 남기지 않습니다.
@@ -83,5 +84,6 @@ frontmatter에는 다음 필드를 둡니다.
 - planned flow sequence가 phase checklist가 아니라 cohesive flow list인가?
 - planned flow sequence에 completed flow의 stale detail이 남지 않는가?
 - 후속 후보가 planned/active/completed flow와 구분되어 라벨링되는가?
+- self-drive가 active일 때 일반 template field를 억지로 채우는 대신 runtime self-drive reference에 따라 sequence-level state를 plan에 남겼는가?
 - active flow pointer와 required next action이 다음 진행에 충분한가?
 - completed flow summaries가 상세 보고가 아니라 링크 가능한 요약인가?
