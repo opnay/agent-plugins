@@ -69,6 +69,16 @@ The Continuity Guard must track:
 - verification status;
 - continuity note.
 
+`verification status` is the result or lifecycle status, not the method. Use `not-started` or `requested` before verification completes, then `pass`, `fail`, `blocked`, or `insufficient`.
+
+Record the verification method in the `Verification` section as one of `clean-context`, `normal`, or `not-required`. The method is separate from status:
+
+- `clean-context`: bounded read-only verifier subagent.
+- `normal`: same-context verification by command/check, source readback, evidence checklist, log review, or logical counterexample review.
+- `not-required`: no work output required separate verification; record the reason, no-output rationale or existing evidence, and residual uncertainty.
+
+Do not treat `not-required` as a pass. Do not use it for file changes, release surfaces, multi-file contracts, previous failed checks, user-requested verification, or approval-sensitive actions.
+
 Only a source-recorded explicit stop can make terminal summary allowed. If closure source is missing or stale, reset `user explicit stop` to `no`, reset `terminal summary allowed` to `no`, and note the stale closure.
 
 If records are inaccessible, report a blocker. Do not silently reconstruct records or treat missing state as permission to close.

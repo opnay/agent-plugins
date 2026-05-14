@@ -14,6 +14,8 @@
 ## 사용자 메시지의 의미
 
 - 실행 의도는 분명합니다.
+- expected task tier: `multi-flow`
+- expected verification method: `clean-context`
 - 하지만 다음 항목에 따라 산출물과 검증 경로가 달라질 수 있습니다.
   - 정적 로그인 화면만 만들지
   - 실제 인증 API 연동까지 포함할지

@@ -15,6 +15,8 @@
 ## 사용자 메시지의 의미
 
 - 직접 요청된 변경: 로그인 버튼의 표시 문구 수정.
+- expected task tier: `single-flow`
+- expected verification method: `clean-context`
 - 후속 실행 후보: 버튼 문구가 정의된 component 또는 locale/resource entry 수정.
 - 사용자가 아직 말하지 않은 것:
   - 버튼 문구가 여러 화면에 재사용되는지

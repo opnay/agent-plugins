@@ -48,14 +48,14 @@
 - `core/skill-contents.md`: runtime `SKILL.md` body의 필수 구성과 content boundary
 - `phases/preparation.md`: work 전 intent, scope, non-goal, approval boundary, verification expectation 정렬
 - `phases/work.md`: active flow 안에서 실제 작업을 수행하기 위한 work phase 계약
-- `phases/verification.md`: work 이후 clean-context verification과 non-pass 처리로 이어지는 verification phase 계약
+- `phases/verification.md`: work 이후 risk-based verification method 선택과 non-pass 처리로 이어지는 verification phase 계약
 - `phases/reporting.md`: terminal close가 아니라 next-flow context를 정리하는 reporting phase 계약
 - `phases/next-flow.md`: explicit stop 확인과 다음 flow reopening을 수행하는 next-flow phase 계약
 - `core/flow-boundaries.md`: `operational-preparation`, `change-unit`, planned flow boundary, 후속 후보와 active execution flow 구분
 - `gates/internal-gates.md`: internal gate model overview and gate detail map
 - `gates/flow-shaping.md`: active flow shaping, follow-up candidate separation, completion criteria
 - `gates/task-policy.md`: flow-local task sequencing, local references, target rereads, command/edit/build/test policy
-- `gates/verification.md`: minimum-sufficient verification packet construction and pass/fail/blocked/insufficient routing
+- `gates/verification.md`: verification method selection, minimum-sufficient evidence or packet construction, and pass/fail/blocked/insufficient routing
 - `gates/reporting.md`: result reporting as continuity context
 - `core/meaning-resolution.md`: operation/target ambiguity, provenance/intent block target locking, user-gated clarification
 - `modes/default.md`: implicit default operating state 계약
@@ -66,7 +66,7 @@
 - `phase-protocols/autopilot.md`: locked-scope end-to-end execution protocol 계약
 - `phase-protocols/commit-readiness-gate.md`: commit readiness judgment protocol 계약
 - `core/approval-boundary.md`: destructive, irreversible, external-action, commit/publish approval boundary
-- `records/verification.md`: mandatory clean-context subagent verification, minimum-sufficient packet sizing, and non-pass handling
+- `records/verification.md`: risk-based verification method, minimum-sufficient evidence or packet sizing, and non-pass handling
 - `records/question-routing.md`: `request_user_input`, next-flow reopening, fallback, visible/recorded turn-end option
 - `records/session-records.md`: `000-plan.md`, `001+` flow records, Continuity Guard, templates, `Next Flow Options`
 - `templates/plan.md`: `000-plan.md` template structure, date-level snapshot/index ownership, plan/flow deduplication
@@ -84,7 +84,7 @@
 - phase 시작 사용자-facing 메시지의 `[<phase-name>(/<phase-protocol>)]` prefix 계약은 `core/runtime-flow.md`와 `core/skill-contents.md`가 소유한다.
 - phase 내부 세부 계약은 `phases/*` spec이 소유하고, internal gate 세부 계약은 `gates/*` spec이 소유한다.
 - session record와 Continuity Guard 계약은 `records/session-records.md`가 소유한다.
-- clean-context verification 계약은 `records/verification.md`가 소유한다.
+- risk-based verification method 계약은 `records/verification.md`가 소유한다.
 
 ## 검토 질문
 

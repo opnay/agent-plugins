@@ -43,7 +43,7 @@ When you tell the user that a phase is starting, start that user-facing message 
 - Canonical phase labels are `preparation`, `work`, `verification`, `reporting`, and `next-flow`.
 - The `(/<phase-protocol>)` segment is optional notation. In actual output, use a slash suffix when a phase protocol is active and do not print literal parentheses.
 - Valid examples include `[preparation]`, `[work]`, `[verification]`, `[reporting]`, `[next-flow]`, `[preparation/deep-interview]`, `[work/ralph-loop]`, `[verification/review-loop]`, and `[reporting/commit-readiness-gate]`.
-- Apply the prefix to phase-start messages, not to every command summary, artifact body, flow record line, or question option.
+- Apply the prefix to phase-start messages, not to every command summary, artifact body, flow record line, command output summary, or question option.
 - For activation-only requests with no concrete task, start with `[preparation]` for scope setup. Use `[next-flow]` only when opening actual next-flow choices.
 - For status questions, use the current active phase. During work, this is usually `[work]`.
 - For session-record access blockers, use the phase where the blocker was found, usually `[reporting]` or `[next-flow]`.
@@ -58,11 +58,11 @@ Before work, lock the active flow enough to execute safely:
 - operation and target meaning when user wording can point to multiple files, surfaces, phases, routing rules, or ownership changes;
 - whether this is an `operational-preparation` flow or a `change-unit` flow.
 
-Use user-gated question routing when scope is empty, too broad, ambiguous, or likely to change the output or verification path. Prefer `request_user_input` for bounded choices.
+Use deep-interview, flow list design, meaning resolution, current-state inspection, target reread, and scope lock as preparation techniques. Ask before work when scope is empty, too broad, ambiguous, likely to create multiple outputs, or likely to change the verification path. Prefer `request_user_input` for bounded choices.
 
 If you infer scope without asking, still record the work boundary and non-goals in the flow record. If the current work is interpreting a request, designing a planned flow list, or collecting approvals, treat that as an `operational-preparation` flow and keep follow-up `change-unit` candidates separate from active execution.
 
-For approval-sensitive actions, record exact target, expected effect, risk, rollback or recovery path, included and excluded scope, and end point before execution. Readiness reporting is evidence only; it is not authority to stage, commit, push, open a PR, publish, release, bump a version, or run any other external action.
+For approval-sensitive actions, record exact target, expected effect, risk, rollback or recovery path, included and excluded scope, and end point before execution. Readiness reporting, self-drive, closure wording, and next-flow routing are not authority to stage, commit, push, open a PR, publish, release, bump a version, or run any other destructive or external action.
 
 When meaningful work starts, keep the visible task plan current with `update_plan`.
 
@@ -72,15 +72,27 @@ Work only inside the active flow boundary. A flow is a cohesive reviewable or co
 
 Before work, select the needed phase protocol from `references/phase-protocols.md`. Use the earliest blocker as the routing basis. If no protocol applies, stay in the default operating state without a protocol suffix.
 
-Keep follow-up candidates, broader refactors, and new approval-sensitive work out of the active flow unless the user explicitly selects or approves them.
+Keep follow-up candidates, broader refactors, unrelated plugins, and new approval-sensitive work out of the active flow unless the user explicitly selects or approves them.
 
-## Verification
+## Verification Method
 
-After work and before reporting, perform clean-context verification with a bounded read-only verifier subagent unless the task is blocked before verification.
+After work and before reporting, choose one verification method and keep it separate from result status.
 
-Clean context means a bounded verification packet, not a full-history fork. The verifier packet must be minimum-sufficient for the current flow's verification expectation, work risk, and evidence already captured.
+- `clean-context`: a bounded read-only verifier subagent checks the flow from an independent packet. This is not a full-history fork.
+- `normal`: the main agent verifies in the same context using commands/checks, source readback, evidence checklists, log review, and logical counterexample review.
+- `not-required`: no separate verification action is needed because there is no work output to verify. This is a method judgment, not a successful result.
 
-The verifier packet must include:
+Use `clean-context` by default for file changes, release surfaces, manifests, templates, scenario fixtures, build output, multi-file contracts, previous failed checks, user-requested verification/review/QA/commit-readiness, and destructive, irreversible, external, commit, push, PR, publish, release, or version-bump preparation or execution.
+
+Use `normal` for lower-risk no-edit or read-only work, single state checks, narrow explanations, already-evidenced work, or cases where command/check/source readback and logical review are enough. Record why `clean-context` was not needed and what uncertainty remains.
+
+Use `not-required` only for blocker-before-work, activation-only, next-flow selection, scope routing, or no-output routing cases. Record the omission reason, already-known evidence or no-output rationale, and residual uncertainty. Do not use `not-required` for file changes, release surfaces, multi-file contracts, failed checks, user-requested verification, or approval-sensitive actions.
+
+Result status is separate from method. Use `pass`, `fail`, `blocked`, or `insufficient` after verification; lifecycle records may also use `not-started` or `requested` before final result. Never treat `not-required`, `blocked`, `fail`, or `insufficient` as automatic pass.
+
+## Clean-Context Packet
+
+Clean-context verification is pre-authorized only within a read-only verification boundary. The verifier packet must include:
 
 - verifier identity or request id;
 - verification target and expected user intent;
@@ -91,18 +103,22 @@ The verifier packet must include:
 - no edit permission, no scope expansion, no destructive or external actions, and no commit/push/PR/publish/release/version-bump authority;
 - stop condition.
 
-Do not automatically ask the verifier to rerun the same command or check when the same evidence was already captured during work and is complete, current, and tied to the final changed state. In that case, ask the verifier to read back the recorded evidence first and only request rerun or blocker reporting if the evidence is stale, incomplete, suspicious, or misses a changed path.
+Do not automatically ask the verifier to rerun the same command or check when the same evidence was already captured during work and is complete, current, and tied to the final changed state. Ask the verifier to read back recorded evidence first and request rerun or blocker reporting only when evidence is stale, incomplete, suspicious, or misses a changed path.
 
-For report-only work with no file changes, focus the verifier on source/evidence readback, logical counterexamples, user-intent fit, and missing-risk checks instead of unnecessary command execution.
+If a verifier would need edit permission, scope expansion, destructive/external action, or commit/push/PR/publish/release/version-bump authority, stop and route to a user-gated question.
 
-Treat verifier results as `pass`, `fail`, `blocked`, or `insufficient`. Do not report `fail`, `blocked`, or `insufficient` as successful completion. Route non-pass results to the earliest safe phase or to user-gated blocker handling.
+## Result Handling
+
+Do not report `fail`, `blocked`, or `insufficient` as successful completion. Return to the earliest safe phase for repair, or open a user-gated blocker when verification cannot be completed.
+
+For report-only work with no file changes, `normal` verification may focus on source/evidence readback, logical counterexamples, user-intent fit, and missing-risk checks instead of unnecessary command execution.
 
 ## Reporting
 
 Reporting is continuity context for the next flow, not a terminal close. Report:
 
 - what was prepared, changed, checked, or decided;
-- verification status and evidence;
+- verification method, status, and evidence;
 - material judgment calls that affected routing or phase selection;
 - residual uncertainty, blockers, and risks;
 - changed surfaces when applicable.

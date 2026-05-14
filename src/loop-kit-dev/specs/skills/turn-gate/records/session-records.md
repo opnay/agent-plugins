@@ -54,7 +54,8 @@
 - explicit stop이 확인된 경우에만 `confirmed closure`를 기록한다. 이때 closure source message와 closure recorded phase를 함께 기록해야 하며, source 없는 closure 기록은 stale state로 취급한다.
 - pending 또는 superseded question이 있으면 guard에 pending question state, question id 또는 요약, superseded 여부를 기록한다.
 - verification이 필요한 flow에서는 guard 또는 verification section에 verification status를 `not-started`, `requested`, `pass`, `fail`, `blocked`, `insufficient` 중 하나로 남긴다.
-- verification 상세 근거와 command/evidence 목록은 verification section이 소유하고, guard에는 현재 status만 둔다.
+- verification method는 `clean-context`, `normal`, `not-required` 중 하나로 verification section에 남긴다. method는 status가 아니므로 `verification_status` frontmatter 값으로 쓰지 않는다.
+- verification 상세 근거, command/evidence 목록, verifier id, not-required reason, residual uncertainty는 verification section이 소유하고, guard에는 현재 status만 둔다.
 - result reporting과 next-flow reopening 전에는 active flow record의 `Continuity Guard`를 먼저 읽는다.
 - 기록이 없을 때만 재구성하고, 재구성한 guard는 가능한 즉시 flow record에 다시 쓴다.
 - 기록이 접근 불가인 경우 missing record처럼 조용히 재구성하지 않는다. 접근 실패를 blocker로 보고하고, 접근이 복구되거나 user-gated decision이 있을 때까지 terminal summary 허용 근거로 삼지 않는다.

@@ -19,7 +19,7 @@
   "interface": {
     "displayName": "Loop Kit",
     "shortDescription": "Turn-gated continuity with execution, refinement, review, and readiness phase protocols driven from one main surface.",
-    "longDescription": "Provides a narrow operational plugin where turn-gate is the main user-facing surface. It keeps one turn alive until the user explicitly ends the work, runs each flow through preparation, work, verification, and reporting, records initial preparation and planned-flow design as an operational-preparation flow when it owns session plan, flow-list, scope, or approval-boundary artifacts, and treats execution planned flows as cohesive reviewable or commit-sized change units rather than phase checklists. Self-drive is a separate overlay reference for prepared autonomous sequences.",
+    "longDescription": "Provides a narrow operational plugin where turn-gate is the main user-facing surface. It keeps one turn alive until the user explicitly ends the work, runs each flow through preparation, work, verification, reporting, and next-flow reopening, records initial preparation and planned-flow design as an operational-preparation flow when it owns session plan, flow-list, scope, or approval-boundary artifacts, treats execution planned flows as cohesive reviewable or commit-sized change units rather than phase checklists, and chooses verification method as clean-context, normal, or not-required based on work risk. Self-drive is a separate overlay reference for prepared autonomous sequences.",
     "developerName": "opnay",
     "category": "Productivity",
     "capabilities": [
@@ -28,19 +28,14 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Keep this turn alive until I explicitly stop and reopen the next flow with explicit choices.",
-      "Run each turn-gated flow as preparation, work, verification, and reporting.",
+      "Keep this turn alive until I explicitly stop; after reporting, reopen next-flow with explicit choices unless closure is source-recorded.",
+      "Run each turn-gated flow through preparation, work, verification, reporting, and next-flow reopening.",
       "Treat planned flows as cohesive reviewable or commit-sized change units, not analysis/work/verification phase slices and not only direct user-visible value.",
-      "Keep pure final QA, consistency checks, verification-result reporting, and commit-readiness reporting out of the planned flow list unless they own a distinct artifact/change unit.",
-      "For initial preparation, use deep-interview alignment and turn the result into a planned flow list before execution.",
-      "Treat initial preparation and planned-flow design as an operational-preparation flow when it owns session plan, flow-list, scope, or approval-boundary artifacts.",
-      "Collect enough information during initial preparation to execute planned flows with clear boundaries, non-goals, verification expectations, expected risky actions, and user-gated approval checkpoints.",
-      "For existing-flow preparation, inspect scope, current state, target files, and verification expectations before work.",
-      "Use turn-gate as the main controller and choose the right phase protocol for the current phase.",
-      "Handle this as a turn-gated loop where refinement, review, and readiness are phase protocols for the current phase.",
-      "Keep turn-gate's loop contract independent from self-drive overlay behavior.",
-      "When a prepared sequence explicitly uses self-drive, apply the self-drive overlay contract instead of repeating its conditions in turn-gate.",
-      "Do not expose direct loop entrypoints; drive the work through turn-gate."
+      "Classify verification method as clean-context, normal, or not-required while keeping result status separate as pass, fail, blocked, or insufficient.",
+      "Use clean-context verifier by default for file changes, release surfaces, multi-file contracts, failed checks, user-requested verification, and approval-sensitive actions.",
+      "Use normal evidence checks only for lower-risk no-edit/read-only work, and use not-required only when there is no work output to verify; always record reason and residual uncertainty.",
+      "Never infer approval for destructive, external, commit, push, PR, publish, release, or version bump actions from readiness, self-drive, verification method, or prior context.",
+      "Use turn-gate as the main controller, choose the current phase protocol as needed, and keep self-drive as a separate overlay for explicitly prepared autonomous sequences."
     ],
     "brandColor": "#1D6E6E"
   }

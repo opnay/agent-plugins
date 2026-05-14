@@ -14,6 +14,8 @@
 ## 사용자 메시지의 의미
 
 - 직접 요청된 작업: 현재 승인된 변경 범위를 커밋한다.
+- expected task tier: `approval-sensitive`
+- expected verification method: `clean-context`
 - 커밋 전 필요한 것:
   - staged/final status 확인
   - intended diff 확인

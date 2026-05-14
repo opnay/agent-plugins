@@ -82,7 +82,10 @@
 
 ## Verification Content
 
-- skill body에는 clean-context verification이 full-history fork가 아니라 bounded verification packet이라는 점이 직접 남아 있어야 한다.
+- skill body에는 verification method가 `clean-context`, `normal`, `not-required`로 나뉘며 method와 result status를 섞지 않는다는 점이 직접 남아 있어야 한다.
+- skill body에는 `clean-context` verification이 full-history fork가 아니라 bounded verification packet이라는 점이 직접 남아 있어야 한다.
+- skill body에는 파일 변경, release surface, 다중 파일 계약, 실패 이력, 사용자 요청 검증, approval-sensitive action에서는 `clean-context`가 기본값이라는 점이 직접 남아 있어야 한다.
+- skill body에는 `not-required`가 검증 성공 상태가 아니라 method 판단이며 reason과 residual uncertainty를 기록해야 한다는 점이 직접 남아 있어야 한다.
 - skill body에는 실패, 차단, 불충분 검증을 통과로 취급하지 않는 규칙이 직접 남아 있어야 한다.
 - skill body는 verifier packet에 필요한 최소 정보, edit permission 없음, scope expansion 금지, destructive/external work 금지, commit/push/PR/publish/release/version bump 금지를 설명해야 한다.
 

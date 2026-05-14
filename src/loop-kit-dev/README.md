@@ -70,7 +70,8 @@ codex plugin marketplace upgrade
 - 이미 선택된 flow에서는 수정 범위, 현재 상태, 대상 파일, 검증 조건을 먼저 확인해야 하는 작업
 - 실행, 정제, 리뷰 처리, 커밋 준비 loop를 하나의 controller 안에서 골라야 하는 작업
 - 사용자 선택이 필요한 지점에서는 질문 도구를 써야 하는 작업
-- 읽기 전용 clean-context verifier subagent를 flow 검증 단계의 일부로 안정적으로 사용해야 하는 작업
+- 작업 위험도에 따라 `clean-context`, `normal`, `not-required` verification method를 구분해야 하는 작업
+- 파일 변경, release surface, 다중 파일 계약, 실패 이력, approval-sensitive action에서는 clean-context verifier를 기본값으로 유지해야 하는 작업
 - 필요하면 self-drive overlay로 bounded decision을 subagent question packet에 라우팅해야 하는 작업
 
 ## 엔트리포인트
@@ -86,7 +87,7 @@ codex plugin marketplace upgrade
 
 1. 준비: 초기 요청은 deep-interview alignment와 flow list로 정렬하고, 이미 선택된 flow는 현재 상태와 작업 범위를 확인합니다.
 2. 작업: 현재 flow가 소유한 실제 작업을 수행합니다.
-3. 검증: 읽기 전용 bounded verifier subagent가 수정 결과, 타입/테스트/파싱 신호, 또는 조사 결과의 논리적 취약점을 확인합니다.
+3. 검증: 작업 위험도에 맞춰 `clean-context`, `normal`, `not-required` method 중 하나로 검증합니다.
 4. 보고: 이번 flow의 맥락을 정리하고 다음 flow 선택지를 명시적으로 다시 엽니다.
 5. 사용자가 종료를 요청하지 않으면 다음 flow의 준비로 계속 진행합니다.
 
@@ -96,6 +97,18 @@ flow를 나눌 때는 독립적으로 이해하고 리뷰하고 검증하고 커
 단, 초기 의도 정렬을 통해 planned flow list를 만드는 앞단은 운영 flow로 기록할 수 있으며, 이 운영 flow는 실제 제품 변경 flow와 섞지 않습니다.
 
 저장소가 해당 운영 방식을 사용한다면 `.agents/sessions/{YYYYMMDD}/` 아래에 세션 기록도 유지합니다.
+
+## 검증 방식
+
+`turn-gate`는 검증 결과 상태와 검증 방법을 구분합니다.
+결과 상태는 `pass`, `fail`, `blocked`, `insufficient`처럼 보고 가능 여부를 나타냅니다.
+검증 방법은 아래 셋 중 하나입니다.
+
+- `clean-context`: 읽기 전용 bounded verifier subagent가 독립 context에서 검증합니다. 파일 변경, release surface, manifest/template/scenario fixture/build output, 여러 파일 사이 계약, 실패 이력, 사용자 요청 검증, approval-sensitive action에서는 기본값입니다.
+- `normal`: 낮은 위험의 no-edit/read-only 작업에서 command/check, source readback, evidence checklist, 논리 반례 검토를 같은 context에서 수행하고 근거를 기록합니다.
+- `not-required`: activation-only, next-flow selection, blocker-before-work처럼 검증할 work output이 없을 때만 사용합니다. 이 경우에도 이유와 남은 불확실성을 기록합니다.
+
+`not-required`는 성공 상태가 아니며, commit/push/PR/publish/release/version bump 같은 승인 민감 작업을 경량화하지 않습니다.
 
 ## Phase Protocol
 
@@ -143,4 +156,4 @@ loop-kit-dev/
 
 `loop-kit-dev`은 의도적으로 작은 플러그인입니다.
 broader workflow taxonomy, domain-specific implementation guidance, 무관한 agent utility를 소유하지 않습니다.
-이 플러그인의 책임은 turn continuity, phase protocol 선택, 결과 보고 전 검증, 명시적 next-flow reopening입니다.
+이 플러그인의 책임은 turn continuity, phase protocol 선택, risk-based verification method, 결과 보고 전 검증 판단, 명시적 next-flow reopening입니다.

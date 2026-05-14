@@ -62,10 +62,12 @@ Status: not-applicable
 ## Verification
 
 - Status: not-started
-- Verifier:
-- Packet:
+- Method:
+- Verifier: not-used
+- Reason:
 - Checks:
 - Evidence:
+- Residual uncertainty:
 - Result:
 
 ## Report

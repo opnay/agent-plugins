@@ -15,6 +15,8 @@
 ## 사용자 메시지의 의미
 
 - 직접 요청된 변경: 필터 변경 뒤 목록이 최신 결과로 갱신되도록 수정.
+- expected task tier: `single-flow` 또는 regression coverage가 분리될 경우 `multi-flow`
+- expected verification method: `clean-context`
 - 후속 실행 후보:
   - stale list 원인 확인과 최소 수정
   - 필요할 경우 cache invalidation, query key, state reset, fetch trigger 중 실제 원인에 해당하는 변경
