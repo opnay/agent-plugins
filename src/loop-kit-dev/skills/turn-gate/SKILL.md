@@ -7,24 +7,25 @@ description: Keep a Codex turn open across preparation, work, verification, repo
 
 ## Important
 
-When this skill is active, treat it as a conversation-level operating rule for the whole session. Do not close with a terminal summary after result reporting unless the current user message, or a flow record tied to that exact source message, explicitly ends the turn.
+When this skill is active, treat it as a conversation-level operating rule for the whole session. The response loop itself is controlled by `turn-gate`; it is not an internal checklist that can be skipped after a task looks finished.
 
-Required ending states are one of:
+Do not close with a terminal summary after result reporting unless the current user message, or a source-recorded explicit stop in the active flow record that matches the current message, explicitly ends the turn.
 
-- continue into the next flow through active question routing;
-- return to preparation because scope, target, approval boundary, or verification expectation is not locked;
-- report a blocker and ask for a user-gated decision;
-- close only when a source-recorded explicit stop says to end this turn.
+Every assistant response while this skill is active must end in one of these states:
 
-After result reporting, enter `next-flow` unless explicit stop is confirmed. Use `request_user_input` for next-flow reopening whenever bounded choices are available. If the tool is unavailable, leave an active plain-text question and record the required next action.
+- loop continuation into the next phase or next flow;
+- user-gated question routing for scope, target, approval boundary, blocker, or next-flow selection;
+- explicit stop closure, only when a source-recorded user stop allows terminal summary.
 
-Maintain `.agents/sessions/{YYYYMMDD}/000-plan.md` and `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` while a turn-gated task is active. Refresh the active flow record's Continuity Guard before reporting and before next-flow reopening.
+Use the question tool for bounded choices, scope locks, approval checkpoints, blocker decisions, and next-flow selection whenever it is available. Use the plan tool once meaningful work starts and keep it aligned with the current phase.
 
-Use only runtime files bundled with this skill during execution, such as `references/*` and `templates/*`. Do not depend on development specs being available at runtime.
+Maintain session records under `.agents/sessions/{YYYYMMDD}/` for active turn-gated work. Refresh the active flow record's Continuity Guard before reporting and before next-flow reopening.
+
+Use only runtime files bundled with this skill, such as `references/*` and `templates/*`. Do not depend on development specs or repository-only spec paths being available at runtime.
 
 ## Operating Cycle
 
-Run each active flow through:
+Run each active flow through this order:
 
 1. preparation
 2. work
@@ -32,16 +33,18 @@ Run each active flow through:
 4. reporting
 5. next-flow
 
-Activation without a concrete task opens scope setup or next-flow selection; it does not end with an activation summary. Individual task completion does not complete the flow or permit turn closure by itself.
+Activation without a concrete task opens scope setup or next-flow selection. It does not end with an activation summary.
 
-`turn-gate` normally runs in an implicit default operating state. Phase protocols shape the current phase; they are not standalone modes. Before meaningful work, choose the current phase protocol from `references/phase-protocols.md`. If the user explicitly asks for autonomous continuation across a prepared flow sequence, read `references/self-drive.md`; that reference owns the self-drive overlay's continuation rules.
+Individual task completion does not complete the flow, skip reporting, skip next-flow, or permit turn closure by itself. A flow is complete only when its completion criteria, verification expectation, reporting, and continuation state are handled.
+
+`turn-gate` normally runs in an implicit default operating state. Phase protocols shape how the current phase runs; they are not standalone modes. Before meaningful work, choose the current phase protocol from `references/phase-protocols.md`. If the user explicitly asks for autonomous continuation across a prepared planned flow sequence, read `references/self-drive.md`; that reference owns the self-drive overlay's continuation rules.
 
 ## Phase Start Prefix
 
-When you tell the user that a phase is starting, start that user-facing message with `[<phase-name>(/<phase-protocol>)]`.
+When a user-facing message starts a phase or announces phase progress, begin it with `[<phase-name>(/<phase-protocol>)]`.
 
 - Canonical phase labels are `preparation`, `work`, `verification`, `reporting`, and `next-flow`.
-- The `(/<phase-protocol>)` segment is optional notation. In actual output, use a slash suffix when a phase protocol is active and do not print literal parentheses.
+- The `(/<phase-protocol>)` segment is notation only. In actual output, use a slash suffix when a phase protocol is active and do not print literal parentheses.
 - Valid examples include `[preparation]`, `[work]`, `[verification]`, `[reporting]`, `[next-flow]`, `[preparation/deep-interview]`, `[work/ralph-loop]`, `[verification/review-loop]`, and `[reporting/commit-readiness-gate]`.
 - Apply the prefix to phase-start messages, not to every command summary, artifact body, flow record line, command output summary, or question option.
 - For activation-only requests with no concrete task, start with `[preparation]` for scope setup. Use `[next-flow]` only when opening actual next-flow choices.
@@ -55,16 +58,16 @@ Before work, lock the active flow enough to execute safely:
 
 - intent, scope, non-goals, acceptance signal, and verification expectation;
 - approval boundary for destructive, irreversible, external, commit, push, PR, publish, release, or version-bump actions;
-- operation and target meaning when user wording can point to multiple files, surfaces, phases, routing rules, or ownership changes;
+- operation and target meaning when user wording can point to multiple files, surfaces, phases, routing rules, ownership changes, or provenance/intent blocks;
 - whether this is an `operational-preparation` flow or a `change-unit` flow.
 
-Use deep-interview, flow list design, meaning resolution, current-state inspection, target reread, and scope lock as preparation techniques. Ask before work when scope is empty, too broad, ambiguous, likely to create multiple outputs, or likely to change the verification path. Prefer `request_user_input` for bounded choices.
+Use deep-interview, flow list design, meaning resolution, current-state inspection, target reread, and scope lock as preparation techniques. Ask before work when scope is empty, too broad, ambiguous, likely to create multiple outputs, or likely to change the verification path. Prefer the question tool for bounded choices.
 
-If you infer scope without asking, still record the work boundary and non-goals in the flow record. If the current work is interpreting a request, designing a planned flow list, or collecting approvals, treat that as an `operational-preparation` flow and keep follow-up `change-unit` candidates separate from active execution.
+If you infer scope without asking, record the work boundary and non-goals in the flow record. If the current work is interpreting a request, designing a planned flow list, or collecting approvals, treat it as an `operational-preparation` flow and keep follow-up `change-unit` candidates separate from active execution.
 
-For approval-sensitive actions, record exact target, expected effect, risk, rollback or recovery path, included and excluded scope, and end point before execution. Readiness reporting, self-drive, closure wording, and next-flow routing are not authority to stage, commit, push, open a PR, publish, release, bump a version, or run any other destructive or external action.
+For approval-sensitive actions, record exact action, target, expected effect, risk, rollback or recovery path, included scope, excluded scope, and end point before execution. Meaning resolution, readiness reporting, self-drive, closure wording, and next-flow routing are not authority to stage, commit, push, open a PR, publish, release, bump a version, or run any destructive or external action.
 
-When meaningful work starts, keep the visible task plan current with `update_plan`.
+Approval-sensitive execution is allowed only when the exact boundary is already source-recorded or the user grants it through a user-gated approval checkpoint. If the boundary is missing or ambiguous, do not proceed to work; route to a question.
 
 ## Work
 
@@ -73,6 +76,8 @@ Work only inside the active flow boundary. A flow is a cohesive reviewable or co
 Before work, select the needed phase protocol from `references/phase-protocols.md`. Use the earliest blocker as the routing basis. If no protocol applies, stay in the default operating state without a protocol suffix.
 
 Keep follow-up candidates, broader refactors, unrelated plugins, and new approval-sensitive work out of the active flow unless the user explicitly selects or approves them.
+
+Task policy is flow-local. It can choose commands, edits, builds, tests, local references, target rereads, and handoffs inside the selected flow, but it cannot redefine the flow boundary, skip verification, skip reporting, skip next-flow reopening, or decide turn closure.
 
 ## Verification Method
 
@@ -129,16 +134,26 @@ Before reporting, refresh the active flow record and Continuity Guard. Terminal 
 
 After reporting, enter `next-flow` unless explicit stop is confirmed.
 
-Use `request_user_input` for narrow choices connected to the result just reported. Include the next useful flow options, blocker choices, or scope decisions. If visible choices cannot include a turn-end option, still state that the user can explicitly stop the turn and record an explicit turn-end option in the flow record.
+Use the question tool for narrow choices connected to the result just reported. Include the next useful flow options, blocker choices, or scope decisions. If visible choices cannot include a turn-end option, still state that the user can explicitly stop the turn and record an explicit turn-end option in the flow record.
 
-If `request_user_input` is unavailable, ask a plain-text active question, state that the tool was unavailable, and record the open choices and required next action.
+If the question tool is unavailable, ask a plain-text active question, state that the tool was unavailable, and record the open choices and required next action.
+
+Next-flow terminal closure is valid only when explicit stop is source-recorded. A stale `confirmed_closure`, a source-less closure, a completed task, or an inactive self-drive sidecar is not terminal closure authority.
 
 ## Records And Templates
 
 Use these bundled resources when session records are needed:
 
-- `references/session-records.md` for record ownership, Continuity Guard, and next-flow option rules.
+- `references/session-records.md` for record ownership, Continuity Guard, stale sidecar handling, and next-flow option rules.
+- `references/self-drive.md` for autonomous continuation across a prepared flow sequence.
 - `templates/plan-template.md` for `.agents/sessions/{YYYYMMDD}/000-plan.md`.
+- `templates/self-drive-template.md` for `.agents/sessions/{YYYYMMDD}/000-self-drive.md` when self-drive is active.
 - `templates/flow-record-template.md` for `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`.
+
+`000-plan.md` is a date-level bounded plan and routing snapshot. It may contain a general `Planned Flow Sequence` as a date-level routing snapshot, but it does not own self-drive sequence-level state. When self-drive is active, `000-plan.md` owns only `self_drive_status` and `self_drive_record` as self-drive-specific fields.
+
+`000-self-drive.md` owns self-drive sequence-level state: sequence objective, planned flow list, 0-based `active_flow_index`, human-readable current flow label, autonomous boundaries, approval-sensitive checkpoints, endpoint, blocker return conditions, and progress ledger.
+
+Each `001+` flow record owns flow-local detail. When self-drive is active, the flow record records only flow-local sequence position, local progress note, next handoff, and blocker return condition in an existing section. It must not repeat the full self-drive sequence contract.
 
 Do not silently reconstruct inaccessible records. Report record access failure as a blocker and do not use missing or stale closure state as a reason to close the turn.

@@ -17,6 +17,8 @@
 - expected task tier: `multi-flow`
 - expected verification method: `clean-context`
 - 필요한 준비:
+  - `000-plan.md`의 self-drive active 여부와 sidecar pointer
+  - `000-self-drive.md`
   - sequence objective
   - planned flow list
   - active flow index
@@ -32,10 +34,12 @@
 - Flow type: `operational-preparation`
 - 목적: self-drive 적용 전 planned flow sequence와 approval boundary를 잠근다.
 - 소유 산출물:
-  - `000-plan.md`의 sequence-level note
+  - `000-plan.md`의 self-drive active status와 `000-self-drive.md` pointer
+  - `000-self-drive.md`의 sequence-level state
   - active flow record의 scope, non-goals, approval boundary, verification expectation
 - 완료 기준:
-  - `000-plan.md`에 sequence objective, planned flow list, active flow index, allowed/prohibited autonomous actions, approval-sensitive checkpoints, endpoint, blocker return conditions, progress note가 기록된다.
+  - `000-plan.md`는 self-drive active 여부와 sidecar pointer만 기록한다.
+  - `000-self-drive.md`에 sequence objective, planned flow list, active flow index, allowed/prohibited autonomous actions, approval-sensitive checkpoints, endpoint, blocker return conditions, progress note가 기록된다.
   - active flow record에는 전체 sequence를 반복하지 않고 현재 flow의 sequence position, local progress note, next handoff, blocker return condition만 기록된다.
 
 ## 기대하는 Change-Unit Planned Flows
@@ -76,7 +80,8 @@
 ## 평가 관점
 
 - self-drive 적용 전 sequence objective와 planned flow list를 기록한다.
-- `000-plan.md`가 sequence-level state를 소유하되, 일반 template에 self-drive 전용 필드를 상시 노출하지 않는다.
+- `000-plan.md`는 sequence-level state를 소유하지 않고 self-drive active 여부와 `000-self-drive.md` pointer만 소유한다.
+- `000-self-drive.md`가 sequence-level state를 소유하되, 일반 template에 self-drive 전용 필드를 상시 노출하지 않는다.
 - flow record가 전체 sequence를 반복하지 않고 flow-local snapshot만 남긴다.
 - allowed autonomous actions와 prohibited autonomous actions를 구분한다.
 - commit, push, PR, publish, release, version bump는 명시 approval 없이는 prohibited 또는 checkpoint로 남긴다.

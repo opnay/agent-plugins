@@ -108,3 +108,7 @@
     - 다음 flow로 무엇을 진행할까요?
       - `None of the above`, 추가 메시지: `템플릿에 들어가면, 일반 상황에서도 작성해야된다고 인지할 수 있어서, 스킬의 self-drive.md 로 풀어버리는게 나을거같아.`
   - 일반 flow template에 self-drive 전용 섹션이 보이면 self-drive가 아닌 상황에서도 작성해야 한다고 오해할 수 있으므로, self-drive 전용 record shape는 runtime `references/self-drive.md`에서 조건부 guidance로 설명해야 한다.
+  - `000-plan.md`와 같은 000-level 위계에 `000-self-drive.md` 보조 record를 두는 방식을 원한다.
+    - 이 `같은 위계`는 `000-plan.md`가 sequence detail을 소유한다는 뜻이 아니다.
+    - `000-plan.md`는 self-drive 사용 여부와 `000-self-drive.md` pointer만 판단한다.
+    - `000-self-drive.md`는 self-drive sequence state를 보조로 소유한다.

@@ -5,9 +5,10 @@ Maintain records under `.agents/sessions/{YYYYMMDD}/` for active turn-gated task
 Use:
 
 - `000-plan.md` as the date-level bounded plan, flow index, and current routing snapshot;
+- `000-self-drive.md` as the optional same-level self-drive sidecar record, created only while self-drive is active;
 - `{count-pad3}-{eng-lower-slug}.md` as the canonical detail record for one flow.
 
-Use `templates/plan-template.md` and `templates/flow-record-template.md` as starting structures.
+Use `templates/plan-template.md`, `templates/self-drive-template.md`, and `templates/flow-record-template.md` as starting structures.
 
 ## Plan Ownership
 
@@ -17,15 +18,36 @@ Use `templates/plan-template.md` and `templates/flow-record-template.md` as star
 - active flow pointer and required next action;
 - recent user request history;
 - one-line flow index;
-- current and future planned flow sequence;
-- self-drive sequence-level snapshot when self-drive is active;
+- current and future planned flow sequence as a date-level routing snapshot;
+- self-drive active status and `000-self-drive.md` pointer when self-drive is active;
 - one-line completed flow summaries;
 - active date-level open risks;
 - date-level note that the user can explicitly end the turn.
 
-It does not own detailed flow scope, non-goals, approval boundary, evidence, verification detail, per-flow residual risk, or canonical Continuity Guard state.
+It does not own detailed flow scope, non-goals, approval boundary, evidence, verification detail, per-flow residual risk, canonical Continuity Guard state, or self-drive sequence-level state.
 
-When self-drive is active, keep sequence-level state in `000-plan.md` as a conditional note near the planned flow sequence or active routing snapshot: sequence objective, planned flow list, active flow index, allowed autonomous actions, prohibited autonomous actions, approval-sensitive checkpoints, endpoint, blocker return conditions, and progress note. Do not add self-drive-only fields to every general template by default.
+When self-drive is active, `000-plan.md` owns only `self_drive_status` and `self_drive_record` as self-drive-specific fields. The general `Planned Flow Sequence` may be kept as a date-level routing snapshot, but sequence-level state belongs to `000-self-drive.md`.
+
+Keep `Flow Index` and `Completed Flow Summaries` compact, one line per flow. Keep `Planned Flow Sequence` limited to current or future selected flows; completed flows should stay only in the index and completed summaries. Keep `Open Risks` limited to active date-level risks.
+
+## Self-Drive Sidecar Ownership
+
+`000-self-drive.md` owns sequence-level state only while self-drive is active:
+
+- sequence objective;
+- planned flow list;
+- active flow index as a 0-based machine field;
+- current flow label with human-readable number/name/file or slug;
+- allowed autonomous actions;
+- prohibited autonomous actions;
+- approval-sensitive checkpoints;
+- endpoint;
+- blocker return conditions;
+- progress ledger.
+
+It is not a replacement for `000-plan.md`, does not own the date-level flow index, does not own each flow's canonical scope, evidence, report, or closure authority, and does not grant commit/push/PR/publish/release/version-bump approval.
+
+If `000-plan.md` says self-drive is inactive but still points at `000-self-drive.md`, or if an old sidecar file still exists, treat that as stale sidecar state. Do not use the leftover sidecar as active continuation authority. Clear or correct the pointer/status when the routing state is clear, or ask/record a user-gated clarification before autonomous continuation. You may read the old sidecar only as historical context after marking it stale; current routing authority comes from `000-plan.md`.
 
 ## Flow Record Ownership
 
@@ -36,7 +58,7 @@ Each `001+` flow record owns:
 - current phase;
 - Continuity Guard;
 - flow contract;
-- self-drive flow-local sequence snapshot when self-drive is active;
+- optional self-drive flow-local sequence snapshot when self-drive is active;
 - optional risky actions;
 - execution log;
 - verification detail;
@@ -46,7 +68,7 @@ Each `001+` flow record owns:
 
 Update the flow record after each phase instead of waiting for final completion.
 
-When self-drive is active, the flow record should mirror only flow-local sequence position, local progress note, next handoff, and blocker return condition in the most natural existing section. Do not add a self-drive-only template section by default, and do not duplicate the full sequence contract in every flow record.
+When self-drive is active, the flow record mirrors only flow-local sequence position, local progress note, next handoff, and blocker return condition in the most natural existing section. Do not add a self-drive-only top-level template section by default, and do not duplicate the full sequence objective, planned flow list, active flow index, autonomous boundaries, approval checkpoints, or endpoint in every flow record.
 
 ## Flow Types
 
@@ -54,7 +76,7 @@ Use `operational-preparation` when the flow interprets a request, locks scope, d
 
 Use `change-unit` when the flow owns a cohesive reviewable or commit-sized artifact change.
 
-Keep follow-up change-unit candidates separate from active execution until the user selects or approves them.
+Keep follow-up change-unit candidates separate from active execution until the user selects or approves them. Final QA, consistency checks, verification result reporting, and commit-readiness reporting are not separate planned flows unless they create or change a reviewable artifact.
 
 ## Continuity Guard
 
