@@ -112,3 +112,14 @@
     - 이 `같은 위계`는 `000-plan.md`가 sequence detail을 소유한다는 뜻이 아니다.
     - `000-plan.md`는 self-drive 사용 여부와 `000-self-drive.md` pointer만 판단한다.
     - `000-self-drive.md`는 self-drive sequence state를 보조로 소유한다.
+
+- self-drive 실행 중 사용자가 새 메시지를 보내도 안전하게 처리되길 원한다.
+  - 리서치 우선순위 목록에서 `Self-drive mid-sequence user routing`을 1순위 작업으로 선택했다.
+    - 이 리스트에서 어떤 항목을 다음 scope로 잡을까요?
+      - `1번 라우팅` 선택
+  - self-drive 중 상태 질문은 현재 phase, active flow, 검증 상태, 다음 action을 보고하되, scope 변경이나 stop 요청이 없으면 prepared sequence를 계속해야 한다.
+  - self-drive 중 우선순위, scope, endpoint, planned flow order가 바뀌면 자율 진행을 멈추고 preparation 또는 next-flow routing으로 돌아가 updated sequence를 다시 잠가야 한다.
+  - self-drive 중 commit, push, PR, publish, release, version bump, destructive/external action 요청이 나오면 기존 approval boundary 안에 정확히 기록된 경우가 아니면 사용자 승인 checkpoint로 돌아가야 한다.
+  - 이 규칙은 self-drive interruption handling이지, 모든 사용자 메시지에 대한 새로운 broad taxonomy가 아니어야 한다.
+  - self-drive가 이미 active인 동안 들어온 새 메시지는 사용자가 `self-drive`라는 말을 다시 쓰지 않아도 active self-drive sequence 안의 mid-sequence input으로 처리해야 한다.
+  - 이 암묵적 self-drive context는 explicit stop, approval boundary, scope lock, endpoint lock, user-gated routing을 대체하지 않아야 한다.

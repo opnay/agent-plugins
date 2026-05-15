@@ -3,7 +3,7 @@
 ## 목적
 
 이 시나리오는 사용자가 self-drive continuation을 명시적으로 요청했을 때 `turn-gate`가 긴 planned flow sequence를 추적 가능한 기록으로 남기는지 확인합니다.
-전체 sequence state는 `000-plan.md`가 소유하고, 각 flow record는 자기 flow의 위치와 진행 메모만 남겨야 합니다.
+전체 sequence state는 `000-self-drive.md`가 소유하고, 각 flow record는 자기 flow의 위치와 진행 메모만 남겨야 합니다.
 
 ## 사용자 메시지
 

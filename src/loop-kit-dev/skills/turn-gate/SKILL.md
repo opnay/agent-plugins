@@ -7,7 +7,7 @@ description: Keep a Codex turn open across preparation, work, verification, repo
 
 ## Important
 
-When this skill is active, treat it as a conversation-level operating rule for the whole session. The response loop itself is controlled by `turn-gate`; it is not an internal checklist that can be skipped after a task looks finished.
+When this skill is active, treat it as a conversation-level operating rule for the whole session. The response loop itself is controlled by `turn-gate`; it is not an internal checklist that can be dropped after a task appears complete.
 
 Do not close with a terminal summary after result reporting unless the current user message, or a source-recorded explicit stop in the active flow record that matches the current message, explicitly ends the turn.
 
@@ -23,9 +23,15 @@ Maintain session records under `.agents/sessions/{YYYYMMDD}/` for active turn-ga
 
 Use only runtime files bundled with this skill, such as `references/*` and `templates/*`. Do not depend on development specs or repository-only spec paths being available at runtime.
 
+## Purpose
+
+Use this skill to keep a turn open across preparation, work, verification, reporting, and next-flow selection. The default state is implicit: phase protocols shape the current phase, but they are not separate modes.
+
+If the user explicitly asks for autonomous continuation across a prepared planned flow sequence, read `references/self-drive.md`. That reference owns the self-drive overlay's continuation and interruption rules for the prepared sequence.
+
 ## Operating Cycle
 
-Run each active flow through this order:
+Run each active flow in this order:
 
 1. preparation
 2. work
@@ -36,8 +42,6 @@ Run each active flow through this order:
 Activation without a concrete task opens scope setup or next-flow selection. It does not end with an activation summary.
 
 Individual task completion does not complete the flow, skip reporting, skip next-flow, or permit turn closure by itself. A flow is complete only when its completion criteria, verification expectation, reporting, and continuation state are handled.
-
-`turn-gate` normally runs in an implicit default operating state. Phase protocols shape how the current phase runs; they are not standalone modes. Before meaningful work, choose the current phase protocol from `references/phase-protocols.md`. If the user explicitly asks for autonomous continuation across a prepared planned flow sequence, read `references/self-drive.md`; that reference owns the self-drive overlay's continuation rules.
 
 ## Phase Start Prefix
 
@@ -79,7 +83,7 @@ Keep follow-up candidates, broader refactors, unrelated plugins, and new approva
 
 Task policy is flow-local. It can choose commands, edits, builds, tests, local references, target rereads, and handoffs inside the selected flow, but it cannot redefine the flow boundary, skip verification, skip reporting, skip next-flow reopening, or decide turn closure.
 
-## Verification Method
+## Verification
 
 After work and before reporting, choose one verification method and keep it separate from result status.
 
@@ -95,7 +99,7 @@ Use `not-required` only for blocker-before-work, activation-only, next-flow sele
 
 Result status is separate from method. Use `pass`, `fail`, `blocked`, or `insufficient` after verification; lifecycle records may also use `not-started` or `requested` before final result. Never treat `not-required`, `blocked`, `fail`, or `insufficient` as automatic pass.
 
-## Clean-Context Packet
+### Clean-Context Packet
 
 Clean-context verification is pre-authorized only within a read-only verification boundary. The verifier packet must include:
 
@@ -145,7 +149,7 @@ Next-flow terminal closure is valid only when explicit stop is source-recorded. 
 Use these bundled resources when session records are needed:
 
 - `references/session-records.md` for record ownership, Continuity Guard, stale sidecar handling, and next-flow option rules.
-- `references/self-drive.md` for autonomous continuation across a prepared flow sequence.
+- `references/self-drive.md` for autonomous continuation and interruption handling across a prepared flow sequence.
 - `templates/plan-template.md` for `.agents/sessions/{YYYYMMDD}/000-plan.md`.
 - `templates/self-drive-template.md` for `.agents/sessions/{YYYYMMDD}/000-self-drive.md` when self-drive is active.
 - `templates/flow-record-template.md` for `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`.

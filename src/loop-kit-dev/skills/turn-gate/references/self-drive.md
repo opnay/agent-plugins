@@ -1,6 +1,6 @@
 # Self-Drive Overlay
 
-Use this reference only when the user explicitly asks for autonomous continuation across a prepared planned flow sequence.
+Use this reference when the user explicitly asks for autonomous continuation across a prepared planned flow sequence, or when an already-active self-drive sequence receives another user message.
 
 Self-drive is an overlay on `turn-gate`, not a separate installed skill entrypoint. It can apply only after preparation has recorded:
 
@@ -53,6 +53,23 @@ While self-drive applies, its continuation rules take priority over default next
 Treat `active_flow_index` as a 0-based machine field. Always pair it with a human-readable current flow label, such as flow number, name, file, or slug. If an existing numeric index conflicts with numbered planned flows, or if the index base is unclear, inspect the flow names/files and reconcile the record before continuing. If the current flow still cannot be identified unambiguously, return to user-gated question routing instead of advancing silently.
 
 Before reporting and before moving to the next planned flow, refresh `000-self-drive.md` so the active flow index, current flow label, sequence progress note, next handoff, and blocker state match the current result. Refresh `000-plan.md` only if the self-drive active status, sidecar pointer, active flow pointer, required next action, or date-level index changed. Refresh the active flow record separately with only the local progress note, next handoff, and blocker return condition.
+
+## Mid-Sequence User Input
+
+When a user message arrives while self-drive is executing a prepared sequence, treat it as self-drive mid-sequence input even if the message does not repeat the word "self-drive". Handle it inside the active flow before continuing.
+
+This implicit self-drive context does not override explicit stop, approval boundary, scope/non-goal/endpoint locks, or user-gated routing. Apply this priority order:
+
+1. If it is a source-recorded explicit stop, record closure state and stop after reporting.
+2. If it requests a destructive, external, commit, push, PR, publish, release, version-bump, or other approval-sensitive action outside the exact recorded approval boundary, pause self-drive and return to user-gated approval routing.
+3. If it changes scope, non-goals, endpoint, target, planned flow order, or acceptance signal, pause self-drive and return to preparation or next-flow routing to relock the updated sequence before continuing.
+4. If it reports or reveals a blocker, route to the earliest safe phase or user-gated blocker decision.
+5. If it only asks for status or progress, report the current phase, active flow, verification state, and next action, then continue self-drive unless the message also matches an earlier rule. Do not convert a status-only input into next-flow selection or terminal closure.
+6. If it is an ordinary continuation note within the recorded boundary, record the note if material and continue.
+
+This is self-drive interruption handling, not a general user-message taxonomy. Do not add a separate routing layer outside self-drive; use the existing meaning-resolution, approval-boundary, explicit-stop, and question-routing contracts.
+
+Subagent packets may help with read-only evidence checks, status/progress synthesis, or low-risk local decisions inside the recorded boundary. They cannot replace user approval for approval-sensitive actions, scope changes, endpoint changes, planned-flow-order changes, or new external/destructive execution.
 
 ## Execution Authority
 
