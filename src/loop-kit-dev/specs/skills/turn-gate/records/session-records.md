@@ -90,6 +90,26 @@
 - 완료된 작업은 삭제하지 않고 한 줄 요약과 flow reference를 유지한다.
 - `000-plan.md`는 날짜 기준 증분 계획과 flow-sequence artifact로, `001+`는 flow 단위 상세 보고서로 취급한다.
 
+## Read-Only Write Boundary
+
+- 일반적인 `read-only`, `no-edit`, `파일만 읽고`, `source 수정 금지`, `코드는 건드리지 마` 요청은 기본적으로 target/source/spec/runtime/release surface 변경 금지로 해석한다. 이 경우 `.agents/sessions/{YYYYMMDD}/` session record는 turn continuity를 위한 운영 기록으로 작성할 수 있다.
+- 사용자가 `아무 파일도 쓰지 마`, `어떤 파일도 만들지 마`, `기록 파일도 쓰지 마`, `세션 기록 남기지 마`, `무기록으로 답만 해`처럼 workspace-wide no-write 또는 no-record를 명시하면 session record 작성도 금지된다.
+- read-only 요청을 받으면 work boundary에 target/source 변경 금지와 session record 운영 기록 작성 여부를 분리해 남긴다.
+- no-write/no-record 제약 때문에 session record를 쓸 수 없으면, 기록을 만들기 전에 user-gated clarification 또는 blocker로 라우팅한다. 필요한 경우 in-memory continuity는 질문 또는 blocker 보고를 끝내는 데 필요한 최소 범위로만 유지한다.
+- `수정이 필요하면 멈춰`는 target/source 수정 필요성이 생기면 멈추라는 의미로 해석한다. session record 작성도 금지하는지 애매하면 쓰기 전에 확인한다.
+- clean-context verifier나 read-only subagent의 `read-only`는 검증 대상 수정 금지와 subagent edit permission 금지를 뜻한다. 별도 no-write/no-record 지시가 없는 한 main turn-gate session record 운영 기록까지 자동 금지하지 않는다.
+
+## Read-Only Boundary Decision Table
+
+| 사용자 제약 | session record write | 기대 라우팅 |
+| --- | --- | --- |
+| `파일만 읽고 정리해줘`, `수정하지 마` | 허용 가능 | target/source는 변경하지 않고 운영 기록에 boundary를 남김 |
+| `코드는 건드리지 마`, `source 수정 금지` | 허용 가능 | source change는 후속 후보로만 남김 |
+| `read-only로 검증만 해줘` | 허용 가능 | 검증 대상과 verifier는 read-only, 운영 기록은 유지 |
+| `수정이 필요하면 멈춰` | 보통 허용, 애매하면 확인 | target/source 수정 필요 시 blocker/question |
+| `아무 파일도 쓰지 마`, `어떤 파일도 만들지 마` | 금지 | session record 생성 전 clarification/blocker |
+| `세션 기록도 남기지 마`, `무기록으로 답만 해` | 금지 | 기록 없이 최소 in-memory blocker/report 또는 clarification |
+
 ## 검토 질문
 
 - `000-plan.md`가 flow sequence와 transition criteria를 소유하고 있는가?
@@ -112,3 +132,5 @@
 - visible choices에 turn-end option이 없어도 record에는 turn-end option이 남았는가?
 - confirmed closure가 있다면 source explicit stop message가 같이 기록돼 있는가?
 - pending 또는 superseded question state가 현재 required next action을 오염시키지 않는가?
+- read-only/no-edit 요청에서 target/source 변경 금지와 session record 운영 기록 작성 여부를 분리했는가?
+- workspace-wide no-write 또는 no-record 요청에서 session record write를 수행하지 않고 blocker/clarification으로 라우팅했는가?

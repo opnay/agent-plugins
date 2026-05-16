@@ -124,6 +124,16 @@ Separate record recovery states before reporting or reopening next-flow:
 
 Do not silently reconstruct unexpectedly missing or inaccessible active records. Do not treat missing state, pass verification, stale closure, or a leftover self-drive sidecar as permission to close the turn.
 
+## Read-Only Write Boundary
+
+Ordinary `read-only`, `no-edit`, `only read files`, `do not change source`, or `do not touch code` requests normally restrict target/source/spec/runtime/release-surface changes. They do not, by default, forbid `.agents/sessions/{YYYYMMDD}/` operational records. Record that split in the flow boundary.
+
+If the user explicitly forbids all file writes, file creation, session records, artifacts, or asks for a no-record answer, session records are also forbidden. Do not create or update session records without clarification. Keep any in-memory continuity only long enough to ask the user or report the blocker.
+
+If the user says "stop if edits are needed", treat target/source edits as the stopping condition. If that wording could also forbid operational records, ask before writing records.
+
+Read-only verifier or subagent packets forbid edits by that verifier/subagent and changes to the verification target. They do not automatically forbid main-thread session records unless the user also gave an all-files/no-record constraint.
+
 ## Next Flow Options
 
 The flow record owns detailed next-flow options. Even when visible choices omit a turn-end option, record an explicit turn-end option. Reflect only the selected result or active next-flow pointer in `000-plan.md`.
