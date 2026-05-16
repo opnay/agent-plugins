@@ -109,7 +109,20 @@ Do not treat `not-required` as a pass. Do not use it for file changes, release s
 
 Only a source-recorded explicit stop can make terminal summary allowed. If closure source is missing or stale, reset `user explicit stop` to `no`, reset `terminal summary allowed` to `no`, and note the stale closure.
 
-If records are inaccessible, report a blocker. Do not silently reconstruct records or treat missing state as permission to close.
+## Record Recovery Boundary
+
+Separate record recovery states before reporting or reopening next-flow:
+
+| State | Use when | Action |
+| --- | --- | --- |
+| `not-yet-created plan` | today's plan does not exist because this is the first turn-gated work for the day | create from the plan template and record the current message as source |
+| `not-yet-created flow` | a new flow was just selected and its `001+` detail record has not been created yet | create from the flow template before work/reporting |
+| `unexpectedly missing active record` | `000-plan.md`, `000-self-drive.md`, current phase state, or previous handoff points to a specific flow record that is absent | report a blocker or ask for a user-gated recovery decision |
+| `inaccessible active record` | the active record exists but cannot be trusted because of permission error, lock, parse failure, partial write, encoding failure, or similar access failure | report a blocker; retry only after access is restored or the user decides |
+| `stale closure state` | closure source is missing, stale, or does not match the current incoming message | reset closure/terminal summary fields to `no` and note the stale state |
+| `stale self-drive sidecar` | `000-plan.md` says self-drive is inactive but a sidecar pointer or file remains | treat the sidecar as historical context only |
+
+Do not silently reconstruct unexpectedly missing or inaccessible active records. Do not treat missing state, pass verification, stale closure, or a leftover self-drive sidecar as permission to close the turn.
 
 ## Next Flow Options
 

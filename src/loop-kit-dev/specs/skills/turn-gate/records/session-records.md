@@ -64,11 +64,24 @@
 - verification method는 `clean-context`, `normal`, `not-required` 중 하나로 verification section에 남긴다. method는 status가 아니므로 `verification_status` frontmatter 값으로 쓰지 않는다.
 - verification 상세 근거, command/evidence 목록, verifier id, not-required reason, residual uncertainty는 verification section이 소유하고, guard에는 현재 status만 둔다.
 - result reporting과 next-flow reopening 전에는 active flow record의 `Continuity Guard`를 먼저 읽는다.
-- 기록이 없을 때만 재구성하고, 재구성한 guard는 가능한 즉시 flow record에 다시 쓴다.
-- 기록이 접근 불가인 경우 missing record처럼 조용히 재구성하지 않는다. 접근 실패를 blocker로 보고하고, 접근이 복구되거나 user-gated decision이 있을 때까지 terminal summary 허용 근거로 삼지 않는다.
+- record recovery는 `not-yet-created`, `unexpectedly missing`, `inaccessible`, `stale` 상태를 분리한다. 새 flow를 시작하며 아직 파일이 만들어지지 않은 경우에만 template 기반 first creation을 허용한다.
+- active plan, active self-drive sidecar, 현재 응답 phase, 또는 직전 flow handoff가 특정 `001+` flow record를 가리키는데 그 record가 없으면 `unexpectedly missing active record`로 취급한다. 이 경우 조용히 재구성하지 말고 blocker로 보고하거나 user-gated decision을 받아야 한다.
+- active flow record가 존재하지만 읽기 실패, 권한 오류, lock, parse failure, encoding failure, partial write처럼 canonical guard를 신뢰할 수 없으면 `inaccessible record`로 취급한다. 접근 실패를 blocker로 보고하고, 접근이 복구되거나 user-gated decision이 있을 때까지 terminal summary 허용 근거로 삼지 않는다.
+- 새 record first creation 또는 명시적으로 승인된 recovery를 수행한 경우, 재구성한 guard는 가능한 즉시 flow record에 다시 쓰고 `continuity_note`에 근거와 source를 남긴다.
 - 기록 접근 blocker의 사용자-facing prefix는 발견 시점에 따른다. result reporting 전에 발견하면 `[reporting]`, next-flow reopening 직전에 발견하면 `[next-flow]`로 blocker routing을 연다. 관련 phase protocol을 적용 중이면 `[reporting/review-loop]`처럼 optional slash suffix를 붙일 수 있다.
 - guard의 terminal summary 허용 값은 현재 incoming message 또는 source가 확인된 explicit stop 기록과 일치할 때만 유효하다. stale `terminal summary allowed: yes`나 source 없는 `confirmed closure`는 무효다.
 - stale closure state를 발견하면 guard를 `user explicit stop: no`, `terminal summary allowed: no`로 갱신하고, 이전 closure state가 source-less 또는 stale이었다는 note를 남긴다.
+
+## Record Recovery Decision Table
+
+| 상태 | 예시 | 허용 동작 | 금지 동작 |
+| --- | --- | --- | --- |
+| `not-yet-created plan` | 당일 첫 turn-gated work이고 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 없음 | plan template로 first creation | 이전 날짜 기록을 active authority로 승격 |
+| `not-yet-created flow` | 새 flow count/slug가 방금 선택됐고 아직 `001+` record를 만들기 전 | flow template로 first creation | source 없는 closure나 pass status를 추정 |
+| `unexpectedly missing active record` | `000-plan.md`가 `022-*.md`를 가리키는데 파일이 없음 | blocker 보고 또는 user-gated recovery 선택 | 같은 slug로 조용히 재구성하고 reporting/next-flow 진행 |
+| `inaccessible active record` | 권한 오류, lock, parse failure, partial write, encoding failure | blocker 보고, 복구 후 재시도 또는 사용자 결정 | missing record처럼 재구성하거나 terminal summary 허용 |
+| `stale closure state` | `terminal summary allowed: yes`인데 source message가 없거나 현재 메시지와 불일치 | stop/summary 허용 값을 `no`로 reset하고 note 기록 | stale closure를 explicit stop으로 사용 |
+| `stale self-drive sidecar` | `000-plan.md`는 self-drive inactive인데 sidecar가 남아 있음 | historical context로만 읽고 current plan 기준으로 routing | sidecar의 active_flow_index를 continuation authority로 사용 |
 
 ## Next Flow Options
 
