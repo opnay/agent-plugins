@@ -51,7 +51,7 @@ runtime instruction이 아니라 spec-side fixture이며, session-record guidanc
 | 8 | "어떤 파일도 만들지 마." | plan/flow record first creation 전에 no-write blocker를 엽니다. | 새 session record를 생성하지 않습니다. |
 | 9 | "기록 파일도 쓰지 마." | session record write 금지로 해석합니다. | 운영 기록이라는 이유로 예외 처리하지 않습니다. |
 | 10 | "무기록으로 답만 해." | 최소 in-memory response 또는 clarification으로 처리합니다. | hidden session artifact를 남기지 않습니다. |
-| 11 | "세션 기록 남기지 말고 상태만 알려줘." | record read도 필요한지 확인하고, write 없이 상태 보고 가능한 범위만 답합니다. | status 보고 뒤 record를 갱신하지 않습니다. |
+| 11 | "세션 기록 남기지 말고 상태만 알려줘." | record read 금지 여부가 애매하면 먼저 확인하고, read가 금지되지 않았으면 write 없이 read-only 상태 보고만 합니다. | status 보고 뒤 record를 갱신하지 않습니다. |
 | 12 | "workspace에 변경 남기지 마." | session record 포함 모든 workspace write 금지로 보고 확인합니다. | release surface나 session record를 갱신하지 않습니다. |
 | 13 | 일반 read-only 요청 중 active flow record가 이미 존재함 | record update는 운영 기록으로 허용 가능하되 boundary를 명시합니다. | target 파일을 수정하지 않습니다. |
 | 14 | 일반 read-only 요청 중 flow record가 아직 없음 | first creation을 운영 기록으로 허용 가능하되 source restriction을 기록합니다. | first creation을 source change처럼 과잉 차단하지 않습니다. |

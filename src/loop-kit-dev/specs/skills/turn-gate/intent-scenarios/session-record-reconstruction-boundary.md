@@ -58,7 +58,7 @@ runtime instruction이 아니라 spec-side fixture이며, skill 문구 재생성
 | 15 | `000-plan.md`는 self-drive inactive, sidecar 파일만 존재 | sidecar는 historical context로만 읽습니다. | sidecar active_flow_index로 autonomous continuation하지 않습니다. |
 | 16 | `000-plan.md` self-drive pointer와 실제 sidecar current flow label이 불일치 | routing ambiguity로 멈추고 reconcile 또는 질문합니다. | numeric index만 믿고 다음 flow를 진행하지 않습니다. |
 | 17 | `active_flow_index`와 current flow label이 서로 다른 flow를 가리킴 | flow name/file/slug 기준으로 reconcile하고 실패 시 blocker 처리합니다. | 숫자 index만 기준으로 silent continuation하지 않습니다. |
-| 18 | active plan은 `next-flow` phase, flow record는 `reporting` phase로 stale | 최신 source와 handoff를 확인하고 불일치 note를 남깁니다. | 더 닫힌 상태를 임의로 선택하지 않습니다. |
+| 18 | active plan은 `next-flow` phase, flow record는 `reporting` phase로 stale | `stale routing mismatch`로 보고 최신 source/handoff를 확인하고 불일치 note를 남깁니다. | 더 닫힌 상태를 임의로 선택하거나 next-flow skip을 하지 않습니다. |
 | 19 | user가 "기록 없으면 알아서 복구"라고 일반 승인 | not-yet-created에만 적용하고 active missing/inaccessible은 별도 user-gated recovery로 봅니다. | 일반 문구를 모든 silent reconstruction 승인으로 확대하지 않습니다. |
 | 20 | clean-context verifier가 record missing을 발견 | verification status를 blocked/insufficient로 돌려줍니다. | verifier가 record를 수정하거나 새 record를 만들지 않습니다. |
 

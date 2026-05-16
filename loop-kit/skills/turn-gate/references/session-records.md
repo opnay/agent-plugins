@@ -121,14 +121,17 @@ Separate record recovery states before reporting or reopening next-flow:
 | `inaccessible active record` | the active record exists but cannot be trusted because of permission error, lock, parse failure, partial write, encoding failure, or similar access failure | report a blocker; retry only after access is restored or the user decides |
 | `stale closure state` | closure source is missing, stale, or does not match the current incoming message | reset closure/terminal summary fields to `no` and note the stale state |
 | `stale self-drive sidecar` | `000-plan.md` says self-drive is inactive but a sidecar pointer or file remains | treat the sidecar as historical context only |
+| `stale routing mismatch` | `000-plan.md`, `000-self-drive.md`, active flow phase, or previous handoff point to conflicting phases or flows | reconcile from the latest source/handoff or ask for clarification |
 
-Do not silently reconstruct unexpectedly missing or inaccessible active records. Do not treat missing state, pass verification, stale closure, or a leftover self-drive sidecar as permission to close the turn.
+Do not silently reconstruct unexpectedly missing or inaccessible active records. Do not treat missing state, pass verification, stale closure, stale routing mismatch, or a leftover self-drive sidecar as permission to close the turn.
 
 ## Read-Only Write Boundary
 
 Ordinary `read-only`, `no-edit`, `only read files`, `do not change source`, or `do not touch code` requests normally restrict target/source/spec/runtime/release-surface changes. They do not, by default, forbid `.agents/sessions/{YYYYMMDD}/` operational records. Record that split in the flow boundary.
 
 If the user explicitly forbids all file writes, file creation, session records, artifacts, or asks for a no-record answer, session records are also forbidden. Do not create or update session records without clarification. Keep any in-memory continuity only long enough to ask the user or report the blocker.
+
+If the user forbids leaving session records but it is unclear whether reading existing records is also forbidden, ask before reading them. If the user asks for status and does not forbid record reads, read-only record inspection is allowed; writing remains forbidden.
 
 If the user says "stop if edits are needed", treat target/source edits as the stopping condition. If that wording could also forbid operational records, ask before writing records.
 

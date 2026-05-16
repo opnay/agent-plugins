@@ -68,6 +68,8 @@
 - active plan, active self-drive sidecar, 현재 응답 phase, 또는 직전 flow handoff가 특정 `001+` flow record를 가리키는데 그 record가 없으면 `unexpectedly missing active record`로 취급한다. 이 경우 조용히 재구성하지 말고 blocker로 보고하거나 user-gated decision을 받아야 한다.
 - active flow record가 존재하지만 읽기 실패, 권한 오류, lock, parse failure, encoding failure, partial write처럼 canonical guard를 신뢰할 수 없으면 `inaccessible record`로 취급한다. 접근 실패를 blocker로 보고하고, 접근이 복구되거나 user-gated decision이 있을 때까지 terminal summary 허용 근거로 삼지 않는다.
 - 새 record first creation 또는 명시적으로 승인된 recovery를 수행한 경우, 재구성한 guard는 가능한 즉시 flow record에 다시 쓰고 `continuity_note`에 근거와 source를 남긴다.
+- `000-plan.md`, `000-self-drive.md`, active flow record의 `current_phase`, 직전 handoff가 서로 다른 phase 또는 flow를 가리키면 `stale routing mismatch`로 취급한다. 최신 source와 handoff를 확인해 reconcile하고, 해소할 수 없으면 user-gated clarification으로 돌아간다.
+- `stale routing mismatch`는 terminal close, successful completion, next-flow skip, self-drive continuation authority가 아니다. 해소하기 전에는 더 닫힌 상태를 임의로 선택하지 않는다.
 - 기록 접근 blocker의 사용자-facing prefix는 발견 시점에 따른다. result reporting 전에 발견하면 `[reporting]`, next-flow reopening 직전에 발견하면 `[next-flow]`로 blocker routing을 연다. 관련 phase protocol을 적용 중이면 `[reporting/review-loop]`처럼 optional slash suffix를 붙일 수 있다.
 - guard의 terminal summary 허용 값은 현재 incoming message 또는 source가 확인된 explicit stop 기록과 일치할 때만 유효하다. stale `terminal summary allowed: yes`나 source 없는 `confirmed closure`는 무효다.
 - stale closure state를 발견하면 guard를 `user explicit stop: no`, `terminal summary allowed: no`로 갱신하고, 이전 closure state가 source-less 또는 stale이었다는 note를 남긴다.
@@ -82,6 +84,7 @@
 | `inaccessible active record` | 권한 오류, lock, parse failure, partial write, encoding failure | blocker 보고, 복구 후 재시도 또는 사용자 결정 | missing record처럼 재구성하거나 terminal summary 허용 |
 | `stale closure state` | `terminal summary allowed: yes`인데 source message가 없거나 현재 메시지와 불일치 | stop/summary 허용 값을 `no`로 reset하고 note 기록 | stale closure를 explicit stop으로 사용 |
 | `stale self-drive sidecar` | `000-plan.md`는 self-drive inactive인데 sidecar가 남아 있음 | historical context로만 읽고 current plan 기준으로 routing | sidecar의 active_flow_index를 continuation authority로 사용 |
+| `stale routing mismatch` | plan은 `next-flow`, flow record는 `reporting`처럼 phase/handoff가 불일치 | 최신 source/handoff로 reconcile 또는 clarification | 더 닫힌 상태를 임의 선택하거나 next-flow skip |
 
 ## Next Flow Options
 
@@ -96,6 +99,7 @@
 - 사용자가 `아무 파일도 쓰지 마`, `어떤 파일도 만들지 마`, `기록 파일도 쓰지 마`, `세션 기록 남기지 마`, `무기록으로 답만 해`처럼 workspace-wide no-write 또는 no-record를 명시하면 session record 작성도 금지된다.
 - read-only 요청을 받으면 work boundary에 target/source 변경 금지와 session record 운영 기록 작성 여부를 분리해 남긴다.
 - no-write/no-record 제약 때문에 session record를 쓸 수 없으면, 기록을 만들기 전에 user-gated clarification 또는 blocker로 라우팅한다. 필요한 경우 in-memory continuity는 질문 또는 blocker 보고를 끝내는 데 필요한 최소 범위로만 유지한다.
+- `세션 기록 남기지 마`, `무기록으로 답만 해`처럼 write만 금지하는지 기존 record read까지 금지하는지 애매하면 session record를 읽기 전에 확인한다. 단, 사용자가 기존 상태 보고를 요청했고 record read를 명시적으로 금지하지 않았다면 read-only record inspection은 가능하지만 write는 금지된다.
 - `수정이 필요하면 멈춰`는 target/source 수정 필요성이 생기면 멈추라는 의미로 해석한다. session record 작성도 금지하는지 애매하면 쓰기 전에 확인한다.
 - clean-context verifier나 read-only subagent의 `read-only`는 검증 대상 수정 금지와 subagent edit permission 금지를 뜻한다. 별도 no-write/no-record 지시가 없는 한 main turn-gate session record 운영 기록까지 자동 금지하지 않는다.
 
@@ -109,6 +113,7 @@
 | `수정이 필요하면 멈춰` | 보통 허용, 애매하면 확인 | target/source 수정 필요 시 blocker/question |
 | `아무 파일도 쓰지 마`, `어떤 파일도 만들지 마` | 금지 | session record 생성 전 clarification/blocker |
 | `세션 기록도 남기지 마`, `무기록으로 답만 해` | 금지 | 기록 없이 최소 in-memory blocker/report 또는 clarification |
+| `세션 기록 남기지 말고 상태만 알려줘` | write 금지, read는 명시 금지 여부 확인 | 기존 record read가 필요한지 먼저 확인하거나 read-only 상태 보고 |
 
 ## 검토 질문
 
