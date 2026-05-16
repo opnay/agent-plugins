@@ -120,6 +120,17 @@ If a verifier would need edit permission, scope expansion, destructive/external 
 
 Do not report `fail`, `blocked`, or `insufficient` as successful completion. Return to the earliest safe phase for repair, or open a user-gated blocker when verification cannot be completed.
 
+Use this routing split:
+
+| Verification status | Successful completion report | Expected routing |
+| --- | --- | --- |
+| `pass` | allowed | reporting, then next-flow reopening or self-drive continuation |
+| `fail` | forbidden | return to the earliest safe work or repair phase |
+| `insufficient` | forbidden | return to verification or work to gather enough evidence |
+| `blocked` | forbidden | open a user-gated blocker question |
+
+Never use a non-pass status as terminal summary, next-flow selection, or commit-readiness authority.
+
 For report-only work with no file changes, `normal` verification may focus on source/evidence readback, logical counterexamples, user-intent fit, and missing-risk checks instead of unnecessary command execution.
 
 ## Reporting

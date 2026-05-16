@@ -52,6 +52,18 @@ result reporting과 next-flow reopening 세부 계약은 `records/question-routi
 - non-pass 상태 보고는 blocker report로만 가능하며, successful completion처럼 표현하지 않는다.
 - `normal` 또는 `not-required` method를 사용했더라도 evidence, omission reason, residual uncertainty가 불충분하면 `pass`로 통합하지 않는다.
 
+## Non-Pass Routing Decision Table
+
+| Verification status | 성공 보고 | 기대 라우팅 | User-gated 여부 |
+| --- | --- | --- | --- |
+| `pass` | 허용 | reporting 이후 next-flow reopening | 일반 next-flow 또는 self-drive continuation |
+| `fail` | 금지 | 가장 이른 안전한 `work` 또는 repair phase로 복귀 | repair가 scope/approval 경계를 넘을 때만 |
+| `insufficient` | 금지 | evidence 보강이 가능한 `verification` 또는 `work` phase로 복귀 | evidence 보강이 승인 경계 밖일 때만 |
+| `blocked` | 금지 | user-gated blocker question-routing | 필요 |
+
+`fail`, `insufficient`, `blocked`는 모두 successful completion, terminal summary, next-flow selection authority가 아니다.
+non-pass 상태를 사용자에게 알릴 수는 있지만, 그 보고는 completion report가 아니라 repair 또는 blocker routing이어야 한다.
+
 ## 검토 질문
 
 - verification method를 `clean-context`, `normal`, `not-required` 중 하나로 기록했는가?
