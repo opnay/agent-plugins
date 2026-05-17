@@ -9,6 +9,9 @@
 - clarification, choices, scope locks, mode narrowing, next-flow decisions는 user-gated question routing으로 처리한다.
 - 구조적 선택지를 줄 수 있고 도구가 사용 가능하면 `request_user_input`을 사용한다.
 - result reporting 뒤 explicit stop이 없다면 active question-routing으로 next-flow를 다시 연다.
+- 단, active self-drive에서 prepared sequence가 여전히 유효하고 다음 planned flow가 식별되면 `next-flow` phase의 결과는 user question이 아니라 기록 기반 loop continuation이 될 수 있다.
+- self-drive 중에도 scope, endpoint, approval boundary, blocker state, current-flow identity가 불명확하면 active question-routing으로 돌아간다.
+- self-drive는 질문 도구를 끄는 계약이 아니라 질문 조건을 좁히는 계약이다. clear prepared transition이나 status-only input을 질문으로 과잉 중단하지 말고, 사용자 결정이 필요한 guard condition에서 질문 도구를 사용한다.
 - next-flow choices는 방금 보고한 결과와 직접 연결된 좁은 선택지여야 한다.
 - plain text follow-up이나 generic closing phrase는 next-flow reopening을 대체하지 못한다.
 - 사용자 follow-up은 explicit stop이 아니면 preparation 또는 next-flow reopening 계약에서 해석한다.

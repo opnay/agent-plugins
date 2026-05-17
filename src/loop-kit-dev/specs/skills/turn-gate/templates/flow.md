@@ -3,13 +3,15 @@
 ## 목적
 
 이 문서는 `turn-gate`의 `skills/turn-gate/templates/flow-record-template.md` 형식 계약을 소유합니다.
+Spec file 이름은 `flow.md`이지만 runtime 시작 파일 이름은 `flow-record-template.md`입니다.
+runtime artifact가 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{slug}.md` flow record이기 때문에 runtime file name에 `record`가 포함됩니다.
 
 `001+` flow record는 하나의 사용자 요청 기반 flow가 실제로 무엇을 소유했고, 무엇을 했고, 어떻게 검증됐는지를 기록하는 canonical detail artifact입니다.
 
 ## 소유
 
 - original user request message
-- task, flow type, flow scope, parent plan
+- task, flow type, flow scope, path-derived parent-plan relation
 - current phase
 - `Continuity Guard`
 - flow contract
@@ -45,6 +47,8 @@
 
 `flow-record-template.md`는 Markdown YAML frontmatter로 짧은 상태값과 포인터를 먼저 드러냅니다.
 파일 경로에서 파생되는 `date`, `record_path`, `slug`, `parent_plan`은 frontmatter에 반복하지 않습니다.
+`parent_plan`은 같은 날짜 디렉터리의 `000-plan.md`를 뜻하는 path-derived relation입니다.
+일반 runtime에서는 중복 `parent_plan` frontmatter를 추가하지 않습니다. 경로를 잃는 export나 aggregation이 필요하면 base runtime template이 아니라 해당 tooling metadata가 별도로 소유해야 합니다.
 
 frontmatter에는 다음 필드를 둡니다.
 

@@ -45,6 +45,24 @@ result reporting과 next-flow reopening 세부 계약은 `records/question-routi
 - work 중 이미 동일한 command/check가 실행됐고 그 결과가 충분히 기록된 경우, verifier packet은 같은 check를 자동 재실행하라고 요구하지 않는다. verifier는 먼저 기록된 evidence를 검토하고, stale output, 불완전한 evidence, 실패 의심, 변경 후 미검증 경로가 있을 때만 재실행을 요청하거나 blocker로 보고한다.
 - 검증 subagent는 active flow 작업을 구현하거나 scope를 확장하지 않고, 검증과 finding 보고만 수행한다.
 
+### Documentation-Only Research Artifact Packet
+
+`.agents/researches/**/topic.md` 같은 documentation-only research artifact도 파일이 바뀌었으면 `clean-context` 기본값을 유지한다.
+다만 verifier packet은 전체 source 재조사가 아니라 변경된 topic/session 파일과 이미 기록된 evidence gap 확인으로 좁힌다.
+
+최소 packet은 다음을 포함한다.
+
+- 변경된 research topic 파일과 active session record.
+- research documentation 목적이며 source/spec/runtime 구현 변경이 아니라는 사용자 의도.
+- main thread가 이미 확보한 source readback 또는 핵심 finding evidence.
+- 필수 heading 존재 여부.
+- conclusion이 기록된 evidence와 모순되지 않는지.
+- source/spec/runtime 구현을 완료했다는 허위 claim이 없는지.
+- session record의 closure state, verification status, required next action이 일관적인지.
+
+같은 broad source search를 자동 재실행하지 않는다.
+단, evidence가 stale, incomplete, suspicious 상태이거나 변경 path를 빠뜨렸으면 verifier는 재실행 요청 또는 blocker를 보고한다.
+
 ## Result Handling
 
 - 검증 결과가 `fail` 또는 `insufficient`이면 result reporting 전에 active flow를 가장 이른 안전한 phase로 되돌려 보완한다.

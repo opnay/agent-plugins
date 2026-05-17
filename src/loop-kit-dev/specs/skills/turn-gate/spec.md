@@ -31,6 +31,10 @@
 
 ## 엔트리포인트 / 대표 표면
 
+경로 표기 규칙: 이 spec에서 `loop-kit-dev/...`는 plugin-root-relative shorthand입니다.
+이 저장소에서 실제 편집 경로는 `src/loop-kit-dev/...`이고, 루트 `loop-kit/`은 build command 산출 release surface이므로 직접 편집하지 않습니다.
+설치된 runtime skill은 dev-only `specs/` 경로에 의존하지 않고 release에 포함된 `references/*`, `templates/*` 같은 상대 경로를 사용해야 합니다.
+
 - 대표 표면: `loop-kit-dev/skills/turn-gate/SKILL.md`
 - 기본 skill spec index: `loop-kit-dev/specs/skills/turn-gate/spec.md`
 - 사용자 스펙 의도: `loop-kit-dev/specs/skills/turn-gate/intent.md`

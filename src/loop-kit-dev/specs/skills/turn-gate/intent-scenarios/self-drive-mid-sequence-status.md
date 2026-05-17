@@ -14,7 +14,14 @@
 
 - 직접 요청된 작업: 현재 self-drive 진행 상태를 확인한다.
 - expected task tier: `multi-flow`
-- expected verification method: `not-required` 또는 session record readback이 필요한 경우 `normal`
+- expected verification method: primary `not-required`
+- allowed verification methods:
+  - `not-required`: 상태 답변이 이미 기록된 최신 상태를 재서술하는 no-output response로 충분한 경우.
+  - `normal`: session record readback 또는 progress note 확인/갱신을 근거로 상태를 보고하는 경우.
+- forbidden downgrade:
+  - file/change-unit artifact가 없으므로 기본적으로 `clean-context`로 과잉 승격하지 않습니다.
+  - session record를 읽거나 갱신했는데 evidence 없이 `not-required`로 낮추지 않습니다.
+- required rationale: no-output 상태 답변만으로 충분했는지, record readback/update evidence를 사용했는지 기록합니다.
 - 필요한 준비:
   - active self-drive sequence가 이미 기록되어 있다.
   - 사용자 메시지는 `self-drive`를 다시 언급하지 않지만 active self-drive sequence 안의 mid-sequence input으로 처리되어야 한다.

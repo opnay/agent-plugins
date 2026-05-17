@@ -41,6 +41,7 @@ deep-interview alignment, flow list design, meaning resolution, current-state in
 - phase 없이 일반 설명만 이어가는 경우에는 prefix를 억지로 붙이지 않습니다.
 - activation-only에 concrete task가 없으면 scope 설정을 위해 `[preparation]`을 우선 사용하고, 실제 next-flow 선택지를 여는 메시지에서만 `[next-flow]`로 전환합니다.
 - status/progress 질문은 현재 active phase label을 사용합니다. work 중이면 보통 `[work]`이고, 의도적으로 flow context를 요약하는 경우에만 `[reporting]`을 사용합니다.
+- self-drive continuation에서는 상태, 검증, 보고, 자동 next-flow handoff처럼 사용자-facing phase/progress를 알리는 메시지에 현재 phase prefix를 붙입니다. 단, `000-self-drive.md`, flow record, 생성 산출물 본문, 질문 선택지 label 안으로 prefix를 전파하지 않습니다.
 - session record 접근 blocker는 발견된 phase label을 사용합니다. result reporting 전이면 `[reporting]`, next-flow reopening 전이면 `[next-flow]`입니다.
 - report-only evaluation은 편집 없이 evidence를 모으더라도 reporting 뒤 explicit stop이 없으면 `[next-flow]`로 이어집니다.
 

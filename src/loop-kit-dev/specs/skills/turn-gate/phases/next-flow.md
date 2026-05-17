@@ -10,6 +10,8 @@
 
 - source-recorded explicit stop이 있는지 확인한다.
 - explicit stop이 없으면 active question-routing, loop continuation, blocker decision 중 하나로 이어간다.
+- active self-drive에서 prepared sequence가 유효하고 다음 planned flow가 식별되면 loop continuation이 user question보다 우선할 수 있다.
+- self-drive continuation identity, scope, endpoint, approval boundary, blocker state가 불명확하면 active question-routing 또는 blocker decision으로 돌아간다.
 - `request_user_input` 사용 가능성과 fallback 필요성을 판단한다.
 - session record의 `Next Flow Options`에 explicit turn-end option을 남긴다.
 

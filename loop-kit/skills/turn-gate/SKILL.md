@@ -53,6 +53,7 @@ When a user-facing message starts a phase or announces phase progress, begin it 
 - Apply the prefix to phase-start messages, not to every command summary, artifact body, flow record line, command output summary, or question option.
 - For activation-only requests with no concrete task, start with `[preparation]` for scope setup. Use `[next-flow]` only when opening actual next-flow choices.
 - For status questions, use the current active phase. During work, this is usually `[work]`.
+- For self-drive continuation, prefix user-facing status, verification, reporting, and automatic next-flow handoff messages with the phase being announced. Do not add phase prefixes inside the self-drive record, flow record, generated artifact body, or option labels.
 - For session-record access blockers, use the phase where the blocker was found, usually `[reporting]` or `[next-flow]`.
 - For report-only evaluation, gather evidence and report without edits if appropriate, then continue to `[next-flow]` unless explicit stop is confirmed.
 
@@ -65,6 +66,8 @@ Before work, lock the active flow enough to execute safely:
 - operation and target meaning when user wording can point to multiple files, surfaces, phases, routing rules, ownership changes, or provenance/intent blocks;
 - whether this is an `operational-preparation` flow or a `change-unit` flow.
 
+Treat structurally ambiguous operation words as meaning-resolution triggers before editing. High-signal examples include `merge`, `absorb`, `promote`, `remove`, `split`, `route`, `병합`, `흡수`, `녹여`, `승격`, `정식 규칙화`, `삭제`, `빼`, `그 밑`, `출처`, and `의도` when they could point to different files, sections, ownership boundaries, or destructive effects.
+
 Use deep-interview, flow list design, meaning resolution, current-state inspection, target reread, and scope lock as preparation techniques. Ask before work when scope is empty, too broad, ambiguous, likely to create multiple outputs, or likely to change the verification path. Prefer the question tool for bounded choices.
 
 If you infer scope without asking, record the work boundary and non-goals in the flow record. If the current work is interpreting a request, designing a planned flow list, or collecting approvals, treat it as an `operational-preparation` flow and keep follow-up `change-unit` candidates separate from active execution.
@@ -76,6 +79,18 @@ Approval-sensitive execution is allowed only when the exact boundary is already 
 ## Work
 
 Work only inside the active flow boundary. A flow is a cohesive reviewable or commit-sized unit, not a checklist of phases such as analysis, implementation, verification, and reporting.
+
+Use these common misclassification checks before shaping work:
+
+| Input shape | Correct handling |
+| --- | --- |
+| `analysis`, `work`, `verification`, `reporting`, or `commit readiness` listed as separate planned flows | Treat them as phases or handoffs unless they create a separate reviewable artifact. |
+| Commit completed | Report and reopen next-flow; it is not a turn stop. |
+| Status/progress question during self-drive | Report status and continue the recorded sequence unless it also changes scope, endpoint, approval, or blocker state. |
+| Future stop such as "stop when the list is exhausted" | Update the endpoint; do not treat it as immediate terminal closure. |
+| Any file, release surface, manifest, template, or multi-file contract change | Default to `clean-context` verification. |
+
+For planned flow examples, prefer cohesive artifacts such as `login-ui-components`, `login-logic`, and `login-page-assembly`. Avoid phase-only planned flows such as `analysis`, `implementation`, `verification`, and `reporting`.
 
 Before work, select the needed phase protocol from `references/phase-protocols.md`. Use the earliest blocker as the routing basis. If no protocol applies, stay in the default operating state without a protocol suffix.
 
@@ -133,6 +148,8 @@ Never use a non-pass status as terminal summary, next-flow selection, or commit-
 
 For report-only work with no file changes, `normal` verification may focus on source/evidence readback, logical counterexamples, user-intent fit, and missing-risk checks instead of unnecessary command execution.
 
+For documentation-only research artifacts such as `.agents/researches/**/topic.md`, keep `clean-context` when files changed, but keep the verifier packet narrow: changed topic/session files, required headings, conclusion-to-evidence consistency, absence of implementation claims, coherent verification status, and no terminal closure without explicit stop. Do not ask the verifier to redo broad source research unless the recorded evidence is stale, incomplete, suspicious, or misses a changed path.
+
 ## Reporting
 
 Reporting is continuity context for the next flow, not a terminal close. Report:
@@ -150,6 +167,8 @@ Before reporting, refresh the active flow record and Continuity Guard. Terminal 
 After reporting, enter `next-flow` unless explicit stop is confirmed.
 
 Use the question tool for narrow choices connected to the result just reported. Include the next useful flow options, blocker choices, or scope decisions. If visible choices cannot include a turn-end option, still state that the user can explicitly stop the turn and record an explicit turn-end option in the flow record.
+
+When active self-drive is recorded, read `references/self-drive.md` before opening a default next-flow question. A valid prepared self-drive sequence may route `next-flow` to recorded loop continuation instead of a user question; blockers, scope or endpoint changes, approval-sensitive actions, and ambiguous current-flow identity still return to user-gated routing.
 
 If the question tool is unavailable, ask a plain-text active question, state that the tool was unavailable, and record the open choices and required next action.
 

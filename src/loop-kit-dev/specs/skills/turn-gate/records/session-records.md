@@ -5,6 +5,8 @@
 이 문서는 `turn-gate`가 유지하는 `.agents/sessions/{YYYYMMDD}/` 기록, `000-plan.md`, optional `000-self-drive.md`, 개별 flow record, `Continuity Guard`, `Next Flow Options`의 상위 계약을 소유합니다.
 
 구체적인 template 형식은 `templates/plan.md`, `templates/self-drive.md`, `templates/flow.md`가 소유합니다.
+여기서 `templates/*.md`는 dev spec-side contract owner를 뜻합니다.
+설치 후 실제 시작 파일은 runtime surface의 `skills/turn-gate/templates/plan-template.md`, `skills/turn-gate/templates/self-drive-template.md`, `skills/turn-gate/templates/flow-record-template.md`이며, runtime instructions는 dev-only spec path에 의존하지 않습니다.
 
 ## 기록 구조
 
@@ -48,6 +50,7 @@
 - `000-plan.md` 기본 템플릿은 `skills/turn-gate/templates/plan-template.md`를 사용한다.
 - `000-self-drive.md` 기본 템플릿은 `skills/turn-gate/templates/self-drive-template.md`를 사용하며, self-drive가 active일 때만 만든다.
 - 최소 flow 기록 항목은 user request message, task, flow type, flow scope, current phase, continuity guard, flow contract, execution log, verification, report, next-flow options, residual risk다. 세부 형식은 `templates/flow.md`가 소유한다.
+- flow record의 parent-plan relation은 같은 날짜 디렉터리의 `000-plan.md`와 그 `Flow Index`에서 파생된다. 일반 runtime에서는 중복 `parent_plan` frontmatter를 요구하지 않는다.
 - self-drive가 active인 경우 각 flow record는 기본 template에 전용 section을 상시 노출하지 않고, 전체 sequence를 반복하지 않으며, 자기 flow의 sequence position, local progress note, next handoff, blocker return condition만 가장 자연스러운 기존 section에 flow-local snapshot으로 남긴다.
 - `000-plan.md`가 `self_drive_status: inactive`인데 `self_drive_record`가 남아 있거나 sidecar 파일이 존재하면 stale sidecar state로 취급한다. 이 경우 leftover sidecar를 active continuation authority로 사용하지 말고, pointer/status를 정리하거나 user-gated clarification을 기록한 뒤 진행한다. 필요하면 historical context로만 읽고, routing authority는 current `000-plan.md` snapshot을 따른다.
 - 같은 정보를 `000-plan.md`와 flow record에 상세 반복하지 않는다. `000-plan.md`에 복사되는 값은 active snapshot 또는 flow index summary로만 유지한다.

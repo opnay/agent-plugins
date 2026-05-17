@@ -52,6 +52,7 @@
 - skill body의 phase prefix 예시는 phase-only form과 phase/protocol form을 모두 포함해야 한다.
 - skill body는 reporting 뒤 다음 flow를 여는 단계를 `next-flow` phase로 설명해야 한다.
 - skill body는 activation-only, mid-work status, session-record blocker, report-only evaluation처럼 여러 phase label이 가능해 보이는 상황의 우선순위를 설명해야 한다.
+- skill body는 self-drive continuation의 status, verification, reporting, automatic next-flow handoff 같은 사용자-facing phase/progress message에는 prefix가 필요하지만, self-drive record, flow record, generated artifact body, question option label 안으로 prefix를 전파하지 않는다고 설명해야 한다.
 - skill body는 이 prefix가 phase-start message에 적용되는 운영 표식이며, flow record, output artifact, command summary, question option 전체 문장에 기계적으로 붙이는 규칙이 아님을 설명해야 한다.
 
 ## Runtime Structure Boundary
@@ -61,6 +62,7 @@
 - runtime body는 phase flow, work boundary, verification, reporting, next-flow, stop rule 중심으로 재구성한다.
 - 개별 task 완료는 flow 완료나 turn closure를 결정할 수 없다는 규칙은 남긴다.
 - reporting 뒤에는 explicit stop이 source-recorded되지 않는 한 `next-flow` phase가 next-flow reopening으로 이어져야 한다.
+- runtime body의 common misclassification examples는 phase-vs-flow, commit completion, self-drive status question, future endpoint stop, file-change verification default처럼 반복 실수를 줄이는 작은 decision aids로 제한한다.
 
 ## Preparation Content
 
@@ -68,6 +70,8 @@
 - skill body는 요청 해석과 planned flow list 설계가 plan/session record를 소유하는 `operational-preparation flow`가 될 수 있다고 설명해야 한다.
 - skill body는 operational-preparation 결과로 만들어지는 실행용 planned flows가 검토 가능하거나 commit-sized인 `change-unit flow`여야 한다고 설명해야 한다.
 - skill body는 요청 해석 결과가 바로 실행으로 이어지지 않을 수 있고, 후속 실행 후보와 실제 실행 flow를 구분해야 한다는 일반 원칙만 설명한다.
+- skill body는 full intent scenario를 runtime에 노출하지 않되, 자주 발생하는 오분류를 막기 위한 compact examples를 포함할 수 있다.
+- skill body는 ambiguous operation trigger의 대표 예시를 짧게 포함해 runtime-only reader가 meaning resolution을 건너뛰지 않게 해야 한다.
 - skill body는 preparation에서 scope가 비어 있거나 너무 넓거나 여러 결과물을 만들 수 있거나 성공 기준과 검증 경로를 바꿀 수 있으면 work 전에 질문으로 scope를 잠그도록 직접 설명해야 한다.
 - skill body는 질문 없이 추론한 scope라도 work boundary와 non-goal을 flow record에 남기도록 설명해야 한다.
 

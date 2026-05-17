@@ -142,6 +142,10 @@ $loop-kit-dev:turn-gate 프론트엔드 리팩토링하자.
 
 ## 플러그인 구조
 
+아래 트리는 플러그인 source shape를 보여줍니다.
+이 저장소에서 실제 개발 원본은 `src/<plugin-name>-dev/`에 있고, 루트 `<plugin-name>/`은 build command가 갱신하는 release surface입니다.
+일반 편집은 `src/<plugin-name>-dev/`에 적용하고, 루트 `<plugin-name>/`은 직접 편집하지 않습니다.
+
 ```text
 loop-kit-dev/
   .codex-plugin/plugin.json

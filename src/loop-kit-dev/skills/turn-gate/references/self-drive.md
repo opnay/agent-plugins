@@ -32,13 +32,14 @@ Keep sequence-level state in `000-self-drive.md`:
 - sequence objective;
 - planned flow list;
 - active flow index;
-- current flow label;
+- current flow label, mirrored in frontmatter as `current_flow_label`;
+- current sequence progress note, mirrored in frontmatter as `progress_note`;
 - allowed autonomous actions;
 - prohibited autonomous actions;
 - approval-sensitive checkpoints;
 - endpoint;
 - blocker return conditions;
-- progress note and progress ledger.
+- progress note and append-only progress ledger.
 
 Do not add self-drive-only sequence fields to general templates by default. If self-drive is not active, do not create `000-self-drive.md`.
 
@@ -50,9 +51,11 @@ If `000-plan.md` says self-drive is inactive but still points at `000-self-drive
 
 While self-drive applies, its continuation rules take priority over default next-flow questioning and ordinary phase protocol selection. Each planned flow still runs through preparation, work, verification, reporting, and next-flow internally.
 
-Treat `active_flow_index` as a 0-based machine field. Always pair it with a human-readable current flow label, such as flow number, name, file, or slug. If an existing numeric index conflicts with numbered planned flows, or if the index base is unclear, inspect the flow names/files and reconcile the record before continuing. If the current flow still cannot be identified unambiguously, return to user-gated question routing instead of advancing silently.
+Self-drive does not remove the `next-flow` phase. It changes the `next-flow` outcome to recorded loop continuation when the prepared sequence is still valid and the next planned flow is identifiable. If continuation identity, scope, endpoint, approval boundary, or blocker state is unclear, pause autonomous continuation and return to user-gated routing.
 
-Before reporting and before moving to the next planned flow, refresh `000-self-drive.md` so the active flow index, current flow label, sequence progress note, next handoff, and blocker state match the current result. Refresh `000-plan.md` only if the self-drive active status, sidecar pointer, active flow pointer, required next action, or date-level index changed. Refresh the active flow record separately with only the local progress note, next handoff, and blocker return condition.
+Treat `active_flow_index` as a 0-based machine field. Always pair it with `current_flow_label`, a human-readable flow number, name, file, or slug. If the frontmatter `current_flow_label`, body `Current flow`, numeric index, or planned-flow list conflict, inspect the flow names/files and reconcile the record before continuing. If the current flow still cannot be identified unambiguously, return to user-gated question routing instead of advancing silently.
+
+Before reporting and before moving to the next planned flow, refresh `000-self-drive.md` so the active flow index, current flow label, `progress_note`, next handoff, and blocker state match the current result. Treat `progress_note` as the current overwriteable sequence summary, and treat `Progress Ledger` as append-only history. Refresh `000-plan.md` only if the self-drive active status, sidecar pointer, active flow pointer, required next action, or date-level index changed. Refresh the active flow record separately with only the local progress note, next handoff, and blocker return condition.
 
 ## Mid-Sequence User Input
 
@@ -87,6 +90,28 @@ Return to user-gated question routing when:
 - repeated critical failure suggests a root blocker;
 - commit, push, PR, publish, release, or version bump is outside the exact approved boundary.
 
+## Question Tool Boundary
+
+Self-drive narrows question-tool use; it does not disable it. Do not ask before every recorded sequence transition, but do ask when user input is needed to keep the sequence safe and valid.
+
+| Situation | Question tool routing |
+| --- | --- |
+| Clear next planned flow inside the recorded boundary | Do not ask; refresh records and continue. |
+| Status/progress-only input | Usually do not ask; report current state and continue. |
+| Scope, target, endpoint, order, non-goal, or acceptance signal changes | Ask or relock the sequence before work. |
+| Approval-sensitive, destructive, external, commit, push, PR, publish, release, or version-bump action outside exact recorded boundary | Ask before execution. |
+| Blocker, record access failure, repeated critical failure, or unclear current-flow identity | Ask or open blocker routing before continuing. |
+| Non-self-drive result reporting with no explicit stop | Use default next-flow question routing. |
+
 ## Ending
 
 When the prepared sequence ends, do not close by default. Continue to the recorded endpoint, commit-readiness reporting handoff, blocker decision, or next-flow reopening. Terminal closure still requires a source-recorded explicit stop.
+
+Record even open-ended self-drive as bounded cycles. Do not use vague endpoints such as "forever" or "until stopped" without a current finite planned flow list, cycle exhaustion behavior, blocker return conditions, and approval boundary.
+
+| Endpoint pattern | Required behavior at sequence exhaustion |
+| --- | --- |
+| Finite list exhaustion | Stop self-drive or hand off exactly as recorded; do not create new work silently. |
+| Repeat inventory loop | Create the next bounded inventory cycle only if the endpoint explicitly says to repeat; refresh planned flow count, active flow index, current flow label, and progress note. |
+| User-stop-only unbounded request | Convert into finite cycles with a recorded repeat policy and user-gated blockers; terminal closure still needs source-recorded explicit stop. |
+| Unclear endpoint | Pause autonomous continuation and ask or open endpoint clarification. |

@@ -14,7 +14,14 @@ Plan C 먼저 보고, repository policy는 뒤로 미뤄.
 
 - 직접 요청된 작업: prepared self-drive sequence의 planned flow order를 바꾼다.
 - expected task tier: `multi-flow`
-- expected verification method: `not-required` 또는 record update/readback이 필요한 경우 `normal`
+- expected verification method: primary `normal`
+- allowed verification methods:
+  - `normal`: updated sequence를 relock하기 위해 session record를 읽거나 갱신하는 경우.
+  - `not-required`: record update 전에 멈추고 no-output user-gated clarification만 여는 경우.
+- forbidden downgrade:
+  - sequence record를 갱신하거나 readback 근거를 사용했는데 `not-required`로 낮추지 않습니다.
+  - 변경된 sequence가 잠기지 않았는데 silent continuation하지 않습니다.
+- required rationale: sequence를 실제로 갱신했는지, 아니면 no-output clarification으로 멈췄는지 기록합니다.
 - 필요한 준비:
   - 현재 self-drive sequence가 active 상태다.
   - 사용자 메시지는 `self-drive`를 다시 언급하지 않지만 active self-drive sequence 안의 mid-sequence input으로 처리되어야 한다.

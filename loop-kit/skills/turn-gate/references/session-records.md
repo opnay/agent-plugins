@@ -54,7 +54,7 @@ If `000-plan.md` says self-drive is inactive but still points at `000-self-drive
 Each `001+` flow record owns:
 
 - original user request;
-- task, flow type, scope, and parent plan;
+- task, flow type, scope, and the path-derived parent-plan relation;
 - current phase;
 - Continuity Guard;
 - flow contract;
@@ -65,6 +65,8 @@ Each `001+` flow record owns:
 - report;
 - next-flow options;
 - residual risk.
+
+The parent-plan relation means the same-date `.agents/sessions/{YYYYMMDD}/000-plan.md` indexes the flow record. Do not add a duplicate `parent_plan` frontmatter field during normal runtime; if a future export or pathless aggregation tool needs explicit parent metadata, that metadata belongs to the exporter rather than the base flow template.
 
 Update the flow record after each phase instead of waiting for final completion.
 

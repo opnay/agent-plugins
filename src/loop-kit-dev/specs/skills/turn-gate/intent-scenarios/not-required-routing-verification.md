@@ -54,6 +54,9 @@ Verification
 - Result: pass
 ```
 
+이 예시는 routing outcome이 완료되고 그 근거가 기록됐기 때문에 pass입니다.
+`Method: not-required` 자체가 pass를 뜻하는 것은 아니며, routing outcome이나 evidence가 불완전하면 `insufficient` 또는 `blocked`가 맞습니다.
+
 ## Flow가 아닌 항목
 
 - `파일 수정`
@@ -67,6 +70,7 @@ Verification
 ## 평가 관점
 
 - `not-required`를 result status로 쓰지 않는다.
+- `not-required` method만으로 `pass`를 자동 채우지 않는다.
 - 검증할 work output이 없다는 reason을 남긴다.
 - 파일 변경, release surface, approval-sensitive action이 있으면 `not-required`를 사용하지 않는다.
 - activation-only 보고 뒤 explicit stop이 없으면 next-flow를 연다.
