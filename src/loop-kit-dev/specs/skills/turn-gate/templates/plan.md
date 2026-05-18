@@ -10,10 +10,9 @@
 
 - date-level summary와 latest user request/decision
 - active flow pointer와 required next action
-- user request history
-- flow index
-- planned flow sequence
-- completed flow summaries
+- current recovery state
+- compact flow table
+- planned/current flow sequence only when needed
 - open risks
 - visible UI에 turn-end option이 없더라도 날짜 단위 availability snapshot으로 남기는 explicit turn-end option
 
@@ -33,12 +32,10 @@
 `plan-template.md`는 다음 구조를 유지합니다.
 
 1. YAML frontmatter
-2. `User Requests Today`
-3. `Flow Index`
-4. `Planned Flow Sequence`
-5. `Completed Flow Summaries`
-6. `Explicit Turn-End Option`
-7. `Open Risks`
+2. `Current State`
+3. `Flow Table`
+4. `Open Risks`
+5. `Turn-End Rule`
 
 ## Frontmatter 규격
 
@@ -71,21 +68,21 @@ frontmatter에는 다음 필드를 둡니다.
 - plan의 `Explicit Turn-End Option`은 전체 next-flow options가 아니라 사용자가 명시적으로 turn을 끝낼 수 있다는 date-level availability snapshot입니다.
 - 실행이 아니라 판단, 설계, 범위 확인만 수행한 경우에는 `Planned Flow Sequence` 안에 `Follow-up Change-Unit Candidates`로 라벨링된 후보 목록을 둘 수 있습니다. 이 후보는 선택 또는 승인 전까지 active/completed flow로 세지 않습니다.
 - self-drive 전용 sequence shape는 기본 plan template에 노출하지 않습니다. `000-plan.md`는 self-drive-specific fields로 `self_drive_status`와 `self_drive_record` pointer만 유지하고, self-drive sequence state는 optional `000-self-drive.md`가 소유합니다. 일반 `Planned Flow Sequence` section은 date-level routing snapshot일 수 있지만 self-drive sequence-level state의 canonical record가 아닙니다.
-- `Flow Index`는 flow당 한 줄 compact entry로 유지합니다. 각 entry는 flow number/path, flow type, current status or phase, verification status, short outcome만 포함합니다.
-- `Completed Flow Summaries`는 삭제하지 않고 모든 completed flow를 one-line summary와 flow record link로 유지합니다.
-- `Planned Flow Sequence`는 current/future selected flow만 담고, completed flow의 stale plan detail을 남기지 않습니다.
-- `User Requests Today`는 routing에 필요한 최근 요청 context를 중심으로 유지할 수 있으며, 오래된 요청의 canonical detail은 flow record로 위임합니다.
+- `Current State`는 active flow, current task, work boundary, latest material outcome, and current required next action을 짧게 담습니다.
+- `Flow Table`은 flow당 한 줄 compact entry로 유지합니다. 각 entry는 flow number/path and current recovery value만 포함합니다.
+- `Planned Flow Sequence`가 필요한 경우 current/future selected flow만 담고, completed flow의 stale plan detail을 남기지 않습니다.
+- 오래된 `User Requests Today` chronology와 `Completed Flow Summaries` 중복은 기본 plan template에 두지 않습니다. 최근 요청은 frontmatter snapshot이나 active flow record로 충분해야 합니다.
 - `Open Risks`는 active date-level risk만 담고, completed 또는 flow-local risk는 해당 flow record에 둡니다.
-- 더 강한 capping이나 section removal은 template contract 변경이므로 이 bounded policy에서 암묵적으로 수행하지 않습니다.
+- `000-plan.md`는 active context로 자주 읽히므로 강하게 capping합니다. detailed history, verbose request chronology, stale next-flow options, per-flow evidence, and duplicate completed summaries는 flow record로 위임합니다.
 
 ## 검토 질문
 
 - plan이 date-level index와 active snapshot으로 읽히는가?
 - plan이 flow record의 상세 scope/evidence/verification을 반복하지 않는가?
-- flow index와 completed summaries가 flow당 한 줄 compact entry로 유지되는가?
+- flow table이 flow당 한 줄 compact recovery entry로 유지되는가?
 - planned flow sequence가 phase checklist가 아니라 cohesive flow list인가?
 - planned flow sequence에 completed flow의 stale detail이 남지 않는가?
 - 후속 후보가 planned/active/completed flow와 구분되어 라벨링되는가?
 - self-drive가 active일 때 `000-plan.md`에는 active status와 sidecar pointer만 있고, sequence-level state는 `000-self-drive.md`로 분리됐는가?
 - active flow pointer와 required next action이 다음 진행에 충분한가?
-- completed flow summaries가 상세 보고가 아니라 링크 가능한 요약인가?
+- 오래된 user request chronology나 completed summaries 중복이 active context를 오염시키지 않는가?

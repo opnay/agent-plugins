@@ -36,7 +36,7 @@ runtime artifact가 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{slug}.md` flow re
 
 1. YAML frontmatter
 2. `Flow Contract`
-3. `Optional Risky Actions`
+3. `Optional Risky Actions` only when applicable, or a collapsed one-line not-applicable marker
 4. `Execution Log`
 5. `Verification`
 6. `Report`
@@ -148,8 +148,10 @@ Self-drive가 active인 flow record는 `references/self-drive.md`의 runtime gui
 - `Plan`과 `Work`를 별도 top-level section으로 분리하지 않고 `Execution Log` 아래에 둡니다.
 - `Files changed`와 `Files or surfaces touched`를 동시에 쓰지 않습니다. 최종 표면은 `Changed surfaces`로 기록합니다.
 - `Why this mode`, `Why this question-routing mode`, `Next-flow context` 같은 반복 필드는 기본 템플릿에 두지 않습니다. 필요하면 `Material judgment calls`나 `Report`에 한 줄로 남깁니다.
-- `Optional Risky Actions` 섹션은 유지합니다. risky action이 없으면 `not-applicable`로 접고 checklist를 펼치지 않습니다.
+- `Optional Risky Actions` 섹션은 risky action이 있거나 approval-sensitive boundary를 명시해야 할 때만 펼칩니다. risky action이 없으면 섹션을 생략하거나 `Status: not-applicable` 한 줄로 접고 checklist를 펼치지 않습니다.
 - risky action이 현재 flow에서 예상되지만 아직 실행 승인이 없으면 checklist를 펼치고 `Initial agreement`를 `not-approved`, `deferred`, 또는 `handoff-required`로 기록합니다.
+- 완료된 flow의 `Next Flow Options`는 historical handoff detail입니다. active routing이 이미 다음 flow로 이동했다면 current-state처럼 읽히지 않도록 final snapshot 또는 report에 선택 결과만 남길 수 있습니다.
+- 완료된 flow의 empty closure fields, stale pending question state, superseded question detail, and verbose command checklist는 current recovery에 필요하지 않으면 compact합니다. 단, non-pass verification, unresolved blocker, approval-sensitive action, or uncommitted changed surface에는 디버깅 가능한 detail을 유지합니다.
 
 ## Next Flow Options
 

@@ -4,7 +4,7 @@ Maintain records under `.agents/sessions/{YYYYMMDD}/` for active turn-gated task
 
 Use:
 
-- `000-plan.md` as the date-level bounded plan, flow index, and current routing snapshot;
+- `000-plan.md` as the date-level current recovery snapshot, compact flow table, and current routing pointer;
 - `000-self-drive.md` as the optional same-level self-drive sidecar record, created only while self-drive is active;
 - `{count-pad3}-{eng-lower-slug}.md` as the canonical detail record for one flow.
 
@@ -16,11 +16,10 @@ Use `templates/plan-template.md`, `templates/self-drive-template.md`, and `templ
 
 - latest user request and decision snapshot;
 - active flow pointer and required next action;
-- recent user request history;
-- one-line flow index;
-- current and future planned flow sequence as a date-level routing snapshot;
+- current state needed to recover the turn;
+- compact one-line flow table;
+- current and future planned flow sequence only when it is still relevant;
 - self-drive active status and `000-self-drive.md` pointer when self-drive is active;
-- one-line completed flow summaries;
 - active date-level open risks;
 - date-level note that the user can explicitly end the turn.
 
@@ -28,7 +27,9 @@ It does not own detailed flow scope, non-goals, approval boundary, evidence, ver
 
 When self-drive is active, `000-plan.md` owns only `self_drive_status` and `self_drive_record` as self-drive-specific fields. The general `Planned Flow Sequence` may be kept as a date-level routing snapshot, but sequence-level state belongs to `000-self-drive.md`.
 
-Keep `Flow Index` and `Completed Flow Summaries` compact, one line per flow. Keep `Planned Flow Sequence` limited to current or future selected flows; completed flows should stay only in the index and completed summaries. Keep `Open Risks` limited to active date-level risks.
+Keep the flow table compact, one line per flow. Keep any planned sequence limited to current or future selected flows; completed flows should stay only as compact recovery entries. Keep `Open Risks` limited to active date-level risks.
+
+Do not let `000-plan.md` become the full all-day transcript. Long chronological request history, duplicate completed summaries, historical next-flow choices, per-flow evidence, and stale planned sequence detail belong in the relevant `001+` flow record, not in active recovery context.
 
 ## Self-Drive Sidecar Ownership
 
@@ -66,6 +67,8 @@ Each `001+` flow record owns:
 - next-flow options;
 - residual risk.
 
+Completed flow records may retain historical audit detail, but active recovery state should stay compact. After a flow has moved on, stale `Next Flow Options`, pending or superseded question state, empty closure fields, and default/no-op template fields should not read like current authority. Prefer a compact final snapshot unless unresolved blockers, non-pass verification, approval-sensitive actions, or uncommitted changed surfaces require fuller evidence.
+
 The parent-plan relation means the same-date `.agents/sessions/{YYYYMMDD}/000-plan.md` indexes the flow record. Do not add a duplicate `parent_plan` frontmatter field during normal runtime; if a future export or pathless aggregation tool needs explicit parent metadata, that metadata belongs to the exporter rather than the base flow template.
 
 Update the flow record after each phase instead of waiting for final completion.
@@ -98,6 +101,8 @@ The Continuity Guard must track:
 - superseded question id or summary;
 - verification status;
 - continuity note.
+
+Record closure source and closure phase only when explicit stop has actually been source-recorded. If there is no closure, avoid treating empty closure values as meaningful active context.
 
 `verification status` is the result or lifecycle status, not the method. Use `not-started` or `requested` before verification completes, then `pass`, `fail`, `blocked`, or `insufficient`.
 

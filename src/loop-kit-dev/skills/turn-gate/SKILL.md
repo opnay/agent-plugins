@@ -210,10 +210,12 @@ Use these bundled resources when session records are needed:
 - `templates/self-drive-template.md` for `.agents/sessions/{YYYYMMDD}/000-self-drive.md` when self-drive is active.
 - `templates/flow-record-template.md` for `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`.
 
-`000-plan.md` is a date-level bounded plan and routing snapshot. It may contain a general `Planned Flow Sequence` as a date-level routing snapshot, but it does not own self-drive sequence-level state. When self-drive is active, `000-plan.md` owns only `self_drive_status` and `self_drive_record` as self-drive-specific fields.
+`000-plan.md` is a date-level current recovery snapshot and routing pointer. Keep it compact: active flow, latest decision, required next action, current work boundary, compact flow table, active open risks, and turn-end rule. Do not use it as a full chronological transcript or duplicate per-flow evidence.
 
 `000-self-drive.md` owns self-drive sequence-level state: sequence objective, planned flow list, 0-based `active_flow_index`, human-readable current flow label, autonomous boundaries, approval-sensitive checkpoints, endpoint, blocker return conditions, and progress ledger.
 
-Each `001+` flow record owns flow-local detail, including exact user request raw text when needed and its separate summary or interpretation. When self-drive is active, the flow record records only flow-local sequence position, local progress note, next handoff, and blocker return condition in an existing section. It must not repeat the full self-drive sequence contract.
+Each `001+` flow record owns flow-local detail, including exact user request raw text when needed and its separate summary or interpretation. When a flow is completed, keep current recovery fields compact; avoid leaving stale next-flow options, pending question state, empty closure fields, or no-op template checklists where they can be mistaken for current authority. Preserve fuller evidence when verification is non-pass, a blocker remains, approval-sensitive action is pending, or changed surfaces are not yet committed.
+
+When self-drive is active, the flow record records only flow-local sequence position, local progress note, next handoff, and blocker return condition in an existing section. It must not repeat the full self-drive sequence contract.
 
 Do not silently reconstruct inaccessible records. Report record access failure as a blocker and do not use missing or stale closure state as a reason to close the turn.

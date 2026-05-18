@@ -46,15 +46,7 @@ user_request_summary: ""
 
 Status: not-applicable
 
-- Exact action:
-- Target:
-- Expected effect:
-- Risk:
-- Rollback or recovery path:
-- Included scope:
-- Excluded scope:
-- Initial agreement:
-- End point:
+Expand this section only when the flow includes an approval-sensitive or risky action. Otherwise keep it collapsed.
 
 ## Execution Log
 
@@ -73,11 +65,10 @@ Status: not-applicable
 
 ## Report
 
-- Prepared:
-- Worked:
-- Verified:
+- Final snapshot:
 - Changed surfaces:
-- Blockers:
+- Verification:
+- Remaining risk:
 
 ## Next Flow Options
 

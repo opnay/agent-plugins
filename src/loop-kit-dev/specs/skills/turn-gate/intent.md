@@ -48,6 +48,13 @@
   - flow record에는 사용자 메시지 원문을 저장할 수 있어야 한다.
   - 사용자 메시지 원문은 요약/해석과 분리해야 하며, 원문을 저장할 때는 재가공, 수정, 번역, 오탈자 정정, 완곡화, 맥락 병합을 하지 않아야 한다.
 
+- session record는 현재 복구에 필요한 정보와 historical audit detail을 구분해야 한다.
+  - `flow.md` 쪽에 실제로 필요 없거나 활용 안 되는 데이터가 무엇인지 리스트업하길 원했다.
+  - 오래된 사실뿐 아니라 빈 템플릿, 반복되는 기본값, 완료된 flow의 next-flow/pending 질문 상태, 중복 요약처럼 active context에 기여하지 않는 데이터를 줄이길 원한다.
+  - `000-plan.md`는 긴 시간순 user request log와 중복 completed summaries보다 current recovery state, concise flow table, active open risks를 우선해야 한다.
+  - 완료된 `001+` flow record의 상세 증거는 보존할 수 있지만, current state로 읽히지 않도록 final snapshot과 historical detail을 분리해야 한다.
+  - empty/default 값은 예외가 있을 때만 기록하고, `Optional Risky Actions` 같은 섹션은 risky action이 있을 때만 펼쳐야 한다.
+
 - 검증은 작업 위험도에 맞는 verification method를 선택해야 한다.
   - 검증 단계는 유지하되, verification method는 `clean-context`, `normal`, `not-required` 중 하나로 기록할 수 있어야 한다.
   - `clean-context`는 bounded read-only verifier subagent를 사용하는 방법이며, 파일 수정, release surface, 다중 파일 계약, 실패 이력, 사용자 요청 검증, approval-sensitive action에서는 기본값이어야 한다.

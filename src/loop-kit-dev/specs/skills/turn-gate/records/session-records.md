@@ -12,7 +12,8 @@
 
 - active turn-gated task마다 `.agents/sessions/{YYYYMMDD}/000-plan.md` 날짜 기준 plan과 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` 상세 flow report 체계를 유지한다.
 - self-drive가 active인 경우에만 `.agents/sessions/{YYYYMMDD}/000-self-drive.md` 보조 record를 유지한다.
-- `000-plan.md`는 당일 작업의 히스토리, 사용자 요청 목록, flow index, 현재 snapshot, planned flow sequence, 완료 flow 요약을 소유하되 bounded date-level index로 유지한다. 세부 형식은 `templates/plan.md`가 소유한다.
+- `000-plan.md`는 당일 작업의 active recovery snapshot, active flow pointer, required next action, compact flow table, active open risks, explicit turn-end rule을 소유하되 bounded date-level index로 유지한다. 세부 형식은 `templates/plan.md`가 소유한다.
+- `000-plan.md`는 긴 시간순 user request log, 상세 completed summaries, per-flow evidence, historical next-flow options를 active context로 반복하지 않는다. 필요한 historical detail은 해당 `001+` flow record가 소유한다.
 - self-drive가 active인 경우 `000-plan.md`는 self-drive-specific date-level snapshot으로 self-drive active 여부와 `000-self-drive.md` pointer만 소유한다. 일반 planned flow sequence section은 date-level routing snapshot으로 남을 수 있지만, self-drive sequence-level state의 canonical owner가 아니다.
 - `000-self-drive.md`는 sequence-level state를 소유한다: sequence objective, planned flow list, active flow index, allowed autonomous actions, prohibited autonomous actions, approval-sensitive checkpoints, endpoint, blocker return conditions, progress note, progress ledger.
 - `active_flow_index`는 0-based machine field이며, `000-self-drive.md`에는 사람이 읽을 수 있는 current flow label도 함께 남긴다. numeric index가 planned flow numbering과 충돌하거나 모호하면 flow name/file 또는 slug를 기준으로 reconcile하고, 해소할 수 없으면 다음 autonomous flow로 진행하지 않는다.
@@ -34,11 +35,11 @@
 - 압축했다면 어느 flow가 preparation/work/verification/reporting/next-flow를 함께 소유하는지 설명한다. 단, phase를 쪼갠 것을 flow sequence로 포장하지 않는다.
 - 세부 작업 단계는 해당 `001+` flow record의 execution log와 verification에 둔다.
 - `000-plan.md`는 "이 작업이 어떤 응집 변경 단위들의 흐름으로 진행되는지"를 소유하고, 각 flow record는 "그 flow 안에서 무엇을 했는지"를 소유한다.
-- `000-plan.md`는 증분 갱신하고, 완료된 작업도 삭제하지 않고 요약과 flow reference를 유지한다.
-- `000-plan.md`의 `Flow Index`와 `Completed Flow Summaries`는 flow당 한 줄의 compact entry로 유지한다. 상세 목적, 완료 기준, 검증 근거, next-flow 후보, residual risk는 해당 flow record로 위임한다.
-- `Planned Flow Sequence`에는 현재 선택됐거나 미래에 실행할 planned flow만 둔다. 완료된 flow는 `Flow Index`와 `Completed Flow Summaries`의 compact entry로만 남긴다.
+- `000-plan.md`는 증분 갱신하고, 완료된 작업은 flow table의 compact recovery entry와 flow reference로 유지한다.
+- `000-plan.md`의 flow table은 flow당 한 줄의 compact entry로 유지한다. 상세 목적, 완료 기준, 검증 근거, next-flow 후보, residual risk는 해당 flow record로 위임한다.
+- `Planned Flow Sequence`에는 현재 선택됐거나 미래에 실행할 planned flow만 둔다. 완료된 flow는 `Flow Table`의 compact recovery entry로만 남긴다.
 - `Open Risks`에는 active date-level risk만 둔다. 완료됐거나 flow-local인 risk는 해당 flow record에 남기고 plan에서 반복하지 않는다.
-- `User Requests Today`는 최근 요청 중심의 routing context로 유지할 수 있으며, 오래된 요청의 canonical detail은 각 flow record가 소유한다.
+- 오래된 user request chronology는 `000-plan.md`의 active context가 아니다. 최근 요청이 routing에 필요하면 latest user request/decision snapshot이나 active flow record에만 남기고, 오래된 요청의 canonical detail은 각 flow record가 소유한다.
 
 ## Flow Record
 
@@ -56,6 +57,9 @@
 - 같은 정보를 `000-plan.md`와 flow record에 상세 반복하지 않는다. `000-plan.md`에 복사되는 값은 active snapshot 또는 flow index summary로만 유지한다.
 - 운영 flow가 판단, 설계, 범위 확인에서 끝나는 경우 최소 기록 항목의 `planned flow list`는 `follow-up change-unit candidates`로 대체할 수 있으며, 각 후보에는 후보 type, 예상 산출물, 분리 또는 압축 근거, 예상 검증, user-gated handoff 조건을 남긴다.
 - flow record는 phase 메모가 아니지만, `preparation`, `work`, `verification`, `reporting`, `next-flow` 각 phase가 끝날 때마다 현재 상태로 갱신해야 한다.
+- 완료된 flow record는 active context로 다시 읽힐 수 있으므로 final snapshot과 historical detail을 구분한다. 완료 후에는 오래된 `Next Flow Options`, pending/superseded question state, empty closure fields, empty/default optional risky action checklist를 current recovery state처럼 유지하지 않는다.
+- empty/default 값은 예외가 있을 때만 펼친다. 예: risky action이 없으면 `Optional Risky Actions`를 생략하거나 `Status: not-applicable` 한 줄로 접고, closure source/phase는 explicit stop이 source-recorded된 경우에만 의미 있게 채운다.
+- 오래된 command checklist와 verbose evidence는 final pass, commit hash, changed surface, 핵심 residual risk로 compact할 수 있다. 단, 커밋 전이거나 검증 실패/불충분/blocked 상태에서는 디버깅 가능한 evidence를 유지한다.
 
 ## Continuity Guard
 
@@ -94,7 +98,7 @@
 - flow record의 `Next Flow Options`에는 사용자 표시 질문에 턴 종료 선택지가 보이지 않는 경우에도 명시적인 turn-end option이 포함되어야 한다.
 - `Next Flow Options`는 flow record가 소유한다. `000-plan.md`는 선택 결과나 active next flow만 snapshot으로 반영한다.
 - 완료된 작업은 삭제하지 않고 한 줄 요약과 flow reference를 유지한다.
-- `000-plan.md`는 날짜 기준 증분 계획과 flow-sequence artifact로, `001+`는 flow 단위 상세 보고서로 취급한다.
+- `000-plan.md`는 날짜 기준 active recovery snapshot과 compact flow-sequence artifact로, `001+`는 flow 단위 상세 보고서와 historical audit detail로 취급한다.
 
 ## Read-Only Write Boundary
 
@@ -121,9 +125,10 @@
 ## 검토 질문
 
 - `000-plan.md`가 flow sequence와 transition criteria를 소유하고 있는가?
+- `000-plan.md`가 긴 chronology 대신 current recovery state, concise flow table, active open risks를 우선하는가?
 - self-drive가 active라면 `000-plan.md`가 self-drive active 여부와 sidecar pointer만 self-drive-specific snapshot으로 소유하고 `000-self-drive.md`가 sequence-level state를 소유하는가?
 - `000-plan.md`가 상세 flow contract와 verification evidence를 반복하지 않고 snapshot/index만 유지하는가?
-- `000-plan.md`의 index와 completed summaries가 flow당 한 줄 compact entry로 유지되는가?
+- `000-plan.md`의 flow table이 flow당 한 줄 compact recovery entry로 유지되는가?
 - `Planned Flow Sequence`에 완료된 flow의 stale 계획이 남지 않는가?
 - `Open Risks`가 active date-level risk만 담고 flow-local risk를 반복하지 않는가?
 - flow record가 scope, non-goals, approval boundary, evidence, verification detail의 canonical owner인가?
@@ -140,5 +145,6 @@
 - visible choices에 turn-end option이 없어도 record에는 turn-end option이 남았는가?
 - confirmed closure가 있다면 source explicit stop message가 같이 기록돼 있는가?
 - pending 또는 superseded question state가 현재 required next action을 오염시키지 않는가?
+- 완료된 flow의 pending/next-flow/empty-default fields가 current state로 읽히지 않도록 compact 또는 archive-only 처리됐는가?
 - read-only/no-edit 요청에서 target/source 변경 금지와 session record 운영 기록 작성 여부를 분리했는가?
 - workspace-wide no-write 또는 no-record 요청에서 session record write를 수행하지 않고 blocker/clarification으로 라우팅했는가?

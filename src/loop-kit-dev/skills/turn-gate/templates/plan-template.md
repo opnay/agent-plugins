@@ -15,26 +15,26 @@ final_readiness_handoff: ""
 
 # Session Plan
 
-## User Requests Today
+## Current State
 
-- TBD
+- Turn gate is active.
+- Active flow: `TBD`.
+- Current task: TBD.
+- Work boundary: TBD.
+- Latest material outcome: TBD.
 
-## Flow Index
+## Flow Table
 
 - TBD
 
 ## Planned Flow Sequence
 
-- TBD
-
-## Completed Flow Summaries
-
-- TBD
-
-## Explicit Turn-End Option
-
-- User may explicitly ask to end the turn. Terminal closure is allowed only when that stop request is source-recorded.
+- TBD, only when current or future selected flows are already known.
 
 ## Open Risks
 
 - TBD
+
+## Turn-End Rule
+
+- Terminal closure is allowed only after the user explicitly asks to stop and that stop request is source-recorded.
