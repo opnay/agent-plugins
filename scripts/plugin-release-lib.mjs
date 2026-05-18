@@ -120,6 +120,7 @@ function copyRuntimeFiles(sourceDir, targetDir, devName, releaseName) {
     ".codex-plugin",
     "README.md",
     "skills",
+    "hooks",
     "assets",
     "scripts",
     ".mcp.json",

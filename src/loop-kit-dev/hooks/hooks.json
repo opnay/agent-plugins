@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 \"${PLUGIN_ROOT}/hooks/turn_gate_stop.py\"",
+            "timeout": 10,
+            "statusMessage": "Checking turn-gate continuation"
+          }
+        ]
+      }
+    ]
+  }
+}

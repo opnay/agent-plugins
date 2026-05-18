@@ -11,6 +11,7 @@
   - turn-level continuity 유지
   - `preparation -> work -> verification -> reporting -> next-flow question-routing response` 구조 유지
   - explicit stop lifecycle handling
+  - optional bundled Codex Stop hook guard guidance
   - preparation에서 사용자 메시지의 operation 의미 해독
   - implicit default state and phase protocol selection
   - 결과 보고 뒤 explicit choice 기반 next-flow reopening
@@ -20,6 +21,7 @@
   - 여러 direct loop skill을 사용자에게 노출하는 일
   - domain-specific implementation detail 자체
   - commit execution, push, PR 같은 외부 작업의 세부 실행 계약
+  - Codex hook trust/reload UI나 plugin hook feature enablement 자체
 
 ## 처리하려는 작업 형태
 
@@ -27,6 +29,7 @@
 - requirement discovery, autonomous execution, refinement, review-driven correction, readiness checking 같은 current-phase work가 번갈아 나타나는 작업
 - 사용자 메시지에서 시작한 preparation과 기존 flow 실행 전 preparation을 구분하고, 준비 뒤 작업, 검증, 보고로 이어져야 하는 작업
 - 결과 보고 뒤 clean stop이 아니라 다음 플로우 선택이 기본이어야 하는 작업
+- bundled Codex Stop hook으로 source-recorded explicit stop 없는 terminal closure를 런타임에서 보조 차단해야 하는 작업
 - 사용자 지시어가 여러 구조 단위를 가리켜 작업 전에 target 또는 operation을 잠가야 하는 작업
 
 ## 엔트리포인트 / 대표 표면
@@ -61,6 +64,7 @@
 - `gates/task-policy.md`: flow-local task sequencing, local references, target rereads, command/edit/build/test policy
 - `gates/verification.md`: verification method selection, minimum-sufficient evidence or packet construction, and pass/fail/blocked/insufficient routing
 - `gates/reporting.md`: result reporting as continuity context
+- `hooks/stop-hook.md`: 선택적 bundled Codex Stop hook을 `turn-gate` runtime guidance에서 backstop으로 설명하고 해석하는 기준
 - `core/meaning-resolution.md`: operation/target ambiguity, provenance/intent block target locking, user-gated clarification
 - `modes/default.md`: implicit default operating state 계약
 - `phase-protocols/routes.md`: implicit default state, phase protocol selection, local references, operating-state-vs-handoff
@@ -88,8 +92,10 @@
 - 전체 phase 흐름과 phase 간 전환은 `core/runtime-flow.md`가 소유한다.
 - phase 시작 사용자-facing 메시지의 `[<phase-name>(/<phase-protocol>)]` prefix 계약은 `core/runtime-flow.md`와 `core/skill-contents.md`가 소유한다.
 - phase 내부 세부 계약은 `phases/*` spec이 소유하고, internal gate 세부 계약은 `gates/*` spec이 소유한다.
+- 선택적 Stop hook guidance 계약은 `hooks/stop-hook.md`가 소유한다. Plugin runtime hook packaging과 script 계약은 plugin-level `specs/hooks/stop-hook.md`가 소유한다.
 - session record와 Continuity Guard 계약은 `records/session-records.md`가 소유한다.
 - risk-based verification method 계약은 `records/verification.md`가 소유한다.
+- 선택적 Stop hook guard는 `turn-gate`의 기본 대화 규칙을 대체하지 않는다. 신뢰되고 활성화된 bundled Codex Stop hook이 있을 때, active flow record의 Continuity Guard를 읽어 terminal summary가 허용되지 않은 응답을 차단하는 runtime backstop으로만 취급한다.
 
 ## 검토 질문
 

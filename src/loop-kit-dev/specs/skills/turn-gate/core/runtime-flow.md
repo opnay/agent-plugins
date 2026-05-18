@@ -16,6 +16,9 @@
 
 activation과 explicit stop handling은 이 기본 flow를 둘러싼 lifecycle guard입니다.
 이 lifecycle guard는 내부 gate로 적용됩니다.
+신뢰되고 활성화된 bundled Codex Stop hook을 사용할 수 있는 환경에서는 이 lifecycle guard를 runtime backstop으로 보강할 수 있습니다.
+Stop hook은 active flow record의 Continuity Guard를 읽고, `terminal_summary_allowed`가 false이며 source-recorded explicit stop이 없는 상태에서 assistant response가 next-flow routing 없이 끝나려 할 때 차단해야 합니다.
+이 hook은 `turn-gate`의 대화 규칙을 대체하지 않으며, hook trust/reload나 plugin hook feature enablement 자체를 자동으로 처리하지 않습니다.
 flow shaping gate는 active flow와 completion criteria를 만들거나 갱신하며, task policy gate는 flow 내부 실행 정책을 정합니다.
 task policy는 flow 밖의 독립 계층이 아니며, 개별 task 완료가 flow 완료나 turn closure를 결정할 수 없습니다.
 verification gate와 reporting gate는 각각 검증 판정과 보고 맥락 정리를 소유합니다.
@@ -84,6 +87,12 @@ deep-interview alignment, flow list design, meaning resolution, current-state in
   - flow record의 `confirmed closure`는 특정 explicit stop 사용자 메시지와 함께 기록된 경우에만 유효하다.
   - closure source message가 없거나 현재 incoming message와 맞지 않는 stale closure 기록은 terminal close 근거로 쓰지 않는다.
   - closure source message와 `Continuity Guard` 기록은 `records/session-records.md`와 함께 유지한다.
+- optional Stop hook guard:
+  - 신뢰되고 활성화된 bundled Codex Stop hook이 있는 경우, hook은 active same-date `000-plan.md`와 active flow record를 읽어 Continuity Guard를 확인한다.
+  - `turn_gate_active`가 true이고, `terminal_summary_allowed`, `user_explicit_stop`, `confirmed_closure`가 모두 false이며, `required_next_action`이 존재하고, 마지막 assistant message가 next-flow로 라우팅하지 않으면 hook은 terminal closure를 block한다.
+  - Stop hook의 block reason은 active flow record를 refresh한 뒤 `required_next_action`으로 계속하라는 형태여야 한다.
+  - Stop hook은 기록을 직접 수정하지 않는다. hook이 차단한 뒤 main agent가 관측 결과와 다음 action을 기록한다.
+  - 이미 `stop_hook_active`인 재진입 payload에서는 block하지 않는다.
 
 ## 검토 질문
 

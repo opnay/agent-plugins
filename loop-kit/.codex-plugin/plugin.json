@@ -16,10 +16,11 @@
     "workflow"
   ],
   "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
   "interface": {
     "displayName": "Loop Kit",
     "shortDescription": "Turn-gated continuity with execution, refinement, review, and readiness phase protocols driven from one main surface.",
-    "longDescription": "Provides a narrow operational plugin where turn-gate is the main user-facing surface. It keeps one turn alive until the user explicitly ends the work, runs each flow through preparation, work, verification, reporting, and next-flow reopening, records initial preparation and planned-flow design as an operational-preparation flow when it owns session plan, flow-list, scope, or approval-boundary artifacts, treats execution planned flows as cohesive reviewable or commit-sized change units rather than phase checklists, and chooses verification method as clean-context, normal, or not-required based on work risk. Self-drive is a separate overlay reference for prepared autonomous sequences.",
+    "longDescription": "Provides a narrow operational plugin where turn-gate is the main user-facing surface. It keeps one turn alive until the user explicitly ends the work, runs each flow through preparation, work, verification, reporting, and next-flow reopening, records initial preparation and planned-flow design as an operational-preparation flow when it owns session plan, flow-list, scope, or approval-boundary artifacts, treats execution planned flows as cohesive reviewable or commit-sized change units rather than phase checklists, and chooses verification method as clean-context, normal, or not-required based on work risk. Self-drive is a separate overlay reference for prepared autonomous sequences. A trusted bundled Codex Stop hook may optionally reinforce terminal-closure blocking when plugin hooks are enabled, but does not replace turn-gate's reporting, recording, and next-flow obligations.",
     "developerName": "opnay",
     "category": "Productivity",
     "capabilities": [
@@ -29,6 +30,7 @@
     ],
     "defaultPrompt": [
       "Keep this turn alive until I explicitly stop; after reporting, reopen next-flow with explicit choices unless closure is source-recorded.",
+      "When the bundled trusted Stop hook is active, treat it as a backstop only; still record, report, and reopen next-flow yourself.",
       "Run each turn-gated flow through preparation, work, verification, reporting, and next-flow reopening.",
       "Treat planned flows as cohesive reviewable or commit-sized change units, not analysis/work/verification phase slices and not only direct user-visible value.",
       "Classify verification method as clean-context, normal, or not-required while keeping result status separate as pass, fail, blocked, or insufficient.",

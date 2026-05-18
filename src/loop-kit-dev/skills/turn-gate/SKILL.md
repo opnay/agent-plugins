@@ -21,6 +21,8 @@ Use the question tool for bounded choices, scope locks, approval checkpoints, bl
 
 Maintain session records under `.agents/sessions/{YYYYMMDD}/` for active turn-gated work. Refresh the active flow record's Continuity Guard before reporting and before next-flow reopening.
 
+If the bundled trusted Codex Stop hook is enabled for `turn-gate`, treat it only as a runtime backstop. The hook may block terminal closure when the active flow record says the turn is still open, but it does not replace the obligation to report, record, and reopen next-flow yourself.
+
 Use only runtime files bundled with this skill, such as `references/*` and `templates/*`. Do not depend on development specs or repository-only spec paths being available at runtime.
 
 ## Purpose
@@ -171,6 +173,22 @@ When active self-drive is recorded, read `references/self-drive.md` before openi
 If the question tool is unavailable, ask a plain-text active question, state that the tool was unavailable, and record the open choices and required next action.
 
 Next-flow terminal closure is valid only when explicit stop is source-recorded. A stale `confirmed_closure`, a source-less closure, a completed task, or an inactive self-drive sidecar is not terminal closure authority.
+
+## Optional Stop Hook Guard
+
+A bundled trusted Codex Stop hook can reinforce this skill's terminal-closure rule when plugin hooks are enabled. Use it as an optional guard, not as the primary controller.
+
+The hook should read the same-date `000-plan.md` and active flow record, then block only when all of these are true:
+
+- `turn_gate_active` is true;
+- `terminal_summary_allowed`, `user_explicit_stop`, and `confirmed_closure` are false;
+- `required_next_action` is present;
+- the last assistant message does not already route to next-flow or a user-gated question;
+- the payload is not already inside a Stop hook reentry.
+
+The block reason should tell the agent to refresh the active flow record and continue to `required_next_action`. The hook should not edit records. After a block, the main agent records the observation and continues the flow.
+
+Hook trust, reload, global Codex configuration, and plugin hook feature enablement are outside this skill's automatic authority. Treat those as user-gated setup steps.
 
 ## Records And Templates
 
