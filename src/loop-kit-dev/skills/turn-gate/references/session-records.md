@@ -47,13 +47,13 @@ Keep `Flow Index` and `Completed Flow Summaries` compact, one line per flow. Kee
 
 It is not a replacement for `000-plan.md`, does not own the date-level flow index, does not own each flow's canonical scope, evidence, report, or closure authority, and does not grant commit/push/PR/publish/release/version-bump approval.
 
-If `000-plan.md` says self-drive is inactive but still points at `000-self-drive.md`, or if an old sidecar file still exists, treat that as stale sidecar state. Do not use the leftover sidecar as active continuation authority. Clear or correct the pointer/status when the routing state is clear, or ask/record a user-gated clarification before autonomous continuation. You may read the old sidecar only as historical context after marking it stale; current routing authority comes from `000-plan.md`.
+If `000-plan.md` says self-drive is inactive but still points at `000-self-drive.md`, or if an old sidecar file still exists, treat that as stale sidecar state. Do not use the leftover sidecar as active continuation authority. Clear or correct the pointer/status when the routing state is clear, or ask/record a user-gated clarification before autonomous continuation. You may read the old sidecar only as historical context after marking it stale.
 
 ## Flow Record Ownership
 
 Each `001+` flow record owns:
 
-- original user request;
+- original user request raw text when it matters, kept separate from summary or interpretation;
 - task, flow type, scope, and the path-derived parent-plan relation;
 - current phase;
 - Continuity Guard;

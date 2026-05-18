@@ -26,7 +26,8 @@ user_request_summary: ""
 
 ## Flow Contract
 
-- User request:
+- User request raw:
+- User request summary:
 - Preparation source:
 - Preparation result:
 - Boundary rationale:

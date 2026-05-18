@@ -7,7 +7,7 @@ description: Keep a Codex turn open across preparation, work, verification, repo
 
 ## Important
 
-When this skill is active, treat it as a conversation-level operating rule for the whole session. The response loop itself is controlled by `turn-gate`; it is not an internal checklist that can be dropped after a task appears complete.
+When this skill is active, treat it as a conversation-level operating rule for the whole session. `turn-gate` controls the response loop itself; it is not an internal checklist that can be dropped after a task appears complete.
 
 Do not close with a terminal summary after result reporting unless the current user message, or a source-recorded explicit stop in the active flow record that matches the current message, explicitly ends the turn.
 
@@ -27,7 +27,7 @@ Use only runtime files bundled with this skill, such as `references/*` and `temp
 
 Use this skill to keep a turn open across preparation, work, verification, reporting, and next-flow selection. The default state is implicit: phase protocols shape the current phase, but they are not separate modes.
 
-If the user explicitly asks for autonomous continuation across a prepared planned flow sequence, read `references/self-drive.md`. That reference owns the self-drive overlay's continuation and interruption rules for the prepared sequence.
+If the user explicitly asks for autonomous continuation across a prepared planned flow sequence, or if an already-active autonomous sequence receives another user message, read `references/self-drive.md`. That reference owns the self-drive overlay's continuation and interruption rules.
 
 ## Operating Cycle
 
@@ -52,7 +52,7 @@ When a user-facing message starts a phase or announces phase progress, begin it 
 - Valid examples include `[preparation]`, `[work]`, `[verification]`, `[reporting]`, `[next-flow]`, `[preparation/deep-interview]`, `[work/ralph-loop]`, `[verification/review-loop]`, and `[reporting/commit-readiness-gate]`.
 - Apply the prefix to phase-start messages, not to every command summary, artifact body, flow record line, command output summary, or question option.
 - For activation-only requests with no concrete task, start with `[preparation]` for scope setup. Use `[next-flow]` only when opening actual next-flow choices.
-- For status questions, use the current active phase. During work, this is usually `[work]`.
+- For status questions, use the current active phase. During work, this is usually `[work]`; use `[reporting]` only when intentionally summarizing flow context.
 - For self-drive continuation, prefix user-facing status, verification, reporting, and automatic next-flow handoff messages with the phase being announced. Do not add phase prefixes inside the self-drive record, flow record, generated artifact body, or option labels.
 - For session-record access blockers, use the phase where the blocker was found, usually `[reporting]` or `[next-flow]`.
 - For report-only evaluation, gather evidence and report without edits if appropriate, then continue to `[next-flow]` unless explicit stop is confirmed.
@@ -135,8 +135,6 @@ If a verifier would need edit permission, scope expansion, destructive/external 
 
 Do not report `fail`, `blocked`, or `insufficient` as successful completion. Return to the earliest safe phase for repair, or open a user-gated blocker when verification cannot be completed.
 
-Use this routing split:
-
 | Verification status | Successful completion report | Expected routing |
 | --- | --- | --- |
 | `pass` | allowed | reporting, then next-flow reopening or self-drive continuation |
@@ -188,6 +186,6 @@ Use these bundled resources when session records are needed:
 
 `000-self-drive.md` owns self-drive sequence-level state: sequence objective, planned flow list, 0-based `active_flow_index`, human-readable current flow label, autonomous boundaries, approval-sensitive checkpoints, endpoint, blocker return conditions, and progress ledger.
 
-Each `001+` flow record owns flow-local detail. When self-drive is active, the flow record records only flow-local sequence position, local progress note, next handoff, and blocker return condition in an existing section. It must not repeat the full self-drive sequence contract.
+Each `001+` flow record owns flow-local detail, including exact user request raw text when needed and its separate summary or interpretation. When self-drive is active, the flow record records only flow-local sequence position, local progress note, next handoff, and blocker return condition in an existing section. It must not repeat the full self-drive sequence contract.
 
 Do not silently reconstruct inaccessible records. Report record access failure as a blocker and do not use missing or stale closure state as a reason to close the turn.
