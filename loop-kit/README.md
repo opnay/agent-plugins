@@ -90,6 +90,12 @@ Codex plugin hooks를 활성화하고 bundled hook을 신뢰하도록 설정한 
 이 패턴은 플러그인 release surface의 `hooks/hooks.json`와 `hooks/turn_gate_stop.py`를 기준으로 합니다.
 Bundled hooks는 Codex feature flag와 별도 trust review가 필요하므로, 이 플러그인이 자동으로 활성화한다고 가정하지 않습니다.
 
+## 선택적 SessionStart hook context
+
+같은 조건에서 bundled `SessionStart` hook은 Codex startup/resume 시 `.agents/sessions/`의 plan/flow 상태를 읽어 시작 맥락을 제공할 수 있습니다.
+오늘 plan이 있으면 active flow를 우선하고, 없으면 가장 최근 plan과 마지막 flow를 historical context로 알려줍니다.
+이 context는 어디서 작업을 멈췄는지 알려주는 보조 정보일 뿐이며, 자동 continuation, commit, push, release, deletion, terminal closure 승인을 만들지 않습니다.
+
 ## 턴 구조
 
 `turn-gate`는 다음 흐름을 계속 보이게 유지합니다.

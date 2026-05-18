@@ -12,6 +12,7 @@
   - `preparation -> work -> verification -> reporting -> next-flow question-routing response` 구조 유지
   - explicit stop lifecycle handling
   - optional bundled Codex Stop hook guard guidance
+  - optional bundled Codex SessionStart hook context guidance
   - preparation에서 사용자 메시지의 operation 의미 해독
   - implicit default state and phase protocol selection
   - 결과 보고 뒤 explicit choice 기반 next-flow reopening
@@ -65,6 +66,7 @@
 - `gates/verification.md`: verification method selection, minimum-sufficient evidence or packet construction, and pass/fail/blocked/insufficient routing
 - `gates/reporting.md`: result reporting as continuity context
 - `hooks/stop-hook.md`: 선택적 bundled Codex Stop hook을 `turn-gate` runtime guidance에서 backstop으로 설명하고 해석하는 기준
+- `hooks/session-start.md`: 선택적 bundled Codex SessionStart hook context를 advisory startup context로 설명하고 해석하는 기준
 - `core/meaning-resolution.md`: operation/target ambiguity, provenance/intent block target locking, user-gated clarification
 - `modes/default.md`: implicit default operating state 계약
 - `phase-protocols/routes.md`: implicit default state, phase protocol selection, local references, operating-state-vs-handoff
@@ -93,6 +95,7 @@
 - phase 시작 사용자-facing 메시지의 `[<phase-name>(/<phase-protocol>)]` prefix 계약은 `core/runtime-flow.md`와 `core/skill-contents.md`가 소유한다.
 - phase 내부 세부 계약은 `phases/*` spec이 소유하고, internal gate 세부 계약은 `gates/*` spec이 소유한다.
 - 선택적 Stop hook guidance 계약은 `hooks/stop-hook.md`가 소유한다. Plugin runtime hook packaging과 script 계약은 plugin-level `specs/hooks/stop-hook.md`가 소유한다.
+- 선택적 SessionStart hook guidance 계약은 `hooks/session-start.md`가 소유한다. Plugin runtime hook packaging과 script 계약은 plugin-level `specs/hooks/session-start.md`가 소유한다.
 - session record와 Continuity Guard 계약은 `records/session-records.md`가 소유한다.
 - risk-based verification method 계약은 `records/verification.md`가 소유한다.
 - 선택적 Stop hook guard는 `turn-gate`의 기본 대화 규칙을 대체하지 않는다. 신뢰되고 활성화된 bundled Codex Stop hook이 있을 때, active flow record의 Continuity Guard를 읽어 terminal summary가 허용되지 않은 응답을 차단하는 runtime backstop으로만 취급한다.

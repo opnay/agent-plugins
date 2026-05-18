@@ -23,6 +23,8 @@ Maintain session records under `.agents/sessions/{YYYYMMDD}/` for active turn-ga
 
 If the bundled trusted Codex Stop hook is enabled for `turn-gate`, treat it only as a runtime backstop. The hook may block terminal closure when the active flow record says the turn is still open, but it does not replace the obligation to report, record, and reopen next-flow yourself.
 
+If the bundled trusted Codex SessionStart hook provides startup context, treat it as advisory state recovery only. It can tell you which plan or flow appears active or latest, but it does not grant approval, automatic continuation, or terminal closure authority.
+
 Use only runtime files bundled with this skill, such as `references/*` and `templates/*`. Do not depend on development specs or repository-only spec paths being available at runtime.
 
 ## Purpose
@@ -189,6 +191,14 @@ The hook should read the same-date `000-plan.md` and active flow record, then bl
 The block reason should tell the agent to refresh the active flow record and continue to `required_next_action`. The hook should not edit records. After a block, the main agent records the observation and continues the flow.
 
 Hook trust, reload, global Codex configuration, and plugin hook feature enablement are outside this skill's automatic authority. Treat those as user-gated setup steps.
+
+## Optional SessionStart Hook Context
+
+A bundled trusted Codex SessionStart hook can provide startup or resume context from `.agents/sessions/`. Use it as a state-recovery hint, not as an instruction to continue automatically.
+
+The context may name the current plan date, active or latest flow, latest user request, latest decision, verification status, required next action, pending question state, and closure state. Before acting, reconcile that context with the current user message and the readable session records.
+
+Do not treat SessionStart context as approval for destructive actions, external actions, commit, push, PR, publish, release, version bump, deletion, or terminal closure. If the context says a previous flow was closed, treat it as historical context only unless the user asks to resume it.
 
 ## Records And Templates
 

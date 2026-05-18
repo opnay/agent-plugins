@@ -32,6 +32,7 @@
   - session-level activation
   - terminal summary 금지
   - optional bundled Stop hook guard가 이 규칙을 보조할 수 있지만 대체하지 않는다는 점
+  - optional bundled SessionStart hook context가 startup/restart 맥락을 보조할 수 있지만 approval이나 continuation authority가 아니라는 점
   - required ending states
   - `request_user_input` 기반 next-flow reopening
   - session record 유지 의무
@@ -66,6 +67,8 @@
 - skill body는 신뢰되고 활성화된 bundled Codex Stop hook이 있으면 terminal closure backstop으로 사용할 수 있음을 짧게 설명할 수 있다.
 - Stop hook guidance는 active flow record의 Continuity Guard와 `required_next_action`을 읽어 block reason을 만들며, 기록 수정은 main agent가 수행한다는 경계를 포함해야 한다.
 - Stop hook guidance는 plugin hook feature enablement, hook trust/reload, global Codex config를 자동 처리한다고 말하면 안 된다.
+- skill body는 신뢰되고 활성화된 bundled Codex SessionStart hook이 있으면 `.agents/sessions/` plan/flow 상태를 startup context로 제공할 수 있음을 짧게 설명할 수 있다.
+- SessionStart hook guidance는 해당 context가 자동 continuation, approval, terminal closure authority가 아니라는 경계를 포함해야 한다.
 - runtime body의 common misclassification examples는 phase-vs-flow, commit completion, self-drive status question, future endpoint stop, file-change verification default처럼 반복 실수를 줄이는 작은 decision aids로 제한한다.
 
 ## Preparation Content

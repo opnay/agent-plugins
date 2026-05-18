@@ -1,5 +1,18 @@
 {
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/usr/bin/python3 \"${PLUGIN_ROOT}/hooks/session_start_context.py\"",
+            "timeout": 10,
+            "statusMessage": "Loading turn-gate session context"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
