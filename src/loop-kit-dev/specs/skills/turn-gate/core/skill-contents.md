@@ -2,124 +2,191 @@
 
 ## 목적
 
-이 문서는 `turn-gate` runtime `SKILL.md` 본문이 반드시 담아야 하는 실행 계약과 구성 기준을 소유합니다.
-`spec.md`는 skill 전체 index와 sibling spec map을 소유하고, 이 문서는 설치 후 실제로 읽히는 skill body의 내용 계약만 소유합니다.
+이 문서는 `turn-gate` runtime skill folder가 설치 후 사용자와 agent에게 제공해야 하는 실행 표면의 내용 계약을 소유합니다.
 
-## 경계
+runtime skill folder는 다음 세 가지 표면으로 구성됩니다.
 
-- 포함:
-  - `SKILL.md` body의 필수 section과 우선순위
-  - runtime body에 직접 남아야 하는 turn continuity, phase flow, verification, reporting 계약
-  - runtime body에 넣지 않아야 하는 dev-only fixture와 spec-side 평가 절차
-- 제외:
-  - 전체 phase 전환 세부 계약 자체
-  - 각 internal gate의 세부 판단 규칙
-  - internal gate model의 runtime-facing 노출
-  - session record template의 정확한 필드 목록
-  - local runtime reference 문서의 상세 내용
+- `SKILL.md`: activation 직후 읽히는 최상위 실행 지시
+- `references/`: `SKILL.md`에 모두 펼치면 너무 길어지는 세부 운영 계약
+- `templates/`: session record를 새로 만들 때 쓰는 runtime 시작점
 
-## Runtime Surface Role
+`spec.md`는 skill 전체 index와 sibling spec map을 소유합니다.
+이 문서는 runtime skill folder의 내용 구성과 보존 기준만 소유합니다.
 
-- `loop-kit-dev/skills/turn-gate/SKILL.md`는 이 스펙의 단순 요약본이 아니라 runtime에서 읽는 운영 표면이다.
-- skill body는 설치된 skill만 읽는 fresh runtime reader가 즉시 따를 수 있는 실행 지시여야 한다.
-- skill body를 짧게 다듬더라도 필수 단계와 금지 규칙을 한 문단으로 뭉개지 말고, 실행 중 빠르게 확인 가능한 형태로 유지한다.
+## 소유
 
-## Required Section Priority
+- `SKILL.md` body의 필수 top-level section과 우선순위
+- `SKILL.md`에 직접 남아야 하는 turn continuity, phase flow, verification, reporting, next-flow 계약
+- `SKILL.md`가 local `references/`와 `templates/`를 어떻게 discoverable하게 만드는지
+- skill folder 재생성 시 runtime `references/`와 `templates/`에서 보존해야 하는 운영 계약
+- runtime body에 넣지 않아야 하는 dev-only fixture, spec-side 평가 절차, internal gate model 노출 제한
 
-- skill body는 대화 응답 자체를 제어하는 conversation-level first-class rule을 `## Important` 섹션으로 앞부분에서 명시해야 한다.
-- `## Important` 섹션은 `Purpose`보다 먼저 위치해야 한다.
-- `## Important` 섹션은 최소한 다음 내용을 포함해야 한다.
-  - session-level activation
-  - terminal summary 금지
-  - optional bundled Stop hook guard가 이 규칙을 보조할 수 있지만 대체하지 않는다는 점
-  - optional bundled SessionStart hook context가 startup/restart 맥락을 보조할 수 있지만 approval이나 continuation authority가 아니라는 점
-  - required ending states
-  - `request_user_input` 기반 next-flow reopening
-  - session record 유지 의무
+## 비소유
+
+- phase 전환의 전체 세부 계약: `core/runtime-flow.md`, `phases/*`, `gates/*`가 소유합니다.
+- session record의 전체 운영 계약: `records/session-records.md`가 소유합니다.
+- template의 정확한 field 형식: `templates/plan.md`, `templates/flow.md`, `templates/self-drive.md`가 소유합니다.
+- self-drive 세부 판단: `modes/self-drive.md`와 runtime `references/self-drive.md`가 소유합니다.
+- Stop/SessionStart hook의 세부 input/output 및 packaging: plugin-level hook spec과 bundled implementation이 소유합니다.
+
+## Runtime Surface 계약
+
+- `loop-kit-dev/skills/turn-gate/SKILL.md`는 spec 요약본이 아니라 설치 후 실제로 읽히는 운영 표면입니다.
+- fresh runtime reader가 dev-only spec을 열지 않아도 즉시 행동할 수 있어야 합니다.
+- 문장을 다듬을 수는 있지만 필수 단계, 금지 규칙, 승인 경계, 검증 경계, next-flow reopening 규칙을 일반론으로 뭉개면 안 됩니다.
+- `SKILL.md`는 `references/`와 `templates/`가 설치 후 존재하는 local runtime 표면임을 안내해야 합니다.
+- `SKILL.md`는 dev-only `specs/`, `intent-scenarios/`, change history를 실행 중 읽으라고 지시하면 안 됩니다.
+- skill folder 재생성은 `SKILL.md`만 새로 쓰는 작업이 아닙니다. 함께 설치되는 `references/`와 `templates/`의 판단 기준, 소유권 경계, recovery state, approval limit도 보존해야 합니다.
+
+## SKILL.md 구조 계약
+
+`SKILL.md`는 다음 top-level section 이름과 순서를 유지합니다.
+
+1. `## Important`
+2. `## Purpose`
+3. `## Phase Messages`
+4. `## Operating Cycle`
+5. `## Session Records`
+6. `## Optional Hooks`
+7. `## Common Misclassifications`
+
+위 section은 서로 흡수하거나 합치지 않습니다.
+예를 들어 `Session Records`, `Optional Hooks`, `Common Misclassifications`의 내용을 `Important`나 `Operating Cycle` 안에만 녹여 없애면 안 됩니다.
+
+`## Important`는 `Purpose`보다 먼저 위치하며, 최소한 다음 내용을 직접 포함합니다.
+
+- `turn-gate` activation은 conversation-level first-class operating rule입니다.
+- explicit stop 없이 terminal summary로 끝내면 안 됩니다.
+- reporting 뒤에는 explicit stop 또는 recorded self-drive continuation이 없는 한 `request_user_input`으로 next-flow를 다시 열어야 합니다.
+- session records는 turn continuity 표면이며, 사용자가 all-file/no-record write 금지를 명시하지 않는 한 유지해야 합니다.
+- trusted bundled Stop hook은 terminal closure backstop일 수 있지만, conversation-level rule, reporting, record refresh, next-flow reopening을 대체하지 않습니다.
+- trusted bundled SessionStart hook context는 startup/restart 힌트일 뿐이며 approval, continuation, terminal closure authority가 아닙니다.
 
 ## Core Loop Content
 
-- skill body에는 `Core Loop`라는 기존 섹션명을 유지할 필요가 없다.
-- 대신 runtime reader가 즉시 실행할 수 있는 간결한 operating cycle을 두고, 최소한 다음 단계가 한 번에 읽히게 해야 한다.
-  - preparation
-  - work
-  - verification
-  - reporting
-  - next-flow
-- skill body에는 `core/runtime-flow.md`의 전체 흐름과 `phase-protocols/routes.md`의 local `references/` 읽기 규칙이 직접 남아 있어야 한다.
-- skill body에는 phase 시작을 알리는 사용자-facing 메시지가 `[<phase-name>(/<phase-protocol>)]` 접두사로 시작해야 한다는 규칙이 직접 남아 있어야 한다.
-- skill body의 phase prefix 규칙은 canonical phase labels `preparation`, `work`, `verification`, `reporting`, `next-flow`를 제시해야 한다.
-- skill body의 phase prefix 규칙은 `(/<phase-protocol>)` segment가 optional notation이며, phase protocol 사용 시 slash suffix로 표기해야 한다는 점을 설명해야 한다.
-- skill body의 phase prefix 규칙은 실제 출력에서 literal parenthesis를 쓰지 않는다는 점을 설명해야 한다.
-- skill body의 phase prefix 예시는 phase-only form과 phase/protocol form을 모두 포함해야 한다.
-- skill body는 reporting 뒤 다음 flow를 여는 단계를 `next-flow` phase로 설명해야 한다.
-- skill body는 activation-only, mid-work status, session-record blocker, report-only evaluation처럼 여러 phase label이 가능해 보이는 상황의 우선순위를 설명해야 한다.
-- skill body는 self-drive continuation의 status, verification, reporting, automatic next-flow handoff 같은 사용자-facing phase/progress message에는 prefix가 필요하지만, self-drive record, flow record, generated artifact body, question option label 안으로 prefix를 전파하지 않는다고 설명해야 한다.
-- skill body는 이 prefix가 phase-start message에 적용되는 운영 표식이며, flow record, output artifact, command summary, question option 전체 문장에 기계적으로 붙이는 규칙이 아님을 설명해야 한다.
+`SKILL.md`에는 `preparation -> work -> verification -> reporting -> next-flow` 흐름이 즉시 보이도록 남아야 합니다.
+기존 section 이름 `Core Loop` 자체를 유지할 필요는 없지만, `## Operating Cycle` 아래에서 각 phase가 수행할 일을 짧고 실행 가능한 형태로 설명해야 합니다.
+
+`SKILL.md`는 다음 규칙을 직접 설명합니다.
+
+- preparation은 intent, scope, non-goal, acceptance signal, verification expectation, approval boundary를 정렬합니다.
+- 요청 해석과 planned flow list 설계 자체가 `operational-preparation` flow가 될 수 있습니다.
+- 실행용 planned flow는 검토 가능하거나 commit-sized인 `change-unit` flow여야 합니다.
+- ambiguous operation 또는 target이 work surface, output shape, success criteria, verification path를 바꿀 수 있으면 work 전에 질문으로 잠급니다.
+- 질문 없이 scope를 추론한 경우에도 work boundary와 non-goal을 flow record에 남깁니다.
+- approval-sensitive action은 exact target, expected effect, risk, rollback/recovery path, 포함/제외 scope, stopping point가 기록돼야 합니다.
+- readiness reporting은 execution authority가 아닙니다.
+- individual task completion은 flow completion이나 turn closure를 결정하지 못합니다.
+- reporting은 완료 요약으로 턴을 닫는 단계가 아니라 다음 flow 진행을 위한 continuity context입니다.
+- reporting 뒤 explicit stop이 source-recorded되지 않으면 `next-flow` phase가 next-flow reopening으로 이어집니다.
+
+## Phase Message Content
+
+`SKILL.md`는 phase 시작 또는 phase 진행 상황을 알리는 사용자-facing 메시지 prefix 규칙을 직접 설명합니다.
+
+- canonical phase label은 `preparation`, `work`, `verification`, `reporting`, `next-flow`입니다.
+- notation은 `[<phase-name>(/<phase-protocol>)]`입니다.
+- phase protocol 사용 시 slash suffix를 사용합니다.
+- 실제 출력에는 literal parenthesis를 쓰지 않습니다.
+- phase-only 예시와 phase/protocol 예시를 모두 포함합니다.
+- prefix는 phase-start/progress message에 적용되는 운영 표식입니다.
+- flow record, generated artifact body, command output summary, question option label 전체에 기계적으로 전파하지 않습니다.
+- activation-only, mid-work status, session-record blocker, report-only evaluation처럼 여러 label이 가능해 보이는 상황의 우선순위를 설명합니다.
+- self-drive continuation의 status, verification, reporting, automatic next-flow handoff 같은 사용자-facing phase/progress message에는 prefix를 쓰되, `000-self-drive.md`, flow record, 생성 산출물, question option label 안으로 오염시키지 않습니다.
 
 ## Runtime Structure Boundary
 
-- runtime body는 internal gate model을 사용자-facing 구조로 설명하지 않는다.
-- runtime body에는 이전 사용자 메시지 routing 또는 intake layer처럼 보이는 섹션, 단계, gate, 분류 절차를 넣지 않는다.
-- runtime body는 phase flow, work boundary, verification, reporting, next-flow, stop rule 중심으로 재구성한다.
-- 개별 task 완료는 flow 완료나 turn closure를 결정할 수 없다는 규칙은 남긴다.
-- reporting 뒤에는 explicit stop이 source-recorded되지 않는 한 `next-flow` phase가 next-flow reopening으로 이어져야 한다.
-- skill body는 신뢰되고 활성화된 bundled Codex Stop hook이 있으면 terminal closure backstop으로 사용할 수 있음을 짧게 설명할 수 있다.
-- Stop hook guidance는 상세 block/quiet-exit 조건을 반복하지 않고, hook이 block하면 main agent가 active flow record를 refresh하고 hook reason의 `required_next_action`으로 돌아가며 기록 수정은 main agent가 수행한다는 경계를 포함해야 한다.
-- Stop hook의 상세 input/output 조건과 packaging 계약은 plugin-level hook spec과 bundled implementation이 소유한다고 취급한다.
-- Stop hook guidance는 plugin hook feature enablement, hook trust/reload, global Codex config를 자동 처리한다고 말하면 안 된다.
-- skill body는 신뢰되고 활성화된 bundled Codex SessionStart hook이 있으면 `.agents/sessions/` plan/flow 상태를 startup context로 제공할 수 있음을 짧게 설명할 수 있다.
-- SessionStart hook guidance는 해당 context가 자동 continuation, approval, terminal closure authority가 아니라는 경계를 포함해야 한다.
-- runtime body의 common misclassification examples는 phase-vs-flow, commit completion, self-drive status question, future endpoint stop, file-change verification default처럼 반복 실수를 줄이는 작은 decision aids로 제한한다.
+`SKILL.md`는 runtime reader에게 필요한 운영 흐름을 보여주되, spec-side 내부 모델을 다시 노출하지 않습니다.
 
-## Preparation Content
-
-- skill body는 deep-interview, flow list design, meaning resolution, current-state inspection을 `preparation`의 세부 방식으로 설명해야 한다.
-- skill body는 요청 해석과 planned flow list 설계가 plan/session record를 소유하는 `operational-preparation flow`가 될 수 있다고 설명해야 한다.
-- skill body는 operational-preparation 결과로 만들어지는 실행용 planned flows가 검토 가능하거나 commit-sized인 `change-unit flow`여야 한다고 설명해야 한다.
-- skill body는 요청 해석 결과가 바로 실행으로 이어지지 않을 수 있고, 후속 실행 후보와 실제 실행 flow를 구분해야 한다는 일반 원칙만 설명한다.
-- skill body는 full intent scenario를 runtime에 노출하지 않되, 자주 발생하는 오분류를 막기 위한 compact examples를 포함할 수 있다.
-- skill body는 ambiguous operation trigger의 대표 예시를 짧게 포함해 runtime-only reader가 meaning resolution을 건너뛰지 않게 해야 한다.
-- skill body는 preparation에서 scope가 비어 있거나 너무 넓거나 여러 결과물을 만들 수 있거나 성공 기준과 검증 경로를 바꿀 수 있으면 work 전에 질문으로 scope를 잠그도록 직접 설명해야 한다.
-- skill body는 질문 없이 추론한 scope라도 work boundary와 non-goal을 flow record에 남기도록 설명해야 한다.
-
-## Approval Content
-
-- skill body는 preparation이 planned flow list 전체를 실행하는 데 필요한 intent, scope, non-goal, acceptance signal, verification expectation을 수집하도록 설명해야 한다.
-- skill body는 `turn-gate`의 기본 loop, phase protocol selection, approval-sensitive execution boundary를 독립적으로 설명해야 한다.
-- skill body는 approval-sensitive action의 exact target, expected effect, risk, rollback or recovery 가능성, 포함/제외 scope, 종료 지점이 기록돼야 한다고 설명해야 한다.
-- skill body는 readiness reporting과 execution authority를 분리해 설명해야 한다.
-- skill body는 self-drive가 명시적으로 요청된 prepared sequence에 대해서는 `references/self-drive.md`를 읽어야 한다는 discoverability를 제공해야 한다.
-- skill body는 self-drive 세부 조건을 반복하지 않고, 해당 reference를 읽으면 그 overlay 계약이 준비된 sequence의 진행 판단을 소유한다고만 설명해야 한다.
+- internal gate model을 사용자-facing 구조로 설명하지 않습니다.
+- 이전 사용자 메시지 routing layer, intake layer처럼 보이는 section이나 gate 분류 절차를 만들지 않습니다.
+- phase flow, work boundary, verification, reporting, next-flow, stop rule 중심으로 유지합니다.
+- phase protocol은 mode가 아니라 current phase에 적용하는 local contract로 설명합니다.
+- self-drive는 `turn-gate` 본체가 모두 소유하는 mode가 아니라 prepared sequence overlay로 설명하고, 세부 판단은 `references/self-drive.md`로 위임합니다.
+- common misclassification은 phase-vs-flow, commit completion, self-drive status question, future endpoint stop, file-change verification default처럼 반복 실수를 줄이는 작은 decision aid로 제한합니다.
 
 ## Verification Content
 
-- skill body에는 verification method가 `clean-context`, `normal`, `not-required`로 나뉘며 method와 result status를 섞지 않는다는 점이 직접 남아 있어야 한다.
-- skill body에는 `clean-context` verification이 full-history fork가 아니라 bounded verification packet이라는 점이 직접 남아 있어야 한다.
-- skill body에는 파일 변경, release surface, 다중 파일 계약, 실패 이력, 사용자 요청 검증, approval-sensitive action에서는 `clean-context`가 기본값이라는 점이 직접 남아 있어야 한다.
-- skill body에는 `not-required`가 검증 성공 상태가 아니라 method 판단이며 reason과 residual uncertainty를 기록해야 한다는 점이 직접 남아 있어야 한다.
-- skill body에는 실패, 차단, 불충분 검증을 통과로 취급하지 않는 규칙이 직접 남아 있어야 한다.
-- skill body는 verifier packet에 필요한 최소 정보, edit permission 없음, scope expansion 금지, destructive/external work 금지, commit/push/PR/publish/release/version bump 금지를 설명해야 한다.
+`SKILL.md`에는 verification method와 result status의 분리가 직접 남아야 합니다.
 
-## Reporting And Next-Flow Content
+- method는 `clean-context`, `normal`, `not-required` 중 하나입니다.
+- result status는 method가 아니며 `pass`, `fail`, `blocked`, `insufficient` 같은 결과 판단입니다.
+- file change, release surface, multi-file contract, previous failure, user-requested verification, approval-sensitive action에는 `clean-context`가 기본값입니다.
+- `clean-context`는 full-history fork가 아니라 bounded verification packet입니다.
+- verifier packet은 target, expected behavior, changed surface, relevant files/commands, constraints, explicit prohibitions를 포함해야 합니다.
+- verifier는 edit permission을 받지 않은 한 수정하지 않으며, scope expansion, destructive/external work, commit, push, PR, publish, release, version bump를 수행하지 않습니다.
+- `not-required`는 pass status가 아니라 method 판단이며, reason과 residual uncertainty를 기록해야 합니다.
+- `fail`, `blocked`, `insufficient`는 pass로 보고하지 않고 repair phase, blocker report, 또는 user-gated routing으로 돌려야 합니다.
 
-- skill body에는 terminal summary 금지 규칙이 직접 남아 있어야 한다.
-- skill body에는 source message에 묶인 confirmed closure 규칙이 직접 남아 있어야 한다.
-- skill body에는 next-flow reopening, Continuity Guard 확인, user-gated next-flow choice, explicit turn-end option 기록 규칙이 직접 남아 있어야 한다.
-- reporting은 완료 요약으로 턴을 닫는 단계가 아니라 다음 flow 진행을 위한 continuity context 정리로 설명해야 한다.
+## Session Record Content
 
-## Runtime/Spec Boundary
+`SKILL.md`는 session record의 세부 field를 모두 반복하지 않고, runtime reader가 기록 표면을 찾고 최소 규칙을 지킬 수 있을 만큼만 설명합니다.
 
-- runtime skill body는 설치 후 실제로 존재하는 `references/`와 `templates/`만 실행 중 읽기 대상으로 안내한다.
-- dev-only spec 경로는 runtime 사용자가 읽어야 하는 실행 지시로 쓰지 않는다.
-- dev-side fixture, 평가 시나리오, change history는 skill body의 행동 계약을 만드는 근거로만 사용하고, runtime body에는 일반 실행 규칙으로만 반영한다.
-- `intent-scenarios/` fixture 이름이나 fixture 평가 절차는 runtime skill body에 직접 넣지 않는다.
+- `000-plan.md`는 compact date-level recovery snapshot과 flow index입니다.
+- `001+` flow record는 flow-local scope, non-goals, approval boundary, execution log, verification evidence, report, residual risk, `Continuity Guard`, `Next Flow Options`를 소유합니다.
+- self-drive active sequence는 필요할 때 `000-self-drive.md` sidecar를 사용합니다.
+- phase step을 별도 flow record로 바꾸지 않습니다. 하나의 flow는 보통 preparation, work, verification, reporting, next-flow를 함께 가집니다.
+- target/source read-only는 session record write 금지와 같지 않습니다.
+- workspace-wide no-write, no-record 요청이 있으면 session record write도 금지하고 clarification 또는 blocker로 라우팅합니다.
+- 세부 record recovery와 read-only/no-record boundary는 `references/session-records.md`로 위임합니다.
+
+## Runtime Reference Contracts
+
+`references/`는 `SKILL.md`에서 모두 펼치면 길어지는 판단 기준을 runtime에 남기는 표면입니다.
+재생성은 reference를 단순 요약본으로 낮추면 안 됩니다.
+
+- `references/phase-protocols.md`는 phase protocol이 local phase contract이며, target/meaning/approval boundary가 work surface를 바꾸면 preparation 또는 question routing으로 돌아간다는 기준을 유지합니다.
+- `references/session-records.md`는 `000-plan.md`, optional `000-self-drive.md`, `001+` flow record의 소유권 분리를 유지합니다.
+- `references/session-records.md`는 `not-yet-created`, `unexpectedly missing`, `inaccessible`, `stale closure state`, `stale routing mismatch`, `stale self-drive sidecar` 같은 recovery state를 구분합니다.
+- `references/session-records.md`는 stale closure, stale sidecar, missing/inaccessible record, routing mismatch가 terminal closure, successful completion, next-flow skip, autonomous continuation authority가 아니라고 설명합니다.
+- `references/session-records.md`는 recovery state마다 use case, allowed action, forbidden action을 충분히 구분합니다. 표 형식일 필요는 없지만, 상태 이름만 나열하는 요약으로 낮추면 안 됩니다.
+- `references/session-records.md`는 completed flow compaction, parent-plan relation, stale current-state field cleanup처럼 active recovery context를 오염시키지 않기 위한 운영 기준을 유지합니다.
+- `references/session-records.md`는 target/source read-only와 workspace-wide no-write/no-record 제약을 분리합니다.
+- `references/session-records.md`는 `operational-preparation` flow와 `change-unit` flow, follow-up candidate와 active execution의 차이를 유지합니다.
+- `references/self-drive.md`는 self-drive를 prepared sequence overlay로 설명하고, standalone skill이나 전체 user-message taxonomy로 넓히지 않습니다.
+- `references/self-drive.md`는 sequence-level state를 `000-self-drive.md`가 소유하고, `000-plan.md`는 self-drive active status와 sidecar pointer만 소유한다고 설명합니다.
+- `references/self-drive.md`는 entry condition 또는 record ownership 설명에서 `active_flow_index`, `current_flow_label`, `progress_note`, blocker return conditions를 빠뜨리지 않습니다.
+- `references/self-drive.md`는 `active_flow_index`가 0-based machine field이며 human-readable current flow label과 함께 reconcile되어야 한다고 설명합니다.
+- `references/self-drive.md`는 mid-sequence user input priority, approval-sensitive action boundary, question-tool boundary, finite endpoint/repeat policy를 유지합니다.
+- `references/self-drive.md`는 question-tool boundary와 endpoint behavior를 runtime reader가 상황별로 판단할 수 있게 유지합니다. 표 형식일 필요는 없지만, clear prepared transition, status-only input, scope/target/endpoint/order change, approval-sensitive action, blocker/record failure/current-flow ambiguity, non-self-drive reporting을 구분해야 합니다.
+
+## Runtime Template Contracts
+
+`templates/`는 새 session record의 runtime 시작점입니다.
+재생성은 template의 표현을 다듬을 수 있지만, machine-readable field와 기록 책임을 바꾸면 안 됩니다.
+
+- `templates/flow-record-template.md`는 `templates/flow.md`가 정한 frontmatter field를 유지합니다.
+- 특히 `turn_gate_session_id`, closure fields, pending question fields, `verification_status`, `continuity_note`, `preparation_source`, `scope_lock_status`를 제거하지 않습니다.
+- `templates/flow-record-template.md`는 `# Flow Record` title과 `## Flow Contract`, `## Optional Risky Actions`, `## Execution Log`, `## Verification`, `## Report`, `## Next Flow Options`, `## Residual Risk` heading depth를 유지합니다.
+- `templates/flow-record-template.md`는 raw user request와 summary/interpretation을 분리할 수 있어야 합니다.
+- `templates/flow-record-template.md`는 work boundary, non-goals, acceptance signal, expected risky actions, approval boundary, user-gated checkpoints, verification expectation, material judgment calls를 기록할 자리를 유지합니다.
+- `templates/flow-record-template.md`는 optional risky action section 또는 collapsed not-applicable marker를 유지합니다.
+- `templates/flow-record-template.md`는 verification method와 result status를 분리합니다.
+- `templates/plan-template.md`는 `# Session Plan` title과 `## Current State`, `## Flow Table`, `## Planned Flow Sequence`, `## Open Risks`, `## Turn-End Rule` heading depth를 유지합니다.
+- `templates/plan-template.md`는 bounded date-level snapshot/index 역할을 유지하고, per-flow scope, evidence, verification detail을 소유하는 것처럼 보이면 안 됩니다.
+- `templates/self-drive-template.md`는 `# Self-Drive Sequence` title과 `## Sequence Contract`, `## Autonomous Boundary`, `## Progress Ledger`, `## User-Gated Return Conditions`, `## Residual Risk` heading depth를 유지합니다.
+- `templates/self-drive-template.md`는 `current_flow_label`, `progress_note`, sequence contract, allowed/prohibited actions, approval-sensitive checkpoints, approval notes, blocker return conditions, append-only progress ledger를 유지합니다.
+
+## Optional Hook Content
+
+`SKILL.md`는 optional hooks를 runtime 보조 장치로만 설명합니다.
+
+- Stop hook은 source-recorded explicit stop 없는 terminal closure를 막는 backstop입니다.
+- Stop hook이 block하면 main agent는 active flow record와 `000-plan.md`를 refresh하고 hook reason의 `required_next_action`으로 돌아갑니다.
+- Stop hook은 기록을 대신 수정하지 않고, destructive/external action, commit, push, PR, publish, release, version bump, global config, plugin hook setup을 승인하지 않습니다.
+- Stop hook의 detailed block/quiet-exit 조건은 runtime skill body에서 반복하지 않습니다.
+- SessionStart hook은 startup/resume context를 제공할 수 있지만, current user message와 active record 재확인을 대체하지 않습니다.
+- SessionStart context는 approval, continuation, terminal closure authority를 만들지 않습니다.
 
 ## 검토 질문
 
-- skill body 앞부분에 `Important` 섹션이 있고 1급 규칙, terminal summary 금지, next-flow reopening이 먼저 드러나는가?
-- skill body가 `preparation -> work -> verification -> reporting -> next-flow` 흐름을 실행 중 빠르게 확인 가능한 형태로 드러내되 기존 routing 중심 구조를 반복하지 않는가?
-- phase 시작을 알리는 사용자-facing 메시지가 `[<phase-name>(/<phase-protocol>)]`으로 시작해야 하고 protocol segment가 optional이라는 규칙이 runtime body에 직접 드러나는가?
-- runtime body가 internal gate model이나 사용자 메시지 intake/routing layer를 사용자-facing 구조로 다시 열지 않는가?
-- spec-side fixture 평가 규칙이 runtime skill body로 직접 누출되지 않았는가?
+- `SKILL.md` 앞부분에 `Important`가 있고 first-class rule, terminal summary 금지, next-flow reopening이 먼저 드러나는가?
+- `SKILL.md` top-level section skeleton이 안정적으로 유지되는가?
+- `SKILL.md`가 `preparation -> work -> verification -> reporting -> next-flow` 흐름을 실행 가능한 형태로 드러내는가?
+- phase prefix 규칙이 runtime body에 직접 드러나며, record/artifact/question label 오염을 막는가?
+- runtime body가 internal gate model이나 broad user-message routing layer를 다시 열지 않는가?
+- self-drive 세부 조건을 본체에 반복하지 않고 `references/self-drive.md`로 위임하는가?
+- verification method와 result status가 분리되어 있는가?
+- `references/`가 decision criteria, ownership boundary, recovery state, approval limit을 잃지 않았는가?
+- `templates/`가 machine-readable field와 기록 책임을 잃지 않았는가?
 - runtime body가 설치 후 존재하지 않는 dev-only spec 파일을 읽으라고 지시하지 않는가?

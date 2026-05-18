@@ -35,13 +35,18 @@ runtime artifact가 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{slug}.md` flow re
 `flow-record-template.md`는 다음 구조를 유지합니다.
 
 1. YAML frontmatter
-2. `Flow Contract`
-3. `Optional Risky Actions` only when applicable, or a collapsed one-line not-applicable marker
-4. `Execution Log`
-5. `Verification`
-6. `Report`
-7. `Next Flow Options`
-8. `Residual Risk`
+2. `# Flow Record`
+3. `## Flow Contract`
+4. `## Optional Risky Actions` only when applicable, or a collapsed one-line not-applicable marker
+5. `## Execution Log`
+6. `## Verification`
+7. `## Report`
+8. `## Next Flow Options`
+9. `## Residual Risk`
+
+Runtime template regeneration must preserve this heading depth.
+The document title stays `# Flow Record`, and the flow sections stay second-level headings.
+Do not promote `Flow Contract`, `Execution Log`, `Verification`, `Report`, `Next Flow Options`, or `Residual Risk` to document titles.
 
 ## Frontmatter 규격
 

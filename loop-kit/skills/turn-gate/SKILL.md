@@ -11,9 +11,9 @@ When this skill is active, it is a conversation-level first-class operating rule
 
 Do not end with a terminal summary after reporting unless the current user message, or a source-recorded closure in the active flow record that matches the current user message, explicitly stops this turn.
 
-After reporting, reopen the next flow with `request_user_input` whenever available. If the question tool is unavailable, ask a visible next-flow question and record the options, including an explicit turn-end option, in the active flow record.
+After reporting, reopen the next flow with `request_user_input` whenever available unless there is a source-recorded explicit stop or a recorded self-drive continuation whose next planned flow is still valid and identifiable. If the question tool is unavailable, ask a visible next-flow question and record the options, including an explicit turn-end option, in the active flow record.
 
-Maintain `.agents/sessions/{YYYYMMDD}/000-plan.md` and the active `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` flow record. Refresh the active flow record at each phase boundary, and refresh the `Continuity Guard` before result reporting and before next-flow reopening.
+Maintain `.agents/sessions/{YYYYMMDD}/000-plan.md` and the active `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md` flow record unless the user explicitly forbids all file writes, file creation, or session records. Refresh the active flow record at each phase boundary, and refresh the `Continuity Guard` before result reporting and before next-flow reopening.
 
 Trusted bundled Stop and SessionStart hooks can help as optional backstops, but they do not replace this operating rule. SessionStart context is advisory startup context only. Stop hook blocking is a signal to refresh records and return to the required next action, not permission to skip reporting, record refresh, or next-flow reopening.
 
@@ -51,7 +51,7 @@ Examples:
 
 Apply this prefix to phase-start user messages and status/progress messages. Do not mechanically copy it into flow records, generated artifacts, command summaries, or question option labels.
 
-If activation has no concrete task, start with `[preparation]` to set scope, then use `[next-flow]` only when opening the next-flow choice. For mid-work status, use the current active phase unless intentionally summarizing flow context. For record access blockers, use the phase where the blocker is discovered.
+If activation has no concrete task, start with `[preparation]` to set scope, then use `[next-flow]` only when opening the next-flow choice. For mid-work status, use the current active phase unless intentionally summarizing flow context. For self-drive continuation, use prefixes for visible status, verification, reporting, and automatic handoff messages, but do not copy prefixes into `000-self-drive.md`, flow records, generated artifacts, or question option labels. For record access blockers, use the phase where the blocker is discovered.
 
 ## Operating Cycle
 
@@ -103,6 +103,8 @@ Use `request_user_input` with 2-3 concise choices when possible. The recorded `N
 
 If `request_user_input` is unavailable, ask a direct next-flow question in the response and record the fallback.
 
+If active self-drive has a prepared sequence that is still valid and the next planned flow is identifiable, `[next-flow]` may continue from records instead of asking. If continuation identity, endpoint, approval boundary, blocker state, or current-flow identity is unclear, return to user-gated routing.
+
 ## Session Records
 
 Use runtime templates when creating records:
@@ -147,3 +149,5 @@ SessionStart context does not approve commit, push, PR, release, version bump, d
 - A future endpoint like "끝나면 알려줘" is not an immediate turn stop.
 - File changes usually require `clean-context` verification unless risk is clearly low and the reason is recorded.
 - A status question during self-drive is still answered within the current phase and does not reset the flow.
+- `not-required` is a verification method, not a successful verification result.
+- A stale closure field, stale routing mismatch, or stale self-drive sidecar is not authority to close, skip next-flow, or continue autonomously.

@@ -18,7 +18,9 @@ required_next_action: ""
 - Planned flows:
 - Active flow index: 0-based machine field
 - Current flow: must match `current_flow_label`; use a human-readable number/name/file or slug
+- Progress note: current sequence summary; refresh before reporting and before next planned flow handoff
 - Endpoint:
+- Blocker return conditions:
 
 ## Autonomous Boundary
 
@@ -26,7 +28,8 @@ required_next_action: ""
 - Prohibited autonomous actions:
 - Approval-sensitive checkpoints:
 - Approval notes:
-- Blocker return conditions:
+- Recovery path:
+- Stop boundary:
 
 ## Progress Ledger
 
@@ -37,6 +40,8 @@ required_next_action: ""
 - New risky action:
 - Scope or non-goal change:
 - Unclear endpoint:
+- Current-flow identity ambiguity:
+- Record access failure:
 - Repeated critical failure or root blocker:
 - Commit, push, PR, publish, release, or version bump outside exact approved boundary:
 

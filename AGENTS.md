@@ -95,6 +95,8 @@
 - skill spec을 수정할 때는 해당 dev plugin의 `src/<plugin-name>-dev/changes/<version>.md` change spec에 변경사항을 기록합니다.
 - skill spec을 수정했고 실제 skill 본문의 문구 작성이 필요한 경우, main agent가 변경된 spec을 먼저 검토하고, 대상 skill 폴더를 삭제한 뒤 subagent에게 clean context로 spec 기준의 skill 본문 재생성을 요청합니다.
 - skill 본문 수정 요청은 기존 본문 패치가 아니라 삭제 후 spec 기준 재생성 흐름으로 다룹니다.
+- skill 폴더 재생성 subagent 지시문은 짧게 작성합니다. 예: `스킬 폴더 재작성이 필요해 제거했으니, 현재 스펙에 맞춰서 재작성해주세요. 담당 경로 외 파일은 수정하지 마세요.`
+- skill 폴더 재생성 subagent에게 이전 대화 맥락, main agent의 해석, 기존 runtime 본문, release surface, git diff를 전달하지 않습니다. 필요한 기준은 현재 spec과 담당 경로만으로 제한합니다.
 - subagent에는 담당 파일과 책임 범위를 명시하고, 다른 작업자가 같은 저장소에서 작업 중일 수 있음을 알려 충돌을 피하게 합니다.
 - subagent 결과를 그대로 신뢰하지 말고, main agent가 spec 정합성, plugin surface 영향, release surface 반영 여부를 최종 확인합니다.
 - 일반 build는 `pnpm build:plugin <plugin-name> [--force]`를 사용합니다.

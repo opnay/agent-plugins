@@ -32,10 +32,16 @@
 `plan-template.md`는 다음 구조를 유지합니다.
 
 1. YAML frontmatter
-2. `Current State`
-3. `Flow Table`
-4. `Open Risks`
-5. `Turn-End Rule`
+2. `# Session Plan`
+3. `## Current State`
+4. `## Flow Table`
+5. `## Planned Flow Sequence`
+6. `## Open Risks`
+7. `## Turn-End Rule`
+
+Runtime template regeneration must preserve this heading depth.
+The document title stays `# Session Plan`, and the plan sections stay second-level headings.
+Do not promote `Current State`, `Flow Table`, `Planned Flow Sequence`, `Open Risks`, or `Turn-End Rule` to document titles.
 
 ## Frontmatter 규격
 

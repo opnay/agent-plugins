@@ -39,12 +39,13 @@ Do not let `000-plan.md` become the full all-day transcript. Long chronological 
 - planned flow list;
 - active flow index as a 0-based machine field;
 - current flow label with human-readable number/name/file or slug;
+- current sequence progress note, mirrored in frontmatter as `progress_note`;
 - allowed autonomous actions;
 - prohibited autonomous actions;
 - approval-sensitive checkpoints;
 - endpoint;
 - blocker return conditions;
-- progress ledger.
+- append-only progress ledger.
 
 It is not a replacement for `000-plan.md`, does not own the date-level flow index, does not own each flow's canonical scope, evidence, report, or closure authority, and does not grant commit/push/PR/publish/release/version-bump approval.
 

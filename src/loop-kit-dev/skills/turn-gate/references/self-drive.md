@@ -31,7 +31,7 @@ Keep sequence-level state in `000-self-drive.md`:
 
 - sequence objective;
 - planned flow list;
-- active flow index;
+- active flow index as a 0-based machine field;
 - current flow label, mirrored in frontmatter as `current_flow_label`;
 - current sequence progress note, mirrored in frontmatter as `progress_note`;
 - allowed autonomous actions;
@@ -39,7 +39,7 @@ Keep sequence-level state in `000-self-drive.md`:
 - approval-sensitive checkpoints;
 - endpoint;
 - blocker return conditions;
-- progress note and append-only progress ledger.
+- append-only progress ledger.
 
 Do not add self-drive-only sequence fields to general templates by default. If self-drive is not active, do not create `000-self-drive.md`.
 

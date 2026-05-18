@@ -53,7 +53,7 @@
 
 - `intent.md`: `turn-gate`의 사용자 스펙 의도 기록
 - `core/runtime-flow.md`: activation부터 explicit stop까지 `turn-gate`의 전체 phase 흐름과 전환 조건
-- `core/skill-contents.md`: runtime `SKILL.md` body의 필수 구성과 content boundary
+- `core/skill-contents.md`: runtime skill folder의 `SKILL.md`, `references/`, `templates/` content boundary와 재생성 보존 기준
 - `phases/preparation.md`: work 전 intent, scope, non-goal, approval boundary, verification expectation 정렬
 - `phases/work.md`: active flow 안에서 실제 작업을 수행하기 위한 work phase 계약
 - `phases/verification.md`: work 이후 risk-based verification method 선택과 non-pass 처리로 이어지는 verification phase 계약
@@ -90,7 +90,7 @@
 - `turn-gate`는 implicit default operating state와 phase protocol routing을 독립적으로 소유한다.
 - `deep-interview`, `review-loop`, `ralph-loop`, `autopilot`, `commit-readiness-gate` 같은 이름은 standalone mode가 아니라 현재 상태에서 필요한 상황별 phase protocol로 취급한다.
 - phase protocol routing은 `phase-protocols/routes.md`가 소유하고, 상세 계약은 나머지 `phase-protocols/*.md`가 소유한다.
-- `loop-kit-dev/skills/turn-gate/SKILL.md`는 runtime에서 읽는 운영 표면이며, 본문 구성과 runtime/spec boundary는 `core/skill-contents.md`가 소유한다.
+- `loop-kit-dev/skills/turn-gate/`는 runtime에서 읽는 운영 표면이며, `SKILL.md`, `references/`, `templates/`의 content boundary와 재생성 보존 기준은 `core/skill-contents.md`가 소유한다.
 - 전체 phase 흐름과 phase 간 전환은 `core/runtime-flow.md`가 소유한다.
 - phase 시작 사용자-facing 메시지의 `[<phase-name>(/<phase-protocol>)]` prefix 계약은 `core/runtime-flow.md`와 `core/skill-contents.md`가 소유한다.
 - phase 내부 세부 계약은 `phases/*` spec이 소유하고, internal gate 세부 계약은 `gates/*` spec이 소유한다.
