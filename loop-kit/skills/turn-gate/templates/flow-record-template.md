@@ -3,6 +3,7 @@ task: ""
 flow_type: ""
 flow_scope: ""
 current_phase: "preparation"
+turn_gate_session_id: ""
 turn_gate_active: true
 question_routing_mode: "active"
 user_explicit_stop: false

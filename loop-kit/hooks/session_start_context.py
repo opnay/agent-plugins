@@ -24,6 +24,7 @@ def main() -> int:
     if payload.get("source") not in ("startup", "resume"):
         return 0
 
+    session_id = _payload_session_id(payload)
     cwd = Path(payload.get("cwd") or ".").resolve()
     plan_path, plan_date = _find_plan(cwd)
     if plan_path is None:
@@ -43,7 +44,7 @@ def main() -> int:
         flow_source = "latest flow"
 
     flow = _read_frontmatter(flow_path) if flow_path else {}
-    context = _build_context(plan_date, plan, flow_path, flow_source, flow)
+    context = _build_context(plan_date, session_id, plan, flow_path, flow_source, flow)
     _emit_context(context)
     return 0
 
@@ -119,6 +120,7 @@ def _parse_scalar(value: str):
 
 def _build_context(
     plan_date: str,
+    session_id: str,
     plan: dict,
     flow_path: Optional[Path],
     flow_source: str,
@@ -136,6 +138,7 @@ def _build_context(
 
     lines = [
         f"Turn-gate session context found for {plan_date}.",
+        _line("Current Codex session id", session_id or "not provided"),
         _line("Plan active_flow", active_flow or "none"),
         _line(flow_source.title(), flow_name),
         _line("Latest user request", latest_user_request or "not recorded"),
@@ -174,6 +177,22 @@ def _clean(value) -> str:
 def _line(label: str, value: str) -> str:
     text = value.rstrip(".")
     return f"{label}: {text}."
+
+
+def _payload_session_id(payload: dict) -> str:
+    for key in ("session_id", "sessionId", "conversation_id", "conversationId"):
+        value = payload.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+
+    for key in ("session", "conversation"):
+        value = payload.get(key)
+        if isinstance(value, dict):
+            nested_id = value.get("id")
+            if isinstance(nested_id, str) and nested_id.strip():
+                return nested_id.strip()
+
+    return ""
 
 
 def _emit_context(context: str) -> None:

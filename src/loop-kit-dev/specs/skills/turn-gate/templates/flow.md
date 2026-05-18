@@ -56,6 +56,7 @@ frontmatter에는 다음 필드를 둡니다.
 - `flow_type`
 - `flow_scope`
 - `current_phase`
+- `turn_gate_session_id`
 - `turn_gate_active`
 - `question_routing_mode`
 - `user_explicit_stop`
@@ -74,6 +75,8 @@ frontmatter에는 다음 필드를 둡니다.
 - `scope_lock_status`
 
 짧은 원문 요약이 필요한 경우 `user_request_summary`를 frontmatter에 둘 수 있습니다.
+`turn_gate_session_id`는 current main Codex session id가 known이고 이 flow가 해당 main turn-gate session에 armed된 경우에만 기록합니다.
+unknown이면 빈 문자열로 두며, bundled Stop hook은 payload session id와 이 값이 일치하지 않으면 fail-open으로 조용히 종료해야 합니다.
 사용자 메시지 원문이 필요한 경우 frontmatter summary로 대체하지 말고 Markdown 본문의 `Flow Contract`에 둡니다.
 긴 사용자 원문, 판단 근거, work boundary, non-goals, approval boundary, verification expectation, material judgment calls는 Markdown 본문에 둡니다.
 사용자 원문을 저장할 때는 요약/해석과 분리하고, 원문 자체를 재가공, 수정, 번역, 오탈자 정정, 완곡화, 맥락 병합하지 않습니다.
@@ -83,6 +86,7 @@ frontmatter에는 다음 필드를 둡니다.
 `Continuity Guard` 상태 필드는 frontmatter에 남아야 합니다.
 
 - `Turn-gate active`
+- `Turn-gate session id`
 - `Question-routing mode`
 - `User explicit stop`
 - `Terminal summary allowed`

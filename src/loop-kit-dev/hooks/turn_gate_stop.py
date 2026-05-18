@@ -23,6 +23,10 @@ def main() -> int:
     if payload.get("stop_hook_active") is True:
         return 0
 
+    session_id = _payload_session_id(payload)
+    if not session_id:
+        return 0
+
     cwd = Path(payload.get("cwd") or ".").resolve()
     plan_path = _find_today_plan(cwd)
     if plan_path is None:
@@ -36,6 +40,14 @@ def main() -> int:
     flow_path = plan_path.parent / f"{active_flow}.md"
     flow = _read_frontmatter(flow_path)
     if not flow:
+        return 0
+
+    expected_session_id = str(
+        flow.get("turn_gate_session_id") or plan.get("turn_gate_session_id") or ""
+    ).strip()
+    if not expected_session_id:
+        return 0
+    if expected_session_id != session_id:
         return 0
 
     if flow.get("turn_gate_active") is not True:
@@ -121,6 +133,22 @@ def _already_routes_forward(message: str) -> bool:
         "await user",
     ]
     return any(marker in lowered for marker in routing_markers)
+
+
+def _payload_session_id(payload: dict) -> str:
+    for key in ("session_id", "sessionId", "conversation_id", "conversationId"):
+        value = payload.get(key)
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+
+    for key in ("session", "conversation"):
+        value = payload.get(key)
+        if isinstance(value, dict):
+            nested_id = value.get("id")
+            if isinstance(nested_id, str) and nested_id.strip():
+                return nested_id.strip()
+
+    return ""
 
 
 if __name__ == "__main__":

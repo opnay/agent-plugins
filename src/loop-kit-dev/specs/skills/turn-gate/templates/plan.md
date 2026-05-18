@@ -45,6 +45,7 @@
 frontmatter에는 다음 필드를 둡니다.
 
 - `summary`
+- `turn_gate_session_id`
 - `latest_user_request`
 - `latest_decision`
 - `active_flow`
@@ -56,6 +57,10 @@ frontmatter에는 다음 필드를 둡니다.
 - `preparation_source`
 - `scope_lock_status`
 - `final_readiness_handoff`
+
+`turn_gate_session_id`는 current main Codex session id가 known일 때만 기록합니다.
+이 값은 plugin-installed Stop hook이 다른 session이나 subagent의 Stop event를 막지 않도록 하는 arming marker입니다.
+unknown이면 빈 문자열로 두고, Stop hook은 fail-open으로 조용히 종료해야 합니다.
 
 `preparation_result`, `flow_list_basis`, `flow_type_rule`, `flow_boundary_basis`처럼 길어지기 쉬운 판단 근거는 `Planned Flow Sequence` 본문에 둡니다.
 
@@ -85,4 +90,5 @@ frontmatter에는 다음 필드를 둡니다.
 - 후속 후보가 planned/active/completed flow와 구분되어 라벨링되는가?
 - self-drive가 active일 때 `000-plan.md`에는 active status와 sidecar pointer만 있고, sequence-level state는 `000-self-drive.md`로 분리됐는가?
 - active flow pointer와 required next action이 다음 진행에 충분한가?
+- `turn_gate_session_id`가 known session에서만 기록되고 unknown일 때 빈 값으로 남아 Stop hook이 fail-open 할 수 있는가?
 - 오래된 user request chronology나 completed summaries 중복이 active context를 오염시키지 않는가?

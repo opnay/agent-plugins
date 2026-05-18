@@ -85,6 +85,8 @@ codex plugin marketplace upgrade
 
 Codex plugin hooks를 활성화하고 bundled hook을 신뢰하도록 설정한 환경에서는 플러그인에 포함된 `Stop` hook으로 `turn-gate`를 보강할 수 있습니다.
 이 hook은 `turn-gate`를 대신 실행하는 기능이 아니라, active flow record의 Continuity Guard를 읽고 명시적 종료 없이 응답이 닫히려 할 때 terminal closure를 차단하는 보조 안전장치입니다.
+차단은 plugin 설치만으로 활성화되지 않아야 하며, 현재 main Codex session id가 `000-plan.md` 또는 active flow record의 `turn_gate_session_id`와 일치할 때만 armed된 것으로 봅니다.
+session id를 확인할 수 없거나 기록된 id와 다르면 hook은 조용히 통과해야 합니다.
 예를 들어 `terminal_summary_allowed`가 false이고 `required_next_action`이 남아 있는데 assistant 응답이 next-flow 질문 없이 끝나려 하면, Stop hook은 block reason으로 다음 행동을 돌려보낼 수 있습니다.
 
 이 패턴은 플러그인 release surface의 `hooks/hooks.json`와 `hooks/turn_gate_stop.py`를 기준으로 합니다.
