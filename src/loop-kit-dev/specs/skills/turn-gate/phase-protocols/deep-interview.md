@@ -11,7 +11,7 @@
 - 같은 요청에서 여러 유효한 산출물이 나올 수 있다.
 - 결과물이나 검증 경로가 질문 답변에 따라 달라질 수 있다.
 - destructive, irreversible, external, commit, push, PR, publish, release, version bump 같은 승인 경계가 아직 불명확하다.
-- planned flow list 전체를 만들 만큼의 정보가 부족하다.
+- sibling `flow` decision이나 prepared flow sequence를 만들 만큼의 정보가 부족하다.
 
 ## 부적합 기준
 
@@ -25,7 +25,7 @@
 - intent, scope, non-goal, acceptance signal, verification expectation, approval boundary를 work 전에 잠근다.
 - bounded choices로 잠글 수 있는 질문은 `request_user_input`을 우선한다.
 - 질문 없이 추론한 scope라도 flow record에 work boundary와 non-goal을 남긴다.
-- planned flow list가 필요하면 각 flow의 boundary, non-goal, verification expectation, expected risky action, user-gated checkpoint를 함께 정리한다.
+- sibling `flow` decision이나 prepared flow sequence가 필요하면 필요한 scope, non-goal, verification expectation, expected risky action, user-gated checkpoint를 함께 정리한다.
 - 위험 작업 승인은 silent inference로 대체하지 않는다.
 
 ## Handoff
@@ -36,5 +36,5 @@
 ## 검토 질문
 
 - 질문 답변에 따라 산출물이나 검증 경로가 달라지는가?
-- 전체 planned flow list를 실행할 만큼의 정보가 충분한가?
+- sibling `flow` decision 또는 prepared flow sequence를 실행/선택할 만큼의 정보가 충분한가?
 - 위험 작업과 approval boundary가 flow record에 남았는가?

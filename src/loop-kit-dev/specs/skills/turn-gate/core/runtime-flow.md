@@ -6,7 +6,10 @@
 
 ## 전체 흐름
 
-`turn-gate`의 기본 flow는 아래 순서를 유지합니다.
+`turn-gate`는 active turn에서 `flow` 계약을 적용하도록 강제합니다.
+각 active flow 자체의 내부 단계는 sibling `flow` skill이 소유하고, `turn-gate`는 flow reporting 이후 next-flow reopening과 explicit stop lifecycle을 소유합니다.
+
+active flow는 아래 순서를 유지합니다.
 
 1. preparation
 2. work
@@ -16,15 +19,15 @@
 
 activation과 explicit stop handling은 이 기본 flow를 둘러싼 lifecycle guard입니다.
 이 lifecycle guard는 내부 gate로 적용됩니다.
-flow shaping gate는 active flow와 completion criteria를 만들거나 갱신하며, task policy gate는 flow 내부 실행 정책을 정합니다.
+flow shaping gate는 active flow 존재 여부와 sibling `flow` decision 적용 상태를 확인하며, task policy gate는 flow 내부 실행 정책을 정합니다.
 task policy는 flow 밖의 독립 계층이 아니며, 개별 task 완료가 flow 완료나 turn closure를 결정할 수 없습니다.
 verification gate와 reporting gate는 각각 검증 판정과 보고 맥락 정리를 소유합니다.
 상세 gate 계약은 `gates/internal-gates.md`가 소유합니다.
 
-deep-interview alignment, flow list design, meaning resolution, current-state inspection, target reread, scope lock, approval boundary 확인은 기본적으로 `preparation` 안의 세부 작업입니다.
+deep-interview alignment, meaning resolution, current-state inspection, target reread, scope lock, approval boundary 확인은 기본적으로 `preparation` 안의 세부 작업입니다.
 
-`operational-preparation flow`, `change-unit flow`, planned flow boundary, 후속 후보와 active execution flow의 구분은 `core/flow-boundaries.md`가 소유합니다.
-이 문서는 phase 순서와 전환 조건만 직접 소유하고, flow taxonomy 판단이 필요하면 `core/flow-boundaries.md`로 위임합니다.
+flow definition, candidates, flow type, flow boundary, and active execution distinction are owned by the sibling `flow` skill.
+`core/flow-boundaries.md`는 `turn-gate`가 이 계약을 적용하는 방법만 소유합니다.
 
 이 문서는 각 phase의 순서와 전환을 소유하고, phase 내부의 세부 판단은 대응 child spec으로 위임합니다.
 
@@ -53,9 +56,9 @@ deep-interview alignment, flow list design, meaning resolution, current-state in
   - activation-only의 첫 사용자-facing 응답은 기본적으로 `[preparation]` scope setup이며, 바로 선택지를 여는 별도 메시지는 `[next-flow]`를 사용할 수 있다.
   - 예: "turn-gate 켜줘", "Use turn-gate", `$loop-kit:turn-gate`만 온 경우에는 activation 완료 요약으로 닫지 않고 다음 scope 또는 next-flow 선택을 연다.
 - preparation:
-  - 이 단계는 flow shaping gate를 통과해 active flow의 경계와 completion criteria를 정한다.
+  - 이 단계는 flow shaping gate를 통과해 active flow가 있는지 확인하고, 필요하면 sibling `flow` decision을 요청하거나 적용한다.
   - work로 넘어가기 전 intent, scope, non-goal, acceptance signal, verification expectation, approval boundary를 정렬한다.
-  - 세부 계약은 `phases/preparation.md`가 소유한다.
+  - 세부 계약은 `phases/preparation.md`가 소유하고, flow 자체의 판단 기준과 output contract는 `flow` skill이 소유한다.
 - work:
   - 이 단계는 task policy gate를 통과해 현재 flow 내부 실행 정책을 정한다.
   - 사용자가 요청한 실제 작업을 진행한다.

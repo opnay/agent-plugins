@@ -12,7 +12,7 @@
 - active flow pointer와 required next action
 - user request history
 - flow index
-- planned flow sequence
+- prepared flow sequence
 - completed flow summaries
 - open risks
 - visible UI에 turn-end option이 없더라도 날짜 단위 availability snapshot으로 남기는 explicit turn-end option
@@ -83,8 +83,8 @@ frontmatter에는 다음 필드를 둡니다.
 - plan이 date-level index와 active snapshot으로 읽히는가?
 - plan이 flow record의 상세 scope/evidence/verification을 반복하지 않는가?
 - flow index와 completed summaries가 flow당 한 줄 compact entry로 유지되는가?
-- planned flow sequence가 phase checklist가 아니라 cohesive flow list인가?
-- planned flow sequence에 completed flow의 stale detail이 남지 않는가?
+- prepared flow sequence가 phase checklist가 아니라 sibling `flow` decision에서 파생됐는가?
+- prepared flow sequence에 completed flow의 stale detail이 남지 않는가?
 - 후속 후보가 planned/active/completed flow와 구분되어 라벨링되는가?
 - self-drive가 active일 때 `000-plan.md`에는 active status와 sidecar pointer만 있고, sequence-level state는 `000-self-drive.md`로 분리됐는가?
 - active flow pointer와 required next action이 다음 진행에 충분한가?

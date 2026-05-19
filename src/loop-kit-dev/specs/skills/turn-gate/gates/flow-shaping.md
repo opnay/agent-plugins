@@ -2,26 +2,27 @@
 
 ## 목적
 
-이 문서는 flow shaping gate의 전환 계약을 소유합니다.
+이 문서는 `turn-gate` 안에서 flow shaping gate가 sibling `flow` 계약을 적용하는 전환 계약을 소유합니다.
 
 flow shaping gate는 현재 사용자 요청과 flow 상태를 active flow에 반영합니다.
 
 ## 소유
 
-- 새 flow를 만들지, 기존 flow를 갱신할지, reporting이나 question-routing으로 이어갈지 결정한다.
-- flow kind를 `operational-preparation`, `change-unit`, user-gated handoff, reporting context, question-routing state 중 적절한 형태로 정한다.
-- flow boundary, completion criteria, verification expectation, next-flow reopening 조건을 기록한다.
-- 후속 `change-unit` 후보와 active execution flow를 구분한다.
+- current turn에 source-recorded active flow가 있는지 확인한다.
+- active flow가 없거나 current request가 active flow 경계를 바꿀 수 있으면 sibling `flow` contract decision을 요구한다.
+- `flow` decision 결과를 current active flow, next-flow routing, blocker, 또는 report-only handoff로 연결한다.
+- 후보를 active flow로 바꾸기 전에는 `turn-gate` next-flow question routing 또는 준비된 self-drive sequence를 요구한다.
 
 ## 비소유
 
+- flow boundary/type/completion 판단 자체
 - flow 내부 command sequence 실행
 - verification pass 판정
 - explicit stop 없는 turn closure
 
-flow shaping gate는 task 목록을 phase checklist나 planned flow list로 오해하지 않게 막아야 합니다.
+flow shaping gate는 flow logic을 재판정하지 않고, sibling `flow` decision 없이 실행으로 넘어가지 않게 막아야 합니다.
 
 ## 검토 질문
 
-- flow shaping gate가 active flow와 후속 후보를 분리하는가?
-- flow boundary와 completion criteria를 기록했는가?
+- active flow가 source-recorded 되어 있거나 sibling `flow` decision이 있는가?
+- 후보를 active flow로 바꾸는 결정을 next-flow routing 또는 prepared self-drive sequence로 처리했는가?

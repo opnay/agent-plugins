@@ -8,7 +8,7 @@ verification gate는 flow work 결과가 보고 가능한 상태인지 판정합
 
 ## 소유
 
-- flow의 completion criteria, verification expectation, work 중 이미 확보한 evidence를 기준으로 verification method를 선택한다.
+- sibling `flow` decision의 verification expectation, work 중 이미 확보한 evidence, 변경 위험도를 기준으로 verification method를 선택한다.
 - `clean-context` method에서는 최소 충분한 verifier packet을 구성한다.
 - `normal` method에서는 command/check, source readback, evidence checklist, 논리 반례 검토를 최소 충분 evidence로 구성한다.
 - `not-required` method에서는 검증할 work output이 없거나 별도 검증 동작이 불필요한 이유와 residual uncertainty를 구성한다.

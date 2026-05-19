@@ -1,0 +1,26 @@
+# flow output contract
+
+## 목적
+
+이 문서는 flow 설계 또는 sub-flow 후보 산출물의 필수 필드를 소유합니다.
+
+## Output Contract
+
+flow 설계 또는 sub-flow 후보 산출물에는 최소한 다음이 드러나야 합니다.
+
+- flow label 또는 slug
+- flow type: `operational-preparation` 또는 `change-unit`
+- scope
+- non-goals
+- completion criteria
+- verification expectation
+- approval-sensitive checkpoint가 필요한지 여부
+- handoff condition
+- unresolved questions 또는 blocker
+- active flow인지, sub-flow candidate인지 여부
+
+## 검토 질문
+
+- 후보가 active flow인지 sub-flow candidate인지 명확한가?
+- completion criteria와 handoff condition이 분리되어 있는가?
+- verification expectation이 flow 위험도에 맞게 드러나는가?

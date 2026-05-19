@@ -26,7 +26,7 @@ runtime artifact가 `.agents/sessions/{YYYYMMDD}/{count-pad3}-{slug}.md` flow re
 - date-level work history
 - all-day user request index
 - completed flow index
-- planned flow sequence 전체의 top-level 관리
+- prepared flow sequence 전체의 top-level 관리
 
 위 항목은 `templates/plan.md`가 소유하는 `000-plan.md`에 둡니다.
 
@@ -123,7 +123,7 @@ source 없는 closure 또는 stale `Terminal summary allowed: yes`를 발견하�
 
 Self-drive 전용 snapshot section은 기본 flow template에 노출하지 않습니다.
 Self-drive가 active인 flow record는 `references/self-drive.md`의 runtime guidance를 따라 `Flow Contract`, `Execution Log`, `Report`, 또는 `Next Flow Options` 중 가장 자연스러운 위치에 sequence position, local progress note, next handoff, blocker return condition만 flow-local snapshot으로 남깁니다.
-전체 sequence objective, planned flow list, active flow index, allowed/prohibited autonomous actions, approval-sensitive checkpoints, endpoint는 `000-self-drive.md`가 소유합니다.
+전체 sequence objective, prepared flow sequence, active flow index, allowed/prohibited autonomous actions, approval-sensitive checkpoints, endpoint는 `000-self-drive.md`가 소유합니다.
 
 ## Verification Section 필수 필드
 

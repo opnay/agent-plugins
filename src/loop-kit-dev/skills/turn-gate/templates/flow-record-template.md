@@ -18,73 +18,64 @@ superseded_question_id_or_summary: ""
 verification_status: "not-started"
 continuity_note: ""
 preparation_source: ""
-scope_lock_status: ""
-user_request_summary: ""
+scope_lock_status: "unlocked"
 ---
 
 # Flow Record
 
 ## Flow Contract
 
-- User request raw:
-- User request summary:
-- Preparation source:
-- Preparation result:
-- Boundary rationale:
-- Current blocker:
-- Scope lock status:
-- Work boundary:
-- Non-goals:
-- Acceptance signal:
-- Expected risky actions:
-- Approval boundary:
-- User-gated checkpoints:
-- Verification expectation:
-- Material judgment calls:
+- user_request_raw: ""
+- user_request_summary: ""
+- preparation_result: ""
+- boundary_rationale: ""
+- current_blocker: ""
+- work_boundary: ""
+- non_goals: ""
+- acceptance_signal: ""
+- expected_risky_actions: ""
+- approval_boundary: ""
+- user_gated_checkpoints: ""
+- verification_expectation: ""
+- material_judgment_calls: ""
 
 ## Optional Risky Actions
 
-Status: not-applicable
-
-- Exact action:
-- Target:
-- Expected effect:
-- Risk:
-- Rollback or recovery path:
-- Included scope:
-- Excluded scope:
-- Initial agreement:
-- End point:
+not-applicable
 
 ## Execution Log
 
-- TBD
+- preparation: ""
+- work: ""
+- verification: ""
+- reporting: ""
+- next_flow: ""
 
 ## Verification
 
-- Status: not-started
-- Method:
-- Verifier: not-used
-- Reason:
-- Checks:
-- Evidence:
-- Residual uncertainty:
-- Result:
+- status: "not-started"
+- method: ""
+- verifier: "not-used"
+- reason: ""
+- checks: []
+- evidence: []
+- residual_uncertainty: ""
+- result: ""
 
 ## Report
 
-- Prepared:
-- Worked:
-- Verified:
-- Changed surfaces:
-- Blockers:
+- summary: ""
+- changed_surfaces: []
+- blocker: ""
+- required_next_action: ""
 
 ## Next Flow Options
 
-- Next useful flow:
-- Blocker decision:
-- Explicit turn-end option:
+- options: []
+- explicit_turn_end_option: "User may explicitly end the current turn."
+- selected_next_flow: ""
 
 ## Residual Risk
 
-- TBD
+- risks: []
+- notes: ""

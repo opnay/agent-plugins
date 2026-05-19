@@ -62,14 +62,13 @@
 - runtime body는 phase flow, work boundary, verification, reporting, next-flow, stop rule 중심으로 재구성한다.
 - 개별 task 완료는 flow 완료나 turn closure를 결정할 수 없다는 규칙은 남긴다.
 - reporting 뒤에는 explicit stop이 source-recorded되지 않는 한 `next-flow` phase가 next-flow reopening으로 이어져야 한다.
-- runtime body의 common misclassification examples는 phase-vs-flow, commit completion, self-drive status question, future endpoint stop, file-change verification default처럼 반복 실수를 줄이는 작은 decision aids로 제한한다.
+- runtime body의 common misclassification examples는 commit completion, self-drive status question, future endpoint stop, file-change verification default처럼 turn-gate lifecycle 실수를 줄이는 작은 decision aids로 제한한다. Flow-vs-phase 판단 예시는 sibling `flow` skill로 넘긴다.
 
 ## Preparation Content
 
-- skill body는 deep-interview, flow list design, meaning resolution, current-state inspection을 `preparation`의 세부 방식으로 설명해야 한다.
-- skill body는 요청 해석과 planned flow list 설계가 plan/session record를 소유하는 `operational-preparation flow`가 될 수 있다고 설명해야 한다.
-- skill body는 operational-preparation 결과로 만들어지는 실행용 planned flows가 검토 가능하거나 commit-sized인 `change-unit flow`여야 한다고 설명해야 한다.
-- skill body는 요청 해석 결과가 바로 실행으로 이어지지 않을 수 있고, 후속 실행 후보와 실제 실행 flow를 구분해야 한다는 일반 원칙만 설명한다.
+- skill body는 preparation에서 sibling `flow` decision이 필요한 시점을 설명해야 한다.
+- skill body는 `flow`가 산출한 active flow 또는 candidate decision을 기록하고 적용한다고 설명해야 한다.
+- skill body는 요청 해석 결과가 바로 실행으로 이어지지 않을 수 있고, 후보와 실제 실행 flow 전환은 next-flow routing 또는 prepared self-drive sequence가 필요하다는 일반 원칙만 설명한다.
 - skill body는 full intent scenario를 runtime에 노출하지 않되, 자주 발생하는 오분류를 막기 위한 compact examples를 포함할 수 있다.
 - skill body는 ambiguous operation trigger의 대표 예시를 짧게 포함해 runtime-only reader가 meaning resolution을 건너뛰지 않게 해야 한다.
 - skill body는 preparation에서 scope가 비어 있거나 너무 넓거나 여러 결과물을 만들 수 있거나 성공 기준과 검증 경로를 바꿀 수 있으면 work 전에 질문으로 scope를 잠그도록 직접 설명해야 한다.
@@ -77,7 +76,7 @@
 
 ## Approval Content
 
-- skill body는 preparation이 planned flow list 전체를 실행하는 데 필요한 intent, scope, non-goal, acceptance signal, verification expectation을 수집하도록 설명해야 한다.
+- skill body는 preparation이 flow sequence 전체를 실행하는 데 필요한 intent, scope, non-goal, acceptance signal, verification expectation을 수집하도록 설명해야 한다.
 - skill body는 `turn-gate`의 기본 loop, phase protocol selection, approval-sensitive execution boundary를 독립적으로 설명해야 한다.
 - skill body는 approval-sensitive action의 exact target, expected effect, risk, rollback or recovery 가능성, 포함/제외 scope, 종료 지점이 기록돼야 한다고 설명해야 한다.
 - skill body는 readiness reporting과 execution authority를 분리해 설명해야 한다.

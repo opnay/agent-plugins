@@ -10,7 +10,7 @@
 ## 소유
 
 - self-drive sequence objective
-- planned flow list
+- prepared flow sequence
 - active flow index as a 0-based machine field
 - current flow label with human-readable number/name/file or slug
 - current sequence progress note
@@ -63,10 +63,10 @@ frontmatter에는 다음 필드를 둡니다.
 - `000-self-drive.md`는 sequence-level state를 소유하고, 각 flow의 상세 scope/evidence/report를 반복하지 않습니다.
 - `active_flow_index`는 0-based machine field로 쓰고, `current_flow_label`에는 사람이 읽는 번호, 이름, 파일 또는 slug를 둡니다.
 - 본문 `Current flow`는 `current_flow_label`과 같은 의미여야 하며, 둘이 맞지 않으면 자동 진행하지 말고 flow name/file/slug 기준으로 reconcile하거나 user-gated clarification으로 돌아갑니다.
-- `progress_note`는 현재 sequence summary입니다. 최신 완료 flow, active flow, next handoff, blocker state를 reporting 전과 다음 planned flow 이동 전에 overwrite/refresh합니다.
+- `progress_note`는 현재 sequence summary입니다. 최신 완료 flow, active flow, next handoff, blocker state를 reporting 전과 다음 flow 이동 전에 overwrite/refresh합니다.
 - `Progress Ledger`는 sequence transition과 material update의 append-only history입니다. current summary만 남기기 위해 ledger를 덮어쓰지 않습니다.
 - `last_updated_flow`는 마지막으로 갱신된 flow를 뜻하며, `active_flow_index`와 `current_flow_label`이 같은 flow를 가리킬 때만 current flow 판단 보조 근거가 됩니다.
-- `001+` flow record는 자기 flow의 local progress, next handoff, blocker return condition만 남기고 전체 planned flow list를 반복하지 않습니다.
+- `001+` flow record는 자기 flow의 local progress, next handoff, blocker return condition만 남기고 전체 prepared flow sequence를 반복하지 않습니다.
 - self-drive가 active가 아니면 `000-self-drive.md`를 만들지 않습니다.
 
 ## 검토 질문

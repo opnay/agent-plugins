@@ -9,7 +9,7 @@ verification_status: "not-started"
 self_drive_status: "inactive"
 self_drive_record: ""
 preparation_source: ""
-scope_lock_status: ""
+scope_lock_status: "unlocked"
 final_readiness_handoff: ""
 ---
 
@@ -17,24 +17,26 @@ final_readiness_handoff: ""
 
 ## User Requests Today
 
-- TBD
+- []
 
 ## Flow Index
 
-- TBD
+- []
 
 ## Planned Flow Sequence
 
-- TBD
+Date-level routing snapshot or prepared flow sequence. Keep only current or future selected flow entries here. Completed flow detail belongs in `Completed Flow Summaries` and the related flow record.
+
+- []
 
 ## Completed Flow Summaries
 
-- TBD
+- []
 
 ## Explicit Turn-End Option
 
-- User may explicitly ask to end the turn. Terminal closure is allowed only when that stop request is source-recorded.
+The user may explicitly end the current turn. Do not treat ordinary reporting, completion, or silence as turn stop.
 
 ## Open Risks
 
-- TBD
+- []

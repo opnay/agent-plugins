@@ -20,7 +20,7 @@ gate는 외부에 노출되는 별도 skill이나 phase가 아니라, 현재 입
 
 ## Gate 상세 문서
 
-- `gates/flow-shaping.md`: 현재 요청과 flow 상태를 active flow, 후보, completion criteria로 반영
+- `gates/flow-shaping.md`: 현재 요청과 flow 상태를 source-recorded active flow 또는 sibling `flow` decision에 연결
 - `gates/task-policy.md`: 선택된 flow 안에서 command, edit, build, test, handoff 같은 실행 정책 결정
 - `gates/verification.md`: work 결과를 pass/fail/blocked/insufficient로 통합하고 non-pass 경로 결정
 - `gates/reporting.md`: flow 결과를 다음 진행을 위한 continuity context로 정리

@@ -11,11 +11,11 @@ task policy는 flow 밖의 독립 계층이 아니라 flow 내부 정책입니�
 
 - 현재 flow를 달성하기 위한 구체 task sequence를 정한다.
 - 필요한 local reference, target reread, command, edit, build, test, subagent handoff 조건을 정한다.
-- commit execution 같은 approval-sensitive action이 flow completion criteria 안에서 허용됐는지 확인한다.
+- commit execution 같은 approval-sensitive action이 source-recorded flow decision과 approval boundary 안에서 허용됐는지 확인한다.
 
 ## 비소유
 
-- flow boundary 재정의
+- flow decision 재정의
 - verification pass 확정
 - reporting 생략
 - next-flow reopening 생략
@@ -26,5 +26,5 @@ task policy는 flow 밖의 독립 계층이 아니라 flow 내부 정책입니�
 
 ## 검토 질문
 
-- task policy gate가 flow 내부 정책으로 남고 별도 planned flow처럼 쓰이지 않는가?
+- task policy gate가 flow 내부 정책으로 남고 별도 flow decision처럼 쓰이지 않는가?
 - task 완료가 reporting이나 next-flow phase를 건너뛰지 않는가?

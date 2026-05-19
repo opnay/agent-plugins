@@ -10,36 +10,37 @@ last_updated_flow: ""
 required_next_action: ""
 ---
 
-# Self-Drive Sequence
+# Self-Drive Record
 
 ## Sequence Contract
 
-- Objective:
-- Planned flows:
-- Active flow index: 0-based machine field
-- Current flow: must match `current_flow_label`; use a human-readable number/name/file or slug
-- Endpoint:
+- objective: ""
+- prepared_flow_sequence: []
+- current_flow: ""
+- active_flow_index_basis: "0-based"
+- endpoint: ""
 
 ## Autonomous Boundary
 
-- Allowed autonomous actions:
-- Prohibited autonomous actions:
-- Approval-sensitive checkpoints:
-- Approval notes:
-- Blocker return conditions:
+- allowed_autonomous_actions: []
+- prohibited_autonomous_actions: []
+- approval_sensitive_checkpoints: []
+- execution_authority_notes: ""
 
 ## Progress Ledger
 
-- Append-only history of sequence transitions and material updates.
+- []
 
 ## User-Gated Return Conditions
 
-- New risky action:
-- Scope or non-goal change:
-- Unclear endpoint:
-- Repeated critical failure or root blocker:
-- Commit, push, PR, publish, release, or version bump outside exact approved boundary:
+- approval_boundary_change: ""
+- scope_or_endpoint_change: ""
+- blocker_state: ""
+- current_flow_identity_ambiguity: ""
+- record_access_failure: ""
+- repeated_critical_failure: ""
 
 ## Residual Risk
 
-- TBD
+- risks: []
+- notes: ""

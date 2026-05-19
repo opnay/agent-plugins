@@ -1,18 +1,17 @@
 # Phase Protocols
 
-`turn-gate` normally runs in an implicit default operating state. The default state always preserves:
+This reference is the runtime contract for choosing and applying phase protocols inside `turn-gate`. Protocols are not modes and not standalone user entrypoints. They are phase-local operating contracts under the implicit default state.
 
-1. preparation
-2. work
-3. verification
-4. reporting
-5. next-flow
+## Route First
 
-Phase protocols are not modes. They are local contracts for how to perform the current phase.
+Before selecting a protocol:
 
-## Selection
+- confirm the active flow is source-recorded or a sibling `flow` decision has been applied
+- resolve operation/target ambiguity when it can change files, scope, routing, deletion, approval, or handoff
+- confirm approval boundaries before destructive, irreversible, external, commit, push, PR, publish, release, or version-bump actions
+- choose the earliest blocker rather than the most convenient protocol
 
-Choose the earliest blocker:
+Default priority when several protocols seem plausible:
 
 1. `deep-interview`
 2. `review-loop`
@@ -20,54 +19,50 @@ Choose the earliest blocker:
 4. `autopilot`
 5. `commit-readiness-gate`
 
-If none applies, stay in the default operating state without a protocol suffix.
-
-Before selecting a protocol, resolve operation/target ambiguity and approval-sensitive boundaries that would change the work surface, verification path, or execution authority.
-
 ## deep-interview
 
-Use in preparation when requirement discovery or scope lock blocks work.
+Use during `preparation` when requirement discovery or scope lock blocks work.
 
-Apply when intent, included scope, non-goals, acceptance signal, verification expectation, planned flow list, or approval boundary is insufficient. Ask bounded questions with the question tool when possible.
+Apply when intent, scope, non-goals, acceptance signal, verification expectation, approval boundary, or expected risky action is not sufficient to proceed. Prefer `request_user_input` for bounded choices.
 
-Do not use this for already-locked implementation work, a single narrow review finding, or final commit readiness judgment.
+Do not use it for a simple operation/target ambiguity that can be locked with one narrow clarification.
 
-Handoff back to phase routing after the scope and approval boundary are locked. If they remain unclear, keep active question routing open and do not enter work.
+Handoff: once sufficiently locked, return to protocol routing. If still broad or unsafe, stay in user-gated question routing.
 
 ## review-loop
 
-Use when review, QA, or self-review findings are the current blocker.
+Use when review feedback, QA findings, or self-review findings are the current blocker.
 
-Focus one loop on one bounded blocking finding. Fix and verify that finding inside the active flow boundary. Keep low-value notes as follow-up candidates. If a finding creates broader scope or a new approval boundary, return to preparation or question routing.
+Apply one bounded blocking finding at a time. Fix, verify the finding, and reassess. Low-value notes stay as follow-up candidates unless they block correctness, reliability, or delivery.
 
-Review feedback is not approval for destructive, external, commit, push, PR, publish, release, or version-bump actions.
+Handoff: return to verification after the finding is addressed. If the finding expands scope or approval boundary, return to preparation or user-gated routing.
 
 ## ralph-loop
 
-Use for one narrow fix-verify-reassess cycle.
+Use for a narrow fix-verify-reassess cycle.
 
-Keep one primary issue, make the smallest useful change that tests the current hypothesis, verify immediately, then reassess whether another cycle is justified. If the loop grows enough to change success criteria, non-goals, verification, or approval boundary, return to preparation or question routing.
+Apply when one primary issue is clear and a small change can test the hypothesis. Keep each loop small, verify immediately, and reassess whether another loop is justified.
 
-Do not execute destructive, irreversible, external, commit, push, PR, publish, release, or version-bump actions unless the exact boundary is already approved.
+Handoff: continue only while the next cycle remains inside the active flow boundary. If scope grows, split or ask.
 
 ## autopilot
 
-Use for locked-scope end-to-end execution.
+Use when scope is locked and the current flow needs broad end-to-end execution.
 
-Proceed autonomously only inside recorded scope, non-goals, verification expectation, and approval boundary. Run meaningful verification after changes. Treat QA issues as bounded loops. Do not treat autonomous execution as approval for destructive, external, commit, push, PR, publish, release, or version-bump actions.
+Apply inside recorded scope, non-goals, verification expectation, and approval boundary. Continue through implementation, QA, validation, and reporting unless blocked.
 
-If scope floor is not met, return to `deep-interview` or question routing. If an approval boundary appears, stop autonomous work and route to a user-gated checkpoint.
+Autonomous execution is not authority for destructive, external, commit, push, PR, publish, release, or version-bump actions.
+
+Handoff: report after implementation and verification. If a new approval boundary appears, return to user-gated routing.
 
 ## commit-readiness-gate
 
-Use when judging whether the intended change unit is ready to commit.
+Use when judging whether an intended change unit is ready to commit.
 
-Evaluate only the intended change unit. Report readiness, residual risk, intended diff scope, excluded unrelated changes, verification evidence, likely commit-message scope, and minimum review recommendation.
+Evaluate intended diff scope, unrelated changes to exclude, verification evidence, residual risk, and likely commit-message scope. This is readiness reporting, not commit execution approval.
 
-Readiness is not execution authority. Keep staging, commit execution, push, PR, publish, release, and version bump behind a separate approval-sensitive boundary.
+Handoff: if ready, open approval-boundary handoff or next-flow routing. If not ready, return to the earliest safe repair or verification phase.
 
-## External And Approval-Sensitive Actions
+## Local Reference Rule
 
-Commit execution, push, PR, publish, release, version bump, destructive changes, irreversible changes, and other external actions require an explicit approval-sensitive checkpoint. Record exact action, target, expected effect, risk, recovery path, included scope, excluded scope, and end point before execution.
-
-Meaning resolution, phase protocol choice, readiness reporting, self-drive, or next-flow selection must not be interpreted as approval to execute these actions.
+If a protocol's meaning would change the active flow or approval boundary, ask before work. If it only chooses how to perform the current phase inside an already locked flow, record the protocol and continue.
