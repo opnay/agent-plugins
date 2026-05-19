@@ -13,7 +13,6 @@
   - flow reporting 뒤 next-flow question-routing response 구조 유지
   - explicit stop lifecycle handling
   - preparation에서 사용자 메시지의 operation 의미 해독
-  - implicit default state and phase protocol selection
   - 결과 보고 뒤 explicit choice 기반 next-flow reopening
   - session record와 Continuity Guard 유지
 - 제외:
@@ -65,12 +64,6 @@
 - `gates/reporting.md`: result reporting as continuity context
 - `core/meaning-resolution.md`: operation/target ambiguity, provenance/intent block target locking, user-gated clarification
 - `modes/default.md`: implicit default operating state 계약
-- `phase-protocols/routes.md`: implicit default state, phase protocol selection, local references, operating-state-vs-handoff
-- `phase-protocols/deep-interview.md`: requirement discovery와 scope lock protocol 계약
-- `phase-protocols/review-loop.md`: review/QA/self-review finding 처리 protocol 계약
-- `phase-protocols/ralph-loop.md`: bounded fix-verify-reassess cycle protocol 계약
-- `phase-protocols/autopilot.md`: locked-scope end-to-end execution protocol 계약
-- `phase-protocols/commit-readiness-gate.md`: commit readiness judgment protocol 계약
 - `core/approval-boundary.md`: destructive, irreversible, external-action, commit/publish approval boundary
 - `records/verification.md`: risk-based verification method, minimum-sufficient evidence or packet sizing, and non-pass handling
 - `records/question-routing.md`: `request_user_input`, next-flow reopening, fallback, visible/recorded turn-end option
@@ -84,13 +77,11 @@
 
 - `turn-gate`는 대화 응답 자체를 제어하는 conversation-level first-class rule이다.
 - `turn-gate`는 flow 자체를 정의하지 않고, 현재 턴에서 `flow` 계약 없이 진행하지 못하게 한다.
-- `turn-gate`는 implicit default operating state와 phase protocol routing을 독립적으로 소유한다.
-- `deep-interview`, `review-loop`, `ralph-loop`, `autopilot`, `commit-readiness-gate` 같은 이름은 standalone mode가 아니라 현재 상태에서 필요한 상황별 phase protocol로 취급한다.
-- phase protocol routing은 `phase-protocols/routes.md`가 소유하고, 상세 계약은 나머지 `phase-protocols/*.md`가 소유한다.
+- `turn-gate`는 implicit default operating state를 소유하지만, requirement discovery, review handling, fix loop, broad execution, commit-readiness 같은 flow-local strategy는 sibling `flow` skill이 소유한다.
 - `loop-kit-dev/skills/turn-gate/SKILL.md`는 runtime에서 읽는 운영 표면이며, 본문 구성과 runtime/spec boundary는 `core/skill-contents.md`가 소유한다.
 - turn-level activation, explicit stop, next-flow reopening은 `core/runtime-flow.md`가 소유한다.
-- flow decision fields and flow-vs-phase judgment are owned by the sibling `flow` skill.
-- phase 시작 사용자-facing 메시지의 `[<phase-name>(/<phase-protocol>)]` prefix 계약은 `core/runtime-flow.md`와 `core/skill-contents.md`가 소유한다.
+- flow decision fields, flow-vs-phase judgment, readiness, discovery, and flow-local strategy are owned by the sibling `flow` skill.
+- phase 시작 사용자-facing 메시지의 `[<phase-name>]` prefix 계약은 `core/runtime-flow.md`와 `core/skill-contents.md`가 소유한다.
 - phase 내부 세부 계약은 `phases/*` spec이 소유하고, internal gate 세부 계약은 `gates/*` spec이 소유한다.
 - session record와 Continuity Guard 계약은 `records/session-records.md`가 소유한다.
 - risk-based verification method 계약은 `records/verification.md`가 소유한다.
@@ -102,8 +93,7 @@
 - skill body 앞부분에 `Important` 섹션이 있고 1급 규칙, terminal summary 금지, next-flow reopening이 먼저 드러나는가?
 - `core/runtime-flow.md`만 읽어도 전체 phase 흐름과 다음 상세 spec 위치를 알 수 있는가?
 - phase 시작 사용자-facing 메시지 prefix 규칙이 runtime-visible 계약으로 반영돼 있는가?
-- 사용자 표현에 구조적 다의성이 있으면 mode 또는 phase protocol 선택 전에 meaning resolution 질문을 열었는가?
-- deep-interview/review-loop 같은 phase protocol을 mode처럼 기록하지 않았는가?
+- 사용자 표현에 구조적 다의성이 있으면 work 전에 meaning resolution 질문을 열었는가?
 - user-gated question routing과 계획 도구 `update_plan`를 필수 단계에서 실제로 사용했는가?
 - cross-flow 작업이라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 prepared flow sequence와 다음 flow 전환 조건을 최신 상태로 담고 있는가?
 - 사용자 메시지 해석과 flow decision이 필요했다면, sibling `flow` decision이 기록되고 active flow와 섞이지 않았는가?
@@ -115,13 +105,14 @@
 - active flow가 `flow` 계약을 따르며, reporting 뒤 `turn-gate`가 next-flow reopening을 유지했는가?
 - 사용자 메시지에서 시작한 flow decision과 기존 active flow를 구분했는가?
 - `flow`를 second loop controller가 아니라 flow contract surface로 유지했는가?
+- requirement discovery와 flow-local strategy를 turn-gate가 재정의하지 않고 sibling `flow` decision으로 적용했는가?
 - 결과 보고 뒤 explicit next-flow choice를 실제로 열었는가?
 - 결과 보고 직전에 `Continuity Guard`를 갱신했고 terminal summary 가능 여부를 확인했는가?
 
 ## 독립성 원칙
 
 - 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 아니오.
-- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: 이 skill은 sibling `flow` skill의 flow boundary contract를 적용한다. 다만 turn continuity, explicit stop, question routing, session continuity, phase protocol selection rule은 이 index spec에서 명시적으로 읽혀야 한다.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: 이 skill은 sibling `flow` skill의 flow boundary, readiness, discovery, strategy contract를 적용한다. 다만 turn continuity, explicit stop, question routing, session continuity rule은 이 index spec에서 명시적으로 읽혀야 한다.
 
 ## 확장 원칙
 

@@ -1,56 +1,45 @@
 # Session Records
 
-`turn-gate` records preserve continuity for `.agents/sessions/{YYYYMMDD}/`. They store active turn state, sibling `flow` decision fields, verification state, questions, and next action. They do not define how to judge flow boundaries, candidates, phases, or completion.
+Use session records to preserve turn continuity and prevent terminal closure from stale or missing state.
 
-## Files
+## Paths
 
-- `000-plan.md`: date-level routing snapshot and bounded index
-- `000-self-drive.md`: optional self-drive sidecar, only when self-drive is active
-- `{count-pad3}-{eng-lower-slug}.md`: per-flow canonical detail record
+For each active turn-gated task, maintain records under:
 
-Use runtime templates:
+```text
+.agents/sessions/{YYYYMMDD}/
+├── 000-plan.md
+├── 000-self-drive.md        # only when self-drive is active
+└── {count-pad3}-{eng-lower-slug}.md
+```
 
-- `templates/plan-template.md`
-- `templates/self-drive-template.md`
-- `templates/flow-record-template.md`
+Use `001`, `002`, `003` style zero-padded flow numbers. Slugs use lowercase English words and hyphens.
 
-## Plan Record
+## Ownership
 
-`000-plan.md` owns:
+`000-plan.md` is the date-level index and snapshot. It owns recent user requests, active flow pointer, required next action, compact flow index, selected or future planned flow sequence, completed flow summaries, explicit turn-end availability, and date-level open risks.
 
-- latest user request and decision snapshot
-- active flow pointer and required next action
-- recent user requests
-- compact flow index
-- `Planned Flow Sequence` as a date-level routing snapshot
-- completed flow summaries
-- open date-level risks
-- explicit turn-end availability snapshot
-- self-drive active status and sidecar pointer
+Each `001+` flow record is the canonical detail artifact for one flow. It owns the flow contract, work boundary, non-goals, approval boundary, material judgment calls, execution log, verification detail, report, next-flow options, and flow-local residual risk.
 
-It does not own detailed scope, non-goals, approval boundary, command output, evidence, or flow-local residual risk. Keep those in the `001+` flow record.
+`000-self-drive.md` exists only when self-drive is active. It owns sequence-level state. `000-plan.md` only keeps self-drive active status and pointer; active flow records keep only flow-local self-drive snapshots.
 
-## Flow Record
+Do not repeat detailed scope, evidence, verification logs, or flow-local risk in `000-plan.md`. Keep plan entries compact and link or point to the flow record.
 
-Each `001+` flow record owns the canonical detail for one active flow:
+## Creating Records
 
-- user request raw text when exact wording matters
-- user request summary or interpretation
-- task and flow type from the sibling `flow` decision
-- scope, non-goals, acceptance signal, approval boundary, verification expectation
-- current phase
-- Continuity Guard
-- execution log
-- verification method and result status
-- report
-- next-flow options
-- residual risk
+Use these installed templates for first creation:
 
-Update the flow record incrementally after each phase. Do not wait until the flow is complete.
+- `templates/plan-template.md` for `000-plan.md`
+- `templates/flow-record-template.md` for `001+` flow records
+- `templates/self-drive-template.md` for `000-self-drive.md`
+
+Only create `000-self-drive.md` when self-drive is active.
+
+If a new flow record is not yet created because the flow was just selected, template-based first creation is allowed. If an active plan or handoff points to a missing existing flow record, treat it as unexpectedly missing and do not silently reconstruct it.
 
 ## Continuity Guard
 
-Before reporting and before next-flow reopening, refresh:
+Every flow record must expose these Continuity Guard fields in frontmatter or equivalent visible state:
 
 - `turn_gate_active`
 - `question_routing_mode`
@@ -67,47 +56,34 @@ Before reporting and before next-flow reopening, refresh:
 - `verification_status`
 - `continuity_note`
 
-Only a source-recorded explicit stop can allow terminal summary. If closure source is missing or stale, reset stop/summary fields to `no` and record the stale-state note.
+Refresh the Continuity Guard before result reporting and before next-flow reopening.
 
-## Verification Fields
+`terminal_summary_allowed: true` is valid only when the current incoming message or a source-recorded explicit stop supports it. A source-less closure or stale closure state is not terminal authority.
 
-Record method and status separately.
+## Recovery Rules
 
-Methods:
+Separate these cases:
 
-- `clean-context`
-- `normal`
-- `not-required`
+- `not-yet-created plan`: first turn-gated work for the date; create from template.
+- `not-yet-created flow`: newly selected flow before first record write; create from template.
+- `unexpectedly missing active record`: plan or handoff points to a missing `001+` record; report blocker or ask for user-gated recovery.
+- `inaccessible active record`: read failure, permissions, lock, parse failure, encoding failure, or partial write; report blocker and do not use it as closure authority.
+- `stale closure state`: closure has no source message or does not match the current incoming message; reset explicit stop and terminal summary permission to false and record a note.
+- `stale self-drive sidecar`: plan says self-drive inactive but sidecar remains; treat sidecar as historical context only.
+- `stale routing mismatch`: plan, sidecar, flow record, and handoff disagree; reconcile from the latest reliable source or ask the user.
 
-Statuses:
+Never use stale closure, inaccessible records, missing records, or routing mismatch as a reason to close the turn.
 
-- `not-started`
-- `requested`
-- `pass`
-- `fail`
-- `blocked`
-- `insufficient`
+## Read-Only And No-Write Requests
 
-`not-required` is a method, not a passing status. Include reason and residual uncertainty.
+`read-only`, `no-edit`, `do not modify source`, or similar requests usually forbid target/source changes, not operational session records. Record that boundary separately.
 
-## Recovery
+If the user says not to write any files, not to create files, not to keep session records, or asks for no-record operation, do not write session records. If record reads or writes are ambiguous, ask before accessing or writing them when needed for continuity.
 
-Separate these states:
+Clean-context verifier read-only means the verifier cannot edit or expand scope. It does not automatically forbid main turn-gate session records unless the user also forbids records.
 
-- `not-yet-created plan`
-- `not-yet-created flow`
-- `unexpectedly missing active record`
-- `inaccessible active record`
-- `stale closure state`
-- `stale self-drive sidecar`
-- `stale routing mismatch`
+## Next Flow Options
 
-Create from template only for first creation. If an active pointer expects a record and it is missing or inaccessible, route as blocker or ask the user. Do not silently reconstruct and proceed as complete.
+Each flow record owns `Next Flow Options`. Even if the visible `request_user_input` choices cannot show a turn-end option, record that explicit turn-end remains available.
 
-If plan, self-drive sidecar, active flow record, and handoff disagree, reconcile from the newest reliable source. If unresolved, return to user-gated clarification.
-
-## Read-Only Boundary
-
-`read-only`, `no-edit`, or source-change bans usually prevent target/source edits, not operational session records. If the user says no file writes, no session records, or no records, do not write session files.
-
-If the boundary is unclear, ask before writing records.
+`000-plan.md` should only snapshot the selected result or active next-flow pointer. It should not duplicate the full option list.

@@ -64,12 +64,12 @@ codex plugin marketplace upgrade
 
 - 사용자가 멈추라고 할 때까지 턴을 계속 유지해야 하는 작업
 - 준비, 작업, 검증, 보고, 다음 플로우 선택이 드러나야 하는 작업
-- 초기 준비에서 deep-interview로 의도를 정렬하고 sub-flow 후보를 만들어야 하는 작업
+- 초기 준비에서 `flow` discovery/readiness로 의도를 정렬하고 sub-flow 후보를 만들어야 하는 작업
 - 초기 의도 정렬과 sub-flow 후보 설계가 session plan 산출물로 남아야 하는 작업
 - sub-flow 후보가 phase checklist가 아니라 검토/검증/커밋 가능한 변경 단위로 나뉘어야 하는 작업
 - 초기 준비에서 필요한 정보를 모은 뒤 self-drive overlay로 여러 flow를 이어가야 하는 작업
 - 이미 선택된 flow에서는 수정 범위, 현재 상태, 대상 파일, 검증 조건을 먼저 확인해야 하는 작업
-- 실행, 정제, 리뷰 처리, 커밋 준비 loop를 하나의 controller 안에서 골라야 하는 작업
+- 실행, 정제, 리뷰 처리, 커밋 준비 handoff를 active flow 안의 strategy로 골라야 하는 작업
 - 사용자 선택이 필요한 지점에서는 질문 도구를 써야 하는 작업
 - 작업 위험도에 따라 `clean-context`, `normal`, `not-required` verification method를 구분해야 하는 작업
 - 파일 변경, release surface, 다중 파일 계약, 실패 이력, approval-sensitive action에서는 clean-context verifier를 기본값으로 유지해야 하는 작업
@@ -77,7 +77,7 @@ codex plugin marketplace upgrade
 
 ## 엔트리포인트
 
-- `flow`: 메시지나 동작을 flow로 해석하고, parent flow, sub-flow candidate, operational-preparation flow, change-unit flow, flow-vs-phase 경계를 판정합니다.
+- `flow`: 메시지나 동작을 flow로 해석하고, parent flow, sub-flow candidate, operational-preparation flow, change-unit flow, flow-vs-phase 경계, readiness, discovery, flow-local strategy, handoff condition을 판정합니다.
 - `turn-gate`: 현재 턴에서 flow 사용을 강제하고, flow reporting 뒤 다음 flow 질문을 여는 turn-level gate입니다.
 
 `turn-gate`가 호출되면, 현재 세션 동안 이 skill을 1급 운영 규칙으로 활성화한 것으로 취급합니다.
@@ -87,7 +87,7 @@ codex plugin marketplace upgrade
 
 `turn-gate`는 다음 흐름을 계속 보이게 유지합니다.
 
-1. 준비: 초기 요청은 deep-interview alignment와 sub-flow 후보로 정렬하고, 이미 선택된 flow는 현재 상태와 작업 범위를 확인합니다.
+1. 준비: 초기 요청은 `flow` discovery/readiness와 sub-flow 후보로 정렬하고, 이미 선택된 flow는 현재 상태와 작업 범위를 확인합니다.
 2. 작업: 현재 flow가 소유한 실제 작업을 수행합니다.
 3. 검증: 작업 위험도에 맞춰 `clean-context`, `normal`, `not-required` method 중 하나로 검증합니다.
 4. 보고: 이번 flow의 맥락을 정리하고 다음 flow 선택지를 명시적으로 다시 엽니다.
@@ -113,19 +113,17 @@ sub-flow 후보 생성은 실행이 아니며, `turn-gate` 질문 또는 준비�
 
 `not-required`는 성공 상태가 아니며, commit/push/PR/publish/release/version bump 같은 승인 민감 작업을 경량화하지 않습니다.
 
-## Phase Protocol
+## Flow Strategy
 
-사용자가 phase protocol을 직접 고를 필요는 없습니다.
-`turn-gate`는 기본 상태로 동작하고, 현재 blocker에 맞는 phase protocol을 적용합니다.
+사용자가 flow strategy를 직접 고를 필요는 없습니다.
+`flow`는 active flow의 contract와 blocker에 맞는 strategy를 산출하고, `turn-gate`는 그 결과를 적용합니다.
 
-- `deep-interview`: 요구사항 확인, 불명확한 의도, scope boundary, approval line을 다루는 phase protocol
-- `autopilot`: 검증된 결과까지 이어지는 broad end-to-end delivery phase protocol
-- `ralph-loop`: 작은 수정, 즉시 검증, 재평가가 필요한 bounded cycle phase protocol
-- `review-loop`: 리뷰 피드백이나 QA finding처럼 material issue를 좁게 처리하는 phase protocol
-- `commit-readiness-gate`: 변경 단위가 커밋으로 넘어갈 준비가 됐는지 확인하는 phase protocol
+- `discovery`: 요구사항 확인, 불명확한 의도, scope boundary, approval line을 다루는 flow preparation strategy
+- `broad-execution`: locked scope 안에서 검증된 결과까지 이어지는 단일 flow execution strategy
+- `fix-verify-loop`: 작은 수정, 즉시 검증, 재평가가 필요한 bounded cycle strategy
+- `review-loop`: 리뷰 피드백이나 QA finding처럼 material issue를 좁게 처리하는 strategy
+- `commit-readiness`: 변경 단위가 커밋으로 넘어갈 준비가 됐는지 확인하는 handoff strategy
 
-이 계약들의 실행용 absorbed contract는 `skills/turn-gate/references/` 아래에 있습니다.
-`workflow-kit`은 각 workflow skill의 일반 의미를 제공하지만, turn-gate runtime contract와 session continuity는 `loop-kit`이 직접 소유합니다.
 Self-drive overlay의 상세 조건은 `skills/turn-gate/references/self-drive.md`가 소유합니다.
 
 ## 질문 라우팅
@@ -164,4 +162,4 @@ loop-kit-dev/
 
 `loop-kit-dev`은 의도적으로 작은 플러그인입니다.
 broader workflow taxonomy, domain-specific implementation guidance, 무관한 agent utility를 소유하지 않습니다.
-이 플러그인의 책임은 flow 경계, sub-flow 후보, turn continuity, phase protocol 선택, risk-based verification method, 결과 보고 전 검증 판단, 명시적 next-flow reopening입니다.
+이 플러그인의 책임은 flow 경계, sub-flow 후보, flow-local strategy, turn continuity, risk-based verification method, 결과 보고 전 검증 판단, 명시적 next-flow reopening입니다.

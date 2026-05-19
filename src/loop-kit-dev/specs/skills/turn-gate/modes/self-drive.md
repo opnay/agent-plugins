@@ -16,7 +16,7 @@ Self-drive는 별도 installed skill entrypoint가 아니라 명시적으로 적
 - `active_flow_index`는 0-based machine field로 취급하고, 사람이 읽는 `Current flow`에는 flow number/name/file 또는 slug를 함께 기록한다. 기존 record의 numeric index와 prepared flow sequence label이 충돌하거나 기준이 불명확하면 flow name/file을 확인하고, 해소할 수 없으면 autonomous continuation 전에 user-gated clarification으로 돌아간다.
 - `000-plan.md`는 self-drive-specific date-level snapshot으로 self-drive active 여부와 `000-self-drive.md` pointer만 소유한다.
 - sequence-level state는 optional sidecar record인 `000-self-drive.md`가 소유하고, 각 active flow record는 자기 flow의 sequence position, progress note, next handoff, blocker return condition만 flow-local snapshot으로 남긴다.
-- self-drive가 적용되는 동안 prepared sequence의 진행 판단은 turn-gate 기본 routing, next-flow 질문 기본값, phase protocol 선택보다 self-drive overlay 계약을 우선한다.
+- self-drive가 적용되는 동안 prepared sequence의 진행 판단은 turn-gate 기본 routing과 next-flow 질문 기본값보다 self-drive overlay 계약을 우선한다.
 - 각 flow는 여전히 자기 내부에서 `preparation -> work -> verification -> reporting -> next-flow` core loop를 가진다.
 - self-drive는 `next-flow` phase를 제거하지 않는다. prepared sequence가 여전히 유효하고 다음 flow를 식별할 수 있으면 `next-flow` 결과가 user question이 아니라 기록 기반 loop continuation으로 바뀐다.
 - continuation identity, scope, endpoint, approval boundary, blocker state가 불명확하면 autonomous continuation을 멈추고 user-gated routing으로 돌아간다.

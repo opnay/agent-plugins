@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "Loop Kit Dev",
     "shortDescription": "[DEV] Flow rules plus turn-gated continuity for multi-flow agent work.",
-    "longDescription": "[DEV] Provides a loop-oriented plugin with two coordinated surfaces. Flow classifies messages and actions into active flows, parent flows, finite sub-flow candidates, operational-preparation flows, and change-unit flows. Turn-gate keeps one turn alive until the user explicitly ends it, requires work to move through flow contracts, reopens next-flow choices after reporting, records continuity, applies phase protocols, and chooses verification method as clean-context, normal, or not-required based on work risk. Self-drive is a separate overlay reference for prepared flow sequences.",
+    "longDescription": "[DEV] Provides a loop-oriented plugin with two coordinated surfaces. Flow classifies messages and actions into active flows, parent flows, finite sub-flow candidates, operational-preparation flows, and change-unit flows, then owns readiness, discovery, flow-local strategy, and handoff conditions. Turn-gate keeps one turn alive until the user explicitly ends it, requires work to move through flow contracts, reopens next-flow choices after reporting, records continuity, and chooses verification method as clean-context, normal, or not-required based on work risk. Self-drive is a separate overlay reference for prepared flow sequences.",
     "developerName": "opnay",
     "category": "Productivity",
     "capabilities": [
@@ -30,6 +30,7 @@
     ],
     "defaultPrompt": [
       "Use flow to classify work into active flows, parent flows, finite sub-flow candidates, operational-preparation flows, and change-unit flows.",
+      "Let flow own readiness, discovery questions, flow-local execution strategy, and handoff conditions; do not make turn-gate redefine those strategy decisions.",
       "Treat sub-flow candidate creation as planning output, not execution; activate a sub-flow only through turn-gate next-flow routing or a prepared self-drive sequence.",
       "Keep this turn alive until I explicitly stop; after reporting, reopen next-flow with explicit choices unless closure is source-recorded.",
       "Run each active flow through preparation, work, verification, and reporting, then let turn-gate handle next-flow reopening.",
@@ -38,7 +39,7 @@
       "Use clean-context verifier by default for file changes, release surfaces, multi-file contracts, failed checks, user-requested verification, and approval-sensitive actions.",
       "Use normal evidence checks only for lower-risk no-edit/read-only work, and use not-required only when there is no work output to verify; always record reason and residual uncertainty.",
       "Never infer approval for destructive, external, commit, push, PR, publish, release, or version bump actions from readiness, self-drive, verification method, or prior context.",
-      "Use turn-gate as the turn-level gate, choose the current phase protocol as needed, and keep self-drive as a separate overlay for explicitly prepared flow sequences."
+      "Use turn-gate as the turn-level gate for continuity, explicit stop handling, session records, and next-flow reopening; keep self-drive as a separate overlay for explicitly prepared flow sequences."
     ],
     "brandColor": "#1D6E6E"
   }

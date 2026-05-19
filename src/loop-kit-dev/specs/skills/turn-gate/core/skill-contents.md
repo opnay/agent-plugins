@@ -44,12 +44,11 @@
   - verification
   - reporting
   - next-flow
-- skill body에는 `core/runtime-flow.md`의 전체 흐름과 `phase-protocols/routes.md`의 local `references/` 읽기 규칙이 직접 남아 있어야 한다.
-- skill body에는 phase 시작을 알리는 사용자-facing 메시지가 `[<phase-name>(/<phase-protocol>)]` 접두사로 시작해야 한다는 규칙이 직접 남아 있어야 한다.
+- skill body에는 `core/runtime-flow.md`의 전체 흐름과 runtime `references/`/`templates/` 사용 경계가 직접 남아 있어야 한다.
+- skill body에는 phase 시작을 알리는 사용자-facing 메시지가 `[<phase-name>]` 접두사로 시작해야 한다는 규칙이 직접 남아 있어야 한다.
 - skill body의 phase prefix 규칙은 canonical phase labels `preparation`, `work`, `verification`, `reporting`, `next-flow`를 제시해야 한다.
-- skill body의 phase prefix 규칙은 `(/<phase-protocol>)` segment가 optional notation이며, phase protocol 사용 시 slash suffix로 표기해야 한다는 점을 설명해야 한다.
 - skill body의 phase prefix 규칙은 실제 출력에서 literal parenthesis를 쓰지 않는다는 점을 설명해야 한다.
-- skill body의 phase prefix 예시는 phase-only form과 phase/protocol form을 모두 포함해야 한다.
+- skill body의 phase prefix 예시는 phase-only form을 중심으로 제시하고, flow-local strategy 이름을 turn-gate-owned protocol처럼 노출하지 않아야 한다.
 - skill body는 reporting 뒤 다음 flow를 여는 단계를 `next-flow` phase로 설명해야 한다.
 - skill body는 activation-only, mid-work status, session-record blocker, report-only evaluation처럼 여러 phase label이 가능해 보이는 상황의 우선순위를 설명해야 한다.
 - skill body는 self-drive continuation의 status, verification, reporting, automatic next-flow handoff 같은 사용자-facing phase/progress message에는 prefix가 필요하지만, self-drive record, flow record, generated artifact body, question option label 안으로 prefix를 전파하지 않는다고 설명해야 한다.
@@ -62,22 +61,23 @@
 - runtime body는 phase flow, work boundary, verification, reporting, next-flow, stop rule 중심으로 재구성한다.
 - 개별 task 완료는 flow 완료나 turn closure를 결정할 수 없다는 규칙은 남긴다.
 - reporting 뒤에는 explicit stop이 source-recorded되지 않는 한 `next-flow` phase가 next-flow reopening으로 이어져야 한다.
-- runtime body의 common misclassification examples는 commit completion, self-drive status question, future endpoint stop, file-change verification default처럼 turn-gate lifecycle 실수를 줄이는 작은 decision aids로 제한한다. Flow-vs-phase 판단 예시는 sibling `flow` skill로 넘긴다.
+- runtime body의 common misclassification examples는 commit completion, self-drive status question, future endpoint stop, file-change verification default처럼 turn-gate lifecycle 실수를 줄이는 작은 decision aids로 제한한다. Flow-vs-phase 판단과 flow-local strategy 판단 예시는 sibling `flow` skill로 넘긴다.
 
 ## Preparation Content
 
 - skill body는 preparation에서 sibling `flow` decision이 필요한 시점을 설명해야 한다.
 - skill body는 `flow`가 산출한 active flow 또는 candidate decision을 기록하고 적용한다고 설명해야 한다.
+- skill body는 `flow`가 산출한 missing contract fields, recommended question topics, recommended flow-local strategy를 적용한다고 설명해야 한다.
 - skill body는 요청 해석 결과가 바로 실행으로 이어지지 않을 수 있고, 후보와 실제 실행 flow 전환은 next-flow routing 또는 prepared self-drive sequence가 필요하다는 일반 원칙만 설명한다.
 - skill body는 full intent scenario를 runtime에 노출하지 않되, 자주 발생하는 오분류를 막기 위한 compact examples를 포함할 수 있다.
-- skill body는 ambiguous operation trigger의 대표 예시를 짧게 포함해 runtime-only reader가 meaning resolution을 건너뛰지 않게 해야 한다.
+- skill body는 ambiguous operation trigger의 대표 예시를 짧게 포함해 runtime-only reader가 flow contract ambiguity와 approval boundary를 건너뛰지 않게 해야 한다.
 - skill body는 preparation에서 scope가 비어 있거나 너무 넓거나 여러 결과물을 만들 수 있거나 성공 기준과 검증 경로를 바꿀 수 있으면 work 전에 질문으로 scope를 잠그도록 직접 설명해야 한다.
 - skill body는 질문 없이 추론한 scope라도 work boundary와 non-goal을 flow record에 남기도록 설명해야 한다.
 
 ## Approval Content
 
 - skill body는 preparation이 flow sequence 전체를 실행하는 데 필요한 intent, scope, non-goal, acceptance signal, verification expectation을 수집하도록 설명해야 한다.
-- skill body는 `turn-gate`의 기본 loop, phase protocol selection, approval-sensitive execution boundary를 독립적으로 설명해야 한다.
+- skill body는 `turn-gate`의 기본 loop와 approval-sensitive execution boundary를 독립적으로 설명해야 한다.
 - skill body는 approval-sensitive action의 exact target, expected effect, risk, rollback or recovery 가능성, 포함/제외 scope, 종료 지점이 기록돼야 한다고 설명해야 한다.
 - skill body는 readiness reporting과 execution authority를 분리해 설명해야 한다.
 - skill body는 self-drive가 명시적으로 요청된 prepared sequence에 대해서는 `references/self-drive.md`를 읽어야 한다는 discoverability를 제공해야 한다.
@@ -110,7 +110,7 @@
 
 - skill body 앞부분에 `Important` 섹션이 있고 1급 규칙, terminal summary 금지, next-flow reopening이 먼저 드러나는가?
 - skill body가 `preparation -> work -> verification -> reporting -> next-flow` 흐름을 실행 중 빠르게 확인 가능한 형태로 드러내되 기존 routing 중심 구조를 반복하지 않는가?
-- phase 시작을 알리는 사용자-facing 메시지가 `[<phase-name>(/<phase-protocol>)]`으로 시작해야 하고 protocol segment가 optional이라는 규칙이 runtime body에 직접 드러나는가?
+- phase 시작을 알리는 사용자-facing 메시지가 `[<phase-name>]`으로 시작해야 한다는 규칙이 runtime body에 직접 드러나는가?
 - runtime body가 internal gate model이나 사용자 메시지 intake/routing layer를 사용자-facing 구조로 다시 열지 않는가?
 - spec-side fixture 평가 규칙이 runtime skill body로 직접 누출되지 않았는가?
 - runtime body가 설치 후 존재하지 않는 dev-only spec 파일을 읽으라고 지시하지 않는가?

@@ -14,6 +14,9 @@ flow 설계 또는 sub-flow 후보 산출물에는 최소한 다음이 드러나
 - non-goals
 - completion criteria
 - verification expectation
+- readiness status 또는 missing contract fields
+- recommended question topics 또는 unresolved ambiguity
+- recommended flow-local strategy
 - approval-sensitive checkpoint가 필요한지 여부
 - handoff condition
 - unresolved questions 또는 blocker
@@ -24,3 +27,4 @@ flow 설계 또는 sub-flow 후보 산출물에는 최소한 다음이 드러나
 - 후보가 active flow인지 sub-flow candidate인지 명확한가?
 - completion criteria와 handoff condition이 분리되어 있는가?
 - verification expectation이 flow 위험도에 맞게 드러나는가?
+- missing contract field와 recommended strategy가 execution authority처럼 쓰이지 않는가?

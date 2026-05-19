@@ -1,87 +1,101 @@
 ---
 name: flow
-description: Interpret a user message or action as an active flow, parent flow, finite sub-flow candidates, operational-preparation flow, or change-unit flow; use when deciding flow boundaries, flow-vs-phase, completion criteria, verification expectation, and handoff shape before turn-gate applies the decision.
+description: Use when a request, action, plan item, review finding, or handoff must be interpreted as a cohesive flow, parent flow, finite sub-flow candidate, readiness/discovery/ambiguity decision, flow-local strategy, or handoff condition before work proceeds.
 ---
 
-# Flow
+# flow
 
-Use this skill to decide what the current work unit is. A flow is not a phase checklist. It is a cohesive unit that can be understood, reviewed, verified, and, when relevant, committed together.
+## Purpose
+
+Use this skill to decide what the current work flow is, whether it is executable now, and whether it should be split into finite `sub-flow candidates`.
+
+A flow is not a phase checklist. A flow is a cohesive unit that can be understood, reviewed, verified, and, when relevant, committed together. Each active flow has its own `preparation -> work -> verification -> reporting` lifecycle. Finishing a flow does not end the turn; turn continuation and next-flow questions belong to `turn-gate`.
 
 ## Ownership
 
-`flow` owns:
+This skill owns:
 
 - flow boundary and flow-vs-phase judgment
-- parent flow and finite `sub-flow candidates`
-- active flow versus candidate status
-- `operational-preparation` versus `change-unit` type
-- flow-local `preparation -> work -> verification -> reporting`
-- completion criteria, verification expectation, and handoff condition
+- parent flow and finite `sub-flow candidate` design
+- `operational-preparation flow` and `change-unit flow` distinction
+- active flow versus follow-up candidate distinction
+- readiness, discovery, and operation/target ambiguity decisions before work
+- flow-local strategy selection: review-loop, fix-verify-loop, broad-execution
+- flow completion criteria, verification expectation, and handoff condition
+- commit-readiness as a readiness/handoff condition, not commit execution
 
-`flow` does not own turn activation, explicit stop handling, next-flow question routing, session continuity, self-drive continuation, commit execution, push, PR, or publish rules.
+This skill does not own:
 
-## Core Model
+- turn activation, explicit stop, or next-flow question routing
+- session continuity or terminal closure guard
+- user question tool mechanics
+- commit, push, PR, publish, release, or version-bump execution details
+- self-drive sequence-level continuation
 
-Treat each flow as one bounded work stream with these internal phases:
+## Flow Model
 
-1. `preparation`
-2. `work`
-3. `verification`
-4. `reporting`
+Classify the current item before treating it as executable work.
 
-If the request is too broad or creates multiple reviewable outputs, model it as a parent flow that produces finite `sub-flow candidates`. Candidate creation is not execution. A candidate becomes the active flow only after a turn controller selects it, or after a prepared self-drive sequence advances to it.
+- `flow`: a cohesive work stream with preparation, work, verification, and reporting.
+- `parent flow`: a flow whose output is a finite list of sub-flow candidates and their contracts.
+- `sub-flow candidate`: a possible future flow. Creating a candidate is not execution.
+- `active flow`: the flow selected for current work.
+- `operational-preparation flow`: a flow that locks intent, scope, non-goals, success signals, verification expectations, approval boundaries, and sub-flow candidates or selected sequence.
+- `change-unit flow`: a flow that owns concrete reviewable changes such as code, docs, fixtures, configuration, or release surface.
 
-An active flow is the unit currently being prepared, worked, verified, or reported. A sub-flow candidate is a possible later unit with enough detail to choose, hand off, or defer.
+Do not treat `analysis`, `work`, `verification`, `reporting`, or `commit readiness` as flows by name alone. Pure QA, final consistency checks, verification reporting, and commit-readiness reporting are not separate change-unit flows unless they own a distinct reviewable artifact change.
 
-## Flow Types
+## Required Flow Output
 
-Use one of these types unless the runtime contract has been explicitly extended:
+When designing a flow or candidate list, make these fields explicit enough for a session record or handoff:
 
-- `operational-preparation`: locks intent, scope, non-goals, success signals, verification expectation, approval boundaries, and candidate handoff. Its output is a plan/session artifact or bounded candidate set, not product work.
-- `change-unit`: changes or creates reviewable artifacts such as code, docs, fixtures, configuration, templates, or release surfaces.
+- flow label or slug
+- flow type: `operational-preparation` or `change-unit`
+- scope and non-goals
+- completion criteria
+- verification expectation
+- readiness status or missing contract fields
+- recommended question topics or unresolved ambiguity
+- recommended flow-local strategy
+- approval-sensitive checkpoint, if expected
+- handoff condition
+- unresolved questions or blocker
+- whether this is the active flow or only a sub-flow candidate
 
-An `operational-preparation` flow may produce `change-unit` candidates. Those candidates remain candidates until selected.
+Keep completion criteria separate from handoff condition. A flow can be complete while still needing a next-flow choice or a commit-readiness handoff.
 
-## Boundary Checks
+## Preparation Decisions
 
-Do not treat these labels as flows by themselves:
+Before work, decide whether the flow contract is ready.
 
-- `analysis`
-- `work`
-- `verification`
-- `reporting`
-- `commit readiness`
-- final QA, consistency checks, or result reporting with no separate artifact change
+Work can start only when scope, non-goals, completion criteria, verification expectation, and handoff condition are sufficient. If any of these are missing, output missing fields and recommended question topics instead of executing.
 
-An item can be a flow when it owns a reviewable artifact or a bounded operational artifact, such as a session plan, candidate handoff, fixture, snapshot baseline, diagnostic output, or validator report.
+Use discovery when user intent, included scope, non-goals, success criteria, verification expectation, output shape, decomposition, or approval-sensitive checkpoints could change based on the answer.
 
-Use these checks:
+Use ambiguity resolution when operation or target wording could change the flow contract. Examples include `merge`, `absorb`, `move`, `promote`, `remove`, `delete`, `split`, `route`, `phase`, `surface`, `skill`, `spec`, `contract`, or pronouns such as "that", "above", "below", and "current" when multiple targets are possible.
 
-- Does this unit have a coherent scope and non-goals?
-- Can it be reviewed and verified on its own?
-- Would it make sense as a commit-sized or handoff-sized unit?
-- Is it merely a phase inside another flow?
-- If it produces candidates, are those finite and not being executed yet?
+Approval-sensitive execution is separate from ambiguity resolution. This skill may identify that approval is needed, but the approval boundary and execution authority are owned outside `flow`.
 
-## Output Contract
+## Flow-Local Strategy
 
-When you return or record a flow decision, include:
+Choose a strategy inside the active flow only after the flow boundary is locked.
 
-- `flow_label` or `slug`
-- `flow_type`: `operational-preparation` or `change-unit`
-- `status`: `active_flow` or `sub_flow_candidate`
-- `scope`
-- `non_goals`
-- `completion_criteria`
-- `verification_expectation`
-- `approval_sensitive_checkpoint`
-- `handoff_condition`
-- `unresolved_questions_or_blockers`
+- Use `review-loop` for a material review, QA, or self-review finding inside the current flow. Focus one loop on one bounded blocking finding and verify the directly related expectation after fixing it.
+- Use `fix-verify-loop` for one narrow problem where a small fix or check can test the current hypothesis. Reassess after each loop.
+- Use `broad-execution` for a single locked active flow whose implementation, QA, and validation all remain inside the same boundary.
 
-For a parent flow, include the parent label and a finite `sub-flow candidates` section. For each candidate, include the same contract fields and make clear that it is not active execution.
+These strategies do not authorize multiple flows to run automatically. Sequence-level continuation belongs to a prepared self-drive sequence, not to `flow`.
 
-## Relationship To Turn Gate
+## Handoff Conditions
 
-`turn-gate` applies this decision inside an active turn. It records the flow fields, prevents work without a source-recorded active flow or new flow decision, and reopens next-flow routing after reporting.
+Use handoff when the current flow reaches a boundary that another controller or workflow must handle.
 
-Do not use flow completion as turn completion. A completed flow can still require next-flow selection, blocker routing, commit-readiness handoff, or explicit turn stop handling.
+Commit-readiness is a handoff condition. It checks intended change unit, diff scope, unrelated-change exclusion, verification evidence, and residual risk. It does not stage, commit, push, open PRs, publish, release, or bump versions.
+
+If verification evidence is missing, do not report readiness as successful. Route the active flow back to the earliest safe preparation, work, or verification point.
+
+## Relationship To turn-gate
+
+`turn-gate` applies this skill inside an active turn. It prevents work without a source-recorded active flow or a `flow` decision, records this skill's output contract in session records, and opens next-flow routing after reporting.
+
+`turn-gate` may use this skill's missing fields and question topics for user-gated routing, but it must not redefine discovery, readiness, flow-local strategy, or handoff conditions. This skill never opens the next flow by itself.

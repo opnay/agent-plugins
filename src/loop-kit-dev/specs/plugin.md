@@ -8,13 +8,13 @@
 여기서 flow는 `분석`, `작업`, `커밋` 같은 진행 phase가 아니며, 반드시 최종 사용자에게 직접 보이는 가치 단위도 아닙니다.
 flow는 함께 이해하고 검토하고 검증하고 필요하면 커밋할 수 있는 응집된 작업 흐름 단위입니다.
 예를 들어 "로그인 페이지 만들기"라는 큰 요청은 하나의 사용자 가치처럼 보일 수 있지만, planned flow는 `로그인 UI/UX 컴포넌트 생성`, `로그인 로직 작성`, `로그인 페이지 조립`처럼 커밋 단위로도 나뉠 수 있는 변경 묶음이어야 합니다.
-초기 준비에서는 deep-interview alignment로 의도를 정렬하고 그 결과를 flow list로 만들며, 이미 선택된 flow의 준비에서는 수정 범위, 현재 상태, 대상 파일 또는 산출물, 검증 조건을 확인합니다.
+초기 준비에서는 `flow`의 discovery/readiness 계약으로 의도를 정렬하고 그 결과를 flow list로 만들며, 이미 선택된 flow의 준비에서는 수정 범위, 현재 상태, 대상 파일 또는 산출물, 검증 조건을 확인합니다.
 초기 의도 정렬과 sub-flow 후보 설계는 자체 산출물로 plan/session record를 소유하는 `operational-preparation flow`가 될 수 있습니다.
 이 운영 flow가 만든 sub-flow 후보의 각 항목은 실제 코드, 문서, fixture, 설정 같은 산출물을 소유하는 `change-unit flow`가 될 수 있습니다.
 초기 준비는 sub-flow 후보 또는 flow sequence를 실행하는 데 필요한 정보와 예상 위험 작업, approval boundary를 먼저 질문해 수집해야 합니다.
 `self-drive`는 이 기본 준비와 loop surface를 수정하지 않고, 명시적으로 적용될 때 자기 계약으로 준비된 sequence의 진행 판단을 덮어쓰는 별도 overlay입니다.
 commit-readiness reporting 자체는 산출물 변경을 소유하지 않는 한 planned flow boundary가 아닙니다.
-phase protocol 선택 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, phase, routing rule, release surface 중 무엇을 가리키는지 확인하고, 해석에 따라 작업이 달라지면 meaning resolution 질문으로 먼저 잠급니다.
+work 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, flow contract, routing rule, release surface 중 무엇을 가리키는지 확인하고, 해석에 따라 작업이 달라지면 meaning resolution 질문으로 먼저 잠급니다.
 이 플러그인은 `workflow-kit`의 일반 workflow skill 의미를 참조하되, turn-gate runtime contract와 session continuity는 자체 runtime-oriented surface로 소유합니다.
 
 ## 플러그인 경계와 비목표
@@ -26,10 +26,10 @@ phase protocol 선택 전에는 사용자 지시어의 operation 의미가 파�
   - flow를 phase나 direct user-value가 아니라 cohesive reviewable or commit-sized work unit으로 나누는 계약
   - 초기 의도 정렬과 sub-flow 후보 설계를 운영 flow로 기록하고, 그 결과 change-unit flow 후보를 분리하는 계약
   - 초기 준비와 기존 flow 기반 준비의 구분 유지
-  - deep-interview alignment와 sub-flow candidate design을 preparation 세부 작업으로 유지
+  - `flow` discovery/readiness와 sub-flow candidate design을 preparation 세부 작업으로 유지
   - 초기 준비에서 flow sequence 전체에 필요한 정보, 예상 위험 작업, user-gated checkpoint 수집
   - prepared flow sequence에 적용될 수 있는 별도 self-drive overlay reference 제공
-  - phase protocol 선택 전 operation meaning resolution
+  - work 전 operation meaning resolution
   - `turn-gate`의 독립적인 implicit default state 유지
   - user-gated question routing 유지
   - `clean-context`, `normal`, `not-required` verification method 선택과 중복 검증을 피하는 최소 충분 evidence 구성
@@ -49,7 +49,7 @@ phase protocol 선택 전에는 사용자 지시어의 operation 의미가 파�
 - 초기 의도 정렬, scope lock, approval boundary 정리, sub-flow 후보 작성 자체가 plan/session record 산출물을 만드는 운영 flow로 남아야 하는 작업
 - 이미 선택된 flow에서 수정 범위, 현재 상태, 대상 파일, 검증 조건을 먼저 확인해야 하는 작업
 - 사용자 지시어가 여러 구조 단위를 가리켜 current-phase work를 고르기 전에 의미를 잠가야 하는 작업
-- 현재 phase의 작업이 requirement discovery, refinement, review handling, readiness pass 같은 phase protocol 중 하나로 좁혀지는 작업
+- 현재 flow의 작업이 requirement discovery, refinement, review handling, readiness pass 같은 flow-local strategy 중 하나로 좁혀지는 작업
 - loop continuity가 top-level governing contract인 작업
 
 ## 대표 표면
@@ -63,11 +63,10 @@ phase protocol 선택 전에는 사용자 지시어의 operation 의미가 파�
 - 대표 스펙: `loop-kit-dev/specs/plugin.md`
 - skill 상세 스펙 위치: `loop-kit-dev/specs/skills/*.md` 또는 복잡한 skill의 `loop-kit-dev/specs/skills/<skill-name>/spec.md`
 - turn-gate local references: `loop-kit-dev/skills/turn-gate/references/*.md`
-- referenced workflow skill specs: `src/workflow-kit-dev/specs/skills/deep-interview.md`, `src/workflow-kit-dev/specs/skills/autopilot.md`, `src/workflow-kit-dev/specs/skills/ralph-loop.md`, `src/workflow-kit-dev/specs/skills/review-loop.md`, `src/workflow-kit-dev/specs/skills/commit-readiness-gate.md`
 
 ## 내장 skill 체계
 
-- `flow`: 메시지나 동작을 active flow, parent flow, finite sub-flow candidate, `operational-preparation flow`, `change-unit flow`로 판정하고 flow-vs-phase 경계를 소유한다.
+- `flow`: 메시지나 동작을 active flow, parent flow, finite sub-flow candidate, `operational-preparation flow`, `change-unit flow`로 판정하고 flow-vs-phase 경계, readiness, discovery, flow-local execution strategy, handoff condition을 소유한다.
   - spec: `loop-kit-dev/specs/skills/flow/spec.md`
 - `turn-gate`: turn continuity를 유지하고, 현재 턴에서 `flow` 계약을 적용하도록 강제하며, flow reporting 뒤 next-flow 질문을 연다.
   - spec: `loop-kit-dev/specs/skills/turn-gate/spec.md`
@@ -76,9 +75,7 @@ phase protocol 선택 전에는 사용자 지시어의 operation 의미가 파�
 
 - `workflow-kit`은 일반 workflow skill 의미를 제공한다.
 - `loop-kit-dev`은 flow 단위 규칙, turn-gate 사용자 표면, runtime loop orchestration, session continuity contract를 소유한다.
-- `turn-gate`는 runtime phase protocol을 local `references/`로 흡수해 사용하되, 그 reference는 관련 workflow skill spec과 동기화해 유지한다.
 - 복잡한 skill spec은 `specs/skills/<skill-name>/spec.md`를 기본 index로 두고, 세부 계약은 같은 folder 아래 sub-spec으로 분리할 수 있다.
-- `turn-gate`의 phase protocol 선택 기준과 routing은 `specs/skills/turn-gate/phase-protocols/routes.md`가 소유하고, phase protocol 상세 계약은 같은 폴더의 개별 protocol spec이 소유한다.
 - `turn-gate`의 필수 운영 도구는 기본적으로 질문 도구 `request_user_input`와 계획 도구 `update_plan`이다.
 - `turn-gate`의 verification method는 `clean-context`, `normal`, `not-required`로 구분한다.
 - `clean-context`는 읽기 전용 bounded verifier subagent 실행을 포함하며, 이 검증 전용 실행은 `turn-gate` 활성 중 사전 허용된 계약으로 취급한다.
@@ -87,6 +84,7 @@ phase protocol 선택 전에는 사용자 지시어의 operation 의미가 파�
 - `not-required`는 검증할 work output이 없는 routing-only 또는 blocker-before-work 상황에서만 사용하며, reason과 residual uncertainty를 기록해야 한다.
 - verification method는 result status가 아니며, `pass`, `fail`, `blocked`, `insufficient` 처리와 섞지 않는다.
 - `flow`의 phase model은 `준비 -> 작업 -> 검증 -> 보고`를 런타임 surface에 드러내야 하며, parent flow와 sub-flow candidate의 경계를 직접 설명해야 한다.
+- `flow`는 discovery, readiness, ambiguity, review-loop, fix-verify-loop, broad-execution, commit-readiness handoff 같은 flow-local strategy를 소유한다.
 - `turn-gate`는 flow phase model을 재소유하지 않고, active turn에서 `flow` 계약을 적용하고 flow reporting 뒤 next-flow reopening을 강제한다.
 - 초기 bootstrap은 `operational-preparation flow`로 기록할 수 있으며, 이 flow의 산출물은 session plan, sub-flow candidate list, scope/approval boundary다. 이 결과로 생성되는 product/work sub-flow candidates는 선택될 때 `change-unit flow`로 분리한다.
 - self-drive는 별도 skill 표면이 아니라 명시적으로 적용될 때 준비된 sequence의 진행 판단을 덮어쓰는 독립 overlay reference로 동작한다.
@@ -95,14 +93,13 @@ phase protocol 선택 전에는 사용자 지시어의 operation 의미가 파�
 - 설치 후 실행 guidance는 `skills/turn-gate/references/self-drive.md`가 소유하며, runtime 문서는 dev-only `modes/self-drive.md` 경로를 실행 지시로 사용하지 않는다.
 - self-drive reference는 초기 preparation을 대신하지 않고, spec-side overlay 계약을 설치 후 실행 가능한 형태로 흡수해 적용한다.
 - self-drive 도중 사용자 메시지가 들어오면 멈추지 않고 현재 플로우 조정 또는 다음 플로우 우선 등록으로 처리한다.
-- 새로운 phase protocol이 필요하면 해당 workflow skill의 일반 의미를 `workflow-kit`에 정의하거나 갱신한 뒤 `loop-kit-dev`의 runtime reference에 반영한다.
 - 새로운 explicit overlay는 기본 상태나 기존 overlay로 current flow를 소유할 수 없을 때만 추가한다.
-- `loop-kit-dev`에서는 `autopilot`, `ralph-loop`, `review-loop`, `commit-readiness-gate`를 직접 호출 가능한 사용자 엔트리포인트로 늘리지 않는다.
-- `turn-gate`의 phase model, verification method, session continuity rule은 `loop-kit-dev` spec, skill body, manifest prompt가 같은 의미로 설명해야 한다. Phase protocol 의미를 바꾸는 경우에만 관련 `workflow-kit` skill spec도 같은 변경 단위에서 점검한다.
+- `loop-kit-dev`에서는 flow-local strategy를 직접 호출 가능한 사용자 엔트리포인트로 늘리지 않는다.
+- `turn-gate`의 phase model, verification method, session continuity rule은 `loop-kit-dev` spec, skill body, manifest prompt가 같은 의미로 설명해야 한다.
 
 ## 구조 요약
 
 - 이 플러그인은 intentionally narrow한 operational package다.
 - `flow`가 흐름 단위 규칙을 소유하고, `turn-gate`가 메인 turn-level gate 표면이다.
-- deep-interview, autopilot, ralph-loop, review-loop, commit-readiness-gate의 일반 의미는 mode가 아니라 phase protocol로 보고, `turn-gate/references/`에는 그 실행용 absorbed contract를 둔다.
+- discovery, broad execution, fix-verify loop, review-loop, commit-readiness는 turn-gate protocol이 아니라 `flow`의 flow-local strategy로 둔다.
 - autonomous subagent question routing은 direct skill entrypoint가 아니라 self-drive runtime reference의 책임으로 둔다.

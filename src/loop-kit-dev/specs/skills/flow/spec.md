@@ -3,6 +3,7 @@
 ## 목적
 
 `flow`는 하나의 메시지나 동작을 작업 흐름 단위로 해석하고, 그 flow가 직접 실행 가능한지 또는 finite `sub-flow candidates`로 나뉘어야 하는지 판단하는 skill입니다.
+또한 flow가 work로 들어가기 전에 필요한 contract를 확인하고, flow-local discovery/execution/handoff 전략을 선택합니다.
 각 flow는 자체 `preparation -> work -> verification -> reporting` 흐름을 가지며, flow가 끝나면 그 flow는 종료됩니다.
 다음 flow 진행 여부와 사용자 질문 라우팅은 `turn-gate`가 소유합니다.
 
@@ -14,10 +15,14 @@
   - `operational-preparation flow`와 `change-unit flow` 구분
   - active flow와 follow-up/sub-flow 후보 구분
   - flow 내부 `preparation -> work -> verification -> reporting` 계약
+  - flow readiness, requirement discovery, operation/target ambiguity 판단
+  - flow-local review handling, fix-verify-reassess, broad execution strategy
   - flow completion criteria와 verification expectation 산출
+  - commit-readiness 같은 flow handoff condition 판단
   - flow가 아닌 분석, 검증, 보고, commit-readiness 항목 판정
 - 제외:
   - turn activation과 explicit stop 처리
+  - 질문 도구 실행 방식과 next-flow question-routing
   - 결과 보고 뒤 next-flow 질문 도구 라우팅
   - 여러 flow 사이의 turn-level continuity
   - self-drive sequence-level continuation
@@ -30,6 +35,8 @@
 - 큰 요청을 parent flow로 받고 finite `sub-flow candidates`로 나눠야 하는 작업
 - 어떤 항목이 flow인지 phase인지, 또는 handoff/reporting인지 판정해야 하는 작업
 - flow별 scope, non-goals, completion criteria, verification expectation, handoff 조건을 설계해야 하는 작업
+- flow contract를 만들기 위한 요구사항 질문 또는 operation/target ambiguity를 판정해야 하는 작업
+- active flow 안에서 review finding, 작은 fix loop, broad execution 중 어떤 strategy가 필요한지 판단해야 하는 작업
 - 이미 끝난 flow가 완료 조건을 만족했는지 검토해야 하는 작업
 
 ## 엔트리포인트 / 대표 표면
@@ -48,14 +55,24 @@
 - `core/boundaries.md`: flow-vs-phase, flow가 아닌 항목, reviewable artifact 기준
 - `core/output-contract.md`: flow 설계 또는 sub-flow 후보 산출물의 필수 필드
 - `core/turn-gate-relationship.md`: `flow`와 `turn-gate`의 소유권 경계
+- `preparation/readiness.md`: work 진입 전 flow contract 충분성 판단
+- `preparation/discovery.md`: flow contract 형성을 위한 requirement discovery와 scope lock 질문 주제
+- `preparation/ambiguity.md`: flow contract에 영향을 주는 operation/target ambiguity
+- `execution/review-loop.md`: active flow 안의 review/QA/self-review finding 처리 전략
+- `execution/fix-verify-loop.md`: 작은 fix-verify-reassess cycle 전략
+- `execution/broad-execution.md`: locked scope 단일 flow의 end-to-end execution 전략
+- `handoff/commit-readiness.md`: commit execution이 아닌 commit-readiness handoff 판단
 - `intent-scenarios/`: flow boundary 의도를 회귀 평가하기 위한 spec-side fixture
 
 ## 핵심 처리 계약
 
 - flow는 phase checklist가 아니라 응집된 작업 흐름 단위입니다.
 - 하나의 flow는 `preparation -> work -> verification -> reporting`을 내부 단계로 갖습니다.
+- flow preparation은 readiness, discovery, ambiguity 판단으로 flow contract를 완성합니다.
+- flow execution은 current flow 안에서 review-loop, fix-verify-loop, broad-execution 같은 strategy를 선택할 수 있습니다.
 - flow가 너무 크거나 여러 산출물을 만들면 parent flow는 finite `sub-flow candidates`를 만들 수 있습니다.
 - `sub-flow candidate` 생성은 실행이 아닙니다.
+- flow handoff는 다음 사용자 질문이나 commit execution을 직접 수행하지 않고, 필요한 handoff condition을 산출합니다.
 - flow가 끝났다는 사실은 turn이 끝났다는 뜻이 아닙니다.
 
 ## 검토 질문
@@ -64,12 +81,14 @@
 - flow가 너무 커서 finite sub-flow 후보로 나눠야 하는가?
 - sub-flow 후보가 active execution flow처럼 실행되고 있지 않은가?
 - 각 flow에 scope, non-goals, completion criteria, verification expectation, handoff 조건이 있는가?
+- readiness/discovery/ambiguity가 필요한데 flow contract 없이 work로 넘어가지 않았는가?
+- flow-local strategy를 turn-level next-flow routing이나 self-drive sequence authority와 혼동하지 않았는가?
 - flow 완료와 turn 종료를 혼동하지 않았는가?
 
 ## 독립성 원칙
 
 - 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 예.
-- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: `flow`는 `turn-gate` 없이도 flow boundary, sub-flow 후보, flow completion을 판단할 수 있어야 합니다. 다만 `turn-gate`가 활성인 경우에는 `turn-gate`가 next-flow 질문, session continuity, terminal closure guard를 소유합니다.
+- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: `flow`는 `turn-gate` 없이도 flow boundary, sub-flow 후보, flow readiness, flow-local strategy, flow completion을 판단할 수 있어야 합니다. 다만 `turn-gate`가 활성인 경우에는 `turn-gate`가 next-flow 질문, session continuity, terminal closure guard를 소유합니다.
 
 ## 확장 원칙
 

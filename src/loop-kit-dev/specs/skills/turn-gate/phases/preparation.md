@@ -12,9 +12,9 @@
 - work로 넘어가기 전에 active flow의 intent, scope, non-goal, acceptance signal, verification expectation, approval boundary가 충분한지 확인한다.
 - work로 넘어가기 전에 task tier와 예상 verification method가 결과 보고, 승인 경계, 검증 경로를 바꿀 정도로 중요한지 확인한다.
 - 사용자 메시지 기반 preparation과 이미 선택된 flow의 실행 전 preparation을 구분한다.
-- scope가 비어 있거나 너무 넓거나 결과/검증 경로를 바꿀 수 있으면 user-gated question-routing으로 잠근다.
+- scope가 비어 있거나 너무 넓거나 결과/검증 경로를 바꿀 수 있으면 sibling `flow`의 readiness/discovery decision을 적용해 user-gated question-routing으로 잠근다.
 - 추론한 scope로 진행하는 경우에도 work boundary와 non-goal을 flow record에 남긴다.
-- flow boundary, candidate, flow type, active execution 구분은 sibling `flow` skill이 소유하며, 이 phase는 그 decision을 적용한다.
+- flow boundary, candidate, flow type, active execution, readiness, recommended question topics, flow-local strategy 구분은 sibling `flow` skill이 소유하며, 이 phase는 그 decision을 적용한다.
 - operation/target ambiguity는 work 전에 `core/meaning-resolution.md`로 잠근다.
 - destructive, irreversible, external, commit/push/PR/publish 같은 위험 작업은 `core/approval-boundary.md`의 approval-sensitive checkpoint로 둔다.
 - 파일 수정, release surface, 다중 파일 계약, 실패 이력, 사용자 요청 검증, approval-sensitive action은 기본적으로 `clean-context` verification method를 예상한다.
@@ -27,5 +27,5 @@
 - work로 넘어가기 전에 intent, scope, non-goal, acceptance signal, verification expectation, approval boundary가 충분히 잠겼는가?
 - task tier와 예상 verification method가 충분히 잠겼는가?
 - 사용자 메시지 기반 preparation과 기존 flow 기반 preparation을 구분했는가?
-- sibling `flow` decision 없이 후보를 active execution flow처럼 실행하지 않았는가?
+- sibling `flow` decision 없이 후보를 active execution flow처럼 실행하거나 discovery strategy를 turn-gate가 재정의하지 않았는가?
 - 위험 작업은 user-gated checkpoint로 기록했는가?

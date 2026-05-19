@@ -24,7 +24,8 @@ task policy는 flow 밖의 독립 계층이 아니며, 개별 task 완료가 flo
 verification gate와 reporting gate는 각각 검증 판정과 보고 맥락 정리를 소유합니다.
 상세 gate 계약은 `gates/internal-gates.md`가 소유합니다.
 
-deep-interview alignment, meaning resolution, current-state inspection, target reread, scope lock, approval boundary 확인은 기본적으로 `preparation` 안의 세부 작업입니다.
+meaning resolution, current-state inspection, target reread, scope lock, approval boundary 확인은 기본적으로 `preparation` 안의 세부 작업입니다.
+requirement discovery, review handling, fix-verify loop, broad execution, commit-readiness 같은 flow-local strategy는 sibling `flow` skill이 소유하며, `turn-gate`는 그 decision을 적용합니다.
 
 flow definition, candidates, flow type, flow boundary, and active execution distinction are owned by the sibling `flow` skill.
 `core/flow-boundaries.md`는 `turn-gate`가 이 계약을 적용하는 방법만 소유합니다.
@@ -33,12 +34,11 @@ flow definition, candidates, flow type, flow boundary, and active execution dist
 
 ## Phase Start Message Prefix
 
-`turn-gate`가 사용자에게 phase 시작을 알리거나 phase 시작과 함께 진행 상황을 말할 때, 그 사용자-facing 메시지는 `[<phase-name>(/<phase-protocol>)]` 접두사로 시작해야 합니다.
+`turn-gate`가 사용자에게 phase 시작을 알리거나 phase 시작과 함께 진행 상황을 말할 때, 그 사용자-facing 메시지는 `[<phase-name>]` 접두사로 시작해야 합니다.
 
 - canonical phase label은 `preparation`, `work`, `verification`, `reporting`, `next-flow`를 사용합니다.
-- `(/<phase-protocol>)` segment는 optional notation이며, phase protocol 사용 시 slash suffix로 표기해야 합니다.
-- 예: `[preparation]`, `[work]`, `[verification]`, `[reporting]`, `[next-flow]`, `[preparation/deep-interview]`, `[work/ralph-loop]`, `[verification/review-loop]`, `[reporting/commit-readiness-gate]`
-- 실제 출력에는 literal parenthesis를 쓰지 않습니다. `(<...>)`는 optional segment notation입니다.
+- 예: `[preparation]`, `[work]`, `[verification]`, `[reporting]`, `[next-flow]`
+- flow-local strategy 이름을 turn-gate-owned protocol suffix처럼 붙이지 않습니다.
 - 이 규칙은 phase가 시작되는 대화 메시지에 적용합니다.
 - 내부 기록 파일, 최종 산출물 본문, command output 요약, 질문 선택지의 모든 문장에 기계적으로 붙이는 규칙은 아닙니다.
 - phase 없이 일반 설명만 이어가는 경우에는 prefix를 억지로 붙이지 않습니다.
@@ -62,7 +62,7 @@ flow definition, candidates, flow type, flow boundary, and active execution dist
 - work:
   - 이 단계는 task policy gate를 통과해 현재 flow 내부 실행 정책을 정한다.
   - 사용자가 요청한 실제 작업을 진행한다.
-  - implicit default state, phase protocol 선택, local reference 읽기 규칙은 `phase-protocols/routes.md`가 소유한다.
+  - flow-local strategy는 sibling `flow` decision을 따른다.
   - 세부 계약은 `phases/work.md`가 소유한다.
 - verification:
   - 이 단계는 verification gate를 통과한다.

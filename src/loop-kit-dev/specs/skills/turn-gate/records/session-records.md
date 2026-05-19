@@ -23,7 +23,7 @@
 - concrete task에서 만든 flow sequence에는 preparation source, preparation result, sibling `flow` decision reference, selected flow sequence 또는 candidate handoff가 드러나야 한다.
 - 기존 verbose session history는 명시적인 migration 요청이 없는 한 재작성하지 않는다. 과거 기록은 historical operational artifact이며, 현재 runtime behavior의 source of truth는 현재 spec과 template이다.
 - 각 flow는 기본적으로 `preparation -> work -> verification -> reporting -> next-flow` 단계를 가진다.
-- 사용자 메시지 기반 preparation이면 deep-interview result와 sibling `flow` decision에서 파생된 candidate handoff 또는 selected flow sequence를 기록한다.
+- 사용자 메시지 기반 preparation이면 sibling `flow`의 readiness/discovery decision에서 파생된 candidate handoff 또는 selected flow sequence를 기록한다.
 - 비 사용자 메시지 기반 preparation이면 수정 범위, 현재 상태, 대상 파일, stale assumption, 실행 전 조건 확인 결과를 기록한다.
 - 압축했다면 sibling `flow` decision reference와 selected sequence를 함께 남긴다. 단, phase를 쪼갠 것을 flow sequence로 포장하지 않는다.
 - 세부 작업 단계는 해당 `001+` flow record의 execution log와 verification에 둔다.
@@ -67,7 +67,7 @@
 - 새 record first creation 또는 명시적으로 승인된 recovery를 수행한 경우, 재구성한 guard는 가능한 즉시 flow record에 다시 쓰고 `continuity_note`에 근거와 source를 남긴다.
 - `000-plan.md`, `000-self-drive.md`, active flow record의 `current_phase`, 직전 handoff가 서로 다른 phase 또는 flow를 가리키면 `stale routing mismatch`로 취급한다. 최신 source와 handoff를 확인해 reconcile하고, 해소할 수 없으면 user-gated clarification으로 돌아간다.
 - `stale routing mismatch`는 terminal close, successful completion, next-flow skip, self-drive continuation authority가 아니다. 해소하기 전에는 더 닫힌 상태를 임의로 선택하지 않는다.
-- 기록 접근 blocker의 사용자-facing prefix는 발견 시점에 따른다. result reporting 전에 발견하면 `[reporting]`, next-flow reopening 직전에 발견하면 `[next-flow]`로 blocker routing을 연다. 관련 phase protocol을 적용 중이면 `[reporting/review-loop]`처럼 optional slash suffix를 붙일 수 있다.
+- 기록 접근 blocker의 사용자-facing prefix는 발견 시점에 따른다. result reporting 전에 발견하면 `[reporting]`, next-flow reopening 직전에 발견하면 `[next-flow]`로 blocker routing을 연다.
 - guard의 terminal summary 허용 값은 현재 incoming message 또는 source가 확인된 explicit stop 기록과 일치할 때만 유효하다. stale `terminal summary allowed: yes`나 source 없는 `confirmed closure`는 무효다.
 - stale closure state를 발견하면 guard를 `user explicit stop: no`, `terminal summary allowed: no`로 갱신하고, 이전 closure state가 source-less 또는 stale이었다는 note를 남긴다.
 
