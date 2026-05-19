@@ -70,6 +70,7 @@
 - 하나의 flow는 `preparation -> work -> verification -> reporting`을 내부 단계로 갖습니다.
 - flow preparation은 readiness, discovery, ambiguity 판단으로 flow contract를 완성합니다.
 - flow execution은 current flow 안에서 review-loop, fix-verify-loop, broad-execution 같은 strategy를 선택할 수 있습니다.
+- review-loop는 여러 review finding 전체를 한 번에 실행하는 포괄 전략이 아니라, active flow 안의 bounded blocking finding 하나를 처리하는 전략입니다. 여러 finding이 있으면 우선순위 선택, discovery, 또는 finite follow-up 후보 설계가 먼저입니다.
 - flow가 너무 크거나 여러 산출물을 만들면 parent flow는 finite `sub-flow candidates`를 만들 수 있습니다.
 - `sub-flow candidate` 생성은 실행이 아닙니다.
 - flow handoff는 다음 사용자 질문이나 commit execution을 직접 수행하지 않고, 필요한 handoff condition을 산출합니다.
@@ -83,6 +84,7 @@
 - 각 flow에 scope, non-goals, completion criteria, verification expectation, handoff 조건이 있는가?
 - readiness/discovery/ambiguity가 필요한데 flow contract 없이 work로 넘어가지 않았는가?
 - flow-local strategy를 turn-level next-flow routing이나 self-drive sequence authority와 혼동하지 않았는가?
+- review-loop를 여러 finding 묶음 실행으로 넓히지 않고 bounded finding 하나 또는 후보 설계로 처리했는가?
 - flow 완료와 turn 종료를 혼동하지 않았는가?
 
 ## 독립성 원칙

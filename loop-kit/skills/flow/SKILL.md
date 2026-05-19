@@ -80,11 +80,24 @@ Approval-sensitive execution is separate from ambiguity resolution. This skill m
 
 Choose a strategy inside the active flow only after the flow boundary is locked.
 
-- Use `review-loop` for a material review, QA, or self-review finding inside the current flow. Focus one loop on one bounded blocking finding and verify the directly related expectation after fixing it.
+- Use `review-loop` only for one bounded blocking review, QA, or self-review finding inside the current active flow. A finding is blocking when it directly affects correctness, regression risk, reliability, or delivery risk for the active flow.
 - Use `fix-verify-loop` for one narrow problem where a small fix or check can test the current hypothesis. Reassess after each loop.
 - Use `broad-execution` for a single locked active flow whose implementation, QA, and validation all remain inside the same boundary.
 
 These strategies do not authorize multiple flows to run automatically. Sequence-level continuation belongs to a prepared self-drive sequence, not to `flow`.
+
+### Review-Loop Contract
+
+Do not use `review-loop` as a broad execution plan for all review comments, QA findings, or self-review notes. It is a flow-local strategy for handling one material finding that is already bounded, blocking, and inside the active flow.
+
+When there are multiple findings:
+
+- choose the highest-priority bounded blocking finding that belongs to the active flow, then run one `review-loop` for that finding only
+- use discovery if the active flow scope, success criteria, or verification expectation must be clarified before choosing a finding
+- return to the parent flow when the findings imply a larger decomposition decision
+- create finite follow-up candidates for non-blocking findings, speculative polish, or findings outside the active flow
+
+After handling the selected finding, verify the expectation directly tied to that finding. If the finding requires new scope, a new approval boundary, destructive action, or external action, stop expanding execution and route back to preparation or handoff instead.
 
 ## Handoff Conditions
 
