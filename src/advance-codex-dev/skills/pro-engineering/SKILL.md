@@ -1,90 +1,83 @@
 ---
 name: pro-engineering
-description: Apply professional engineering judgment to coding, debugging, refactoring, and design decisions by separating symptoms from expected behavior, grounding analysis in evidence, testing root-cause hypotheses, making the smallest complete change, verifying outcomes, and reporting residual risk. engineering judgment, problem solving, root cause analysis, technical reasoning, code quality, implementation discipline
+description: Apply evidence-based engineering judgment to coding, debugging, refactoring, root cause analysis, implementation scope, verification, and technical reporting. Use when a task needs disciplined problem framing, practical code quality decisions, or a clear link between cause, change, and acceptance signal. engineering judgment, problem solving, root cause analysis, technical reasoning, code quality, implementation discipline
 ---
 
 # Pro Engineering
 
-Use this skill to make coding and problem-solving work evidence-led, narrowly scoped, and verifiable. Treat it as a practical engineering loop, not as a language- or framework-specific recipe.
+Use this skill to make engineering work explicit: define the problem, ground decisions in evidence, choose a narrow complete implementation, and report what was verified.
 
-## Problem Loop
+## Problem Frame
 
-1. Define the problem.
-   - Separate the observed symptom from the expected behavior.
-   - Identify the affected workflow, input, output, and failure mode.
-   - Convert vague reports into checkable statements, such as "given X, Y should happen, but Z happens."
+Start by separating the observed symptom from the expected behavior.
 
-2. Gather evidence.
-   - Read the actual code, configuration, tests, logs, fixtures, and runtime behavior before trusting a description.
-   - List the parts that could plausibly affect the symptom.
-   - Distinguish facts from assumptions. Mark assumptions that need verification.
+- Translate vague reports into observable conditions: input, action, state, output, error, timing, or user flow.
+- Treat user explanations as important clues, but verify them against code, logs, tests, fixtures, configuration, or reproduction steps.
+- Keep confirmed facts separate from assumptions.
+- List plausible cause areas before committing to one explanation.
 
-3. Build hypotheses.
-   - Name the likely causes and the evidence for each.
-   - Look for counterexamples that would disprove the preferred explanation.
-   - Prefer the hypothesis that explains all observed facts with the fewest extra assumptions.
+A good root-cause hypothesis explains the observed facts with few extra assumptions and can be challenged by a concrete counterexample.
 
-4. Verify the cause.
-   - Reproduce the behavior when possible.
-   - Use targeted inspection, tests, traces, or minimal experiments to narrow the cause.
-   - Avoid broad rewrites until the failure mechanism is understood well enough to predict the fix.
+## Scope Control
 
-5. Make the smallest complete change.
-   - Fix the root cause, not only the visible symptom.
-   - Keep the change inside the relevant ownership boundary.
-   - Preserve existing public contracts unless the task explicitly requires changing them.
-   - Start with the simplest working implementation, then improve clarity, naming, structure, and edge handling in the same work pass.
+Use different scope widths at different phases.
 
-6. Verify the result.
-   - Run the narrowest meaningful check first.
-   - Add or update tests when the behavior is shared, user-facing, or easy to regress.
-   - For higher-risk changes, also run a representative integration or end-to-end path.
-   - Confirm both the fixed path and any important adjacent paths.
+Before direct coding, explore broadly enough to understand the problem space. This applies during research, requirement clarification, failure-path discovery, implementation sizing, alternative comparison, and risk assessment. Broad exploration does not mean reading files indiscriminately; it means keeping plausible systems, contracts, data paths, and edge conditions visible until you can justify what matters.
 
-7. Report residual risk.
-   - State what was changed, how it was verified, and what remains uncertain.
-   - Name skipped checks and why they were skipped.
-   - Do not imply confidence that the evidence does not support.
+When implementation begins, narrow attention to the code path tied to the chosen cause and acceptance signal. Narrow implementation does not mean ignoring surrounding context; it means preserving the boundaries and non-goals learned during exploration while changing the smallest surface that connects cause to result.
+
+Move from broad exploration to focused implementation only when:
+
+- The symptom and expected behavior are testable.
+- Relevant and irrelevant areas have been separated.
+- The chosen approach can be explained against alternatives.
+- The edited files, contracts, and checks map to an acceptance signal.
+
+If these conditions are missing, continue discovery or ask the user for the product, risk, or scope decision that cannot be inferred from local evidence.
 
 ## Engineering Judgment
 
-- Prefer existing project patterns and local helper APIs over new abstractions.
-- Add an abstraction only when it removes real complexity, reduces meaningful duplication, or matches an established design.
-- Keep contracts explicit: inputs, outputs, errors, side effects, and ownership boundaries should be clear from code or tests.
-- Separate infrastructure failures, harness failures, assertion failures, and product behavior differences when diagnosing failures.
-- Avoid silent fallbacks that hide broken states. If fallback behavior is needed, make it observable and justified.
-- Treat concurrency, caching, time, randomness, retries, and external services as risk multipliers that need extra evidence.
-- Ask for user input when the next step depends on product intent, risk tolerance, or an unavailable fact; otherwise keep moving from local evidence.
+Prefer the repository's existing patterns, helpers, names, error handling, and test style. Introduce a new pattern only when existing patterns cannot meet the goal or are part of the problem.
+
+Add abstraction only when it removes real duplication, centralizes a rule, improves testability, clarifies ownership, or matches an existing design. Do not add abstraction for speculative future use.
+
+Make contracts visible. Inputs, outputs, errors, side effects, and ownership boundaries should be clear in code or tests. For fragile boundaries such as strings, JSON, external inputs, and process or network edges, prefer structured parsing, validation, schemas, or explicit failure handling over ad hoc assumptions.
+
+Require stronger evidence and verification when the change touches concurrency, async ordering, caching, time, timezone, randomness, retry, timeout, external services, filesystems, auth, permissions, migrations, destructive actions, shared libraries, public APIs, or broad UI workflows.
 
 ## Code Discipline
 
-- Make the code easy to reason about before making it clever.
-- Keep edits cohesive: do not mix unrelated cleanup with the fix.
-- Use precise names for domain concepts, states, and failure cases.
-- Prefer structured parsing, validation, and typed or explicit contracts over ad hoc string handling when reasonable tools exist.
-- Handle edge cases that are part of the discovered failure mechanism; avoid speculative hardening unrelated to the task.
-- Preserve user changes and existing work in the tree. If surrounding code changed, adapt to it instead of reverting it.
-- Leave comments only where they explain non-obvious reasoning, constraints, or failure handling.
+Start with the simplest complete implementation that directly addresses the selected cause. Small does not mean partial: include the normal path, relevant failure path, and meaningful verification.
 
-## Verification Checklist
+Then improve within the same task:
 
-Before finishing, check:
+1. Check whether names, control flow, duplication, edge handling, and failure reporting are clear.
+2. Refine only the parts that are actually hard to read, risky, or inconsistent with local patterns.
+3. Confirm the original acceptance signal still holds after cleanup.
 
-- The original symptom and expected behavior are both accounted for.
-- The fix follows from the verified cause.
-- The smallest meaningful test or command has been run, or the reason it was not run is clear.
-- Adjacent behavior that could be affected has been considered.
-- The final report names changed files, verification, and residual risk.
+Keep changes inside the ownership boundary. Do not mix unrelated cleanup, formatting churn, speculative hardening, or broad restructuring into the fix. If nearby files already contain unrelated changes, treat them as user-owned and adapt to the current state rather than reverting them.
+
+Avoid fixes that only hide symptoms, silent fallbacks that mask failures, weakened assertions, and future-proofing that is not tied to the observed problem or an explicit contract.
+
+## Verification
+
+Choose the narrowest verification that proves the changed contract, then broaden only when risk demands it.
+
+- For local logic, use focused tests or a minimal reproduction.
+- For shared behavior, public APIs, cross-module contracts, or user-facing workflows, add or run representative integration or end-to-end checks.
+- For configuration changes, verify parsing or loading and one affected path.
+- For fixtures or sample data, run the scenario that consumes them.
+- For reporting or logging changes, check both machine readability and operator usefulness when applicable.
+
+Do not hide flaky or unclear failures with blind retries. Separate infrastructure failure, harness failure, assertion failure, and product behavior. If verification is blocked by permissions, sandboxing, network, external state, or missing tools, report the blocker and any alternative evidence separately.
 
 ## Reporting
 
-Keep reports concise and current. Do not include stale decisions from earlier conversation context.
+Report the current state only. Connect the work to the confirmed problem or contract, list changed files, state what was verified, and name residual risk.
 
-For implementation work, include:
+For implementation or harness work, include:
 
 - `Scope handled`
 - `Files changed`
 - `Verification`
 - `Residual risk`
-
-For smaller tasks, compress the same information into a short paragraph without losing verification or uncertainty.
