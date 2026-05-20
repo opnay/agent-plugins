@@ -18,6 +18,8 @@ Self-drive는 별도 installed skill entrypoint가 아니라 명시적으로 적
 - sequence-level state는 optional sidecar record인 `000-self-drive.md`가 소유하고, 각 active flow record는 자기 flow의 sequence position, progress note, next handoff, blocker return condition만 flow-local snapshot으로 남긴다.
 - self-drive가 적용되는 동안 prepared sequence의 진행 판단은 turn-gate 기본 routing과 next-flow 질문 기본값보다 self-drive overlay 계약을 우선한다.
 - 각 flow는 여전히 자기 내부에서 `preparation -> work -> verification -> reporting -> next-flow` core loop를 가진다.
+- self-drive active 상태에서 새 flow의 `preparation`을 시작할 때는 먼저 `000-plan.md`의 self-drive status/pointer와 `000-self-drive.md`를 읽어 sequence identity를 다시 잠근다. 이 시작 gate는 기억이나 직전 대화 요약이 아니라 기록된 sidecar를 continuation authority로 사용한다.
+- flow-start sidecar check는 최소한 `status`, `active_flow_index`, `current_flow_label`, `planned_flow_count`, `endpoint`, `required_next_action`, `acceptance signal`, blocker state를 확인한다. 값이 비어 있거나 서로 충돌하거나 현재 active flow와 맞지 않으면 work로 들어가지 말고 reconcile하거나 user-gated routing으로 돌아간다. 특히 `active_flow_index`가 `planned_flow_count` 이상이면 stale/corrupt sidecar로 취급하고 modulo 또는 wraparound로 진행하지 않는다.
 - self-drive는 `next-flow` phase를 제거하지 않는다. prepared sequence가 여전히 유효하고 다음 flow를 식별할 수 있으면 `next-flow` 결과가 user question이 아니라 기록 기반 loop continuation으로 바뀐다.
 - continuation identity, scope, endpoint, approval boundary, blocker state가 불명확하면 autonomous continuation을 멈추고 user-gated routing으로 돌아간다.
 - 각 flow의 reporting 전후에는 self-drive sequence record를 현재 active flow index, current flow label, progress note, next handoff, blocker 여부에 맞게 갱신한다.
@@ -25,7 +27,7 @@ Self-drive는 별도 installed skill entrypoint가 아니라 명시적으로 적
 - 이 암묵적 self-drive context는 explicit stop, approval boundary, scope/non-goal/endpoint lock, user-gated routing을 대체하지 않으며, 다음 우선순위로 처리한다.
   1. source-recorded explicit stop이면 closure state를 기록하고 reporting 뒤 종료한다.
   2. 기록된 approval boundary 밖의 destructive, external, commit, push, PR, publish, release, version bump 요청이면 self-drive를 멈추고 user-gated approval routing으로 돌아간다.
-  3. scope, non-goal, endpoint, target, prepared flow order, acceptance signal을 바꾸는 메시지이면 self-drive를 멈추고 preparation 또는 next-flow routing에서 updated sequence를 다시 잠근다.
+  3. scope, non-goal, endpoint, target, prepared flow order, acceptance signal을 바꾸는 메시지이면 self-drive를 멈추고 preparation 또는 next-flow routing에서 updated sequence를 다시 잠근다. 단, 현재 active flow boundary를 바꾸지 않는 명확한 future endpoint 보강(예: "항목 소진되면 멈춰")은 source-recorded endpoint update로 기록하고 현재 boundary를 계속할 수 있다.
   4. blocker 또는 반복 실패를 드러내는 메시지이면 earliest safe phase 또는 user-gated blocker decision으로 라우팅한다.
   5. status/progress 질문만 있으면 현재 phase, active flow, verification state, next action을 보고하고, 앞선 규칙에 걸리지 않는 한 self-drive를 계속한다.
   6. 기록된 boundary 안의 ordinary continuation note이면 중요한 내용만 record에 남기고 계속한다.
@@ -35,7 +37,7 @@ Self-drive는 별도 installed skill entrypoint가 아니라 명시적으로 적
 - 초기 협의 범위 밖의 위험 작업, 새 approval boundary, 또는 종료 지점이 불명확한 실행이 나타나면 implicit default state의 user-gated question routing으로 돌아간다.
 - self-drive는 question tool을 비활성화하지 않고 사용 조건을 좁힌다. 명확한 prepared sequence transition과 status-only input은 보통 질문 없이 계속하지만, scope/target/endpoint/order/non-goal/acceptance 변경, approval-sensitive 실행, blocker, record access failure, repeated critical failure, current-flow identity ambiguity는 user-gated question routing으로 돌아간다.
 - subagent packet은 evidence readback, status/progress synthesis, 기록된 boundary 안의 low-risk local 판단에만 사용할 수 있다. subagent는 approval boundary를 대체하지 못하며, scope/endpoint 변경이나 approval-sensitive 실행 허가는 사용자에게 돌아가야 한다.
-- prepared flow sequence가 끝나면 terminal close가 아니라 기록된 종료 지점, commit-readiness reporting handoff, 또는 next-flow reopening으로 이어진다.
+- prepared flow sequence가 끝나면 terminal close가 아니라 기록된 종료 지점, commit-readiness reporting handoff, 또는 next-flow reopening으로 이어진다. sequence exhaustion을 판단하기 전에 verification result가 `fail`, `blocked`, 또는 `insufficient`이면 endpoint handling보다 repair, verification evidence 보강, 또는 blocker routing이 먼저다. sequence exhaustion을 판단하는 순간에는 sidecar의 `endpoint`와 endpoint handling 본문을 다시 읽고, self-drive stop, handoff, repeat cycle, blocker decision, next-flow reopening 중 기록된 행동만 수행한다.
 - open-ended self-drive 요청도 현재 cycle은 finite prepared flow sequence로 기록해야 한다. endpoint에는 cycle exhaustion behavior, repeat policy, blocker return condition, approval boundary를 명시하고, "forever"나 "until stopped"만으로 autonomous continuation authority를 만들지 않는다.
 - finite list exhaustion은 기록된 self-drive stop/handoff로 처리하고 새 작업을 자동 생성하지 않는다. repeat inventory loop는 endpoint가 명시적으로 반복을 허용할 때만 다음 bounded cycle을 만들며, flow count, active flow index, current flow label, progress note를 새 cycle에 맞게 갱신한다.
 - endpoint가 불명확하면 autonomous continuation을 멈추고 endpoint clarification 또는 next-flow routing으로 돌아간다.

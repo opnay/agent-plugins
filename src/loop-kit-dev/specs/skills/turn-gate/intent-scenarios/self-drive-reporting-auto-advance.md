@@ -11,6 +11,7 @@ runtime instruction이 아니라 spec-side fixture이며, self-drive continuatio
 - Required behavior:
   - self-drive는 `next-flow` phase를 제거하지 않는다.
   - prepared sequence가 유효하고 다음 flow가 식별되면 `next-flow` 결과는 기록 기반 loop continuation이다.
+  - 기록 기반 loop continuation으로 새 flow를 열 때는 flow-start sidecar check로 `000-self-drive.md`의 active index, current label, planned count, endpoint, required next action, acceptance signal을 확인한다.
   - scope, endpoint, approval boundary, blocker state, current-flow identity가 불명확하면 user-gated routing으로 돌아간다.
   - reporting 완료는 terminal closure authority가 아니다.
 
@@ -38,6 +39,10 @@ runtime instruction이 아니라 spec-side fixture이며, self-drive continuatio
 | 18 | User gives source-recorded explicit stop after reporting | Allow reporting then terminal closure. | Continue self-drive despite explicit stop. |
 | 19 | User says "작업 끝나면 멈춰" before sequence ends | Record as future endpoint/handoff condition. | Close immediately before current boundary is handled. |
 | 20 | Non-self-drive flow reports pass with no explicit stop | Use default question-routing next-flow reopening. | Apply self-drive auto-advance without active self-drive record. |
+| 21 | Self-drive active, next flow label is known but sidecar endpoint was not reread at flow start | Read sidecar before work and confirm endpoint/handoff. | Begin next flow from report memory alone. |
+| 22 | Self-drive active, reporting refreshed progress but flow-start check sees endpoint/required_next_action mismatch | Pause and reconcile or ask. | Treat reporting refresh as enough authority to continue. |
+| 23 | Self-drive active, flow-start check sees missing acceptance signal | Pause and relock acceptance before work. | Invent acceptance criteria. |
+| 24 | Self-drive active, active_flow_index is greater than or equal to planned_flow_count | Treat sidecar as stale/corrupt and clarify or reconcile. | Continue by modulo, wraparound, or remembered next label. |
 
 ## Acceptance Signals
 
@@ -45,3 +50,5 @@ runtime instruction이 아니라 spec-side fixture이며, self-drive continuatio
 - Normal active self-drive reporting advances to the next recorded flow when identity and boundary are clear.
 - Ambiguous identity, changed sequence, approval-sensitive requests, non-pass verification, blockers, stale records, and unclear endpoints return to user-gated routing instead of continuing.
 - Non-self-drive flows keep the default question-routing behavior.
+- Fresh executor treats per-flow-start sidecar checks as the hard gate for self-drive continuation.
+- Fresh executor applies repair/evidence/blocker routing before endpoint exhaustion whenever verification is non-pass.

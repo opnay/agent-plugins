@@ -3,13 +3,13 @@ task: ""
 flow_type: ""
 flow_scope: ""
 current_phase: "preparation"
-turn_gate_active: true
+turn_gate_active: "yes"
 question_routing_mode: "active"
-user_explicit_stop: false
-terminal_summary_allowed: false
+user_explicit_stop: "no"
+terminal_summary_allowed: "no"
 required_next_action: ""
 last_refreshed_phase: "preparation"
-confirmed_closure: false
+confirmed_closure: "no"
 closure_source_message: ""
 closure_recorded_phase: ""
 pending_question_state: "none"
@@ -18,12 +18,10 @@ superseded_question_id_or_summary: ""
 verification_status: "not-started"
 continuity_note: ""
 preparation_source: ""
-scope_lock_status: ""
+scope_lock_status: "unlocked"
 ---
 
-# Flow Record
-
-## Flow Contract
+# Flow Contract
 
 - User request raw:
 - User request summary or interpretation:
@@ -41,23 +39,15 @@ scope_lock_status: ""
 - Verification expectation:
 - Material judgment calls:
 
-## Optional Risky Actions
+# Optional Risky Actions
 
 - Status: not-applicable
-- Initial agreement:
-- Exact target:
-- Expected effect:
-- Risk:
-- Rollback or recovery:
-- Include scope:
-- Exclude scope:
-- Endpoint:
 
-## Execution Log
+# Execution Log
 
 -
 
-## Verification
+# Verification
 
 - Status: not-started
 - Method:
@@ -68,16 +58,18 @@ scope_lock_status: ""
 - Residual uncertainty:
 - Result:
 
-## Report
+# Report
 
--
+- Changed surfaces:
+- Outcome:
+- Required next action:
 
-## Next Flow Options
+# Next Flow Options
 
-- Continue with:
-- Ask user for:
-- Explicit turn-end option: available only by source-recorded user stop.
+- Continue:
+- Clarify:
+- Explicit turn-end option: user may explicitly stop the current turn.
 
-## Residual Risk
+# Residual Risk
 
 -

@@ -9,32 +9,30 @@ verification_status: "not-started"
 self_drive_status: "inactive"
 self_drive_record: ""
 preparation_source: ""
-scope_lock_status: ""
+scope_lock_status: "unlocked"
 final_readiness_handoff: ""
 ---
 
-# Session Plan
-
-## User Requests Today
+# User Requests Today
 
 -
 
-## Flow Index
+# Flow Index
 
 -
 
-## Planned Flow Sequence
+# Planned Flow Sequence
 
 -
 
-## Completed Flow Summaries
+# Completed Flow Summaries
 
 -
 
-## Explicit Turn-End Option
+# Explicit Turn-End Option
 
-- The user may explicitly stop this turn. Do not infer turn closure from task completion or reporting.
+- User may explicitly stop the current turn; terminal close is allowed only when the explicit stop source is recorded.
 
-## Open Risks
+# Open Risks
 
 -

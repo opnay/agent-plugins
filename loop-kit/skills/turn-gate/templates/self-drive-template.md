@@ -10,35 +10,40 @@ last_updated_flow: ""
 required_next_action: ""
 ---
 
-# Self-Drive Sequence
-
-## Sequence Contract
+# Sequence Contract
 
 - Objective:
 - Prepared flow sequence:
 - Current flow:
 - Acceptance signal:
 - Verification expectation:
-- Endpoint:
 
-## Autonomous Boundary
+# Autonomous Boundary
 
 - Allowed autonomous actions:
 - Prohibited autonomous actions:
 - Approval-sensitive checkpoints:
-- Include scope:
-- Exclude scope:
 
-## Progress Ledger
+# Endpoint Handling
+
+- Endpoint:
+- Sequence exhaustion behavior:
+- Repeat policy:
+- Handoff target:
+- Blocker return condition:
+- Last confirmed flow or timestamp:
+
+# Progress Ledger
 
 -
 
-## User-Gated Return Conditions
+# User-Gated Return Conditions
 
-- Scope, target, endpoint, approval boundary, blocker state, or current-flow identity is unclear.
-- A destructive, external, commit, push, PR, publish, release, version-bump, or other approval-sensitive action lacks recorded approval.
-- The prepared sequence is exhausted and no bounded endpoint or repeat policy is recorded.
+- Scope, endpoint, target, flow order, non-goal, or acceptance signal ambiguity.
+- Approval-sensitive action outside the recorded boundary.
+- Blocker, repeated critical failure, inaccessible records, or current-flow identity mismatch.
+- `active_flow_index` greater than or equal to `planned_flow_count`.
 
-## Residual Risk
+# Residual Risk
 
 -

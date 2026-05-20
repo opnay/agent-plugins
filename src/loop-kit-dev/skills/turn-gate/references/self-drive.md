@@ -1,66 +1,71 @@
-# Self-Drive Overlay
+# turn-gate self-drive overlay
 
-Self-drive is an overlay for an already prepared flow sequence. It is not a separate installed skill entrypoint and not a default runtime mode.
+Self-drive is an overlay for a prepared finite flow sequence. It is not a separate skill entrypoint and it does not remove the core `preparation -> work -> verification -> reporting -> next-flow` loop.
 
-Use this reference only when the user explicitly asks for self-drive or when current session records show an active self-drive sequence.
+Use this reference only when self-drive has been explicitly requested or is already active in current records.
 
-## Preconditions
+## Activation Requirements
 
-Self-drive can run only after records include:
+Apply self-drive only after records contain:
 
 - sequence objective
-- finite prepared flow sequence
-- active flow index as a 0-based machine field
-- current flow label with human-readable number, name, file, or slug
+- prepared flow sequence
+- active flow index
+- current flow label
 - allowed autonomous actions
 - prohibited autonomous actions
 - approval-sensitive checkpoints
 - endpoint
 - blocker return conditions
+- acceptance signal
 - verification expectation
-- progress note
 
-If any of these are missing or contradictory, return to user-gated preparation or next-flow routing.
+`000-plan.md` stores self-drive status and sidecar pointer. `000-self-drive.md` stores sequence-level state. Each active flow record stores only its flow-local sequence position, local progress note, next handoff, and blocker return condition.
 
-## Record Ownership
+## Flow-Start Sidecar Gate
 
-`000-plan.md` owns only self-drive active status and the `000-self-drive.md` pointer.
+At the start of each self-drive flow, read the plan pointer and `000-self-drive.md`. Confirm:
 
-`000-self-drive.md` owns sequence-level state: objective, prepared sequence, active index, current label, autonomous boundaries, checkpoints, endpoint, blocker return conditions, progress note, and progress ledger.
+- `status`
+- `active_flow_index`
+- `current_flow_label`
+- `planned_flow_count`
+- `endpoint`
+- `required_next_action`
+- acceptance signal
+- blocker state
 
-Each active flow record owns only flow-local self-drive snapshots: sequence position, local progress note, next handoff, and blocker return condition. Do not repeat the full prepared sequence in every flow record.
+If values are missing, conflicting, or do not identify the current active flow, reconcile by flow name/file/slug or return to user-gated routing. If `active_flow_index >= planned_flow_count`, treat the sidecar as stale or corrupt. Do not use modulo, wraparound, or a remembered next label.
 
-Use `templates/self-drive-template.md` when creating `000-self-drive.md`.
+## Interruption Handling
 
-## Continuation Rule
-
-Each flow still runs through `preparation -> work -> verification -> reporting -> next-flow`.
-
-Self-drive does not remove `next-flow`. It changes the result of `next-flow`: when the prepared sequence is still valid and the next flow is identifiable, continuation can be record-driven instead of a user question.
-
-Stop autonomous continuation and return to user-gated routing when continuation identity, scope, endpoint, approval boundary, blocker state, or current-flow identity is unclear.
-
-Finite sequence exhaustion does not create new work automatically. Follow the recorded endpoint: stop/handoff, commit-readiness reporting handoff, bounded repeat policy, blocker decision, or next-flow reopening.
-
-## Incoming User Messages During Self-Drive
-
-If a user message arrives while self-drive is active, treat it as input inside the active self-drive sequence unless it explicitly stops the turn.
+When a user message arrives during active self-drive, interpret it inside the active sequence first unless it is an explicit turn stop.
 
 Priority:
 
-1. Source-recorded explicit stop: record closure and end only after reporting permits it.
-2. Destructive, external, commit, push, PR, publish, release, version-bump, or other approval-sensitive action outside recorded approval boundary: stop and ask.
-3. Scope, non-goal, endpoint, target, flow order, or acceptance signal change: return to preparation or next-flow routing and re-lock the sequence.
-4. Blocker or repeated critical failure: route to earliest safe phase or user-gated blocker decision.
-5. Status/progress question only: report current phase, active flow, verification state, and next action, then continue if no higher rule applies.
-6. Ordinary continuation note inside recorded boundary: record material context and continue.
+1. Source-recorded explicit stop: record closure and report toward stop.
+2. Destructive, external, commit, push, PR, publish, release, version bump, or approval-boundary-expanding request: stop self-drive and ask for approval.
+3. Scope, non-goal, endpoint, target, prepared order, or acceptance-signal change: stop self-drive and relock the sequence. A clear future endpoint constraint that does not change the current active flow boundary, such as "stop when the listed items are exhausted", may be recorded as a source-backed endpoint update and the current boundary may continue.
+4. Blocker or repeated failure: route to earliest safe repair phase or user-gated blocker decision.
+5. Status/progress question only: report current phase, active flow, verification state, and next action; continue if no higher rule applies.
+6. Ordinary note inside the recorded boundary: record material details and continue.
 
-This priority list is self-drive interruption handling, not a general user-message taxonomy.
+Self-drive narrows question conditions; it does not disable questions.
+
+## Verification And Endpoint
+
+Each flow must still verify before reporting. Before endpoint exhaustion handling, route non-pass verification first:
+
+- `fail`: repair or return to work.
+- `insufficient`: gather evidence or repair verification.
+- `blocked`: open user-gated blocker routing.
+
+Only after verification passes may you evaluate sequence exhaustion. Read the sidecar endpoint and endpoint handling body again. Follow only recorded behavior: self-drive stop, handoff, repeat cycle, blocker decision, or next-flow reopening.
+
+Open-ended self-drive still needs a finite current cycle. Do not treat "forever" or "until stopped" alone as autonomous continuation authority. Repeat inventory loops are allowed only when the endpoint explicitly permits bounded repeats and the sidecar is refreshed for the new cycle.
 
 ## Approval Boundary
 
-Self-drive may execute approval-sensitive actions only when the initial prepared sequence recorded exact action, target, expected effect, risk, recovery path, include/exclude scope, and endpoint.
+Self-drive can execute approval-sensitive actions only when the initial preparation recorded exact action, target, expected effect, risk, recovery path, included/excluded scope, and endpoint. Otherwise return to user-gated approval routing.
 
-Commit, push, PR, publish, release, and version bump are approval-sensitive execution steps. If they are not explicitly included with clear endpoint and risk, return to user-gated routing.
-
-Subagents cannot grant approval, expand scope, change endpoint, or authorize external/destructive work.
+Subagents may support evidence readback, status synthesis, or low-risk local judgment inside recorded boundaries. They do not replace approval for scope, endpoint, or approval-sensitive execution.
