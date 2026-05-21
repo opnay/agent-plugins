@@ -47,9 +47,11 @@
 
 - role fit을 먼저 판단하고, subagent가 필요하지 않으면 caller가 직접 처리하도록 권한다.
 - role은 loose persona가 아니라 role specialty 조합으로 정의한다.
+- 같은 축을 반복하거나 이름만 바꾼 role은 그대로 확정하지 않고, 중복된 축을 지적한 뒤 판단 관점이 달라지는 조합으로 고친다.
 - 반복적으로 쓰이는 기본 역할 관점은 `skills/subagent-role/roles/`의 role template reference에서 고른다.
 - roles reference는 고정 persona catalog가 아니라 role packet을 만들 때 참고하는 관심 축과 packet default 모음이다.
 - spawn이 적절하면 role packet을 먼저 작성한다.
+- spawn이 적절하지 않으면 role packet을 억지로 작성하지 않고, no-spawn 판단, caller가 직접 처리할 범위, 필요한 최소 후속 질문 또는 evidence gap을 출력한다.
 - role packet에는 role name, role specialty, objective, context, ownership, non-goals, expected output, verification signal, integration rule, stop condition을 포함한다.
 - coding work를 맡길 때는 write scope를 분리하고, 다른 작업자가 있을 수 있음을 명시한다.
 - subagent answer는 caller가 검증하고 통합할 evidence로 취급한다.
@@ -65,6 +67,7 @@
   - `decision_style`: product sense, technical critique, verification처럼 답변에서 우선할 판단 방식
 - 좋은 role specialty는 서로 다른 축을 조합해 관점을 선명하게 만든다.
 - 같은 축을 반복하는 표현은 피한다.
+- 예를 들어 `프론트 출신 프론트엔드 개발자`처럼 배경과 책임 영역이 같은 의미를 반복하면 중복 role로 보고, `게임 기획 출신 프론트엔드 개발자`처럼 판단 관점을 실제로 바꾸는 cross-axis 조합을 제안한다.
 - 공통 역할이 task에 맞으면 `skills/subagent-role/roles/`의 template을 참고해 관심 축과 packet default를 선택하되, 실제 task에 영향을 주는 항목만 사용한다.
 - 예시:
   - `PM 역할의 게임 시나리오 담당자`: `functional_role=PM`, `responsibility_domain=game scenario`

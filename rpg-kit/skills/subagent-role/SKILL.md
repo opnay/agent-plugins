@@ -21,6 +21,7 @@ Use a role-assigned subagent only when at least one condition is true:
 - the caller wants to compare subagent behavior across roles
 
 Prefer local caller work when the task is the immediate blocker, too vague to delegate, or tightly coupled to the caller's next step.
+If role fit fails, do not create a role packet. Report the no-spawn decision, what the caller should handle locally, and any missing evidence or question that would change the decision.
 
 ## Role Specialty
 
@@ -35,6 +36,7 @@ Use only the axes that matter for the task:
 
 When a task maps to a common role, consult the templates under `roles/` for default attention axes and packet defaults.
 Use those axes as prompts for role design, not as a fixed persona template.
+Reject duplicate-axis roles instead of polishing their names. For example, a "frontend-origin frontend developer" repeats the same perspective; propose a cross-axis alternative only if the added background changes the expected judgment, such as `game-planning-origin frontend developer`.
 
 Examples:
 
@@ -109,11 +111,8 @@ After the subagent returns, record:
 
 - `Role fit`
 - `Role specialty`
-- `Role packet`
-- `Spawn boundary`
-- `Answer contract`
-- `Integration rule`
-- `Learning note`
+- If no spawn: `No-spawn decision`, `Caller-local handling`, `Missing evidence or question`
+- If spawn is appropriate: `Role packet`, `Spawn boundary`, `Answer contract`, `Integration rule`, `Learning note`
 - `Residual risk`
 
 ## Guardrails
