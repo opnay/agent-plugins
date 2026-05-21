@@ -2,7 +2,7 @@
 
 - skill boundary와 비책임을 더 엄격하게 잠그고 싶다.
 - plugin-owned skill이 hidden sibling context에 기대지 않게 만들고 싶다.
-- tool policy와 domain workflow가 섞일 때 이를 분리할 기준이 필요하다.
+- tool policy와 domain workflow가 섞일 때 skill boundary 안에서 분리할 기준이 필요하다.
 - 스킬의 `description`은 스킬 사용 여부를 결정하는 트리거 조건이므로, passive skill은 설명 끝에 토큰 매칭에 걸릴 수 있는 plain token 목록을 쉼표로 나열해야 한다.
   - 이 목록은 literal hashtag가 아니며 `#`를 붙이지 않는다.
   - 이 방식은 사용자가 명시적으로 스킬을 요청하지 않아도 적용되어야 하는 passive skill에 사용한다.
@@ -22,7 +22,7 @@
   - skill boundary와 비책임 명시
   - hidden sibling context 제거
   - plugin 내부 skill packaging 규칙
-  - runtime-specific tool policy의 분리 필요성 판단
+  - runtime-specific tool policy가 skill boundary를 흐릴 때 분리 필요성 판단
   - skill `description`의 trigger metadata 작성 규칙
 - 제외:
   - canonical base scaffold 전체 대체
@@ -33,7 +33,7 @@
 
 - 새 skill을 만들거나 existing skill boundary를 재설계하는 경우
 - plugin-owned skill이 sibling context에 의존하고 있는 경우
-- tool-use policy를 skill에서 분리해야 하는 경우
+- tool-use policy가 skill boundary를 흐릴 수 있는 경우
 - passive skill이 명시적 호출 없이도 필요한 상황에서 선택되도록 `description` trigger token을 설계해야 하는 경우
 
 ## 엔트리포인트 / 대표 표면
@@ -45,7 +45,7 @@
 
 - 각 skill은 목적, 소유 범위, 비목표를 명확히 가져야 한다.
 - plugin 내부 skill이라도 cross-skill usage guidance는 manifest prompt, README, plugin spec에 둔다.
-- main bottleneck이 tool policy면 domain skill 안에 넣지 않고 별도 artifact를 고려한다.
+- main bottleneck이 tool policy면 domain skill 안에 넣지 않고 해당 plugin 또는 system tool guidance가 소유하게 한다.
 - behavioral guidance는 skill reader 관점에서 작성한다.
 - skill frontmatter `description`은 본문을 읽기 전에 사용되는 trigger metadata로 취급한다.
 - `description`은 먼저 사람이 읽을 수 있는 기본 설명과 사용 조건을 짧게 쓰고, passive skill인 경우 마지막에 token matching을 돕는 plain token 목록을 쉼표로 나열한다.
@@ -58,7 +58,7 @@
 
 - 이 skill이 hidden sibling context 없이도 이해 가능한 경계를 갖고 있는가?
 - cross-skill usage guidance가 개별 skill 안으로 잘못 들어오지 않았는가?
-- tool policy를 domain skill 안에 묻어 두고 있지 않은가?
+- tool policy를 domain skill 안에 묻어 두어 skill boundary를 흐리지 않는가?
 - `description`이 body를 읽기 전 trigger metadata로 충분히 작동하는가?
 - passive skill이라면 `description` 끝에 `#` 없는 쉼표 구분 plain token 목록이 있는가?
 - token 목록이 실제 적용 조건을 넓히되, 무관한 broad match를 만들지 않는가?

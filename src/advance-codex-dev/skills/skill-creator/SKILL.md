@@ -18,7 +18,7 @@ Use this extension to enforce five things the base workflow does not cover stron
 1. explicit skill ownership and non-goals
 2. removal of hidden sibling-skill context
 3. clean separation between plugin usage guidance and skill-level behavior
-4. separation of runtime-specific tool policy from domain workflow guidance
+4. separation of runtime-specific tool policy from domain workflow guidance when that boundary affects the skill itself
 5. trigger-oriented frontmatter descriptions, especially for passive skills
 
 ## Boundary Rules
@@ -30,7 +30,7 @@ When creating or revising a skill:
 - Keep each skill understandable as a bounded artifact without assuming hidden context from sibling skills.
 - Put cross-skill or plugin-wide usage guidance in the plugin's usage surfaces, not inside a sibling skill unless it directly affects that skill's own behavior.
 - Do not use a skill body to compensate for unclear plugin packaging or manifest guidance.
-- If the main issue is tool selection, tool sequencing, or escalation policy, consider a separate tool-use guidance artifact instead of burying tool policy in a domain skill.
+- If the main issue is tool selection, tool sequencing, or escalation policy, keep that policy out of unrelated domain skill behavior and route it through the owning plugin or system tool guidance.
 
 ## Plugin-Owned Skills
 
