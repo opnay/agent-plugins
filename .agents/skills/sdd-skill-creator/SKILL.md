@@ -36,14 +36,23 @@ Also load `$skill-creator` and follow its folder, frontmatter, interface metadat
    - For standalone repository skills without a formal spec folder, write the durable contract directly in `SKILL.md`, but still keep transient session details out.
    - If the user says the skill should be regenerated from spec, rebuild the runtime body from the spec rather than patching around old wording.
 
-4. Generate the runtime skill.
+4. Write plugin-owned runtime skills from spec with a fresh worker when needed.
+   - When a plugin-owned skill spec changed and runtime skill writing is needed, the main agent first reviews the current spec and locks the source of truth.
+   - Use a newly spawned worker with clean context for the writing pass. Do not reuse or interrupt an existing worker for this purpose.
+   - The worker packet should include only: user intent, source of truth, editable scope, do-not-use sources, validation commands, and output contract.
+   - Do not give the writer prior worker output, main-thread suspected findings, old deleted specs, or `git diff` as writing source.
+   - Treat old spec or diff comparison as a separate read-only verification or repair flow, not as the runtime writing source.
+   - The writer edits dev source only. The main agent owns release build output, final integration review, and any commit workflow.
+
+5. Generate the runtime skill.
    - Keep frontmatter to `name` and `description`.
    - Put trigger criteria in `description`; do not rely on a body-only "when to use" section.
    - Keep body instructions concise, imperative, and usable by a fresh Codex instance.
    - Reference bundled resources only when they exist in the delivered skill folder.
    - Avoid telling runtime users to read dev-only specs unless the skill is explicitly repository-local and those files are available at runtime.
+   - Treat the runtime surface as the whole skill folder when needed: `SKILL.md`, `references/`, `templates/`, and metadata that ships with the skill.
 
-5. Validate and forward-test.
+6. Validate and forward-test.
    - Run the canonical `quick_validate.py` against the skill folder.
    - For nontrivial skills, forward-test with a fresh subagent using only the skill path and a realistic task prompt.
    - Review generated artifacts yourself before reporting completion.
@@ -53,10 +62,12 @@ Also load `$skill-creator` and follow its folder, frontmatter, interface metadat
 When a skill body is regenerated from a spec, prefer this order:
 
 1. Read the current spec and any owned child specs.
-2. Delete or fully replace the old runtime `SKILL.md` body.
-3. Write a new body from the current spec contract.
-4. Check that no conversation-only notes or unavailable dev paths leaked into runtime text.
-5. Validate the skill folder and inspect the diff.
+2. Decide whether the runtime surface is only `SKILL.md` or the whole skill folder.
+3. For plugin-owned runtime writing, spawn a fresh clean-context worker with the current spec as source of truth.
+4. Delete or fully replace the old runtime surface inside the editable scope.
+5. Write the new runtime surface from the current spec contract.
+6. Check that no conversation-only notes, prior-worker context, `git diff` recovery framing, old deleted spec paths, or unavailable dev paths leaked into runtime text.
+7. Validate the skill folder and inspect the resulting files.
 
 Use patch editing only for small metadata fixes or localized corrections that do not change the skill's contract.
 
