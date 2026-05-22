@@ -14,7 +14,10 @@ runtime template은 `skills/turn-gate/templates/`의 파일을 사용합니다.
 
 flow filename은 zero-padded counter와 lowercase English slug를 사용합니다. active flow boundary가 바뀌면 새 flow record가 필요합니다. 같은 flow가 계속 active이거나 reporting 전 자기 Continuity Guard를 고치는 경우에만 이전 flow를 갱신할 수 있습니다.
 
-flow record는 completed flow를 기다리지 않고 각 phase가 끝날 때마다 현재 상태로 증분 갱신합니다.
+flow record는 completed flow를 기다리지 않고 각 phase 시작과 종료마다 현재 상태로 증분 갱신합니다.
+`flow`가 산출한 phase start/end record checkpoint expectation을 적용해 `000-plan.md`와 active flow record 중 어느 표면이 갱신돼야 하는지 구분합니다.
+active flow pointer, date-level required next action, planned/current sequence가 바뀌면 `000-plan.md`를 갱신합니다.
+같은 active flow 내부의 current phase, execution log, verification evidence, report outcome, residual risk, handoff condition이 바뀌면 active flow record를 갱신합니다.
 
 flow record는 compact contract를 유지하더라도 최소한 다음 섹션을 가져야 합니다.
 
@@ -57,7 +60,7 @@ raw user request text를 기록할 때는 interpretation 또는 summary와 분�
 - verification status
 - continuity note
 
-guard는 reporting과 next-flow reopening 전에 갱신합니다.
+guard는 각 phase 시작과 종료, reporting, next-flow reopening 전에 갱신합니다.
 
 현재 source-recorded explicit stop만 terminal closure authority를 설정할 수 있습니다. stale 또는 source-less closure state는 열린 continuity 상태로 reset해야 합니다.
 

@@ -67,6 +67,7 @@ work 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, f
 ## 내장 skill 체계
 
 - `flow`: 메시지나 동작을 active flow, parent flow, finite sub-flow candidate, `operational-preparation flow`, `change-unit flow`로 판정하고 flow-vs-phase 경계, readiness, discovery, flow-local execution strategy, handoff condition을 소유한다.
+  - active flow의 phase 시작/종료 record checkpoint를 산출하고, `000-plan.md`와 active flow record 중 어떤 표면이 최신화돼야 하는지 구분한다.
   - spec: `loop-kit-dev/specs/skills/flow/spec.md`
 - `turn-gate`: turn continuity를 유지하고, 현재 턴에서 `flow` 계약을 적용하도록 강제하며, flow reporting 뒤 next-flow 질문을 연다.
   - spec: `loop-kit-dev/specs/skills/turn-gate/spec.md`
@@ -84,6 +85,7 @@ work 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, f
 - `not-required`는 검증할 work output이 없는 routing-only 또는 blocker-before-work 상황에서만 사용하며, reason과 residual uncertainty를 기록해야 한다.
 - verification method는 result status가 아니며, `pass`, `fail`, `blocked`, `insufficient` 처리와 섞지 않는다.
 - `flow`의 phase model은 `준비 -> 작업 -> 검증 -> 보고`를 런타임 surface에 드러내야 하며, parent flow와 sub-flow candidate의 경계를 직접 설명해야 한다.
+- `flow`의 phase model은 각 phase 시작/종료에서 `000-plan.md` 또는 active flow record 갱신이 필요한지 판단하는 checkpoint를 드러내야 한다.
 - `flow`는 discovery, readiness, ambiguity, review-loop, fix-verify-loop, broad-execution, commit-readiness handoff 같은 flow-local strategy를 소유한다.
 - `turn-gate`는 flow phase model을 재소유하지 않고, active turn에서 `flow` 계약을 적용하고 flow reporting 뒤 next-flow reopening을 강제한다.
 - 초기 bootstrap은 `operational-preparation flow`로 기록할 수 있으며, 이 flow의 산출물은 session plan, sub-flow candidate list, scope/approval boundary다. 이 결과로 생성되는 product/work sub-flow candidates는 선택될 때 `change-unit flow`로 분리한다.

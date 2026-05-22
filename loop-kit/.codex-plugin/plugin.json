@@ -35,6 +35,7 @@
       "Keep this turn alive until I explicitly stop; after reporting, reopen next-flow with explicit choices unless closure is source-recorded.",
       "Run each active flow through preparation, work, verification, and reporting, then let turn-gate handle next-flow reopening.",
       "Treat flows as cohesive reviewable or commit-sized units, not analysis/work/verification phase slices and not only direct user-visible value.",
+      "At each active flow phase start and end, decide whether 000-plan.md or the active flow record must be refreshed so the current phase, result, and next action can be reconstructed.",
       "Classify verification method as clean-context, normal, or not-required while keeping result status separate as pass, fail, blocked, or insufficient.",
       "Use clean-context verifier by default for file changes, release surfaces, multi-file contracts, failed checks, user-requested verification, and approval-sensitive actions.",
       "Use normal evidence checks only for lower-risk no-edit/read-only work, and use not-required only when there is no work output to verify; always record reason and residual uncertainty.",

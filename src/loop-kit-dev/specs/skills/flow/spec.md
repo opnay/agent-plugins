@@ -15,6 +15,7 @@
   - `operational-preparation flow`와 `change-unit flow` 구분
   - active flow와 follow-up/sub-flow 후보 구분
   - flow 내부 `preparation -> work -> verification -> reporting` 계약
+  - active flow phase start/end record checkpoint 계약
   - flow readiness, requirement discovery, operation/target ambiguity 판단
   - flow-local review handling, fix-verify-reassess, broad execution strategy
   - flow completion criteria와 verification expectation 산출
@@ -55,6 +56,7 @@
 - `core/boundaries.md`: flow-vs-phase, flow가 아닌 항목, reviewable artifact 기준
 - `core/output-contract.md`: flow 설계 또는 sub-flow 후보 산출물의 필수 필드
 - `core/turn-gate-relationship.md`: `flow`와 `turn-gate`의 소유권 경계
+- `core/phase-record-checkpoints.md`: active flow phase start/end에서 필요한 plan 또는 flow record checkpoint
 - `preparation/readiness.md`: work 진입 전 flow contract 충분성 판단
 - `preparation/discovery.md`: flow contract 형성을 위한 requirement discovery와 scope lock 질문 주제
 - `preparation/ambiguity.md`: flow contract에 영향을 주는 operation/target ambiguity
@@ -68,6 +70,7 @@
 
 - flow는 phase checklist가 아니라 응집된 작업 흐름 단위입니다.
 - 하나의 flow는 `preparation -> work -> verification -> reporting`을 내부 단계로 갖습니다.
+- 각 active flow의 phase 시작과 종료는 `000-plan.md` 또는 active flow record 중 어디를 갱신해야 하는지 드러나는 record checkpoint를 가져야 합니다.
 - flow preparation은 readiness, discovery, ambiguity 판단으로 flow contract를 완성합니다.
 - flow execution은 current flow 안에서 review-loop, fix-verify-loop, broad-execution 같은 strategy를 선택할 수 있습니다.
 - review-loop는 여러 review finding 전체를 한 번에 실행하는 포괄 전략이 아니라, active flow 안의 bounded blocking finding 하나를 처리하는 전략입니다. 여러 finding이 있으면 우선순위 선택, discovery, 또는 finite follow-up 후보 설계가 먼저입니다.
@@ -82,6 +85,7 @@
 - flow가 너무 커서 finite sub-flow 후보로 나눠야 하는가?
 - sub-flow 후보가 active execution flow처럼 실행되고 있지 않은가?
 - 각 flow에 scope, non-goals, completion criteria, verification expectation, handoff 조건이 있는가?
+- 각 phase 시작과 종료에서 `000-plan.md` 또는 active flow record 갱신 기준이 드러나는가?
 - readiness/discovery/ambiguity가 필요한데 flow contract 없이 work로 넘어가지 않았는가?
 - flow-local strategy를 turn-level next-flow routing이나 self-drive sequence authority와 혼동하지 않았는가?
 - review-loop를 여러 finding 묶음 실행으로 넓히지 않고 bounded finding 하나 또는 후보 설계로 처리했는가?

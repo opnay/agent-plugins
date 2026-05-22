@@ -8,6 +8,7 @@
 
 - flow는 phase checklist가 아니라 응집된 작업 흐름 단위입니다.
 - 하나의 flow는 `preparation -> work -> verification -> reporting`을 내부 단계로 갖습니다.
+- 각 phase의 시작과 종료는 기록 checkpoint를 가지며, `000-plan.md` 또는 active flow record 중 어떤 표면이 최신화돼야 하는지 판단해야 합니다.
 - flow preparation은 readiness, discovery, ambiguity 판단으로 flow contract를 완성합니다.
 - flow work는 current flow boundary 안에서 review-loop, fix-verify-loop, broad-execution 같은 flow-local strategy를 선택할 수 있습니다.
 - flow가 너무 크거나 여러 산출물을 만들면 parent flow는 finite `sub-flow candidates`를 만들 수 있습니다.
@@ -24,3 +25,4 @@
 - 후보 생성과 후보 실행을 혼동하지 않았는가?
 - active flow 전환 권한이 `turn-gate` 또는 준비된 self-drive sequence에 남아 있는가?
 - flow-local strategy와 turn-level continuation authority를 혼동하지 않았는가?
+- 각 phase 시작/종료의 기록 checkpoint가 flow-local 상태와 turn-level active pointer를 구분하는가?

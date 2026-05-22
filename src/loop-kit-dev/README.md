@@ -4,6 +4,7 @@
 
 이 플러그인의 중심 표면은 `flow`와 `turn-gate`입니다.
 `flow`는 하나의 메시지나 동작을 흐름 단위로 해석하고, 필요하면 finite `sub-flow candidates`로 나눕니다.
+또한 active flow의 각 phase가 시작되거나 끝날 때 `000-plan.md` 또는 active flow record 중 어느 기록을 갱신해야 하는지 판단하는 checkpoint를 둡니다.
 `turn-gate`는 현재 턴의 구조를 유지하면서 모든 작업이 `flow` 계약을 통과하게 하고, flow가 끝난 뒤 다음 flow 선택지를 엽니다.
 초기 의도 정렬과 sub-flow 후보 설계 자체는 session plan과 approval boundary를 소유하는 운영 flow가 될 수 있고, 그 결과 만들어지는 실행 flow는 코드, 문서, fixture, 설정 같은 산출물 변경 단위로 구분합니다.
 이때 flow는 `분석`, `작업`, `검증`, `커밋 준비` 같은 진행 단계가 아니라 함께 검토하고 검증하고 필요하면 커밋할 수 있는 응집된 변경 단위입니다.
@@ -64,6 +65,7 @@ codex plugin marketplace upgrade
 
 - 사용자가 멈추라고 할 때까지 턴을 계속 유지해야 하는 작업
 - 준비, 작업, 검증, 보고, 다음 플로우 선택이 드러나야 하는 작업
+- 각 phase 시작과 종료에서 plan 또는 flow record가 현재 상태를 재구성할 수 있어야 하는 작업
 - 초기 준비에서 `flow` discovery/readiness로 의도를 정렬하고 sub-flow 후보를 만들어야 하는 작업
 - 초기 의도 정렬과 sub-flow 후보 설계가 session plan 산출물로 남아야 하는 작업
 - sub-flow 후보가 phase checklist가 아니라 검토/검증/커밋 가능한 변경 단위로 나뉘어야 하는 작업
@@ -78,6 +80,7 @@ codex plugin marketplace upgrade
 ## 엔트리포인트
 
 - `flow`: 메시지나 동작을 flow로 해석하고, parent flow, sub-flow candidate, operational-preparation flow, change-unit flow, flow-vs-phase 경계, readiness, discovery, flow-local strategy, handoff condition을 판정합니다.
+- `flow`: phase 시작/종료 record checkpoint를 산출해 `000-plan.md`와 active flow record 중 무엇을 갱신해야 하는지 구분합니다.
 - `turn-gate`: 현재 턴에서 flow 사용을 강제하고, flow reporting 뒤 다음 flow 질문을 여는 turn-level gate입니다.
 
 `turn-gate`가 호출되면, 현재 세션 동안 이 skill을 1급 운영 규칙으로 활성화한 것으로 취급합니다.

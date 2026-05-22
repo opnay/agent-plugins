@@ -14,6 +14,9 @@
 4. `reporting`: terminal close가 아니라 continuity context를 보고합니다.
 5. `next-flow`: next-flow choice, blocker decision, 유효한 self-drive continuation, source-recorded explicit stop 중 하나로 라우팅합니다.
 
+각 active flow phase의 시작과 종료에는 sibling `flow`의 phase record checkpoint expectation을 적용합니다.
+`000-plan.md`는 active flow pointer나 turn-level required next action 같은 date-level routing 변화가 있을 때 갱신하고, active flow record는 같은 flow 내부 phase state, evidence, report, residual risk가 바뀔 때 갱신합니다.
+
 task completion은 턴을 닫지 않습니다. source-recorded explicit stop만 terminal close를 허용할 수 있습니다.
 
 `turn-gate`가 active이면 reporting과 next-flow reopening은 ongoing conversation channel에 남아야 합니다. terminal/final closeout을 일반 report 형태로 사용하지 않습니다. final closeout은 현재 사용자 메시지가 명시적으로 턴을 끝내고 그 closure source가 기록된 뒤에만 허용됩니다.
@@ -71,6 +74,7 @@ Runtime `SKILL.md`는 다음을 직접 포함해야 합니다.
 - explicit stop 전 final/terminal closeout 금지
 - five-phase lifecycle
 - phase prefix behavior
+- flow phase record checkpoint 적용
 - preparation과 approval boundary
 - verification method와 status 구분
 - reporting과 next-flow reopening
