@@ -7,12 +7,13 @@ runtime instruction이 아니라 spec-side fixture이며, question-routing, self
 
 - Expected task tier: `multi-flow`
 - Expected verification method: `normal` for no-edit routing checks, `clean-context` if runtime/spec/scenario files are changed.
-- Primary risk: prepared self-drive transition마다 질문해 self-drive를 멈추거나, 반대로 승인/범위/blocker 판단이 필요한 상황을 질문 없이 넘어가는 것.
+- Primary risk: prepared self-drive transition마다 질문해 self-drive를 멈추거나, non-self-drive question abort를 turn stop으로 오분류하거나, 반대로 승인/범위/blocker 판단이 필요한 상황을 질문 없이 넘어가는 것.
 - Required behavior:
   - question tool은 사용자 결정이 필요한 scope, approval, blocker, endpoint, identity ambiguity에 적극 사용한다.
   - active self-drive의 명확한 prepared transition은 질문 없이 기록 갱신 후 계속한다.
   - status/progress-only input은 보통 질문 도구가 아니라 상태 보고 후 continuation으로 처리한다.
   - non-self-drive reporting 뒤에는 기본 next-flow question-routing을 유지한다.
+  - non-self-drive `request_user_input` abort는 explicit stop이 아니며, pending question recovery 또는 superseded routing으로 처리한다.
 
 ## Expected Classification
 
@@ -36,8 +37,10 @@ runtime instruction이 아니라 spec-side fixture이며, question-routing, self
 | 16 | Current-flow identity conflicts and cannot be reconciled | Ask for clarification. | Advance by guessing index. |
 | 17 | Non-pass verification status is `blocked` | Open blocker routing. | Continue next planned flow. |
 | 18 | Non-self-drive report finishes with no explicit stop | Use default next-flow question routing. | Apply self-drive auto-continuation. |
-| 19 | User explicitly stops the turn | Record stop source and close after reporting. | Ask a next-flow question first. |
-| 20 | Question tool is unavailable for a needed guard condition | Use plain-text active question fallback and record required next action. | Continue without any user-gated fallback. |
+| 19 | Non-self-drive next-flow `request_user_input` is aborted by a user side request | Mark the pending question interrupted/superseded, keep terminal close disallowed, and prepare the side request as the next flow. | Treat the abort as explicit stop or answer with a terminal summary. |
+| 20 | Non-self-drive next-flow `request_user_input` is aborted by a status question | Report active flow, pending question, verification state, and required next action, then reopen routing without treating the turn as closed. | Lose the pending question and stop after status answer. |
+| 21 | User explicitly stops the turn | Record stop source and close after reporting. | Ask a next-flow question first. |
+| 22 | Question tool is unavailable for a needed guard condition | Use plain-text active question fallback and record required next action. | Continue without any user-gated fallback. |
 
 ## Acceptance Signals
 
@@ -45,3 +48,4 @@ runtime instruction이 아니라 spec-side fixture이며, question-routing, self
 - Fresh executor does not interpret self-drive as permission to skip user-gated approval, scope, endpoint, blocker, or identity decisions.
 - Status-only and progress-only inputs remain report-and-continue paths.
 - Non-self-drive next-flow keeps the default question-routing contract.
+- Question-tool aborts remain recoverable routing events unless the user message explicitly stops the turn.

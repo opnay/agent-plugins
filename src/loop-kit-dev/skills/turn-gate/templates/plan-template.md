@@ -1,38 +1,44 @@
----
-summary: ""
-latest_user_request: ""
-latest_decision: ""
-active_flow: ""
-required_next_action: ""
-pending_question_state: "none"
-verification_status: "not-started"
-self_drive_status: "inactive"
-self_drive_record: ""
-preparation_source: ""
-scope_lock_status: "unlocked"
-final_readiness_handoff: ""
----
+# Turn Gate Plan
 
-# User Requests Today
+## Routing State
 
--
+- date: `{YYYYMMDD}`
+- turn_gate_active: yes
+- active_flow: `{flow-record-path-or-none}`
+- required_next_action: `{next-action}`
+- user_explicit_stop: no
+- terminal_summary_allowed: no
+- confirmed_closure: no
+- explicit_turn_end_available: yes
 
-# Flow Index
+## Request History
 
--
+- `{timestamp}` raw: `{raw-user-request-or-activation}`
+  interpretation: `{compact-interpretation}`
 
-# Planned Flow Sequence
+## Flow Index
 
--
+- `{count-pad3}` `{flow-label}`: `{state}`; record `{flow-record-path}`; required next action `{next-action}`
 
-# Completed Flow Summaries
+## Planned Flow Sequence
 
--
+- `{selected-current-or-future-flow}`
 
-# Explicit Turn-End Option
+## Completed Flow Summaries
 
-- User may explicitly stop the current turn; terminal close is allowed only when the explicit stop source is recorded.
+- `{flow-label}`: `{compact-summary}`; verification `{status}`; residual risk `{risk}`
 
-# Open Risks
+## Self-Drive
 
--
+- status: inactive
+- sidecar: none
+- active_flow_index: none
+- current_flow_label: none
+
+## Active Date-Level Risks
+
+- `{risk-or-none}`
+
+## Continuity Note
+
+`{what the next agent must know after compaction or interruption}`

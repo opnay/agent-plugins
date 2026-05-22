@@ -1,75 +1,71 @@
 ---
-task: ""
-flow_type: ""
-flow_scope: ""
-current_phase: "preparation"
-turn_gate_active: "yes"
-question_routing_mode: "active"
-user_explicit_stop: "no"
-terminal_summary_allowed: "no"
-required_next_action: ""
-last_refreshed_phase: "preparation"
-confirmed_closure: "no"
-closure_source_message: ""
-closure_recorded_phase: ""
-pending_question_state: "none"
-pending_question_id_or_summary: ""
-superseded_question_id_or_summary: ""
-verification_status: "not-started"
-continuity_note: ""
-preparation_source: ""
-scope_lock_status: "unlocked"
+turn_gate_active: yes
+phase: preparation
+question_routing_mode: none
+user_explicit_stop: no
+terminal_summary_allowed: no
+confirmed_closure: no
+closure_source_message: none
+closure_recorded_phase: none
+pending_question_state: none
+pending_question_id_or_summary: none
+superseded_question_id_or_summary: none
+verification_status: not-started
+required_next_action: prepare flow contract
+continuity_note: update this guard before reporting and next-flow routing
 ---
 
-# Flow Contract
+# `{Flow Label}`
 
-- User request raw:
-- User request summary or interpretation:
-- Preparation source:
-- Preparation result:
-- Boundary rationale:
-- Current blocker:
-- Scope lock status:
-- Work boundary:
-- Non-goals:
-- Acceptance signal:
-- Expected risky actions:
-- Approval boundary:
-- User-gated checkpoints:
-- Verification expectation:
-- Material judgment calls:
+## Flow Contract
 
-# Optional Risky Actions
+- source request summary: `{summary}`
+- raw request: `{raw-text-if-needed}`
+- interpretation: `{interpretation}`
+- scope: `{in-scope}`
+- non-goals: `{out-of-scope}`
+- acceptance signal: `{completion-or-success-condition}`
+- verification expectation: `{expected-method-or-risk}`
+- approval boundary: `{allowed-actions-and-approval-sensitive-checkpoints}`
+- handoff condition: `{when-to-report-route-or-stop}`
 
-- Status: not-applicable
+## Optional Risky Actions
 
-# Execution Log
+- action: `{none-or-action}`
+- exact target: `{target}`
+- expected effect: `{effect}`
+- risk: `{risk}`
+- recovery path: `{path}`
+- included scope: `{included}`
+- excluded scope: `{excluded}`
+- endpoint: `{endpoint}`
+- approval status: `{not-requested|required|granted|blocked}`
 
--
+## Execution Log
 
-# Verification
+- `[preparation]` `{event}`
 
-- Status: not-started
-- Method:
-- Verifier: not-used
-- Reason:
-- Checks:
-- Evidence:
-- Residual uncertainty:
-- Result:
+## Verification
 
-# Report
+- method: `{clean-context|normal|not-required}`
+- method reason: `{reason}`
+- result_status: `{pass|fail|blocked|insufficient}`
+- evidence: `{evidence-or-gap}`
+- non-pass routing: `{repair|collect-more-evidence|blocker|none}`
 
-- Changed surfaces:
-- Outcome:
-- Required next action:
+## Report
 
-# Next Flow Options
+- changed surfaces: `{files-artifacts-decisions}`
+- verification status: `{status}`
+- material judgment calls: `{calls}`
+- required next action: `{action}`
 
-- Continue:
-- Clarify:
-- Explicit turn-end option: user may explicitly stop the current turn.
+## Next Flow Options
 
-# Residual Risk
+- continue: `{next-action}`
+- blocked recovery: `{needed-input-or-access}`
+- explicit turn-end: user may explicitly stop the turn
 
--
+## Residual Risk
+
+- `{risk-or-none}`

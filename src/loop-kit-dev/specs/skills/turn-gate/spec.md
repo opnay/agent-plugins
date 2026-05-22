@@ -2,119 +2,71 @@
 
 ## 목적
 
-`loop-kit-dev`의 `turn-gate`는 turn continuity를 유지하면서 기본적으로 implicit operating state로 동작하고, 현재 턴에서 모든 작업이 `flow` 계약을 통과하도록 강제하는 turn-level gate입니다.
-이 skill이 활성화되면 `turn-gate` 메인 플로우는 대화 응답 자체의 1급 제어 규칙이 되며, 사용자의 explicit stop 전까지 결과 보고를 terminal response로 닫지 않습니다.
+`turn-gate`는 사용자가 명시적으로 현재 턴을 끝내기 전까지 활성 Codex 턴을 열린 상태로 유지하는 `loop-kit` 스킬입니다. 각 활성 flow에 sibling `flow` 계약을 적용하고, session record를 유지하며, 보고 전에 검증을 수행하고, 보고 뒤에는 다음 flow 선택을 다시 엽니다.
+
+이 폴더에서는 `intent.md`가 사용자 의도 기록을 소유하고, `intent-scenarios/`가 회귀 의도 fixture를 소유합니다. 지속 실행 계약은 `contracts/`가 소유합니다.
+
+`turn-gate`는 workflow taxonomy가 아니며 두 번째 구현 planner도 아닙니다. 책임은 더 좁습니다. 현재 응답을 운영상 열린 상태로 유지하고, 실행되는 항목마다 기록된 flow 계약을 요구하며, 우발적인 terminal closure를 막고, 보고 뒤 필요한 다음 행동을 라우팅합니다.
 
 ## 경계
 
-- 포함:
-  - turn-level continuity 유지
-  - active flow 사용 강제
-  - flow reporting 뒤 next-flow question-routing response 구조 유지
-  - explicit stop lifecycle handling
-  - preparation에서 사용자 메시지의 operation 의미 해독
-  - 결과 보고 뒤 explicit choice 기반 next-flow reopening
-  - session record와 Continuity Guard 유지
-- 제외:
-  - flow 정의, parent/sub-flow 후보, flow-vs-phase 판정 자체
-  - broad workflow taxonomy 자체의 소유
-  - 여러 direct loop skill을 사용자에게 노출하는 일
-  - domain-specific implementation detail 자체
-  - commit execution, push, PR 같은 외부 작업의 세부 실행 계약
+포함:
 
-## 처리하려는 작업 형태
+- 대화 턴 단위 continuity
+- `preparation -> work -> verification -> reporting -> next-flow`
+- source-recorded explicit stop 처리
+- session record와 Continuity Guard
+- next-flow question routing과 question abort recovery
+- 위험 기반 verification routing
+- approval-sensitive checkpoint 경계
+- 명시적으로 준비된 overlay로서의 self-drive
 
-- 사용자가 턴을 종료하자고 요청하기 전까지 한 턴 안에서 하나 이상의 flow를 이어가야 하는 작업
-- requirement discovery, autonomous execution, refinement, review-driven correction, readiness checking 같은 current-phase work가 번갈아 나타나는 작업
-- 사용자 메시지에서 시작한 flow와 기존 active flow를 구분하고, flow reporting 뒤 다음 flow 선택이 필요할 수 있는 작업
-- 결과 보고 뒤 clean stop이 아니라 다음 플로우 선택이 기본이어야 하는 작업
-- 사용자 지시어가 여러 구조 단위를 가리켜 작업 전에 target 또는 operation을 잠가야 하는 작업
+제외:
 
-## 엔트리포인트 / 대표 표면
+- flow taxonomy, parent flow, sub-flow candidate, readiness, discovery, flow-local strategy 정의. 이 책임은 sibling `flow`가 소유합니다.
+- 설치 후 runtime reader가 dev-only spec 경로를 읽도록 지시하는 일
+- readiness, verification, self-drive, 또는 이전 맥락을 commit, push, PR, publish, release, version bump 승인으로 취급하는 일
+- 완료된 작업, 성공한 검증, 답변된 질문, 중단된 질문 도구, stale record, final처럼 보이는 문구를 turn closure로 취급하는 일
 
-경로 표기 규칙: 이 spec에서 `loop-kit-dev/...`는 plugin-root-relative shorthand입니다.
-이 저장소에서 실제 편집 경로는 `src/loop-kit-dev/...`이고, 루트 `loop-kit/`은 build command 산출 release surface이므로 직접 편집하지 않습니다.
-설치된 runtime skill은 dev-only `specs/` 경로에 의존하지 않고 release에 포함된 `references/*`, `templates/*` 같은 상대 경로를 사용해야 합니다.
+## 대표 표면
 
-- 대표 표면: `loop-kit-dev/skills/turn-gate/SKILL.md`
-- 기본 skill spec index: `loop-kit-dev/specs/skills/turn-gate/spec.md`
-- 사용자 스펙 의도: `loop-kit-dev/specs/skills/turn-gate/intent.md`
-- sub-spec directory: `loop-kit-dev/specs/skills/turn-gate/`
-- local runtime references: `loop-kit-dev/skills/turn-gate/references/*.md`
-- 호출 방식: 직접 호출하거나 manifest prompt의 안내를 따른다.
+- Runtime skill: `src/loop-kit-dev/skills/turn-gate/SKILL.md`
+- Runtime references: `src/loop-kit-dev/skills/turn-gate/references/*.md`
+- Runtime templates: `src/loop-kit-dev/skills/turn-gate/templates/*-template.md`
+- 사용자 의도: `src/loop-kit-dev/specs/skills/turn-gate/intent.md`
+- 회귀 의도 fixture: `src/loop-kit-dev/specs/skills/turn-gate/intent-scenarios/`
 
-## 상세 계약 구조
+## 계약 맵
 
-`turn-gate`의 사용자 스펙 의도, 전체 흐름, 세부 계약은 같은 skill spec folder 아래 ownership-based child folder로 분리합니다.
-이 파일은 top-level ownership, whole-flow overview, sibling contract map을 소유합니다.
+- `contracts/runtime.md`: active-turn lifecycle, activation, explicit stop, phase prefix, runtime body 경계, approval checkpoint 위치
+- `contracts/question-routing.md`: next-flow reopening, structured question 사용, fallback, pending question recovery, `request_user_input` abort 처리
+- `contracts/session-records.md`: `000-plan.md`, flow record, self-drive sidecar pointer, raw request 처리, Continuity Guard, recovery case
+- `contracts/verification.md`: verification method 선택, result status, clean-context verifier 경계, non-pass routing
+- `contracts/self-drive.md`: prepared sequence overlay, sidecar gate, interruption handling, endpoint 처리, approval boundary
 
-- `intent.md`: `turn-gate`의 사용자 스펙 의도 기록
-- `core/runtime-flow.md`: activation부터 explicit stop까지 `turn-gate`의 전체 phase 흐름과 전환 조건
-- `core/skill-contents.md`: runtime `SKILL.md` body의 필수 구성과 content boundary
-- `phases/preparation.md`: work 전 intent, scope, non-goal, approval boundary, verification expectation 정렬
-- `phases/work.md`: active flow 안에서 실제 작업을 수행하기 위한 work phase 계약
-- `phases/verification.md`: work 이후 risk-based verification method 선택과 non-pass 처리로 이어지는 verification phase 계약
-- `phases/reporting.md`: terminal close가 아니라 next-flow context를 정리하는 reporting phase 계약
-- `phases/next-flow.md`: explicit stop 확인과 다음 flow reopening을 수행하는 next-flow phase 계약
-- `core/flow-boundaries.md`: `flow` skill로 위임된 flow boundary 계약을 `turn-gate`가 적용하는 방법
-- `gates/internal-gates.md`: internal gate model overview and gate detail map
-- `gates/flow-shaping.md`: active flow presence checks and sibling `flow` decision application
-- `gates/task-policy.md`: flow-local task sequencing, local references, target rereads, command/edit/build/test policy
-- `gates/verification.md`: verification method selection, minimum-sufficient evidence or packet construction, and pass/fail/blocked/insufficient routing
-- `gates/reporting.md`: result reporting as continuity context
-- `core/meaning-resolution.md`: operation/target ambiguity, provenance/intent block target locking, user-gated clarification
-- `modes/default.md`: implicit default operating state 계약
-- `core/approval-boundary.md`: destructive, irreversible, external-action, commit/publish approval boundary
-- `records/verification.md`: risk-based verification method, minimum-sufficient evidence or packet sizing, and non-pass handling
-- `records/question-routing.md`: `request_user_input`, next-flow reopening, fallback, visible/recorded turn-end option
-- `records/session-records.md`: `000-plan.md`, `001+` flow records, Continuity Guard, templates, `Next Flow Options`
-- `templates/plan.md`: `000-plan.md` template structure, date-level snapshot/index ownership, plan/flow deduplication
-- `templates/self-drive.md`: optional `000-self-drive.md` sidecar template structure for self-drive sequence state
-- `templates/flow.md`: `001+` flow record template structure, flow-local contract/evidence/report ownership, safety fields
-- `intent-scenarios/`: runtime instruction이 아니라 flow boundary 의도를 회귀 평가하기 위한 spec-side fixture
+## 소유권 규칙
 
-## 핵심 처리 계약
+- 지속 규칙은 정확히 하나의 contract 파일이 소유합니다.
+- 다른 contract 파일은 소유 파일을 가리킬 수 있지만, 상세 decision table을 반복하지 않습니다.
+- `spec.md`는 index와 boundary map으로 유지하며, operational decision table을 축적하지 않습니다.
+- `intent.md`는 사용자 의도를 기록하고 migration step을 기록하지 않습니다.
+- `intent-scenarios/`는 회귀 예시를 보관하고 runtime instruction을 보관하지 않습니다.
+- Runtime `SKILL.md`는 dev-only spec 경로를 참조하지 않고, 이 계약들을 실행 가능한 지시로 압축해야 합니다.
+- Runtime references와 templates에는 설치 후 실제로 존재하는 guidance만 둡니다. 설치 후 실행이 필요한 계약은 `specs/`를 가리키지 말고 `SKILL.md`, `references/`, `templates/`로 흡수합니다.
 
-- `turn-gate`는 대화 응답 자체를 제어하는 conversation-level first-class rule이다.
-- `turn-gate`는 flow 자체를 정의하지 않고, 현재 턴에서 `flow` 계약 없이 진행하지 못하게 한다.
-- `turn-gate`는 implicit default operating state를 소유하지만, requirement discovery, review handling, fix loop, broad execution, commit-readiness 같은 flow-local strategy는 sibling `flow` skill이 소유한다.
-- `loop-kit-dev/skills/turn-gate/SKILL.md`는 runtime에서 읽는 운영 표면이며, 본문 구성과 runtime/spec boundary는 `core/skill-contents.md`가 소유한다.
-- turn-level activation, explicit stop, next-flow reopening은 `core/runtime-flow.md`가 소유한다.
-- flow decision fields, flow-vs-phase judgment, readiness, discovery, and flow-local strategy are owned by the sibling `flow` skill.
-- phase 시작 사용자-facing 메시지의 `[<phase-name>]` prefix 계약은 `core/runtime-flow.md`와 `core/skill-contents.md`가 소유한다.
-- phase 내부 세부 계약은 `phases/*` spec이 소유하고, internal gate 세부 계약은 `gates/*` spec이 소유한다.
-- session record와 Continuity Guard 계약은 `records/session-records.md`가 소유한다.
-- risk-based verification method 계약은 `records/verification.md`가 소유한다.
+## 필수 runtime 동작
+
+- activation-only 요청은 terminal activation summary가 아니라 기록된 활성 상태와 next-flow routing을 만들어야 합니다.
+- work는 active flow boundary, non-goals, acceptance signal, verification expectation, approval boundary, handoff condition이 알려졌거나 user-gated된 뒤에만 시작할 수 있습니다.
+- reporting은 먼저 기록을 갱신한 뒤 changed surfaces, verification status, material judgment calls, residual risk, required next action을 보고해야 합니다.
+- reporting 뒤에는 `next-flow`, `blocked`, 유효한 self-drive continuation, source-recorded explicit stop 중 하나로 라우팅해야 합니다.
+- source-recorded explicit stop만 terminal closure의 근거가 됩니다.
 
 ## 검토 질문
 
-- 현재 응답이 turn continuity를 실제로 유지하고 있는가?
-- skill body 구성과 runtime/spec boundary 판단이 필요하면 `core/skill-contents.md`를 확인했는가?
-- skill body 앞부분에 `Important` 섹션이 있고 1급 규칙, terminal summary 금지, next-flow reopening이 먼저 드러나는가?
-- `core/runtime-flow.md`만 읽어도 전체 phase 흐름과 다음 상세 spec 위치를 알 수 있는가?
-- phase 시작 사용자-facing 메시지 prefix 규칙이 runtime-visible 계약으로 반영돼 있는가?
-- 사용자 표현에 구조적 다의성이 있으면 work 전에 meaning resolution 질문을 열었는가?
-- user-gated question routing과 계획 도구 `update_plan`를 필수 단계에서 실제로 사용했는가?
-- cross-flow 작업이라면 `.agents/sessions/{YYYYMMDD}/000-plan.md`가 prepared flow sequence와 다음 flow 전환 조건을 최신 상태로 담고 있는가?
-- 사용자 메시지 해석과 flow decision이 필요했다면, sibling `flow` decision이 기록되고 active flow와 섞이지 않았는가?
-- flow shaping, task policy, verification, reporting이 phase 전환 권한을 침범하지 않는가?
-- task policy 결과가 flow completion이나 turn closure를 직접 승인하는 구조가 남아 있지 않은가?
-- spec-side fixture 평가 규칙이 runtime skill body로 직접 누출되지 않았는가?
-- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`가 현재 phase까지 증분 갱신됐는가?
-- `work -> verification -> result reporting` 순서를 실제로 유지했는가?
-- active flow가 `flow` 계약을 따르며, reporting 뒤 `turn-gate`가 next-flow reopening을 유지했는가?
-- 사용자 메시지에서 시작한 flow decision과 기존 active flow를 구분했는가?
-- `flow`를 second loop controller가 아니라 flow contract surface로 유지했는가?
-- requirement discovery와 flow-local strategy를 turn-gate가 재정의하지 않고 sibling `flow` decision으로 적용했는가?
-- 결과 보고 뒤 explicit next-flow choice를 실제로 열었는가?
-- 결과 보고 직전에 `Continuity Guard`를 갱신했고 terminal summary 가능 여부를 확인했는가?
-
-## 독립성 원칙
-
-- 이 skill이 독립 실행 가능성을 spec으로 강제해야 하는가: 아니오.
-- 그렇다면 왜 필요한가 / 아니라면 어떤 sibling context를 허용하는가: 이 skill은 sibling `flow` skill의 flow boundary, readiness, discovery, strategy contract를 적용한다. 다만 turn continuity, explicit stop, question routing, session continuity rule은 이 index spec에서 명시적으로 읽혀야 한다.
-
-## 확장 원칙
-
-- `spec.md`는 top-level ownership과 routing map을 유지하고, 상세 계약이 커지면 같은 폴더 아래 sub-spec으로 내린다.
-- 새 sub-spec을 추가할 때는 `spec.md`의 상세 계약 구조와 필요하면 plugin spec의 skill spec 위치 설명을 함께 갱신한다.
+- 현재 응답은 현재 source-recorded explicit stop이 없는 한 계속 열린 상태인가?
+- active flow는 sibling `flow` decision 또는 충분히 기록된 flow contract에 기반하는가?
+- reporting 뒤 next-flow routing, blocker routing, 유효한 self-drive continuation, source-recorded explicit stop 중 하나로 이어졌는가?
+- question-tool abort를 turn closure로 보거나 같은 질문 도구 호출을 무작정 반복하지 않고 recoverable routing으로 다루는가?
+- approval-sensitive action은 exact target, effect, risk, recovery path, included/excluded scope, endpoint에 기반하는가?
+- raw user message가 중요할 때 summary 또는 interpretation과 분리해 기록하는가?

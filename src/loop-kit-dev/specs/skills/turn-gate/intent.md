@@ -10,6 +10,7 @@
 - `turn-gate`는 flow reporting 뒤 source-recorded explicit stop이 없으면 `next-flow` phase로 이어져 다음 flow 선택지를 열어야 한다.
 - 질문, 선택지, blocker decision, 다음 flow 선택은 user-gated question routing으로 드러나야 한다.
 - 질문 도구가 사용 가능하면 필요한 user-gated routing에 적극 사용하고, 사용할 수 없으면 active plain-text question fallback과 required next action을 기록해야 한다.
+- 질문 도구가 사용자 interrupt나 새 메시지로 중단되더라도 그것만으로 turn 종료나 terminal summary 권한이 생기지 않아야 하며, 다음 사용자 메시지는 pending question recovery 또는 superseded flow routing으로 해석해야 한다.
 - visible next-flow 선택지에 turn-end option을 표시하지 못하더라도 flow record의 `Next Flow Options`에는 explicit turn-end option이 항상 남아야 한다.
 - `.agents/sessions/{YYYYMMDD}/000-plan.md`는 date-level index, active snapshot, planned flow sequence, required next action을 소유해야 한다.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`는 개별 flow의 contract, boundary, execution log, verification, report, next-flow options를 소유해야 한다.

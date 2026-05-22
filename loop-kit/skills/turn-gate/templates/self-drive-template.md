@@ -1,49 +1,33 @@
----
-sequence_objective: ""
-active_flow_index: 0
-current_flow_label: ""
-progress_note: ""
-planned_flow_count: 0
-endpoint: ""
-status: "active"
-last_updated_flow: ""
-required_next_action: ""
----
+# Turn Gate Self-Drive
 
-# Sequence Contract
+## Sequence Contract
 
-- Objective:
-- Prepared flow sequence:
-- Current flow:
-- Acceptance signal:
-- Verification expectation:
+- status: active
+- objective: `{objective}`
+- endpoint: `{endpoint}`
+- acceptance signal: `{acceptance-signal}`
+- verification expectation: `{verification-expectation}`
+- allowed autonomous actions: `{allowed-actions}`
+- prohibited autonomous actions: `{prohibited-actions}`
+- approval-sensitive checkpoints: `{checkpoints}`
+- blocker return conditions: `{conditions}`
 
-# Autonomous Boundary
+## Current Position
 
-- Allowed autonomous actions:
-- Prohibited autonomous actions:
-- Approval-sensitive checkpoints:
+- active_flow_index: `{zero-based-or-one-based-index}`
+- current_flow_label: `{label}`
+- planned_flow_count: `{count}`
+- required_next_action: `{action}`
+- blocker_state: none
 
-# Endpoint Handling
+## Prepared Flow Sequence
 
-- Endpoint:
-- Sequence exhaustion behavior:
-- Repeat policy:
-- Handoff target:
-- Blocker return condition:
-- Last confirmed flow or timestamp:
+1. `{flow-label}`: `{scope}`; endpoint `{endpoint}`; verification `{expectation}`
 
-# Progress Ledger
+## Progress Ledger
 
--
+- `{timestamp}` `{flow-label}`: `{material-update}`
 
-# User-Gated Return Conditions
+## Next Handoff
 
-- Scope, endpoint, target, flow order, non-goal, or acceptance signal ambiguity.
-- Approval-sensitive action outside the recorded boundary.
-- Blocker, repeated critical failure, inaccessible records, or current-flow identity mismatch.
-- `active_flow_index` greater than or equal to `planned_flow_count`.
-
-# Residual Risk
-
--
+- `{handoff-condition-or-next-flow}`

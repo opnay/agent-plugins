@@ -88,9 +88,8 @@ work 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, f
 - `turn-gate`는 flow phase model을 재소유하지 않고, active turn에서 `flow` 계약을 적용하고 flow reporting 뒤 next-flow reopening을 강제한다.
 - 초기 bootstrap은 `operational-preparation flow`로 기록할 수 있으며, 이 flow의 산출물은 session plan, sub-flow candidate list, scope/approval boundary다. 이 결과로 생성되는 product/work sub-flow candidates는 선택될 때 `change-unit flow`로 분리한다.
 - self-drive는 별도 skill 표면이 아니라 명시적으로 적용될 때 준비된 sequence의 진행 판단을 덮어쓰는 독립 overlay reference로 동작한다.
-- `modes/self-drive.md`의 `mode` 명칭은 dev spec-side taxonomy일 뿐이며, 설치 후 사용자가 선택하거나 읽어야 하는 runtime mode를 뜻하지 않는다.
-- `modes/self-drive.md`는 self-drive overlay의 endpoint, stop boundary, execution authority, handoff behavior에 대한 spec-side ownership을 소유한다.
-- 설치 후 실행 guidance는 `skills/turn-gate/references/self-drive.md`가 소유하며, runtime 문서는 dev-only `modes/self-drive.md` 경로를 실행 지시로 사용하지 않는다.
+- `turn-gate/contracts/self-drive.md`는 self-drive overlay의 endpoint, stop boundary, execution authority, handoff behavior에 대한 spec-side ownership을 소유한다.
+- 설치 후 실행 guidance는 `skills/turn-gate/references/self-drive.md`가 소유하며, runtime 문서는 dev-only spec 경로를 실행 지시로 사용하지 않는다.
 - self-drive reference는 초기 preparation을 대신하지 않고, spec-side overlay 계약을 설치 후 실행 가능한 형태로 흡수해 적용한다.
 - self-drive 도중 사용자 메시지가 들어오면 멈추지 않고 현재 플로우 조정 또는 다음 플로우 우선 등록으로 처리한다.
 - 새로운 explicit overlay는 기본 상태나 기존 overlay로 current flow를 소유할 수 없을 때만 추가한다.
