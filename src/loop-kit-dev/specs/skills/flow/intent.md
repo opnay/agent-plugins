@@ -9,7 +9,9 @@
 - 사용자 메시지를 받아 의도, scope, non-goal, acceptance signal, approval boundary, verification expectation, planned flow list를 정리하는 일 자체도 산출물을 가진 `operational-preparation flow`가 될 수 있어야 한다.
 - 실제 코드, 문서, fixture, 설정, release surface 변경은 `change-unit flow`로 분리되어야 한다.
 - requirement discovery, readiness, operation/target ambiguity는 `flow`의 preparation 계약이어야 한다.
-- discovery는 질문 도구 실행 방식이 아니라 flow contract를 만들기 위한 질문 주제와 missing field를 산출하는 역할이어야 한다.
+- discovery는 질문 도구 실행 방식이 아니라 사용자 intent, scope edge, non-goal, tradeoff, acceptance signal을 압력 테스트해 flow contract를 잠그는 역할이어야 한다.
+- discovery는 단순히 빈 필드를 채우는 것이 아니라, 사용자가 실제로 원하는 결과와 거절할 tradeoff를 드러내야 한다.
+- discovery 질문은 가능하면 한 번에 하나의 high-leverage question으로 좁히고, bounded choice가 가능하면 선택지와 tradeoff를 함께 산출해야 한다.
 - review-loop, fix-verify-loop, broad-execution은 active flow 안에서 선택되는 flow-local strategy여야 한다.
 - review-loop는 여러 review/QA/self-review finding 전체를 한 번에 실행하는 전략이 아니라, active flow 안의 bounded blocking finding 하나를 처리하는 전략이어야 한다.
 - 여러 finding이 있으면 우선순위가 가장 높은 bounded blocking finding 하나를 선택하거나, discovery/parent flow로 finite follow-up 후보를 만들어야 한다.

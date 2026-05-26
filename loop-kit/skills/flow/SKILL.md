@@ -5,34 +5,34 @@ description: Interpret a message, action, plan item, review finding, or handoff 
 
 # Flow
 
-Use this skill to turn ambiguous work into a bounded flow contract before execution. A flow is a cohesive work unit that can be understood, reviewed, verified, and handed off. It is not just a phase label such as `analysis`, `work`, `verification`, `reporting`, or `commit readiness`.
+Use this skill to turn work into a bounded flow contract before execution. A flow is a cohesive work unit that can be understood, reviewed, verified, reported, and handed off. It is not merely a phase label such as `preparation`, `work`, `verification`, `reporting`, or `commit readiness`.
 
-Each active flow has internal phases: `preparation -> work -> verification -> reporting`. These phases remain inside the same active flow; do not split them into separate flows only because a phase starts or ends.
+Each active flow has internal phases: `preparation -> work -> verification -> reporting`. Keep those phases inside the same active flow unless a separate reviewable work unit is needed.
 
-## Flow Boundary
+## Classify The Item
 
-Classify the current item before acting:
+Before acting, decide what the current item is:
 
 - `active flow`: the selected flow currently being prepared, executed, verified, or reported.
-- `parent flow`: a flow whose result is a finite list of `sub-flow candidates`.
+- `parent flow`: a flow whose output is a finite list of `sub-flow candidates`.
 - `sub-flow candidate`: a proposed later flow with its own scope, non-goals, completion criteria, verification expectation, and handoff condition. Creating candidates is not execution.
 - `phase`: an internal step of the active flow, not a flow by itself.
 - `handoff`: a readiness or routing result, not execution authority.
 
-Pure final QA, consistency checks, verification reporting, and commit-readiness reporting are not separate change-unit flows unless they create or modify a reviewable artifact. A fixture, snapshot baseline, operator report, validator output, code change, document change, config change, or release surface change can be a flow when it owns a reviewable artifact.
+Pure analysis, QA, consistency checks, verification reporting, and commit-readiness reporting are not separate change-unit flows unless they create or modify a reviewable artifact. Code, docs, fixtures, config, snapshots, operator reports, validator output, or release surfaces can be flow-owned artifacts when they are the actual reviewable result.
 
 ## Flow Types
 
 Use two default flow types:
 
-- `operational-preparation`: locks intent, scope, non-goals, success signal, verification expectation, approval boundary, and planned flow candidates or sequence.
-- `change-unit`: owns a reviewable change to code, docs, fixtures, config, release surface, or another artifact.
+- `operational-preparation`: locks intent, scope, non-goals, success signal, verification expectation, approval boundary, and a planned flow list or finite candidates.
+- `change-unit`: owns a reviewable change to code, docs, fixtures, config, release surfaces, or another artifact.
 
-An operational-preparation flow may produce change-unit candidates. Those candidates stay inactive until selected by the surrounding routing or an explicitly prepared sequence.
+An operational-preparation flow may produce change-unit candidates. Those candidates remain inactive until selected by the surrounding routing or by an explicitly prepared sequence.
 
-## Output Contract
+## Flow Contract Output
 
-When designing a flow or sub-flow candidate, make these fields visible:
+When designing a flow or sub-flow candidate, make these fields visible when relevant:
 
 - flow label or slug
 - flow type: `operational-preparation` or `change-unit`
@@ -40,41 +40,80 @@ When designing a flow or sub-flow candidate, make these fields visible:
 - non-goals
 - completion criteria
 - verification expectation
-- phase start/end record checkpoint expectation
-- readiness status or missing contract fields
-- recommended question topics or unresolved ambiguity
-- recommended flow-local strategy
 - approval-sensitive checkpoint, if any
+- phase start/end record checkpoint expectation
+- readiness status
+- missing contract fields or unresolved edges
+- discovery topic or ambiguity to resolve
+- recommended flow-local strategy
 - handoff condition
 - unresolved questions or blocker
-- whether the item is an active flow or a sub-flow candidate
+- active-flow vs sub-flow-candidate status
 
-Keep completion criteria separate from handoff condition. Keep missing fields, question topics, and recommended strategies separate from execution authority.
+Keep completion criteria separate from handoff condition. Keep discovery topics, unresolved fields, and recommended strategies separate from authority to execute.
 
 ## Preparation
 
-Before work begins, check readiness. The flow contract must cover scope, non-goals, completion criteria, verification expectation, and handoff condition. If the operation, target, endpoint, approval boundary, or verification path changes the result, lock it before work.
+Do not enter work until the flow contract is ready enough for the risk. At minimum, check:
 
-Use discovery when user intent, included scope, non-goals, success criteria, verification expectation, or candidate decomposition is missing. Produce bounded question topics and missing fields; do not decide how the question is routed to the user.
+- user intent and expected result
+- included scope and scope edges
+- explicit non-goals
+- completion or acceptance signal
+- tradeoffs the user would reject
+- verification expectation
+- target and operation
+- approval boundary
+- handoff condition
+- whether the request should remain one active flow or become a parent flow with finite candidates
 
-Use ambiguity handling when an operation or target can point to multiple structures and the interpretation changes scope, output, verification, approval sensitivity, or handoff. Record the interpreted operation, target, alternate interpretations, and impact of ambiguity when needed.
+If an answer would change the artifact, decomposition, verification path, approval checkpoint, or handoff condition, stay in preparation.
+
+## Discovery
+
+Use discovery as a flow-local preparation strategy when intent, scope edge, non-goal, tradeoff, acceptance signal, verification expectation, or candidate decomposition is not locked. Discovery pressure-tests alignment; it is not just filling blank fields.
+
+Discovery should surface the smallest high-leverage topic that would change the flow contract. Prefer one bounded question topic at a time. If bounded choices can lock the contract, provide the choices with their tradeoffs. If free-form input is needed, identify whether the needed answer is an example, counterexample, non-goal, rejected tradeoff, success signal, verification expectation, or decomposition preference.
+
+Discovery output may include:
+
+- `initial intent snapshot`: what the user appears to want now.
+- `alignment risk`: how the current interpretation could be wrong.
+- `locked brief field`: the part of the contract that is now clear.
+- `unresolved edge`: the remaining scope, tradeoff, acceptance, verification, or decomposition issue.
+- `recommended handoff`: the bounded topic or unresolved field to route outside this skill.
+
+If the user's answer remains ambiguous, keep narrowing the same intent, scope edge, or tradeoff instead of switching topics. Do not treat discovery as approval for destructive, external, publish, release, commit, push, PR, or other approval-sensitive execution.
+
+This skill identifies question topics and unresolved fields only. The mechanism for asking the user, choosing a question tool, continuing the turn, or routing the next flow is owned outside this skill.
+
+## Ambiguity
+
+Use ambiguity handling when the operation or target can point to multiple structures and the interpretation changes scope, output, verification, approval sensitivity, or handoff. Record:
+
+- interpreted operation and target
+- alternate interpretations
+- why the difference matters
+- which contract field must be locked before work
+
+If ambiguity affects the result, return to discovery or produce a parent-flow candidate output instead of beginning work.
 
 ## Phase Record Checkpoints
 
-At the start and end of each active-flow phase, decide whether `000-plan.md` or the active flow record needs an update. `flow` defines the checkpoint expectation; the active turn controller applies record updates when it owns that runtime surface.
+At the start and end of each active-flow phase, decide whether `000-plan.md` or the active flow record needs an update. This skill defines the checkpoint expectation; the active turn controller applies record updates when it owns that runtime surface.
 
-Use these checkpoint rules:
+Use these checkpoint expectations:
 
-- `preparation` start: expose the current flow label, type, scope boundary, pending contract fields, and next preparation action.
-- `preparation` end: expose readiness status, locked scope and non-goals, missing questions or blockers, selected strategy, and whether work may begin.
-- `work` start: expose the active flow boundary, required next action, approval-sensitive checkpoint status, and expected work artifact.
-- `work` end: expose changed artifact or work result, issue found, next phase, and whether verification expectation changed.
-- `verification` start: expose verification method expectation, evidence needed, target surface, and any known limitation.
-- `verification` end: expose pass/fail/blocked/insufficient status, evidence gathered, residual risk, and earliest safe next phase if verification did not pass.
+- `preparation` start: expose flow label, type, scope boundary, pending contract fields, and next preparation action.
+- `preparation` end: expose readiness, locked scope and non-goals, missing questions or blockers, selected strategy, and whether work may begin.
+- `work` start: expose active flow boundary, next action, approval-sensitive checkpoint status, and expected artifact.
+- `work` end: expose changed artifact or work result, issue found, next phase, and any changed verification expectation.
+- `verification` start: expose verification method, evidence needed, target surface, and known limitation.
+- `verification` end: expose pass, fail, blocked, or insufficient status; evidence gathered; residual risk; and the earliest safe next phase if verification did not pass.
 - `reporting` start: expose reportable result, verification status, handoff condition, and unresolved question or blocker.
 - `reporting` end: expose reported outcome, residual risk, handoff condition, and any next-flow candidate without executing it.
 
-Update `000-plan.md` expectation when the active flow changes or the turn-level required next action changes. Update active flow record expectation when flow-local phase state, execution evidence, verification evidence, report outcome, or residual risk changes. If a trivial read-only judgment needs no record change, make the reason visible in the active flow record or report.
+Update `000-plan.md` expectation when the active flow or turn-level required next action changes. Update active flow record expectation when phase state, execution evidence, verification evidence, report outcome, or residual risk changes. If a trivial read-only judgment needs no record change, make that reason visible in the report or active flow record.
 
 ## Flow-Local Strategies
 
@@ -88,7 +127,7 @@ Do not use a flow-local strategy as authority to continue through multiple flows
 
 ## Verification And Handoff
 
-Set verification expectation from the flow risk and changed surfaces. After work, verify against that expectation or mark what evidence is missing. A verification failure or insufficient evidence sends the flow back to the earliest safe phase rather than success reporting.
+Set verification expectation from the flow risk and changed surfaces. After work, verify against that expectation or mark what evidence is missing. A verification failure or insufficient evidence sends the flow back to the earliest safe phase instead of success reporting.
 
 For commit-readiness, judge only whether handoff conditions are ready: intended change unit, diff scope, unrelated-change exclusion, verification evidence, and residual risk. Commit-readiness is not commit execution, staging, pushing, PR creation, publishing, release, or version bump authority.
 

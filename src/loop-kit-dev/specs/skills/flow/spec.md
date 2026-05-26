@@ -4,7 +4,7 @@
 
 `flow`는 메시지, 동작, 계획 항목, review finding, handoff를 응집된 작업 흐름 단위로 해석합니다.
 직접 실행 가능한 active flow인지, parent flow가 만들 finite `sub-flow candidates`인지, 또는 flow가 아닌 phase/reporting 항목인지 판단합니다.
-work 전에는 flow contract를 잠그고, active flow 안에서는 discovery, review-loop, fix-verify-loop, broad-execution, handoff 전략을 고릅니다.
+work 전에는 사용자 의도와 경계를 확인해 flow contract를 잠그고, active flow 안에서는 discovery, review-loop, fix-verify-loop, broad-execution, handoff 전략을 고릅니다.
 next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니다.
 
 ## 경계
@@ -16,7 +16,7 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
   - active flow와 follow-up/sub-flow 후보 구분
   - flow 내부 `preparation -> work -> verification -> reporting` 계약
   - active flow phase start/end record checkpoint 계약
-  - flow readiness, requirement discovery, operation/target ambiguity 판단
+  - flow readiness, intent-first requirement discovery, operation/target ambiguity 판단
   - flow-local review handling, fix-verify-reassess, broad execution strategy
   - flow completion criteria와 verification expectation 산출
   - commit-readiness 같은 flow handoff condition 판단
@@ -36,7 +36,7 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
 - 큰 요청을 parent flow로 받고 finite `sub-flow candidates`로 나눠야 하는 작업
 - 어떤 항목이 flow인지 phase인지, 또는 handoff/reporting인지 판정해야 하는 작업
 - flow별 scope, non-goals, completion criteria, verification expectation, handoff 조건을 설계해야 하는 작업
-- flow contract를 만들기 위한 요구사항 질문 또는 operation/target ambiguity를 판정해야 하는 작업
+- flow contract를 만들기 위한 intent, scope, tradeoff, acceptance 질문 또는 operation/target ambiguity를 판정해야 하는 작업
 - active flow 안에서 review finding, 작은 fix loop, broad execution 중 어떤 strategy가 필요한지 판단해야 하는 작업
 - 이미 끝난 flow가 완료 조건을 만족했는지 검토해야 하는 작업
 
@@ -58,7 +58,7 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
 - `core/turn-gate-relationship.md`: `flow`와 `turn-gate`의 소유권 경계
 - `core/phase-record-checkpoints.md`: active flow phase start/end에서 필요한 plan 또는 flow record checkpoint
 - `preparation/readiness.md`: work 진입 전 flow contract 충분성
-- `preparation/discovery.md`: requirement discovery와 scope lock 질문 주제
+- `preparation/discovery.md`: intent-first requirement discovery와 scope/tradeoff lock 질문 주제
 - `preparation/ambiguity.md`: operation/target ambiguity
 - `execution/review-loop.md`: active flow 안의 review/QA/self-review finding 처리 전략
 - `execution/fix-verify-loop.md`: 작은 fix-verify-reassess cycle 전략
@@ -71,7 +71,7 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
 - flow는 phase checklist가 아니라 이해, 리뷰, 검증, 필요 시 커밋 가능한 작업 단위입니다.
 - 하나의 flow는 `preparation -> work -> verification -> reporting`을 내부 단계로 갖습니다.
 - 각 active flow phase 시작과 종료는 `000-plan.md` 또는 active flow record 중 갱신 표면을 드러내야 합니다.
-- flow preparation은 readiness, discovery, ambiguity 판단으로 flow contract를 완성합니다.
+- flow preparation은 readiness, intent-first discovery, ambiguity 판단으로 flow contract를 완성합니다.
 - flow execution은 current flow 안에서 review-loop, fix-verify-loop, broad-execution을 선택할 수 있습니다.
 - review-loop는 여러 review finding 전체를 한 번에 실행하는 포괄 전략이 아니라, active flow 안의 bounded blocking finding 하나를 처리하는 전략입니다. 여러 finding이 있으면 우선순위 선택, discovery, 또는 finite follow-up 후보 설계가 먼저입니다.
 - flow가 너무 크거나 여러 산출물을 만들면 parent flow는 finite `sub-flow candidates`를 만들 수 있습니다.
@@ -86,7 +86,7 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
 - sub-flow 후보가 active execution flow처럼 실행되고 있지 않은가?
 - 각 flow에 scope, non-goals, completion criteria, verification expectation, handoff 조건이 있는가?
 - 각 phase 시작과 종료에서 `000-plan.md` 또는 active flow record 갱신 기준이 드러나는가?
-- readiness/discovery/ambiguity가 필요한데 flow contract 없이 work로 넘어가지 않았는가?
+- readiness/discovery/ambiguity가 필요한데 사용자 의도와 경계가 잠기지 않은 채 work로 넘어가지 않았는가?
 - flow-local strategy를 turn-level next-flow routing이나 self-drive sequence authority와 혼동하지 않았는가?
 - review-loop를 여러 finding 묶음 실행으로 넓히지 않고 bounded finding 하나 또는 후보 설계로 처리했는가?
 - flow 완료와 turn 종료를 혼동하지 않았는가?
