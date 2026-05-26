@@ -1,13 +1,13 @@
 ---
 name: sdd-skill-creator
-description: Create or update repository skills with spec-driven discipline. Use when Codex is asked to create, regenerate, or revise a skill in this repository and the work must keep user intent, specs, runtime SKILL.md content, and validation evidence separate.
+description: Create or update repository skills with spec-driven discipline. Use when Codex is asked to create, rewrite, regenerate, or revise a skill in this repository and the work must keep user intent, specs, runtime SKILL.md content, and validation evidence separate.
 ---
 
 # SDD Skill Creator
 
 ## Overview
 
-Use this skill as an overlay on the canonical `$skill-creator` workflow. Keep skill work in this repository spec-first: understand intent, update or confirm the owning spec, then generate the runtime `SKILL.md` from that spec instead of from loose conversation memory.
+Use this skill as an overlay on the canonical `$skill-creator` workflow. Keep skill work in this repository spec-first: understand intent, update or confirm the owning spec, then rewrite the runtime `SKILL.md` from that spec instead of from loose conversation memory or old runtime text.
 
 ## Required Inputs
 
@@ -34,15 +34,15 @@ Also load `$skill-creator` and follow its folder, frontmatter, interface metadat
 3. Confirm or write the spec before runtime text.
    - For plugin-owned skills, update the related skill spec and change spec before rewriting `SKILL.md`.
    - For standalone repository skills without a formal spec folder, write the durable contract directly in `SKILL.md`, but still keep transient session details out.
-   - If the user says the skill should be regenerated from spec, rebuild the runtime body from the spec rather than patching around old wording.
+   - If the user says the skill should be regenerated or rewritten from spec, rewrite the runtime body from the current spec rather than patching around old wording.
 
-4. Write plugin-owned runtime skills from spec with a fresh worker when needed.
+4. Rewrite runtime skills from the current spec.
    - When a plugin-owned skill spec changed and runtime skill writing is needed, the main agent first reviews the current spec and locks the source of truth.
-   - Use a newly spawned worker with clean context for the writing pass. Do not reuse or interrupt an existing worker for this purpose.
-   - The worker packet should include only: user intent, source of truth, editable scope, do-not-use sources, validation commands, and output contract.
-   - Do not give the writer prior worker output, main-thread suspected findings, old deleted specs, or `git diff` as writing source.
+   - The main agent owns the runtime rewrite. Do not delegate runtime writing or regeneration to a clean-context subagent.
+   - Use the current spec as the source of truth and treat old runtime text as optional reference, not as preserved source.
+   - Do not use prior worker output, main-thread suspected findings, old deleted specs, or `git diff` as writing source.
    - Treat old spec or diff comparison as a separate read-only verification or repair flow, not as the runtime writing source.
-   - The writer edits dev source only. The main agent owns release build output, final integration review, and any commit workflow.
+   - For plugin-owned skills, edit dev source only. The main agent owns release build output, final integration review, and any commit workflow.
 
 5. Generate the runtime skill.
    - Keep frontmatter to `name` and `description`.
@@ -55,19 +55,20 @@ Also load `$skill-creator` and follow its folder, frontmatter, interface metadat
 6. Validate and forward-test.
    - Run the canonical `quick_validate.py` against the skill folder.
    - For nontrivial skills, forward-test with a fresh subagent using only the skill path and a realistic task prompt.
+   - For spec/runtime alignment, use multiple clean-context verifier subagents with narrow read-only scopes. They verify; they do not write, rewrite, build, commit, push, PR, release, or version-bump.
    - Review generated artifacts yourself before reporting completion.
 
-## Regeneration Rule
+## Runtime Rewrite Rule
 
-When a skill body is regenerated from a spec, prefer this order:
+When a skill body is rewritten from a spec, prefer this order:
 
 1. Read the current spec and any owned child specs.
 2. Decide whether the runtime surface is only `SKILL.md` or the whole skill folder.
-3. For plugin-owned runtime writing, spawn a fresh clean-context worker with the current spec as source of truth.
+3. Rewrite the runtime surface from the current spec contract.
 4. Delete or fully replace the old runtime surface inside the editable scope.
-5. Write the new runtime surface from the current spec contract.
-6. Check that no conversation-only notes, prior-worker context, `git diff` recovery framing, old deleted spec paths, or unavailable dev paths leaked into runtime text.
-7. Validate the skill folder and inspect the resulting files.
+5. Check that no conversation-only notes, prior-worker context, `git diff` recovery framing, old deleted spec paths, or unavailable dev paths leaked into runtime text.
+6. Validate the skill folder and inspect the resulting files.
+7. Run read-only clean-context verifier subagents for spec/runtime alignment when the change is nontrivial or repository rules require it.
 
 Use patch editing only for small metadata fixes or localized corrections that do not change the skill's contract.
 

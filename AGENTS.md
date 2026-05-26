@@ -68,6 +68,8 @@
 - 플러그인 표면이 바뀌면 `README.md`, `specs/plugin.md`, 관련 skill spec, `plugin.json`을 같은 변경 단위에서 함께 점검합니다.
 - change spec을 정식 규칙으로 승격하라는 요청은 repo-level 규칙, `docs/SDD.md`, 또는 해당 소유 spec으로 반영하고, change spec 자체만 고쳐서 끝내지 않습니다.
 - folder-based skill spec의 사용자 스펙 의도는 `intent.md`가 소유하고, `spec.md`와 child spec에는 반복하지 않습니다.
+- skill spec이 바뀌면 기존 runtime skill 본문을 보존 대상으로 삼아 부분 패치하지 않고, 현재 spec 기준으로 `SKILL.md`를 처음부터 재작성합니다.
+- clean-context subagent는 runtime skill 작성 대행이 아니라 독립 검증에 사용합니다. spec/runtime 정합성 검증이 필요하면 여러 verifier가 각자 좁은 spec 표면을 읽고 맞는지 확인합니다.
 
 ## 마켓플레이스 단일 진실 공급원
 
@@ -92,6 +94,7 @@
 
 - 플러그인 수정 요청은 먼저 해당 dev source의 spec을 확인하고 필요한 spec 변경을 반영합니다.
 - 실제 skill 본문 변경은 spec 변경 또는 spec 확인 이후에 진행합니다.
+- skill spec을 수정했다면 해당 runtime skill은 현재 spec을 기준으로 처음부터 재작성합니다.
 - skill spec을 수정할 때는 해당 dev plugin의 `src/<plugin-name>-dev/changes/<version>.md` change spec에 변경사항을 기록합니다.
 - 일반 build는 `pnpm build:plugin <plugin-name> [--force]`를 사용합니다.
 - version bump가 필요한 release 승격은 `pnpm release:plugin <plugin-name> --bump <patch|minor|major> [--force]` 또는 `pnpm release:plugin <plugin-name> --version <version> [--force]`를 사용합니다.
@@ -153,7 +156,8 @@
 - `src/<plugin-name>-dev/specs/`는 개발 원본 계약이며, 설치되는 runtime skill 본문이 의존할 수 있는 표면이 아닙니다.
 - release surface에는 `specs/`가 포함되지 않는다는 전제로 skill 본문을 작성합니다.
 - skill 본문에는 설치 후 실제로 존재하지 않는 dev-only spec 경로를 "읽으라"는 실행 지시로 넣지 않습니다.
-- skill을 작성하거나 재생성할 때 spec은 대화 맥락과 작성 기준으로 사용하고, 결과물인 `SKILL.md`에는 runtime에서 접근 가능한 `references/`, `templates/`, 또는 본문 자체의 지시만 남깁니다.
+- skill을 작성하거나 재작성할 때 spec은 대화 맥락과 작성 기준으로 사용하고, 결과물인 `SKILL.md`에는 runtime에서 접근 가능한 `references/`, `templates/`, 또는 본문 자체의 지시만 남깁니다.
+- spec 변경 후 runtime skill을 맞출 때는 clean-context subagent에게 재생성을 맡기는 방식이 아니라, 현재 spec 기준으로 `SKILL.md`를 처음부터 다시 작성합니다.
 - 상세 계약이 runtime에서도 필요하면 dev spec을 직접 참조시키지 말고, 필요한 내용을 간결히 본문에 포함하거나 `skills/<skill-name>/references/`로 승격한 뒤 build 산출물에 포함되게 합니다.
 - dev source에서는 spec 파일이 보이더라도, root release plugin을 설치한 사용자가 같은 경로를 볼 수 있다고 가정하지 않습니다.
 
@@ -188,7 +192,9 @@ plugin usage 표면을 바꿀 때는 다음을 함께 처리합니다.
 - clean context에는 source of truth, 대상 파일, 편집 가능 범위, 금지 범위, 검증 조건, 출력 계약처럼 작업에 필요한 기준만 전달합니다.
 - clean context에는 prior worker output, main agent의 suspected finding, git diff 기반 복구 방향, 이전 실패 서사를 전달하지 않습니다.
 - 기존 subagent를 interrupt하거나 재사용하는 것은 clean context가 아닙니다. clean context가 필요한 경우 새 subagent를 spawn합니다.
-- clean context는 검증뿐 아니라 spec 기준 작성에도 적용할 수 있습니다.
+- clean context는 spec 기준 작성 결과를 검증할 때 사용할 수 있지만, runtime skill 작성이나 재작성 자체를 맡기는 방식으로 사용하지 않습니다.
+- skill spec/runtime 정합성을 검증할 때는 가능한 한 여러 clean-context verifier를 사용하고, 각 verifier에는 서로 다른 spec 표면 또는 책임 영역을 좁게 배정합니다.
+- verifier subagent는 read-only로만 동작하며, `SKILL.md` 재작성·수정·빌드·커밋 권한을 갖지 않습니다.
 
 ## 문서 맵
 

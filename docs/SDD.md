@@ -53,6 +53,22 @@ flat skill spec은 다음을 소유합니다.
 skill spec에는 해당 skill이 실제로 무엇을 판단하고 어떤 계약으로 동작하는지 적습니다.
 실제 판단을 수행하는 skill이라면 `핵심 처리 계약` 뒤에 실제 문서에서 쓰는 규칙 섹션 이름을 그대로 두고, 필요할 때만 섹션 수를 줄이거나 늘립니다.
 
+## Runtime Skill 재작성
+
+skill spec이 바뀌면 해당 runtime `SKILL.md`는 현재 spec을 기준으로 처음부터 재작성합니다.
+기존 runtime 본문은 참고 자료가 될 수 있지만, 보존해야 할 원본이나 부분 패치 대상으로 취급하지 않습니다.
+
+재작성 시 지킬 기준:
+
+- spec의 현재 목적, 경계, 처리 계약, 판단 규칙, 검토 질문, 독립성 원칙을 먼저 읽습니다.
+- runtime에서 필요한 계약만 `SKILL.md`, `references/`, `templates/` 같은 설치 후 접근 가능한 표면으로 옮깁니다.
+- dev-only spec 경로를 runtime 실행 지시로 남기지 않습니다.
+- 이전 runtime 문구를 유지할지는 spec과 runtime 사용성 기준으로 다시 판단합니다.
+- spec 변경이 skill 책임, plugin boundary, sibling 관계를 바꾸면 plugin spec과 인접 skill spec도 같은 변경 단위에서 점검합니다.
+
+clean-context subagent는 runtime skill 재작성 대행자가 아닙니다.
+clean-context는 독립적인 read-only 검증에 사용하고, 재작성 책임은 현재 작업을 소유한 주 실행자가 집니다.
+
 ## Folder-Based Skill Spec
 
 skill spec이 커져 하나의 파일 안에서 index와 세부 계약이 반복되면 folder-based spec으로 전환할 수 있습니다.
@@ -151,6 +167,22 @@ folder-based skill spec을 만들 때는 `skill-spec.md`를 그대로 모든 chi
 
 - 플러그인 수정 요청은 먼저 해당 dev source의 spec을 확인하고 필요한 spec 변경을 반영합니다.
 - 실제 skill 본문 변경은 spec 변경 또는 spec 확인 이후에 진행합니다.
+- skill spec을 수정했다면 해당 runtime skill을 현재 spec 기준으로 처음부터 재작성합니다.
 - skill 책임, 사용 기준, plugin boundary가 바뀌면 관련 skill spec, plugin spec, upstream/downstream plugin surface를 같은 변경 단위에서 함께 점검합니다.
 - spec 없는 skill 추가를 기본 경로로 두지 않습니다.
 - 반복되는 검토 질문, 예시, decision rule이 생기면 skill spec 안에서 소유할지 별도 reference 문서로 뺄지 의도적으로 결정합니다.
+
+## Spec/Runtime 검증
+
+skill spec 또는 runtime skill을 바꾼 뒤에는 spec/runtime 정합성을 검증합니다.
+파일 변경, release surface 변경, multi-spec contract 변경, 사용자 요청 검증에는 clean-context verifier를 기본값으로 둡니다.
+
+검증 방식:
+
+- 여러 clean-context verifier를 사용해 각 verifier가 하나의 spec 표면, child spec, 또는 책임 영역을 좁게 확인하도록 나눕니다.
+- verifier packet에는 target spec, target runtime, 확인할 계약, pass/fail 기준, read-only 경계, 금지 작업을 포함합니다.
+- verifier에게 이전 worker output, main agent의 의심, git diff 기반 복구 방향, 실패 서사를 전달하지 않습니다.
+- verifier는 수정, 재작성, 빌드, 커밋, push, PR, release, version bump를 수행하지 않습니다.
+- 주 실행자는 verifier 결과를 그대로 최종 답으로 쓰지 않고, 결과를 대조해 누락·충돌·오탐을 판단합니다.
+
+검증 결과가 불일치하면 성공 보고하지 않고 가장 이른 안전한 spec 또는 runtime 재작성 단계로 돌아갑니다.
