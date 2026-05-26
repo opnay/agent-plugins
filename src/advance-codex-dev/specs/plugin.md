@@ -17,6 +17,7 @@
   - reviewable work unit 동안 worker subagent를 운영하고 작업 단위 종료 시 close/dispose하는 생애주기 설계
   - task-scoped commit finalization discipline
   - 문제 해결 중심의 engineering judgment, root cause analysis, implementation discipline
+  - 응답 표면의 토큰 낭비를 줄이되 정확성, 검증, 승인 경계를 보존하는 response optimization
 - 제외:
   - 일반 제품 구현 workflow
   - 특정 도메인 기능 구현 가이드
@@ -30,6 +31,7 @@
 - reusable instruction을 clean-context scenario로 테스트하고 evidence 중심으로 분석하는 작업
 - commit workflow처럼 Codex 사용 자체의 운영 품질을 안정화하는 작업
 - 코드 작성과 버그 수정에서 문제 정의, 원인 분석, 작은 완전 수정, 검증과 리스크 보고 기준을 명시하는 작업
+- 응답을 짧고 선명하게 다듬되 필수 보고 정보와 안전 경계를 유지하는 작업
 
 ## 대표 표면
 
@@ -55,6 +57,8 @@
   - spec: `advance-codex-dev/specs/skills/git-committer.md`
 - `pro-engineering`: 코드 작성과 문제 해결에서 엔지니어링 판단, 원인 분석, 구현 규율, 검증 기준을 제공한다.
   - spec: `advance-codex-dev/specs/skills/pro-engineering/spec.md`
+- `optimize-token`: 응답을 간결하게 압축하되 정확성, 검증 상태, 승인 경계, 필수 출력 형식을 보존하는 기준을 제공한다.
+  - spec: `advance-codex-dev/specs/skills/optimize-token.md`
 
 ## SDD 운영 원칙
 
