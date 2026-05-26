@@ -1,6 +1,6 @@
 # Approval-Sensitive Release Verification 시나리오
 
-## 목적
+## 검증 목적
 
 이 시나리오는 release, version bump, publish 계열 요청에서 risk-based verification의 경량화 규칙이 approval boundary를 약화하지 않는지 확인합니다.
 `close-after-result`, `micro`, evidence checklist 같은 가벼운 경로는 approval-sensitive action의 승인이나 검증을 대신할 수 없습니다.

@@ -1,6 +1,6 @@
 # Micro Read-Only Research Verification 시나리오
 
-## 목적
+## 검증 목적
 
 이 시나리오는 파일을 수정하지 않는 작은 조사 요청에서 `turn-gate`가 clean-context verifier subagent를 무조건 요구하지 않는지 확인합니다.
 검증 단계는 유지하되, 검증 방법은 evidence checklist와 source readback으로 충분할 수 있어야 합니다.

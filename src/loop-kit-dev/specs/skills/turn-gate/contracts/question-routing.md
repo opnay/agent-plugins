@@ -1,10 +1,10 @@
 # turn-gate question-routing 계약
 
-## 목적
+## 소유 범위
 
-이 계약은 reporting 뒤 user-gated routing, clarification, blocker decision, structured `request_user_input` 사용, fallback, question abort recovery를 소유합니다.
+reporting 뒤 user-gated routing, clarification, blocker decision, structured `request_user_input`, fallback, question abort recovery.
 
-## 다음 Flow 라우팅
+## 계약
 
 reporting 뒤 현재 사용자 메시지가 턴을 명시적으로 끝내지 않았다면 다음 flow를 다시 열어야 합니다.
 
@@ -24,7 +24,7 @@ structured choices가 가능하고 도구가 사용 가능하면 `request_user_i
 
 질문은 지금 필요한 결정만 물어야 합니다. 가능하다는 이유만으로 관계없는 미래 작업 선택지를 묶지 않습니다.
 
-## 중단 복구
+## 중단 복구 계약
 
 `request_user_input`이 사용자 interrupt로 abort 또는 cancel되더라도, 그것은 flow completion, explicit stop, terminal close authority가 아닙니다.
 
@@ -49,7 +49,7 @@ recovery state를 다음처럼 기록합니다.
 
 pending question이 superseded되면 superseded question id 또는 summary와 새 flow source를 기록합니다. 질문이 superseded되더라도 이전 flow의 report나 verification result는 지우지 않습니다.
 
-## 명확화와 차단 상태
+## 명확화와 차단 계약
 
 scope, target, endpoint, approval boundary, blocker state, current-flow identity가 성공 조건이나 verification path를 바꿀 수 있으면 user-gated routing을 사용합니다. 이 경계를 추측으로 넘지 않습니다.
 

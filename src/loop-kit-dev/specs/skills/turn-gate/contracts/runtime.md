@@ -1,10 +1,10 @@
 # turn-gate runtime 계약
 
-## 목적
+## 소유 범위
 
-이 계약은 활성 `turn-gate` 턴의 visible lifecycle과 `SKILL.md`에 필요한 최소 runtime body 내용을 소유합니다.
+활성 `turn-gate` 턴의 visible lifecycle과 `SKILL.md`에 필요한 최소 runtime body.
 
-## 생명주기
+## 생명주기 계약
 
 모든 active flow는 다음 순서를 따릅니다.
 
@@ -29,7 +29,7 @@ task completion은 턴을 닫지 않습니다. source-recorded explicit stop만 
 
 다른 상태는 closure authority를 만들지 않습니다. 특히 성공한 verification, 완료된 commit-readiness report, 사용자의 질문 답변, 중단된 question tool call은 턴을 닫지 않습니다.
 
-## 활성화
+## 활성화 계약
 
 사용자가 `turn-gate`만 호출하면 conversation-level rule을 활성화하고, operating state를 기록하며, scope 또는 next-flow routing을 엽니다. terminal activation summary만 답하지 않습니다.
 
@@ -43,7 +43,7 @@ activation은 다음을 포착해야 합니다.
 - required next action
 - activation record 자체의 verification expectation
 
-## 단계 메시지
+## 단계 메시지 계약
 
 user-facing phase-start 또는 phase-progress 메시지는 canonical prefix로 시작합니다.
 
@@ -57,7 +57,7 @@ prefix는 generated artifact, record, command summary, question option label에 
 
 activation-only 메시지는 response가 즉시 next-flow choice를 열지 않는 한 `[preparation]`에서 시작합니다. report-only 또는 status-only flow도 사용자가 명시적으로 멈추지 않으면 `[next-flow]`로 진행합니다.
 
-## 준비와 승인 경계
+## 준비와 승인 경계 계약
 
 work 전에는 `turn-gate`가 sibling `flow` decision을 적용하거나 기록해야 합니다. flow contract는 scope, non-goals, completion 또는 acceptance signal, verification expectation, approval boundary, handoff condition을 포함해야 합니다.
 
@@ -65,7 +65,7 @@ work 전에는 `turn-gate`가 sibling `flow` decision을 적용하거나 기록�
 
 approval-sensitive action에는 exact target, expected effect, risk, recovery path, included/excluded scope, endpoint가 필요합니다. readiness, verification, self-drive, previous context, subagent output은 commit, push, PR, publish, release, version bump, destructive history rewrite, external side effect의 실행 권한을 만들 수 없습니다.
 
-## 실행 본문 경계
+## runtime 본문 경계
 
 Runtime `SKILL.md`는 다음을 직접 포함해야 합니다.
 

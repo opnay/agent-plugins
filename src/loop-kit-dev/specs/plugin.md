@@ -77,6 +77,8 @@ work 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, f
 - `workflow-kit`은 일반 workflow skill 의미를 제공한다.
 - `loop-kit-dev`은 flow 단위 규칙, turn-gate 사용자 표면, runtime loop orchestration, session continuity contract를 소유한다.
 - 복잡한 skill spec은 `specs/skills/<skill-name>/spec.md`를 기본 index로 두고, 세부 계약은 같은 folder 아래 sub-spec으로 분리할 수 있다.
+- spec 문서는 현재 유지되는 계약을 짧고 직접적으로 적는다. migration 과정, 작업 지시, 중복 설명은 change spec이나 session record에 둔다.
+- child spec은 `소유 범위`, `계약`, `검토 기준`처럼 반복 가능한 작은 구조를 우선 사용하고, runtime 지시와 spec-side fixture를 섞지 않는다.
 - `turn-gate`의 필수 운영 도구는 기본적으로 질문 도구 `request_user_input`와 계획 도구 `update_plan`이다.
 - `turn-gate`의 verification method는 `clean-context`, `normal`, `not-required`로 구분한다.
 - `clean-context`는 읽기 전용 bounded verifier subagent 실행을 포함하며, 이 검증 전용 실행은 `turn-gate` 활성 중 사전 허용된 계약으로 취급한다.

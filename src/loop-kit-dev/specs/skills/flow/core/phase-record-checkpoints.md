@@ -1,8 +1,8 @@
-# flow phase record checkpoints
+# flow phase record checkpoint 계약
 
-## 목적
+## 소유 범위
 
-이 문서는 active flow의 `preparation -> work -> verification -> reporting` phase 시작과 종료에서 필요한 기록 checkpoint를 소유합니다.
+active flow의 `preparation -> work -> verification -> reporting` phase 시작과 종료에 필요한 기록 checkpoint.
 
 ## 계약
 
@@ -15,7 +15,7 @@
 - checkpoint는 phase를 별도 flow로 만들지 않습니다. `preparation`, `work`, `verification`, `reporting`은 여전히 같은 active flow 내부의 phase입니다.
 - trivial read-only judgment처럼 기록 변경이 필요 없다고 판단하는 경우에도 이유가 active flow record나 report에 남아야 합니다.
 
-## 검토 질문
+## 검토 기준
 
 - phase 시작 때 현재 phase와 required next action이 기록에서 재구성 가능한가?
 - phase 종료 때 결과와 다음 phase가 기록에서 재구성 가능한가?

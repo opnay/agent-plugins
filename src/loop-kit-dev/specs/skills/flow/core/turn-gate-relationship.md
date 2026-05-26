@@ -1,8 +1,8 @@
-# flow and turn-gate relationship
+# flow와 turn-gate 관계 계약
 
-## 목적
+## 소유 범위
 
-이 문서는 `flow`와 `turn-gate`의 소유권 경계를 소유합니다.
+`flow`와 `turn-gate`의 소유권 경계.
 
 ## 계약
 
@@ -16,7 +16,7 @@
 - self-drive는 준비된 flow sequence 위에서만 자동 진행할 수 있으며, sub-flow 후보 생성 자체로 self-drive 실행 권한이 생기지 않습니다.
 - flow-local broad execution은 단일 active flow 안의 strategy이며, 여러 flow를 자동으로 이어가는 권한이 아닙니다.
 
-## 검토 질문
+## 검토 기준
 
 - flow 완료와 turn 종료를 혼동하지 않았는가?
 - sub-flow 후보를 `turn-gate` 질문 없이 실행하지 않았는가?

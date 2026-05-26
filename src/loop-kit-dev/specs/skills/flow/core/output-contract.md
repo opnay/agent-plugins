@@ -1,10 +1,10 @@
-# flow output contract
+# flow output 계약
 
-## 목적
+## 소유 범위
 
-이 문서는 flow 설계 또는 sub-flow 후보 산출물의 필수 필드를 소유합니다.
+flow 설계 또는 sub-flow 후보 산출물의 필수 필드.
 
-## Output Contract
+## 계약
 
 flow 설계 또는 sub-flow 후보 산출물에는 최소한 다음이 드러나야 합니다.
 
@@ -23,7 +23,7 @@ flow 설계 또는 sub-flow 후보 산출물에는 최소한 다음이 드러나
 - unresolved questions 또는 blocker
 - active flow인지, sub-flow candidate인지 여부
 
-## 검토 질문
+## 검토 기준
 
 - 후보가 active flow인지 sub-flow candidate인지 명확한가?
 - completion criteria와 handoff condition이 분리되어 있는가?

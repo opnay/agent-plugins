@@ -1,6 +1,6 @@
 # Self-Drive Mid-Sequence Status 시나리오
 
-## 목적
+## 검증 목적
 
 이 시나리오는 self-drive가 준비된 sequence를 실행하는 도중 사용자가 상태만 물었을 때, 흐름을 닫거나 planned sequence를 바꾸지 않고 현재 상태를 보고한 뒤 계속 진행하는지 확인합니다.
 

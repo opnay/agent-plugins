@@ -1,6 +1,6 @@
 # 커밋 완료 후 Continuation Flow Boundary 시나리오
 
-## 목적
+## 검증 목적
 
 이 시나리오는 커밋 실행이 끝난 뒤 `turn-gate`가 자동으로 턴을 닫지 않는지 확인합니다.
 커밋 완료 보고는 explicit stop이 아니며, 보고 이후에는 next-flow question-routing으로 이어져야 합니다.

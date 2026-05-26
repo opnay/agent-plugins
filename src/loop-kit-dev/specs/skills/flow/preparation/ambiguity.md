@@ -1,8 +1,8 @@
-# flow ambiguity preparation sub-spec
+# flow ambiguity preparation 계약
 
-## 목적
+## 소유 범위
 
-이 문서는 flow contract 형성에 영향을 주는 operation/target ambiguity를 잠그는 계약을 소유합니다.
+flow contract 형성에 영향을 주는 operation/target ambiguity 잠금.
 
 ## 계약
 
@@ -13,7 +13,7 @@
 - ambiguity resolution 결과는 interpreted operation, operation target, alternate interpretations, impact of ambiguity로 flow output 또는 record에 남길 수 있어야 한다.
 - destructive, irreversible, external, commit, push, PR, publish, release, version bump 실행 승인은 이 문서가 아니라 approval boundary가 소유한다.
 
-## 검토 질문
+## 검토 기준
 
 - 해석 후보가 flow scope나 산출물을 바꾸는가?
 - 해석 후보가 approval-sensitive action 여부를 바꾸는가?

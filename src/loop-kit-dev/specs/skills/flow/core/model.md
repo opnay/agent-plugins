@@ -1,8 +1,8 @@
-# flow core model
+# flow core model 계약
 
-## 목적
+## 소유 범위
 
-이 문서는 `flow`의 핵심 모델인 flow, parent flow, sub-flow candidate, active flow 관계를 소유합니다.
+flow, parent flow, sub-flow candidate, active flow 관계.
 
 ## 계약
 
@@ -19,7 +19,7 @@
 - flow가 끝났다는 사실은 turn이 끝났다는 뜻이 아닙니다. turn-level next-flow reopening은 `turn-gate`가 소유합니다.
 - flow-local strategy는 여러 flow를 자동으로 이어가는 self-drive sequence authority가 아닙니다.
 
-## 검토 질문
+## 검토 기준
 
 - parent flow가 finite 후보 목록을 만들었는가?
 - 후보 생성과 후보 실행을 혼동하지 않았는가?

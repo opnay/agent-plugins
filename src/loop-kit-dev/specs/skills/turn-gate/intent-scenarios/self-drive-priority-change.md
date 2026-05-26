@@ -1,6 +1,6 @@
 # Self-Drive Priority Change 시나리오
 
-## 목적
+## 검증 목적
 
 이 시나리오는 self-drive가 준비된 sequence를 실행하는 도중 사용자가 planned flow 우선순위나 scope를 바꿨을 때, 기존 sequence를 조용히 계속하지 않고 updated sequence를 다시 잠그는지 확인합니다.
 

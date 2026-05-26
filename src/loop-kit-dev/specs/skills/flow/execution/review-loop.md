@@ -1,8 +1,8 @@
-# flow review-loop execution sub-spec
+# flow review-loop 계약
 
-## 목적
+## 소유 범위
 
-이 문서는 active flow 안에서 review feedback, QA finding, self-review finding을 처리하는 flow-local 실행 전략을 소유합니다.
+active flow 안에서 review feedback, QA finding, self-review finding을 처리하는 flow-local 실행 전략.
 
 ## 계약
 
@@ -14,7 +14,7 @@
 - low-value note나 speculative polish는 현재 flow를 넓히지 않고 follow-up candidate로 둔다.
 - finding이 새 scope, 새 approval boundary, destructive/external action을 요구하면 current flow execution을 넓히지 않고 preparation 또는 handoff로 되돌린다.
 
-## 검토 질문
+## 검토 기준
 
 - finding이 현재 flow scope 안의 blocking issue인가?
 - 한 번에 하나의 bounded finding만 처리했는가?

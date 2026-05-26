@@ -1,8 +1,8 @@
-# flow discovery preparation sub-spec
+# flow discovery preparation 계약
 
-## 목적
+## 소유 범위
 
-이 문서는 요구사항 발견과 scope lock이 flow contract 형성의 병목일 때 필요한 질문 전략을 소유합니다.
+요구사항 발견과 scope lock이 flow contract 형성의 병목일 때 필요한 질문 주제.
 
 ## 계약
 
@@ -14,7 +14,7 @@
 - bounded choices로 잠글 수 있는 질문 주제를 산출하되, `request_user_input` 사용 방식은 question-routing이 소유한다.
 - 위험 작업 승인은 discovery 질문만으로 대체하지 않는다.
 
-## 검토 질문
+## 검토 기준
 
 - 질문 답변에 따라 flow contract 또는 sub-flow 후보가 달라지는가?
 - discovery 결과가 scope, non-goals, completion criteria, verification expectation으로 반영되는가?

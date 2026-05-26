@@ -1,11 +1,9 @@
 # turn-gate intent scenarios
 
-이 폴더는 `turn-gate`가 의도한 flow boundary 의미를 유지하는지 확인하기 위한 intent 시나리오를 보관합니다.
+이 폴더는 `turn-gate` continuity, routing, verification, session record, self-drive 경계를 회귀 평가하는 spec-side fixture를 보관합니다.
+시나리오는 runtime instruction이 아니며, skill 문구나 planning 동작을 바꿀 때 평가 입력으로 사용합니다.
 
-이 시나리오들은 그 자체로 runtime instruction이 아니라 spec-side fixture입니다.
-skill 문구를 재생성하거나 flow planning 동작을 바꾸는 경우 평가 입력으로 사용합니다.
-
-## 시나리오 계약
+## fixture 계약
 
 각 시나리오는 다음 항목을 기록해야 합니다.
 
@@ -25,7 +23,7 @@ skill 문구를 재생성하거나 flow planning 동작을 바꾸는 경우 평�
 조건부 문구만으로 "아무 method나 허용"하지 않으며, file-change, release/build, approval-sensitive, strong regression fixture는 단일 expected method를 유지합니다.
 경량화 시나리오라도 approval-sensitive boundary, 파일 변경 시 검증 기본값, non-pass routing을 약화하면 안 됩니다.
 
-## 현재 시나리오
+## 현재 fixture
 
 - `commit-completion-continuation-flow.md`: 커밋 완료가 explicit stop이 아니며, 보고 뒤 next-flow question-routing으로 이어지는지 확인합니다.
 - `approval-sensitive-release-verification.md`: release/version/publish 계열 요청에서 approval-sensitive boundary와 stronger verification이 경량화보다 우선하는지 확인합니다.

@@ -1,8 +1,8 @@
-# flow commit-readiness handoff sub-spec
+# flow commit-readiness handoff 계약
 
-## 목적
+## 소유 범위
 
-이 문서는 active flow 또는 change unit이 commit handoff로 이동할 준비가 됐는지 판단하는 flow-local handoff 계약을 소유합니다.
+active flow 또는 change unit이 commit handoff로 이동할 준비가 됐는지 판단하는 flow-local handoff.
 
 ## 계약
 
@@ -13,7 +13,7 @@
 - verification evidence가 부족하면 readiness를 성공으로 보고하지 않고 flow의 earliest safe phase로 되돌린다.
 - commit-readiness 자체가 별도 산출물 변경을 소유하지 않으면 독립 change-unit flow가 아니다.
 
-## 검토 질문
+## 검토 기준
 
 - intended change unit과 unrelated-change exclusion이 분명한가?
 - verification evidence와 residual risk가 commit handoff에 충분한가?

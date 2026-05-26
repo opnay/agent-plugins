@@ -2,7 +2,8 @@
 
 ## 목적
 
-`turn-gate`는 사용자가 명시적으로 현재 턴을 끝내기 전까지 활성 Codex 턴을 열린 상태로 유지하는 `loop-kit` 스킬입니다. 각 활성 flow에 sibling `flow` 계약을 적용하고, session record를 유지하며, 보고 전에 검증을 수행하고, 보고 뒤에는 다음 flow 선택을 다시 엽니다.
+`turn-gate`는 사용자가 명시적으로 현재 턴을 끝내기 전까지 활성 Codex 턴을 열린 상태로 유지합니다.
+각 active flow에 sibling `flow` 계약을 적용하고, session record를 갱신하며, 보고 전에 검증을 처리하고, 보고 뒤에는 다음 flow 선택을 다시 엽니다.
 
 이 폴더에서는 `intent.md`가 사용자 의도 기록을 소유하고, `intent-scenarios/`가 회귀 의도 fixture를 소유합니다. 지속 실행 계약은 `contracts/`가 소유합니다.
 
@@ -10,23 +11,23 @@
 
 ## 경계
 
-포함:
+- 포함:
 
-- 대화 턴 단위 continuity
-- `preparation -> work -> verification -> reporting -> next-flow`
-- source-recorded explicit stop 처리
-- session record와 Continuity Guard
-- next-flow question routing과 question abort recovery
-- 위험 기반 verification routing
-- approval-sensitive checkpoint 경계
-- 명시적으로 준비된 overlay로서의 self-drive
+  - 대화 턴 단위 continuity
+  - `preparation -> work -> verification -> reporting -> next-flow`
+  - source-recorded explicit stop 처리
+  - session record와 Continuity Guard
+  - next-flow question routing과 question abort recovery
+  - 위험 기반 verification routing
+  - approval-sensitive checkpoint 경계
+  - 명시적으로 준비된 overlay로서의 self-drive
 
-제외:
+- 제외:
 
-- flow taxonomy, parent flow, sub-flow candidate, readiness, discovery, flow-local strategy 정의. 이 책임은 sibling `flow`가 소유합니다.
-- 설치 후 runtime reader가 dev-only spec 경로를 읽도록 지시하는 일
-- readiness, verification, self-drive, 또는 이전 맥락을 commit, push, PR, publish, release, version bump 승인으로 취급하는 일
-- 완료된 작업, 성공한 검증, 답변된 질문, 중단된 질문 도구, stale record, final처럼 보이는 문구를 turn closure로 취급하는 일
+  - flow taxonomy, parent flow, sub-flow candidate, readiness, discovery, flow-local strategy 정의
+  - 설치 후 runtime reader가 dev-only spec 경로를 읽도록 지시하는 일
+  - readiness, verification, self-drive, 이전 맥락을 commit, push, PR, publish, release, version bump 승인으로 취급하는 일
+  - 완료된 작업, 성공한 검증, 답변된 질문, 중단된 질문 도구, stale record, final처럼 보이는 문구를 turn closure로 취급하는 일
 
 ## 대표 표면
 
@@ -38,9 +39,9 @@
 
 ## 계약 맵
 
-- `contracts/runtime.md`: active-turn lifecycle, activation, explicit stop, phase prefix, runtime body 경계, approval checkpoint 위치
+- `contracts/runtime.md`: active-turn lifecycle, activation, explicit stop, phase prefix, runtime body 경계, approval checkpoint
 - `contracts/question-routing.md`: next-flow reopening, structured question 사용, fallback, pending question recovery, `request_user_input` abort 처리
-- `contracts/session-records.md`: `000-plan.md`, flow record, self-drive sidecar pointer, raw request 처리, Continuity Guard, recovery case
+- `contracts/session-records.md`: `000-plan.md`, flow record, self-drive sidecar pointer, raw request, Continuity Guard, recovery case
 - `contracts/verification.md`: verification method 선택, result status, clean-context verifier 경계, non-pass routing
 - `contracts/self-drive.md`: prepared sequence overlay, sidecar gate, interruption handling, endpoint 처리, approval boundary
 

@@ -1,10 +1,10 @@
 # turn-gate verification 계약
 
-## 목적
+## 소유 범위
 
-이 계약은 verification method 선택, result status, non-pass routing을 소유합니다.
+verification method 선택, result status, non-pass routing.
 
-## 검증 방법
+## method 계약
 
 - `clean-context`: full-history fork가 아니라 bounded read-only verifier packet입니다.
 - `normal`: main-thread checks, readback, evidence review, logical counterexample review입니다.
@@ -14,7 +14,7 @@ method는 result status가 아닙니다.
 
 reporting 전에 method를 선택합니다. 선택한 method와 그 이유를 모두 기록합니다.
 
-## 결과 상태
+## result status 계약
 
 - `pass`
 - `fail`
@@ -32,7 +32,7 @@ result status는 선택된 verification method의 결과를 설명해야 합니�
 
 flow record의 진행 상태는 result status와 분리할 수 있습니다. verification이 아직 실행되지 않은 새 flow는 `verification_status`를 `not-started`로 둘 수 있고, clean-context verifier를 요청했지만 결과가 오기 전에는 `requested`로 둘 수 있습니다. `not-started`와 `requested`는 성공/실패 결과가 아니라 기록용 진행 상태이며, reporting에서 성공 근거로 사용할 수 없습니다.
 
-## Clean-Context 기본값
+## clean-context 기본값
 
 파일 변경, release surface 변경, 다중 파일 contract 변경, prior check failure, 사용자 요청 verification/review/QA/commit-readiness, approval-sensitive action에는 기본적으로 `clean-context`를 사용합니다.
 
@@ -44,7 +44,7 @@ clean-context verification은 flow record가 실제 위험에 대해 `normal` �
 
 documentation-only research artifact가 바뀐 경우에도 파일 변경이면 `clean-context` 기본값을 유지합니다. 다만 verifier packet은 전체 source 재조사가 아니라 변경된 artifact, active session record, 이미 기록된 evidence gap, 필수 heading, conclusion/evidence 일관성, 구현 완료 허위 claim 여부로 좁힙니다.
 
-## 미통과 라우팅
+## non-pass 라우팅
 
 success를 보고하기 전에 non-pass result를 라우팅합니다.
 

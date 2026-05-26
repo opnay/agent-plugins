@@ -1,6 +1,6 @@
 # Not-Required Routing Verification 시나리오
 
-## 목적
+## 검증 목적
 
 이 시나리오는 검증할 work output이 없는 routing-only 요청에서 `not-required` verification method를 사용할 수 있는지 확인합니다.
 `not-required`는 검증 성공 상태가 아니라 method 판단이며, 이유와 남은 불확실성을 기록해야 합니다.

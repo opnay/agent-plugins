@@ -1,8 +1,8 @@
-# flow fix-verify-loop execution sub-spec
+# flow fix-verify-loop 계약
 
-## 목적
+## 소유 범위
 
-이 문서는 active flow 안에서 하나의 좁은 문제를 작은 fix-verify-reassess cycle로 처리하는 전략을 소유합니다.
+active flow 안에서 하나의 좁은 문제를 작은 fix-verify-reassess cycle로 처리하는 전략.
 
 ## 계약
 
@@ -13,7 +13,7 @@
 - 다음 loop가 필요한지는 매번 재평가한다.
 - success criteria, non-goal, verification expectation, approval boundary가 바뀔 정도로 커지면 현재 loop를 멈추고 flow preparation 또는 handoff로 되돌린다.
 
-## 검토 질문
+## 검토 기준
 
 - 이 loop가 하나의 primary issue에 머무르는가?
 - 수정 또는 확인 동작이 가설 검증에 충분히 작고 직접적인가?

@@ -1,10 +1,10 @@
 # turn-gate session-records 계약
 
-## 목적
+## 소유 범위
 
-이 계약은 활성 `turn-gate` work에서 사용하는 operational continuity record를 소유합니다.
+활성 `turn-gate` work에서 사용하는 operational continuity record.
 
-## 파일
+## 파일 계약
 
 - `.agents/sessions/{YYYYMMDD}/000-plan.md`: date-level routing context, active flow pointer, required next action, request history, compact flow index, planned current/future sequence, completed summaries, explicit turn-end availability, active date-level risks를 소유합니다.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`: 하나의 active flow contract, 필요 시 raw request, interpretation, scope, non-goals, approval boundary, execution log, verification, report, next-flow options, residual risk를 소유합니다.
@@ -31,7 +31,7 @@ flow record는 compact contract를 유지하더라도 최소한 다음 섹션을
 
 flow record frontmatter 또는 Continuity Guard에는 현재 phase, required next action, closure 관련 필드, pending/superseded question state, verification status, continuity note가 드러나야 합니다. 정확한 template 문구는 runtime template이 소유하지만, 이 최소 정보가 빠지면 compaction 또는 interruption 뒤 다음 행동을 복구하기 어렵습니다.
 
-## 중복 방지
+## 중복 방지 계약
 
 `000-plan.md`는 compact하게 유지합니다. detailed scope, evidence, verification, residual risk, self-drive sequence detail은 plan에 반복하지 않고 active flow record 또는 self-drive sidecar에 둡니다.
 
@@ -41,7 +41,7 @@ self-drive가 active이면 `000-plan.md`는 status와 sidecar pointer만 저장�
 
 raw user request text를 기록할 때는 interpretation 또는 summary와 분리해야 합니다. raw request field 안에서는 normalize, translate, correct, soften, merge, infer missing words를 하지 않습니다. summary와 interpretation은 별도로 작성할 수 있습니다.
 
-## Continuity Guard
+## Continuity Guard 계약
 
 모든 flow record는 Continuity Guard를 둡니다.
 
@@ -68,7 +68,7 @@ guard는 compaction 또는 interruption 뒤에도 다음 행동을 알 수 있�
 
 `verification status`는 기록 진행 상태와 결과 상태를 모두 표현할 수 있습니다. work 전 또는 검증 전에는 `not-started`, verifier 요청 후 결과 전에는 `requested`, 검증 결과가 있으면 `pass`, `fail`, `blocked`, `insufficient` 중 하나를 사용합니다. `not-started`와 `requested`는 terminal close나 successful reporting 근거가 아닙니다.
 
-## 복구
+## 복구 계약
 
 missing/not-created record와 unexpectedly missing 또는 inaccessible active record를 구분합니다. 있어야 하는 active record를 조용히 재구성하지 않습니다. inaccessible active record는 blocker recovery로 라우팅합니다.
 

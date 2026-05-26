@@ -1,8 +1,8 @@
-# flow readiness preparation sub-spec
+# flow readiness preparation 계약
 
-## 목적
+## 소유 범위
 
-이 문서는 active flow가 work로 들어가기 전에 필요한 flow contract가 충분한지 판단하는 계약을 소유합니다.
+active flow가 work로 들어가기 전에 필요한 flow contract 충분성.
 
 ## 계약
 
@@ -13,7 +13,7 @@
 - 질문을 어떤 도구로 사용자에게 보여줄지는 question-routing 또는 turn-gate 적용 표면이 소유한다.
 - readiness 판단은 active flow와 sub-flow candidate를 구분해야 한다. candidate는 선택되기 전까지 work로 들어가지 않는다.
 
-## 검토 질문
+## 검토 기준
 
 - work에 들어갈 만큼 scope, non-goals, completion criteria가 충분한가?
 - verification expectation과 handoff condition이 분리돼 있는가?

@@ -1,6 +1,6 @@
 # File Change Verifier Default 시나리오
 
-## 목적
+## 검증 목적
 
 이 시나리오는 파일 변경이 있는 작업에서 risk-based verification이 clean-context verifier 기본값을 약화하지 않는지 확인합니다.
 작은 문서 fixture 수정이라도 실제 파일이 바뀌면 `micro`가 아니며, verifier 또는 동등하게 독립된 검증 경로가 필요합니다.

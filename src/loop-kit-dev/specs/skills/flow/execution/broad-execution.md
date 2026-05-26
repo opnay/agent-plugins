@@ -1,8 +1,8 @@
-# flow broad-execution sub-spec
+# flow broad-execution 계약
 
-## 목적
+## 소유 범위
 
-이 문서는 scope가 잠긴 단일 active flow를 end-to-end로 수행하는 flow-local 실행 전략을 소유합니다.
+scope가 잠긴 단일 active flow를 end-to-end로 수행하는 flow-local 실행 전략.
 
 ## 계약
 
@@ -14,7 +14,7 @@
 - 여러 flow를 자동으로 이어가는 sequence-level continuation은 self-drive가 소유한다.
 - destructive, external, commit, push, PR, publish, release, version bump 실행 승인은 approval boundary가 소유한다.
 
-## 검토 질문
+## 검토 기준
 
 - 단일 active flow의 scope가 broad execution을 시작할 만큼 잠겼는가?
 - sequence-level continuation을 flow-local execution과 혼동하지 않았는가?
