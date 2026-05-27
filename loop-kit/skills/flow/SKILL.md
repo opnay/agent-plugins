@@ -1,15 +1,31 @@
 ---
 name: flow
-description: Interpret a message, action, plan item, review finding, or handoff as a cohesive flow; decide whether it is an active flow, parent flow, finite sub-flow candidate, phase, or handoff; and define readiness, discovery, ambiguity, flow-local strategy, phase record checkpoints, verification expectation, and commit-readiness handoff.
+description: Interpret a message, action, plan item, review finding, or handoff as a cohesive flow; decide whether it is an active flow, parent flow, finite sub-flow candidate, phase, or handoff; and define intake, framing, preparation readiness, discovery, ambiguity, flow-local strategy, phase record checkpoints, verification expectation, and commit-readiness handoff.
 ---
 
 # Flow
 
 Use this skill to turn work into a bounded flow contract before execution. A flow is a cohesive work unit that can be understood, reviewed, verified, reported, and handed off. It is not merely a phase label such as `preparation`, `work`, `verification`, `reporting`, or `commit readiness`.
 
-Each active flow has internal phases: `preparation -> work -> verification -> reporting`. Keep those phases inside the same active flow unless a separate reviewable work unit is needed.
+Each active flow has internal phases: `intake -> framing -> preparation -> work -> verification -> reporting`. Keep those phases inside the same active flow unless a separate reviewable work unit is needed.
 
-## Classify The Item
+## Intake
+
+Start by separating the user's source wording from your interpretation. Intake owns raw input analysis, goal detection, non-goal detection, authority-sensitive signal detection, and deep-interview topics.
+
+Use intake to identify:
+
+- what the user appears to want now
+- explicit or implied non-goals
+- scope edges and tradeoffs the user may reject
+- acceptance signal or completion expectation
+- verification expectation if the user stated one
+- authority-sensitive language such as commit, push, PR, publish, release, version bump, destructive action, or external effect
+- missing fields that require a high-leverage discovery question
+
+Deep interview is an intake strategy, not a separate phase. It should surface the smallest question topic that would change the flow contract. Intake does not execute a flow; it produces the input contract that framing uses.
+
+## Framing
 
 Before acting, decide what the current item is:
 
@@ -20,6 +36,8 @@ Before acting, decide what the current item is:
 - `handoff`: a readiness or routing result, not execution authority.
 
 Pure analysis, QA, consistency checks, verification reporting, and commit-readiness reporting are not separate change-unit flows unless they create or modify a reviewable artifact. Code, docs, fixtures, config, snapshots, operator reports, validator output, or release surfaces can be flow-owned artifacts when they are the actual reviewable result.
+
+Framing owns flow decomposition, flow design, candidate-vs-selected distinction, and artifact ownership. If the current request is too large, produce finite `sub-flow candidates` instead of starting execution. Candidate creation is not execution. Only the selected active flow moves into preparation.
 
 ## Flow Types
 
@@ -54,7 +72,7 @@ Keep completion criteria separate from handoff condition. Keep discovery topics,
 
 ## Preparation
 
-Do not enter work until the flow contract is ready enough for the risk. At minimum, check:
+Preparation is only for the selected active flow. Do not use it to redo intake or framing, and do not enter work until the selected flow contract is ready enough for the risk. At minimum, check:
 
 - user intent and expected result
 - included scope and scope edges
@@ -65,13 +83,13 @@ Do not enter work until the flow contract is ready enough for the risk. At minim
 - target and operation
 - approval boundary
 - handoff condition
-- whether the request should remain one active flow or become a parent flow with finite candidates
+- active-flow status, not merely sub-flow-candidate status
 
-If an answer would change the artifact, decomposition, verification path, approval checkpoint, or handoff condition, stay in preparation.
+If an answer would change the artifact, decomposition, verification path, approval checkpoint, or handoff condition, return to intake or framing instead of beginning work.
 
 ## Discovery
 
-Use discovery as a flow-local preparation strategy when intent, scope edge, non-goal, tradeoff, acceptance signal, verification expectation, or candidate decomposition is not locked. Discovery pressure-tests alignment; it is not just filling blank fields.
+Use discovery as a flow-local strategy when intent, scope edge, non-goal, tradeoff, acceptance signal, verification expectation, or candidate decomposition is not locked. Discovery usually belongs to intake; if framing or preparation reveals the missing field later, route back to the earliest stage that can lock it. Discovery pressure-tests alignment; it is not just filling blank fields.
 
 Discovery should surface the smallest high-leverage topic that would change the flow contract. Prefer one bounded question topic at a time. If bounded choices can lock the contract, provide the choices with their tradeoffs. If free-form input is needed, identify whether the needed answer is an example, counterexample, non-goal, rejected tradeoff, success signal, verification expectation, or decomposition preference.
 
@@ -96,7 +114,7 @@ Use ambiguity handling when the operation or target can point to multiple struct
 - why the difference matters
 - which contract field must be locked before work
 
-If ambiguity affects the result, return to discovery or produce a parent-flow candidate output instead of beginning work.
+If ambiguity affects the result, return to intake discovery, framing, or a parent-flow candidate output instead of beginning work.
 
 ## Phase Record Checkpoints
 
@@ -106,6 +124,10 @@ When an active flow or planned sequence requires specific skills, expect `000-pl
 
 Use these checkpoint expectations:
 
+- `intake` start: expose raw request source, current interpretation boundary, pending input-analysis fields, and next intake action.
+- `intake` end: expose goal, non-goals, authority-sensitive signals, missing discovery topic, and whether framing may begin.
+- `framing` start: expose item to classify, candidate boundary, artifact ownership question, and decomposition risk.
+- `framing` end: expose selected active flow or finite sub-flow candidates, candidate-vs-selected status, draft verification expectation, and readiness gaps.
 - `preparation` start: expose flow label, type, scope boundary, pending contract fields, and next preparation action.
 - `preparation` end: expose readiness, locked scope and non-goals, missing questions or blockers, selected strategy, and whether work may begin.
 - `work` start: expose active flow boundary, next action, approval-sensitive checkpoint status, and expected artifact.
@@ -125,7 +147,7 @@ Choose a strategy inside the active flow only after readiness is sufficient:
 - `fix-verify-loop`: use one small fix or confirmation action to test one primary issue, verify immediately, then reassess whether another loop is justified.
 - `broad-execution`: execute a single locked active flow end to end when scope, non-goals, completion criteria, verification expectation, and approval boundary are clear.
 
-Do not use a flow-local strategy as authority to continue through multiple flows. If the issue introduces new scope, a new approval boundary, destructive or external effects, or changed completion criteria, return to preparation or handoff.
+Do not use a flow-local strategy as authority to continue through multiple flows. If the issue introduces new scope, a new approval boundary, destructive or external effects, or changed completion criteria, return to intake, framing, preparation, or handoff as appropriate.
 
 ## Verification And Handoff
 

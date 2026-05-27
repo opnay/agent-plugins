@@ -1,6 +1,6 @@
 # Self-Drive
 
-Self-drive is a prepared sequence overlay. It narrows when to continue autonomously, but it does not replace preparation, work, verification, reporting, or next-flow routing.
+Self-drive is a prepared sequence overlay. It narrows when to continue autonomously, but it does not replace intake, framing, preparation, work, verification, reporting, or next-flow routing.
 
 ## Activation Requirements
 
@@ -54,7 +54,7 @@ Priority order:
 5. status or progress question
 6. ordinary note inside the recorded boundary
 
-If the user changes endpoint, order, target, approval boundary, or acceptance signal, stop autonomous advancement and return to preparation.
+If the user changes endpoint, order, target, approval boundary, or acceptance signal, stop autonomous advancement and return to the earliest affected phase: intake for changed intent or acceptance signal, framing for changed target, order, or flow boundary, and preparation for selected-flow readiness or approval-boundary lock.
 
 If the user asks for status, report current flow, sequence position, verification state, and next required action, then continue only if the recorded sequence still permits it.
 

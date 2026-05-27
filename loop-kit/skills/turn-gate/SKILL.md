@@ -1,6 +1,6 @@
 ---
 name: turn-gate
-description: Keep an active Codex turn open across preparation, work, verification, reporting, and next-flow routing until the user explicitly stops the turn; apply sibling flow contracts, maintain session records, route questions, verify before reporting, and support prepared self-drive sequences.
+description: Keep an active Codex turn open across intake, framing, preparation, work, verification, reporting, and next-flow routing until the user explicitly stops the turn; apply sibling flow contracts, maintain session records, route questions, verify before reporting, and support prepared self-drive sequences.
 ---
 
 # Turn Gate
@@ -19,25 +19,29 @@ Every active flow must end in exactly one recorded state:
 
 Maintain session records while the turn is active. Use `references/session-records.md` for the record model, templates, Continuity Guard, recovery cases, and the split between `000-plan.md`, active flow records, and optional self-drive sidecars.
 
-## Five-Phase Lifecycle
+## Active Flow Lifecycle
 
 Run each active flow through:
 
-1. `preparation`: reread the skills needed for the current flow, then lock intent, scope, non-goals, acceptance signal, verification expectation, approval boundary, and handoff condition. Apply the sibling `flow` contract for flow boundary, readiness, ambiguity, and flow-local strategy; do not redefine those rules here.
-2. `work`: execute only inside the recorded active flow boundary.
-3. `verification`: choose a verification method, run or justify it, and record result status.
-4. `reporting`: update records first, then report continuity context rather than closing the turn.
-5. `next-flow`: route to a next-flow choice, blocker decision, valid self-drive continuation, or source-recorded explicit stop.
+1. `intake`: reread the skills needed for the current flow, separate source wording from interpretation, detect goal, non-goals, authority-sensitive signals, and discovery topics.
+2. `framing`: classify the item with the sibling `flow` contract, design finite candidates when needed, and distinguish selected active flow from candidate output.
+3. `preparation`: lock readiness for the selected active flow, including scope, acceptance signal, verification expectation, approval boundary, and handoff condition.
+4. `work`: execute only inside the recorded active flow boundary.
+5. `verification`: choose a verification method, run or justify it, and record result status.
+6. `reporting`: update records first, then report continuity context rather than closing the turn.
+7. `next-flow`: route to a next-flow choice, blocker decision, valid self-drive continuation, or source-recorded explicit stop.
 
 At the start and end of each active flow phase, apply the sibling `flow` phase record checkpoint expectation. Decide which surface changed:
 
 - Update `000-plan.md` when the active flow pointer, date-level required next action, planned/current sequence, current/planned flow skill list, or turn-level routing changes.
 - Update the active flow record when the same flow's current phase, execution log, verification evidence, report outcome, residual risk, or handoff condition changes.
 
-Phase checkpoints do not make phases separate flows. `preparation`, `work`, `verification`, and `reporting` remain phases inside the same active flow.
+Phase checkpoints do not make phases separate flows. `intake`, `framing`, `preparation`, `work`, `verification`, and `reporting` remain phases inside the same active flow.
 
 Use the phase prefix at the start of user-facing phase-start or phase-progress messages:
 
+- `[intake]`
+- `[framing]`
 - `[preparation]`
 - `[work]`
 - `[verification]`
@@ -110,7 +114,7 @@ An aborted, canceled, or interrupted question tool call is not flow completion a
 
 ## Self-Drive
 
-Self-drive is an explicit prepared sequence overlay; it is not the default turn state and does not replace the five-phase lifecycle. Use `references/self-drive.md` when records show a prepared sequence objective, active flow index, allowed and prohibited autonomous actions, approval-sensitive checkpoints, endpoint, blocker return conditions, acceptance signal, and verification expectation.
+Self-drive is an explicit prepared sequence overlay; it is not the default turn state and does not replace the active flow lifecycle. Use `references/self-drive.md` when records show a prepared sequence objective, active flow index, allowed and prohibited autonomous actions, approval-sensitive checkpoints, endpoint, blocker return conditions, acceptance signal, and verification expectation.
 
 At each self-drive flow start, read `000-plan.md` and `000-self-drive.md`. `000-plan.md` stores only self-drive status and sidecar pointer; `000-self-drive.md` owns sequence-level state; the active flow record owns flow-local state.
 

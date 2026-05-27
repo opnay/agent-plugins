@@ -66,10 +66,10 @@ codex plugin marketplace upgrade
 - 사용자가 멈추라고 할 때까지 턴을 계속 유지해야 하는 작업
 - 준비, 작업, 검증, 보고, 다음 플로우 선택이 드러나야 하는 작업
 - 각 phase 시작과 종료에서 plan 또는 flow record가 현재 상태를 재구성할 수 있어야 하는 작업
-- 초기 준비에서 `flow` discovery/readiness로 의도를 정렬하고 sub-flow 후보를 만들어야 하는 작업
+- intake에서 사용자 입력과 목표를 정리하고, framing에서 sub-flow 후보를 만든 뒤, preparation에서 선택된 flow의 readiness를 잠가야 하는 작업
 - 초기 의도 정렬과 sub-flow 후보 설계가 session plan 산출물로 남아야 하는 작업
 - sub-flow 후보가 phase checklist가 아니라 검토/검증/커밋 가능한 변경 단위로 나뉘어야 하는 작업
-- 초기 준비에서 필요한 정보를 모은 뒤 self-drive overlay로 여러 flow를 이어가야 하는 작업
+- intake/framing/preparation에서 필요한 정보를 모은 뒤 self-drive overlay로 여러 flow를 이어가야 하는 작업
 - 이미 선택된 flow에서는 수정 범위, 현재 상태, 대상 파일, 검증 조건을 먼저 확인해야 하는 작업
 - 실행, 정제, 리뷰 처리, 커밋 준비 handoff를 active flow 안의 strategy로 골라야 하는 작업
 - 사용자 선택이 필요한 지점에서는 질문 도구를 써야 하는 작업
@@ -79,7 +79,7 @@ codex plugin marketplace upgrade
 
 ## 엔트리포인트
 
-- `flow`: 메시지나 동작을 flow로 해석하고, parent flow, sub-flow candidate, operational-preparation flow, change-unit flow, flow-vs-phase 경계, readiness, discovery, flow-local strategy, handoff condition을 판정합니다.
+- `flow`: 메시지나 동작을 flow로 해석하고, intake, framing, preparation readiness, parent flow, sub-flow candidate, operational-preparation flow, change-unit flow, flow-vs-phase 경계, discovery, flow-local strategy, handoff condition을 판정합니다.
 - `flow`: phase 시작/종료 record checkpoint를 산출해 `000-plan.md`와 active flow record 중 무엇을 갱신해야 하는지 구분합니다.
 - `turn-gate`: 현재 턴에서 flow 사용을 강제하고, flow reporting 뒤 다음 flow 질문을 여는 turn-level gate입니다.
 
@@ -90,13 +90,15 @@ codex plugin marketplace upgrade
 
 `turn-gate`는 다음 흐름을 계속 보이게 유지합니다.
 
-1. 준비: 초기 요청은 `flow` discovery/readiness와 sub-flow 후보로 정렬하고, 이미 선택된 flow는 현재 상태와 작업 범위를 확인합니다.
-2. 작업: 현재 flow가 소유한 실제 작업을 수행합니다.
-3. 검증: 작업 위험도에 맞춰 `clean-context`, `normal`, `not-required` method 중 하나로 검증합니다.
-4. 보고: 이번 flow의 맥락을 정리하고 다음 flow 선택지를 명시적으로 다시 엽니다.
-5. 사용자가 종료를 요청하지 않으면 다음 flow의 준비로 계속 진행합니다.
+1. Intake: 초기 요청의 원문과 해석을 분리하고 goal, non-goal, authority-sensitive signal, discovery topic을 확인합니다.
+2. Framing: active flow, parent flow, sub-flow candidate, phase, handoff를 구분하고 산출물 소유권과 후보/선택 상태를 정리합니다.
+3. Preparation: 선택된 active flow의 scope, readiness, verification expectation, approval boundary, handoff condition을 잠급니다.
+4. 작업: 현재 flow가 소유한 실제 작업을 수행합니다.
+5. 검증: 작업 위험도에 맞춰 `clean-context`, `normal`, `not-required` method 중 하나로 검증합니다.
+6. 보고: 이번 flow의 맥락을 정리하고 다음 flow 선택지를 명시적으로 다시 엽니다.
+7. 사용자가 종료를 요청하지 않으면 다음 flow의 intake로 계속 진행합니다.
 
-각 flow는 위 1-4단계를 내부에 모두 가집니다.
+각 flow는 위 1-6단계를 내부에 모두 가집니다.
 따라서 `분석`, `작업`, `검증`을 서로 다른 flow로 나누지 않습니다.
 flow를 나눌 때는 독립적으로 이해하고 리뷰하고 검증하고 커밋할 수 있는 변경 묶음인지 봅니다.
 단, 초기 의도 정렬을 통해 sub-flow 후보를 만드는 앞단은 운영 flow로 기록할 수 있으며, 이 운영 flow는 실제 제품 변경 flow와 섞지 않습니다.
@@ -121,7 +123,7 @@ sub-flow 후보 생성은 실행이 아니며, `turn-gate` 질문 또는 준비�
 사용자가 flow strategy를 직접 고를 필요는 없습니다.
 `flow`는 active flow의 contract와 blocker에 맞는 strategy를 산출하고, `turn-gate`는 그 결과를 적용합니다.
 
-- `discovery`: 요구사항 확인, 불명확한 의도, scope boundary, approval line을 다루는 flow preparation strategy
+- `discovery`: 요구사항 확인, 불명확한 의도, scope boundary, approval line을 다루는 flow-local strategy이며 주로 intake에서 사용
 - `broad-execution`: locked scope 안에서 검증된 결과까지 이어지는 단일 flow execution strategy
 - `fix-verify-loop`: 작은 수정, 즉시 검증, 재평가가 필요한 bounded cycle strategy
 - `review-loop`: 리뷰 피드백이나 QA finding처럼 material issue를 좁게 처리하는 strategy

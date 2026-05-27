@@ -2,8 +2,8 @@
 
 - `turn-gate` 활성화는 세션 단위의 1급 응답 규칙이어야 한다.
 - 이 skill이 활성화된 turn은 사용자가 명시적으로 현재 turn을 종료하자고 요청할 때까지 일반적인 terminal summary로 닫히지 않아야 한다.
-- `turn-gate`는 대화 응답 자체를 제어하며, 각 phase 시작 또는 phase progress 사용자-facing 메시지는 `[preparation]`, `[work]`, `[verification]`, `[reporting]`, `[next-flow]` 같은 core phase prefix로 드러나야 한다.
-- `turn-gate`의 operating cycle은 `preparation -> work -> verification -> reporting -> next-flow`여야 한다.
+- `turn-gate`는 대화 응답 자체를 제어하며, 각 phase 시작 또는 phase progress 사용자-facing 메시지는 `[intake]`, `[framing]`, `[preparation]`, `[work]`, `[verification]`, `[reporting]`, `[next-flow]` 같은 core phase prefix로 드러나야 한다.
+- `turn-gate`의 operating cycle은 `intake -> framing -> preparation -> work -> verification -> reporting -> next-flow`여야 한다.
 - concrete task는 source-recorded active flow 안에서만 진행되어야 한다.
 - active flow가 없거나 flow contract가 부족하면 sibling `flow` decision을 적용해 scope, non-goal, acceptance signal, verification expectation, handoff condition을 잠가야 한다.
 - `turn-gate`는 flow 자체를 정의하거나 flow-local strategy를 재정의하지 않고, sibling `flow`의 decision을 현재 turn에 적용하고 session record에 기록해야 한다.

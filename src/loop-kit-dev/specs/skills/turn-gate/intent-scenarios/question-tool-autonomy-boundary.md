@@ -26,7 +26,7 @@ runtime instruction이 아니라 spec-side fixture이며, question-routing, self
 | 5 | Self-drive active, target becomes ambiguous | Use question tool or clarification before work. | Guess target and continue. |
 | 6 | Self-drive active, endpoint becomes unclear | Use question tool to relock endpoint. | Invent endpoint silently. |
 | 7 | Self-drive active, planned order changes | Pause and relock updated sequence. | Continue old order. |
-| 8 | Self-drive active, scope/non-goal changes | Ask or return to preparation before work. | Treat change as ordinary continuation. |
+| 8 | Self-drive active, scope/non-goal changes | Ask or return to the earliest affected phase before work. | Treat change as ordinary continuation. |
 | 9 | Self-drive active, acceptance signal changes | Ask or relock acceptance before work. | Keep old acceptance silently. |
 | 10 | New commit request appears without exact recorded boundary | Use approval question routing. | Commit automatically. |
 | 11 | New push/PR request appears without exact recorded boundary | Use approval question routing. | Push or open PR automatically. |

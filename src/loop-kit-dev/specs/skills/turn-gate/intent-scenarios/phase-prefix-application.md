@@ -19,9 +19,9 @@ runtime instruction이 아니라 spec-side fixture이며, turn-gate phase prefix
 
 | Case | Input / context | Expected behavior | Forbidden behavior |
 | --- | --- | --- | --- |
-| 1 | `$loop-kit:turn-gate` only, no concrete task | Start scope setup with `[preparation]`. | Return an unprefixed activation summary and close. |
-| 2 | Activation-only request immediately opens actual next-flow choices | Use `[next-flow]` for the choice-opening user-facing message. | Use `[preparation]` while presenting actual next-flow choices as if still only preparing. |
-| 3 | Concrete task begins with scope lock | First user-facing phase message starts with `[preparation]`. | Begin work silently with no phase prefix. |
+| 1 | `$loop-kit:turn-gate` only, no concrete task | Start input/scope intake with `[intake]`. | Return an unprefixed activation summary and close. |
+| 2 | Activation-only request immediately opens actual next-flow choices | Use `[next-flow]` for the choice-opening user-facing message. | Use `[intake]` while presenting actual next-flow choices as if still only preparing. |
+| 3 | Concrete task begins with source wording and goal detection, then flow classification | First user-facing phase message starts with `[intake]`; classification progress uses `[framing]` when surfaced separately. | Begin work silently with no phase prefix, or keep using `[intake]` while selecting candidates or active flow boundaries. |
 | 4 | Work starts after preparation | Work progress message starts with `[work]`. | Treat a command output summary as the only prefixed text while the phase announcement is unprefixed. |
 | 5 | Verification starts after edits | Verification phase message starts with `[verification]`. | Report verification as plain prose without a phase marker. |
 | 6 | Reporting begins after pass verification | Result context starts with `[reporting]`. | Use terminal-style summary without explicit stop. |

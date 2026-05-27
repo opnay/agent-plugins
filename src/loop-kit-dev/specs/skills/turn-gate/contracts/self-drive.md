@@ -2,7 +2,7 @@
 
 ## 소유 범위
 
-명시적으로 준비된 finite flow sequence 위에 적용되는 self-drive overlay. self-drive는 기본 `preparation -> work -> verification -> reporting -> next-flow` loop를 대체하지 않습니다.
+명시적으로 준비된 finite flow sequence 위에 적용되는 self-drive overlay. self-drive는 기본 `intake -> framing -> preparation -> work -> verification -> reporting -> next-flow` loop를 대체하지 않습니다.
 
 ## 활성화 계약
 

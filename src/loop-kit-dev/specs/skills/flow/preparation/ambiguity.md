@@ -1,8 +1,8 @@
-# flow ambiguity preparation 계약
+# flow ambiguity 계약
 
 ## 소유 범위
 
-flow contract 형성에 영향을 주는 operation/target ambiguity 잠금.
+flow contract 형성에 영향을 주는 operation/target ambiguity 잠금. Ambiguity는 intake에서 먼저 탐지하고, framing 또는 preparation에서 뒤늦게 발견되면 work로 넘어가지 않고 intake/framing으로 되돌린다.
 
 ## 계약
 

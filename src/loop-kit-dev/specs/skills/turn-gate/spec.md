@@ -14,7 +14,7 @@
 - 포함:
 
   - 대화 턴 단위 continuity
-  - `preparation -> work -> verification -> reporting -> next-flow`
+  - `intake -> framing -> preparation -> work -> verification -> reporting -> next-flow`
   - source-recorded explicit stop 처리
   - session record와 Continuity Guard
   - next-flow question routing과 question abort recovery
@@ -59,6 +59,8 @@
 
 - activation-only 요청은 terminal activation summary가 아니라 기록된 활성 상태와 next-flow routing을 만들어야 합니다.
 - 각 새 flow 시작 지점에서는 현재 flow에 필요한 skill을 다시 읽고, `000-plan.md`에 current/planned flow skill list를 compact하게 남겨야 합니다.
+- intake는 raw input과 해석을 분리하고, goal, non-goals, authority-sensitive signal, discovery topic을 드러내야 합니다.
+- framing은 sibling `flow` contract를 적용해 active flow, parent flow, sub-flow candidate, phase, handoff를 구분하고 selected flow와 candidate를 혼동하지 않아야 합니다.
 - work는 active flow boundary, non-goals, acceptance signal, verification expectation, approval boundary, handoff condition이 알려졌거나 user-gated된 뒤에만 시작할 수 있습니다.
 - reporting은 먼저 기록을 갱신한 뒤 changed surfaces, verification status, material judgment calls, residual risk, required next action을 보고해야 합니다.
 - reporting 뒤에는 `next-flow`, `blocked`, 유효한 self-drive continuation, source-recorded explicit stop 중 하나로 라우팅해야 합니다.

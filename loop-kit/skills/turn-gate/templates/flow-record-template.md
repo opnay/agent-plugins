@@ -1,6 +1,6 @@
 ---
 turn_gate_active: yes
-phase: preparation
+phase: intake
 question_routing_mode: none
 user_explicit_stop: no
 terminal_summary_allowed: no
@@ -43,7 +43,7 @@ continuity_note: update this guard before reporting and next-flow routing
 
 ## Execution Log
 
-- `[preparation]` `{event}`
+- `[intake]` `{event}`
 
 ## Verification
 

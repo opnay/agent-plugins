@@ -2,11 +2,12 @@
 
 ## 소유 범위
 
-active flow가 work로 들어가기 전에 필요한 flow contract 충분성.
+framing에서 선택된 active flow가 work로 들어가기 전에 필요한 flow contract 충분성.
 
 ## 계약
 
-- readiness 판단은 flow-local preparation의 일부이며, turn-level next-flow routing이나 explicit stop 판단이 아니다.
+- readiness 판단은 selected active flow의 preparation 단계이며, intake나 framing을 다시 수행하는 단계가 아니다.
+- intake 또는 framing에서 잠기지 않은 goal, non-goal, authority, candidate 경계가 남아 있으면 work로 넘어가지 않는다.
 - work로 넘어가기 전에 최소한 scope, non-goals, completion criteria, verification expectation, handoff condition을 확인한다.
 - approval-sensitive checkpoint가 예상되면 flow output에 그 필요성을 드러내되, 실행 승인 자체는 approval boundary가 소유한다.
 - flow contract가 부족하면 부족한 필드와 질문 주제를 산출한다.

@@ -8,11 +8,13 @@
 
 모든 active flow는 다음 순서를 따릅니다.
 
-1. `preparation`: flow 시작 지점에서 현재 flow에 필요한 skill을 다시 읽고, intent, scope, non-goals, acceptance signal, verification expectation, approval boundary, handoff condition을 잠급니다. flow boundary, readiness, ambiguity, flow-local strategy에는 sibling `flow`를 적용합니다.
-2. `work`: active flow boundary 안에서만 실행합니다.
-3. `verification`: verification method를 선택하고, 실행하거나 정당화한 뒤, result status를 기록합니다.
-4. `reporting`: terminal close가 아니라 continuity context를 보고합니다.
-5. `next-flow`: next-flow choice, blocker decision, 유효한 self-drive continuation, source-recorded explicit stop 중 하나로 라우팅합니다.
+1. `intake`: flow 시작 지점에서 현재 flow에 필요한 skill을 다시 읽고, raw input과 해석을 분리하며 goal, non-goals, authority-sensitive signal, discovery topic을 드러냅니다.
+2. `framing`: sibling `flow` 계약을 적용해 항목을 분류하고, 필요하면 finite sub-flow candidate를 설계하며, selected active flow와 candidate를 구분합니다.
+3. `preparation`: selected active flow의 intent, scope, non-goals, acceptance signal, verification expectation, approval boundary, handoff condition을 잠급니다. readiness, ambiguity, flow-local strategy에는 sibling `flow`를 적용합니다.
+4. `work`: active flow boundary 안에서만 실행합니다.
+5. `verification`: verification method를 선택하고, 실행하거나 정당화한 뒤, result status를 기록합니다.
+6. `reporting`: terminal close가 아니라 continuity context를 보고합니다.
+7. `next-flow`: next-flow choice, blocker decision, 유효한 self-drive continuation, source-recorded explicit stop 중 하나로 라우팅합니다.
 
 각 active flow phase의 시작과 종료에는 sibling `flow`의 phase record checkpoint expectation을 적용합니다.
 `000-plan.md`는 active flow pointer나 turn-level required next action 같은 date-level routing 변화가 있을 때 갱신하고, active flow record는 같은 flow 내부 phase state, evidence, report, residual risk가 바뀔 때 갱신합니다.
@@ -49,6 +51,8 @@ activation은 다음을 포착해야 합니다.
 
 user-facing phase-start 또는 phase-progress 메시지는 canonical prefix로 시작합니다.
 
+- `[intake]`
+- `[framing]`
 - `[preparation]`
 - `[work]`
 - `[verification]`
@@ -57,7 +61,7 @@ user-facing phase-start 또는 phase-progress 메시지는 canonical prefix로 �
 
 prefix는 generated artifact, record, command summary, question option label에 복사하지 않습니다. status/progress update에는 현재 phase label을 사용합니다. record access blocker는 blocker를 발견한 phase를 사용합니다.
 
-activation-only 메시지는 response가 즉시 next-flow choice를 열지 않는 한 `[preparation]`에서 시작합니다. report-only 또는 status-only flow도 사용자가 명시적으로 멈추지 않으면 `[next-flow]`로 진행합니다.
+activation-only 메시지는 response가 즉시 next-flow choice를 열지 않는 한 `[intake]`에서 시작합니다. report-only 또는 status-only flow도 사용자가 명시적으로 멈추지 않으면 `[next-flow]`로 진행합니다.
 
 ## 준비와 승인 경계 계약
 
@@ -75,7 +79,7 @@ Runtime `SKILL.md`는 다음을 직접 포함해야 합니다.
 - first behavioral section에서 active-turn rule, terminal summary 금지, required ending states, next-flow reopening, session record 유지 의무를 먼저 드러냅니다.
 - active-turn rule과 terminal summary 금지
 - explicit stop 전 final/terminal closeout 금지
-- five-phase lifecycle
+- active flow lifecycle
 - flow 시작 지점의 skill reread
 - phase prefix behavior
 - flow phase record checkpoint 적용

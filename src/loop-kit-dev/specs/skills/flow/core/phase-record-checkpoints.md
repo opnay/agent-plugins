@@ -2,7 +2,7 @@
 
 ## 소유 범위
 
-active flow의 `preparation -> work -> verification -> reporting` phase 시작과 종료에 필요한 기록 checkpoint.
+active flow의 `intake -> framing -> preparation -> work -> verification -> reporting` phase 시작과 종료에 필요한 기록 checkpoint.
 
 ## 계약
 
@@ -14,7 +14,7 @@ active flow의 `preparation -> work -> verification -> reporting` phase 시작�
 - skill 목록은 현재 선택된 flow와 준비된 future flow에 필요한 것만 담습니다. 후보 단계에서 나온 가능성만으로 active skill처럼 기록하지 않습니다.
 - 같은 active flow 내부의 phase 상태, execution log, verification evidence, report outcome, residual risk가 바뀌면 active flow record 갱신이 필요합니다.
 - record checkpoint는 실제 기록 적용을 위한 계약입니다. `flow`는 어떤 기록이 필요한지 산출하고, `turn-gate`는 active turn 안에서 그 기록을 유지합니다.
-- checkpoint는 phase를 별도 flow로 만들지 않습니다. `preparation`, `work`, `verification`, `reporting`은 여전히 같은 active flow 내부의 phase입니다.
+- checkpoint는 phase를 별도 flow로 만들지 않습니다. `intake`, `framing`, `preparation`, `work`, `verification`, `reporting`은 여전히 같은 active flow 내부의 phase입니다.
 - trivial read-only judgment처럼 기록 변경이 필요 없다고 판단하는 경우에도 이유가 active flow record나 report에 남아야 합니다.
 
 ## 검토 기준

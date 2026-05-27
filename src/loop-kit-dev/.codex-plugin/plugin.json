@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "Loop Kit Dev",
     "shortDescription": "[DEV] Flow rules plus turn-gated continuity for multi-flow agent work.",
-    "longDescription": "[DEV] Provides a loop-oriented plugin with two coordinated surfaces. Flow classifies messages and actions into active flows, parent flows, finite sub-flow candidates, operational-preparation flows, and change-unit flows, then owns readiness, discovery, flow-local strategy, and handoff conditions. Turn-gate keeps one turn alive until the user explicitly ends it, requires work to move through flow contracts, reopens next-flow choices after reporting, records continuity, and chooses verification method as clean-context, normal, or not-required based on work risk. Self-drive is a separate overlay reference for prepared flow sequences.",
+    "longDescription": "[DEV] Provides a loop-oriented plugin with two coordinated surfaces. Flow classifies messages and actions into active flows, parent flows, finite sub-flow candidates, operational-preparation flows, and change-unit flows, then owns intake, framing, selected-flow readiness, discovery, flow-local strategy, and handoff conditions. Turn-gate keeps one turn alive until the user explicitly ends it, requires work to move through flow contracts, reopens next-flow choices after reporting, records continuity, and chooses verification method as clean-context, normal, or not-required based on work risk. Self-drive is a separate overlay reference for prepared flow sequences.",
     "developerName": "opnay",
     "category": "Productivity",
     "capabilities": [
@@ -30,10 +30,10 @@
     ],
     "defaultPrompt": [
       "Use flow to classify work into active flows, parent flows, finite sub-flow candidates, operational-preparation flows, and change-unit flows.",
-      "Let flow own readiness, discovery questions, flow-local execution strategy, and handoff conditions; do not make turn-gate redefine those strategy decisions.",
+      "Let flow own intake, framing, selected-flow readiness, discovery questions, flow-local execution strategy, and handoff conditions; do not make turn-gate redefine those strategy decisions.",
       "Treat sub-flow candidate creation as planning output, not execution; activate a sub-flow only through turn-gate next-flow routing or a prepared self-drive sequence.",
       "Keep this turn alive until I explicitly stop; after reporting, reopen next-flow with explicit choices unless closure is source-recorded.",
-      "Run each active flow through preparation, work, verification, and reporting, then let turn-gate handle next-flow reopening.",
+      "Run each active flow through intake, framing, preparation, work, verification, and reporting, then let turn-gate handle next-flow reopening.",
       "Treat flows as cohesive reviewable or commit-sized units, not analysis/work/verification phase slices and not only direct user-visible value.",
       "At each active flow phase start and end, decide whether 000-plan.md or the active flow record must be refreshed so the current phase, result, and next action can be reconstructed.",
       "Classify verification method as clean-context, normal, or not-required while keeping result status separate as pass, fail, blocked, or insufficient.",

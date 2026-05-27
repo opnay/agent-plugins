@@ -14,7 +14,9 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
   - parent flow와 `sub-flow candidates` 관계
   - `operational-preparation flow`와 `change-unit flow` 구분
   - active flow와 follow-up/sub-flow 후보 구분
-  - flow 내부 `preparation -> work -> verification -> reporting` 계약
+  - flow 내부 `intake -> framing -> preparation -> work -> verification -> reporting` 계약
+  - input analysis, deep interview, goal detection, non-goal detection, authority detection
+  - flow decomposition, flow design, candidate-vs-selected distinction, artifact ownership
   - active flow phase start/end record checkpoint 계약
   - flow readiness, intent-first requirement discovery, operation/target ambiguity 판단
   - flow-local review handling, fix-verify-reassess, broad execution strategy
@@ -37,6 +39,8 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
 - 어떤 항목이 flow인지 phase인지, 또는 handoff/reporting인지 판정해야 하는 작업
 - flow별 scope, non-goals, completion criteria, verification expectation, handoff 조건을 설계해야 하는 작업
 - flow contract를 만들기 위한 intent, scope, tradeoff, acceptance 질문 또는 operation/target ambiguity를 판정해야 하는 작업
+- 사용자 입력을 분석하고 목표, 비목표, authority, 모호성을 탐지해야 하는 작업
+- flow 후보를 분리하고 각 후보의 산출물과 실행 경계를 설계해야 하는 작업
 - active flow 안에서 review finding, 작은 fix loop, broad execution 중 어떤 strategy가 필요한지 판단해야 하는 작업
 - 이미 끝난 flow가 완료 조건을 만족했는지 검토해야 하는 작업
 
@@ -57,6 +61,8 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
 - `core/output-contract.md`: flow 설계 또는 sub-flow 후보 산출물의 필수 필드
 - `core/turn-gate-relationship.md`: `flow`와 `turn-gate`의 소유권 경계
 - `core/phase-record-checkpoints.md`: active flow phase start/end에서 필요한 plan 또는 flow record checkpoint
+- `intake.md`: 사용자 입력 분석, deep interview, goal/non-goal/authority 탐지
+- `framing.md`: flow 분리, flow 설계, candidate-vs-selected 구분, artifact ownership
 - `preparation/readiness.md`: work 진입 전 flow contract 충분성
 - `preparation/discovery.md`: intent-first requirement discovery와 scope/tradeoff lock 질문 주제
 - `preparation/ambiguity.md`: operation/target ambiguity
@@ -69,10 +75,13 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
 ## 핵심 처리 계약
 
 - flow는 phase checklist가 아니라 이해, 리뷰, 검증, 필요 시 커밋 가능한 작업 단위입니다.
-- 하나의 flow는 `preparation -> work -> verification -> reporting`을 내부 단계로 갖습니다.
+- 하나의 flow는 `intake -> framing -> preparation -> work -> verification -> reporting`을 내부 단계로 갖습니다.
+- `intake`는 사용자 입력 분석, deep interview, 목표/비목표/authority 탐지를 소유합니다.
+- `framing`은 flow 분리, flow 설계, candidate-vs-selected 구분, artifact ownership 판단을 소유합니다.
+- `preparation`은 선택된 active flow의 readiness, scope/non-goals/completion/verification/approval boundary lock, work 진입 가능성 판단으로 좁힙니다.
 - 각 active flow phase 시작과 종료는 `000-plan.md` 또는 active flow record 중 갱신 표면을 드러내야 합니다.
 - `000-plan.md` 갱신이 필요한 경우에는 현재 flow 또는 planned sequence에서 사용할 skill 목록도 필요한 만큼 드러내야 합니다.
-- flow preparation은 readiness, intent-first discovery, ambiguity 판단으로 flow contract를 완성합니다.
+- flow preparation은 이미 선택된 active flow의 readiness를 잠그는 단계이며, intake/framing에서 미해결 필드가 발견되면 work로 넘어가지 않습니다.
 - flow execution은 current flow 안에서 review-loop, fix-verify-loop, broad-execution을 선택할 수 있습니다.
 - review-loop는 여러 review finding 전체를 한 번에 실행하는 포괄 전략이 아니라, active flow 안의 bounded blocking finding 하나를 처리하는 전략입니다. 여러 finding이 있으면 우선순위 선택, discovery, 또는 finite follow-up 후보 설계가 먼저입니다.
 - flow가 너무 크거나 여러 산출물을 만들면 parent flow는 finite `sub-flow candidates`를 만들 수 있습니다.
@@ -83,12 +92,14 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
 ## 검토 질문
 
 - 현재 항목이 flow인가, phase인가, handoff인가?
+- 사용자 입력 분석과 목표/비목표/authority 탐지가 intake에서 끝났는가?
+- flow 분리와 후보/선택 구분이 framing에서 끝났는가?
 - flow가 너무 커서 finite sub-flow 후보로 나눠야 하는가?
 - sub-flow 후보가 active execution flow처럼 실행되고 있지 않은가?
 - 각 flow에 scope, non-goals, completion criteria, verification expectation, handoff 조건이 있는가?
 - 각 phase 시작과 종료에서 `000-plan.md` 또는 active flow record 갱신 기준이 드러나는가?
 - `000-plan.md`에 사용할 skill 목록이 필요한 flow 또는 planned sequence 기준으로 유지되는가?
-- readiness/discovery/ambiguity가 필요한데 사용자 의도와 경계가 잠기지 않은 채 work로 넘어가지 않았는가?
+- intake/framing/preparation 중 어느 단계가 부족한지 구분하지 않은 채 work로 넘어가지 않았는가?
 - flow-local strategy를 turn-level next-flow routing이나 self-drive sequence authority와 혼동하지 않았는가?
 - review-loop를 여러 finding 묶음 실행으로 넓히지 않고 bounded finding 하나 또는 후보 설계로 처리했는가?
 - flow 완료와 turn 종료를 혼동하지 않았는가?
