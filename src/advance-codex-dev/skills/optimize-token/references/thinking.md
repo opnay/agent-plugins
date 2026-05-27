@@ -1,29 +1,38 @@
 # Thinking And Progress Wording
 
-Use these rules to make pre-action judgment sentences and progress updates compact, actionable, and safe. Do not expose private reasoning or write long explanations of internal thought.
+Make visible pre-action judgment sentences and progress updates compact, actionable, and safe. Do not expose private reasoning or long internal thought.
 
 ## Scope
 
-This reference covers visible progress wording and compact pre-action planning notes before or during work. It guides what to write or keep brief; it does not ask you to reveal private reasoning.
+This reference covers visible progress wording and compact pre-action planning notes:
 
-- deciding what the user wants
-- naming the next action
-- stating why a check, edit, question, or approval is needed
-- reporting short progress while work continues
-- preserving uncertainty, verification needs, and approval boundaries
+- user intent
+- next action
+- check, edit, question, approval, or verification reason
+- short progress updates
+- uncertainty, verification needs, and approval boundaries
 
-Final response compression is owned by `references/response.md`.
+Final response compression is owned by `references/response.md`. The selected call-level strength, `light`, `standard`, or `extreme`, applies here too.
 
 ## Rules
 
-- Convert weak hedging into direct action when the evidence is sufficient.
+- Apply the selected strength to visible progress wording and pre-action judgment sentences.
+- Convert weak hedging into direct action when evidence is sufficient.
 - Keep real uncertainty visible when it affects the next action.
-- Keep the sentence about the decision, not the whole reasoning path.
+- Keep the sentence about the decision, not the reasoning path.
 - State the next action as a verb: check, edit, ask, verify, compare, rerun.
 - Preserve user intent, next action, verification need, approval boundary, and scope limits.
-- Keep the active language and register. If Korean honorific style is active, use it naturally.
-- Make progress updates short enough to be useful while work continues.
+- Keep the active language and register; use Korean honorific style when active.
+- Keep updates short enough to be useful while work continues.
 - Do not mention hidden deliberation, private chain-of-thought, or internal reasoning logs.
+
+## Compression Strength
+
+- `light`: Default for ordinary progress updates and pre-action judgment sentences. Keep a natural sentence with reason and next action when both matter.
+- `standard`: Use when context is shared or the user asks for key progress only. Keep next action, uncertainty, verification need, or approval boundary that changes the work.
+- `extreme`: Use only for status labels, checklists, fixed fields, or explicit status-only requests. Preserve uncertainty, skipped verification, approval boundaries, and material risk.
+
+Do not use `extreme` for generic shorter-progress requests. Do not hide failed, skipped, or insufficient verification to save tokens.
 
 ## Patterns
 
@@ -39,14 +48,14 @@ Final response compression is owned by `references/response.md`.
 
 - "It seems like the user may want..." when the request is clear.
 - "I think it would probably be good to..." when the next step is required.
-- Long explanations of why a normal file read, edit, or test is being done.
-- Progress updates that repeat the user's request without saying what changed.
+- Long explanations for normal reads, edits, or tests.
+- Progress updates that repeat the request without saying what changed.
 - Over-compressed updates that hide failed verification, skipped checks, risk, or approval needs.
 
 ## Check
 
-- Is the user's intent still clear?
+- Is the user's intent clear?
 - Is the next action explicit?
-- Did real uncertainty remain visible?
+- Is real uncertainty visible?
 - Did approval-sensitive or verification-sensitive detail survive?
 - Is the sentence short without sounding broken?
