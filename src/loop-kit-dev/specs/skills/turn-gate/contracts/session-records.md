@@ -6,7 +6,7 @@
 
 ## 파일 계약
 
-- `.agents/sessions/{YYYYMMDD}/000-plan.md`: date-level routing context, active flow pointer, required next action, request history, compact flow index, planned current/future sequence, current/planned flow skill list, completed summaries, explicit turn-end availability, active date-level risks를 소유합니다.
+- `.agents/sessions/{YYYYMMDD}/000-plan.md`: date-level routing card입니다. Frontmatter가 active flow pointer, next action, closure flags, self-drive status와 sidecar pointer, unapproved actions, active skill list를 소유합니다. Body는 compact recent request list, active/recent/archive flow index, continuity note만 소유합니다.
 - `.agents/sessions/{YYYYMMDD}/000-review.md`: optional date-level retrospective notes를 소유합니다. 이 파일은 flat tagged list로 reusable lesson, process correction, follow-up candidate를 기록하며 active routing state, raw flow log, verification authority, closure authority를 소유하지 않습니다.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`: 하나의 active flow의 compact `Contract`, `Execution Log`, `Result`를 소유하고, 필요할 때만 raw request와 `Risky Action`을 추가합니다.
 - `.agents/sessions/{YYYYMMDD}/000-self-drive.md`: self-drive가 active일 때만 사용하는 optional self-drive sequence state입니다.
@@ -17,7 +17,7 @@ flow filename은 zero-padded counter와 lowercase English slug를 사용합니�
 
 flow record는 completed flow를 기다리지 않고 각 phase 시작과 종료마다 현재 상태로 증분 갱신합니다.
 `flow`가 산출한 phase start/end record checkpoint expectation을 적용해 `000-plan.md`와 active flow record 중 어느 표면이 갱신돼야 하는지 구분합니다.
-active flow pointer, date-level required next action, planned/current sequence, current/planned flow skill list가 바뀌면 `000-plan.md`를 갱신합니다.
+active flow pointer, date-level required next action, active skill list, self-drive status, unapproved action state, turn-level routing이 바뀌면 `000-plan.md` frontmatter를 갱신합니다.
 같은 active flow 내부의 current phase, execution log, verification evidence, report outcome, residual risk, handoff condition이 바뀌면 active flow record를 갱신합니다.
 
 flow record는 기본적으로 compact formal style을 사용합니다. 기본 섹션은 다음입니다.
@@ -32,10 +32,12 @@ flow record frontmatter는 긴 boolean 나열보다 formal metadata를 우선합
 
 ## 중복 방지 계약
 
-`000-plan.md`는 compact하게 유지합니다. detailed scope, evidence, verification, residual risk, self-drive sequence detail은 plan에 반복하지 않고 active flow record 또는 self-drive sidecar에 둡니다.
-skill list는 현재 active flow 또는 selected future flow에 필요한 skill 이름과 사용 지점만 짧게 기록합니다. 전체 사용 가능 skill catalog, 후보 단계의 가능성, 이미 끝난 flow의 상세 사용 내역은 plan에 반복하지 않습니다.
+`000-plan.md`는 compact routing card로 유지합니다. Git으로 재구성 가능한 branch/latest commit, detailed scope, evidence, verification, residual risk, self-drive sequence detail은 plan에 반복하지 않고 active flow record, self-drive sidecar, 또는 실제 tool readback에 둡니다.
+skill list는 frontmatter의 `active_skills`에 skill 이름만 기록합니다. 사용 지점 설명, 전체 사용 가능 skill catalog, 후보 단계의 가능성, 이미 끝난 flow의 상세 사용 내역은 plan에 반복하지 않습니다.
 
-`000-plan.md`의 `Flow Index`와 `Completed Flow Summaries`는 flow당 한 줄의 compact entry로 유지하고 완료된 flow 요약을 삭제하지 않습니다. `Planned Flow Sequence`에는 현재 또는 미래 selected flow만 두며, 판단/설계/범위 확인에서 나온 후속 후보는 선택 전까지 active 또는 completed flow가 아닌 candidate handoff로 구분합니다.
+`000-plan.md`의 `Flow Index`는 active, recent, archive만 둡니다. `active`는 현재 flow, `recent`는 바로 이전 handoff flow, `archive`는 오래된 flow range와 individual flow record로의 복구 가능성을 가리킵니다. 완료 flow 전체 목록, completed summaries, planned old flows는 plan에 누적하지 않습니다.
+
+`Recent Requests`는 현재 요청과 복구에 필요한 직전 routing signal만 짧게 둡니다. `user requested ...` 같은 문장형 이력보다 `[current] compact note` 형식을 우선합니다. 오래된 raw request와 interpretation은 개별 flow record가 소유합니다.
 
 self-drive가 active이면 `000-plan.md`는 status와 sidecar pointer만 저장합니다. `000-self-drive.md`가 sequence-level state를 소유합니다.
 

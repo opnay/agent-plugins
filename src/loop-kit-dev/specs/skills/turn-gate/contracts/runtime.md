@@ -17,8 +17,8 @@
 7. `next-flow`: next-flow choice, blocker decision, 유효한 self-drive continuation, source-recorded explicit stop 중 하나로 라우팅합니다.
 
 각 active flow phase의 시작과 종료에는 필수 `flow`의 phase record checkpoint expectation을 적용합니다.
-`000-plan.md`는 active flow pointer나 turn-level required next action 같은 date-level routing 변화가 있을 때 갱신하고, active flow record는 같은 flow 내부 phase state, evidence, report, residual risk가 바뀔 때 갱신합니다.
-flow 시작 지점에서 다시 읽은 skill과 앞으로 필요한 skill 목록은 `000-plan.md`의 routing context에 반영합니다.
+`000-plan.md`는 active flow pointer, turn-level required next action, active skill list, self-drive status, unapproved action state 같은 date-level routing 변화가 있을 때 갱신하고, active flow record는 같은 flow 내부 phase state, evidence, report, residual risk가 바뀔 때 갱신합니다.
+flow 시작 지점에서 다시 읽을 skill 목록은 `000-plan.md` frontmatter의 `active_skills`에 이름만 반영합니다.
 
 task completion은 턴을 닫지 않습니다. source-recorded explicit stop만 terminal close를 허용할 수 있습니다.
 

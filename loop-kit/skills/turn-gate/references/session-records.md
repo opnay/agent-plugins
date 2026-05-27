@@ -4,7 +4,7 @@ Use this reference whenever `turn-gate` is active and records must be created, r
 
 ## Files
 
-- `.agents/sessions/{YYYYMMDD}/000-plan.md`: date-level routing context, active flow pointer, required next action, request history, compact flow index, planned current or future sequence, current/planned flow skill list, completed summaries, explicit turn-end availability, active date-level risks, and self-drive sidecar pointer.
+- `.agents/sessions/{YYYYMMDD}/000-plan.md`: compact date-level routing card. Frontmatter owns active flow pointer, next action, closure flags, self-drive status and sidecar pointer, unapproved actions, and active skill list. Body owns only compact recent requests, active/recent/archive flow index, and continuity note.
 - `.agents/sessions/{YYYYMMDD}/000-review.md`: optional date-level retrospective notes. Use it for reusable lessons, process corrections, and follow-up candidates. It must not own active routing state, raw flow logs, verification authority, or closure authority.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`: one active flow's compact `Contract`, `Execution Log`, and `Result`, with raw request and `Risky Action` added only when needed.
 - `.agents/sessions/{YYYYMMDD}/000-self-drive.md`: optional sequence-level self-drive state, used only when self-drive is active.
@@ -40,7 +40,7 @@ At each active flow phase end, record enough state to reconstruct:
 - handoff or next-flow condition
 - whether the change belongs in `000-plan.md` or the active flow record
 
-Update `000-plan.md` when the active flow pointer, date-level required next action, planned/current sequence, current/planned flow skill list, self-drive status pointer, or turn-level routing changes.
+Update `000-plan.md` frontmatter when the active flow pointer, date-level required next action, active skill list, self-drive status, unapproved action state, or turn-level routing changes.
 
 Update the active flow record when the same flow's current phase, execution log, verification evidence, report outcome, residual risk, handoff condition, pending question, or blocker state changes.
 
@@ -64,13 +64,13 @@ The flow record frontmatter must expose phase, verification status, next action,
 
 ## Avoid Duplication
 
-Keep `000-plan.md` compact. Do not repeat detailed scope, evidence, verification, residual risk, or self-drive sequence detail there. Store that detail in the active flow record or `000-self-drive.md`.
+Keep `000-plan.md` as a compact routing card. Do not repeat git-reconstructable branch/latest-commit state, detailed scope, evidence, verification, residual risk, or self-drive sequence detail there. Store that detail in the active flow record, `000-self-drive.md`, or fresh tool readback.
 
-Keep `Flow Index` and `Completed Flow Summaries` as one compact line per flow. Do not delete completed summaries.
+Store skill reread requirements in frontmatter `active_skills` as names only. Do not add usage explanations, candidate-only skills, completed-flow skill lists, or the full available skill catalog.
 
-Keep `Planned Flow Sequence` limited to selected current or future flows. Handoff candidates from discovery or planning are not active or completed flows until selected.
+Keep `Flow Index` to active, recent, and archive entries only. `active` is the current flow, `recent` is the immediately previous handoff flow, and `archive` points to older flow ranges recoverable from individual flow records. Do not accumulate completed flow summaries or old planned flows in `000-plan.md`.
 
-Keep `Flow Skill List` compact: list only skill names and usage points for active or selected future flows. Do not copy full skill text, candidate-only skills, or completed-flow detail into `000-plan.md`.
+Keep `Recent Requests` short. Prefer `[current] compact note` and one or two routing-relevant previous entries over sentence-form request history. Older raw requests and interpretations belong in individual flow records.
 
 When self-drive is active, `000-plan.md` stores only status and sidecar pointer. `000-self-drive.md` owns sequence-level state.
 

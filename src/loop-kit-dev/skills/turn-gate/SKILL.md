@@ -33,7 +33,7 @@ Run each active flow through:
 
 At the start and end of each active flow phase, apply the required `flow` phase record checkpoint expectation. Decide which surface changed:
 
-- Update `000-plan.md` when the active flow pointer, date-level required next action, planned/current sequence, current/planned flow skill list, or turn-level routing changes.
+- Update `000-plan.md` when the active flow pointer, date-level required next action, active skill list, self-drive status, unapproved action state, or turn-level routing changes.
 - Update the active flow record when the same flow's current phase, execution log, verification evidence, report outcome, residual risk, or handoff condition changes.
 
 Phase checkpoints do not make phases separate flows. `intake`, `framing`, `preparation`, `work`, `verification`, and `reporting` remain phases inside the same active flow.
