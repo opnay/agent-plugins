@@ -8,7 +8,7 @@
 
 모든 active flow는 다음 순서를 따릅니다.
 
-1. `preparation`: intent, scope, non-goals, acceptance signal, verification expectation, approval boundary, handoff condition을 잠급니다. flow boundary, readiness, ambiguity, flow-local strategy에는 sibling `flow`를 적용합니다.
+1. `preparation`: flow 시작 지점에서 현재 flow에 필요한 skill을 다시 읽고, intent, scope, non-goals, acceptance signal, verification expectation, approval boundary, handoff condition을 잠급니다. flow boundary, readiness, ambiguity, flow-local strategy에는 sibling `flow`를 적용합니다.
 2. `work`: active flow boundary 안에서만 실행합니다.
 3. `verification`: verification method를 선택하고, 실행하거나 정당화한 뒤, result status를 기록합니다.
 4. `reporting`: terminal close가 아니라 continuity context를 보고합니다.
@@ -16,6 +16,7 @@
 
 각 active flow phase의 시작과 종료에는 sibling `flow`의 phase record checkpoint expectation을 적용합니다.
 `000-plan.md`는 active flow pointer나 turn-level required next action 같은 date-level routing 변화가 있을 때 갱신하고, active flow record는 같은 flow 내부 phase state, evidence, report, residual risk가 바뀔 때 갱신합니다.
+flow 시작 지점에서 다시 읽은 skill과 앞으로 필요한 skill 목록은 `000-plan.md`의 routing context에 반영합니다.
 
 task completion은 턴을 닫지 않습니다. source-recorded explicit stop만 terminal close를 허용할 수 있습니다.
 
@@ -37,6 +38,7 @@ activation은 다음을 포착해야 합니다.
 
 - 현재 active flow 또는 새 activation flow
 - latest user request
+- 현재 또는 planned flow에서 다시 읽어야 하는 skill 목록
 - `turn_gate_active: yes`
 - `user_explicit_stop: no`
 - `terminal_summary_allowed: no`
@@ -60,6 +62,7 @@ activation-only 메시지는 response가 즉시 next-flow choice를 열지 않�
 ## 준비와 승인 경계 계약
 
 work 전에는 `turn-gate`가 sibling `flow` decision을 적용하거나 기록해야 합니다. flow contract는 scope, non-goals, completion 또는 acceptance signal, verification expectation, approval boundary, handoff condition을 포함해야 합니다.
+새 active flow를 시작할 때는 해당 flow에 적용할 skill을 다시 읽고, 이전 flow에서 로드된 skill context만으로 work를 시작하지 않습니다.
 
 요청이 target, operation, success condition, verification path를 바꿀 수 있으면 work 전에 user-gated clarification으로 라우팅합니다.
 
@@ -73,6 +76,7 @@ Runtime `SKILL.md`는 다음을 직접 포함해야 합니다.
 - active-turn rule과 terminal summary 금지
 - explicit stop 전 final/terminal closeout 금지
 - five-phase lifecycle
+- flow 시작 지점의 skill reread
 - phase prefix behavior
 - flow phase record checkpoint 적용
 - preparation과 approval boundary

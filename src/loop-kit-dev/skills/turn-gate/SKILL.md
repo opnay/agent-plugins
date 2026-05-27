@@ -23,7 +23,7 @@ Maintain session records while the turn is active. Use `references/session-recor
 
 Run each active flow through:
 
-1. `preparation`: lock intent, scope, non-goals, acceptance signal, verification expectation, approval boundary, and handoff condition. Apply the sibling `flow` contract for flow boundary, readiness, ambiguity, and flow-local strategy; do not redefine those rules here.
+1. `preparation`: reread the skills needed for the current flow, then lock intent, scope, non-goals, acceptance signal, verification expectation, approval boundary, and handoff condition. Apply the sibling `flow` contract for flow boundary, readiness, ambiguity, and flow-local strategy; do not redefine those rules here.
 2. `work`: execute only inside the recorded active flow boundary.
 3. `verification`: choose a verification method, run or justify it, and record result status.
 4. `reporting`: update records first, then report continuity context rather than closing the turn.
@@ -31,7 +31,7 @@ Run each active flow through:
 
 At the start and end of each active flow phase, apply the sibling `flow` phase record checkpoint expectation. Decide which surface changed:
 
-- Update `000-plan.md` when the active flow pointer, date-level required next action, planned/current sequence, or turn-level routing changes.
+- Update `000-plan.md` when the active flow pointer, date-level required next action, planned/current sequence, current/planned flow skill list, or turn-level routing changes.
 - Update the active flow record when the same flow's current phase, execution log, verification evidence, report outcome, residual risk, or handoff condition changes.
 
 Phase checkpoints do not make phases separate flows. `preparation`, `work`, `verification`, and `reporting` remain phases inside the same active flow.
@@ -58,6 +58,8 @@ Before work begins, ensure the active flow contract is recorded with:
 - verification expectation
 - approval boundary
 - handoff condition
+
+At each new flow start, reread the skills required for that flow. Do not rely on skill text loaded for an earlier flow when the current flow boundary has changed.
 
 If any missing target, operation, endpoint, success condition, approval boundary, or verification path could change the work, route through a user-gated clarification before proceeding.
 

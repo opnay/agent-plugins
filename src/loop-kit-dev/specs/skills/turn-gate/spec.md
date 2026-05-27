@@ -58,6 +58,7 @@
 ## 필수 runtime 동작
 
 - activation-only 요청은 terminal activation summary가 아니라 기록된 활성 상태와 next-flow routing을 만들어야 합니다.
+- 각 새 flow 시작 지점에서는 현재 flow에 필요한 skill을 다시 읽고, `000-plan.md`에 current/planned flow skill list를 compact하게 남겨야 합니다.
 - work는 active flow boundary, non-goals, acceptance signal, verification expectation, approval boundary, handoff condition이 알려졌거나 user-gated된 뒤에만 시작할 수 있습니다.
 - reporting은 먼저 기록을 갱신한 뒤 changed surfaces, verification status, material judgment calls, residual risk, required next action을 보고해야 합니다.
 - reporting 뒤에는 `next-flow`, `blocked`, 유효한 self-drive continuation, source-recorded explicit stop 중 하나로 라우팅해야 합니다.
@@ -67,6 +68,7 @@
 
 - 현재 응답은 현재 source-recorded explicit stop이 없는 한 계속 열린 상태인가?
 - active flow는 sibling `flow` decision 또는 충분히 기록된 flow contract에 기반하는가?
+- 새 flow 시작 때 필요한 skill을 다시 읽고 `000-plan.md` skill list가 최신인지 확인했는가?
 - reporting 뒤 next-flow routing, blocker routing, 유효한 self-drive continuation, source-recorded explicit stop 중 하나로 이어졌는가?
 - question-tool abort를 turn closure로 보거나 같은 질문 도구 호출을 무작정 반복하지 않고 recoverable routing으로 다루는가?
 - approval-sensitive action은 exact target, effect, risk, recovery path, included/excluded scope, endpoint에 기반하는가?

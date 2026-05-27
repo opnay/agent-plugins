@@ -27,3 +27,4 @@
 - `000-plan.md`는 self-drive active 여부와 sidecar pointer만 소유하고, self-drive detail은 일반 plan/flow template에 상시 노출하지 않아야 한다.
 - active self-drive 중 새 사용자 메시지는 `self-drive`를 다시 언급하지 않아도 mid-sequence input으로 처리하되, explicit stop, approval boundary, scope lock, endpoint lock, user-gated routing을 대체하지 않아야 한다.
 - flow 해석, sub-flow 후보 설계, readiness/discovery, review-loop, fix-verify-loop, broad-execution, commit-readiness 판단은 `flow` intent와 spec이 소유하고, `turn-gate` intent에는 turn-level gate 책임만 남겨야 한다.
+- 각 새 flow 시작 지점에서는 현재 flow에 필요한 skill을 다시 읽어 stale instruction이나 이전 flow의 skill context에 기대지 않아야 한다.

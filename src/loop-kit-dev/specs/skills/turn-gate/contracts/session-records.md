@@ -6,7 +6,7 @@
 
 ## 파일 계약
 
-- `.agents/sessions/{YYYYMMDD}/000-plan.md`: date-level routing context, active flow pointer, required next action, request history, compact flow index, planned current/future sequence, completed summaries, explicit turn-end availability, active date-level risks를 소유합니다.
+- `.agents/sessions/{YYYYMMDD}/000-plan.md`: date-level routing context, active flow pointer, required next action, request history, compact flow index, planned current/future sequence, current/planned flow skill list, completed summaries, explicit turn-end availability, active date-level risks를 소유합니다.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`: 하나의 active flow contract, 필요 시 raw request, interpretation, scope, non-goals, approval boundary, execution log, verification, report, next-flow options, residual risk를 소유합니다.
 - `.agents/sessions/{YYYYMMDD}/000-self-drive.md`: self-drive가 active일 때만 사용하는 optional self-drive sequence state입니다.
 
@@ -16,7 +16,7 @@ flow filename은 zero-padded counter와 lowercase English slug를 사용합니�
 
 flow record는 completed flow를 기다리지 않고 각 phase 시작과 종료마다 현재 상태로 증분 갱신합니다.
 `flow`가 산출한 phase start/end record checkpoint expectation을 적용해 `000-plan.md`와 active flow record 중 어느 표면이 갱신돼야 하는지 구분합니다.
-active flow pointer, date-level required next action, planned/current sequence가 바뀌면 `000-plan.md`를 갱신합니다.
+active flow pointer, date-level required next action, planned/current sequence, current/planned flow skill list가 바뀌면 `000-plan.md`를 갱신합니다.
 같은 active flow 내부의 current phase, execution log, verification evidence, report outcome, residual risk, handoff condition이 바뀌면 active flow record를 갱신합니다.
 
 flow record는 compact contract를 유지하더라도 최소한 다음 섹션을 가져야 합니다.
@@ -34,6 +34,7 @@ flow record frontmatter 또는 Continuity Guard에는 현재 phase, required nex
 ## 중복 방지 계약
 
 `000-plan.md`는 compact하게 유지합니다. detailed scope, evidence, verification, residual risk, self-drive sequence detail은 plan에 반복하지 않고 active flow record 또는 self-drive sidecar에 둡니다.
+skill list는 현재 active flow 또는 selected future flow에 필요한 skill 이름과 사용 지점만 짧게 기록합니다. 전체 사용 가능 skill catalog, 후보 단계의 가능성, 이미 끝난 flow의 상세 사용 내역은 plan에 반복하지 않습니다.
 
 `000-plan.md`의 `Flow Index`와 `Completed Flow Summaries`는 flow당 한 줄의 compact entry로 유지하고 완료된 flow 요약을 삭제하지 않습니다. `Planned Flow Sequence`에는 현재 또는 미래 selected flow만 두며, 판단/설계/범위 확인에서 나온 후속 후보는 선택 전까지 active 또는 completed flow가 아닌 candidate handoff로 구분합니다.
 
@@ -65,6 +66,7 @@ guard는 각 phase 시작과 종료, reporting, next-flow reopening 전에 갱�
 현재 source-recorded explicit stop만 terminal closure authority를 설정할 수 있습니다. stale 또는 source-less closure state는 열린 continuity 상태로 reset해야 합니다.
 
 guard는 compaction 또는 interruption 뒤에도 다음 행동을 알 수 있게 해야 합니다. 최소한 `turn-gate` active 여부, pending question 여부, verification status, closure 허용 여부, 다음 required action을 보여야 합니다.
+flow start recovery 때는 `000-plan.md`의 current/planned skill list를 기준으로 필요한 skill을 다시 읽고, 이전 runtime context에 남은 skill 본문만 신뢰하지 않습니다.
 
 `verification status`는 기록 진행 상태와 결과 상태를 모두 표현할 수 있습니다. work 전 또는 검증 전에는 `not-started`, verifier 요청 후 결과 전에는 `requested`, 검증 결과가 있으면 `pass`, `fail`, `blocked`, `insufficient` 중 하나를 사용합니다. `not-started`와 `requested`는 terminal close나 successful reporting 근거가 아닙니다.
 

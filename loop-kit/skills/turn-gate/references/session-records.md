@@ -4,7 +4,7 @@ Use this reference whenever `turn-gate` is active and records must be created, r
 
 ## Files
 
-- `.agents/sessions/{YYYYMMDD}/000-plan.md`: date-level routing context, active flow pointer, required next action, request history, compact flow index, planned current or future sequence, completed summaries, explicit turn-end availability, active date-level risks, and self-drive sidecar pointer.
+- `.agents/sessions/{YYYYMMDD}/000-plan.md`: date-level routing context, active flow pointer, required next action, request history, compact flow index, planned current or future sequence, current/planned flow skill list, completed summaries, explicit turn-end availability, active date-level risks, and self-drive sidecar pointer.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`: one active flow's contract, raw request when needed, interpretation, scope, non-goals, approval boundary, execution log, verification, report, next-flow options, and residual risk.
 - `.agents/sessions/{YYYYMMDD}/000-self-drive.md`: optional sequence-level self-drive state, used only when self-drive is active.
 
@@ -25,6 +25,7 @@ At each active flow phase start, record enough state to reconstruct:
 - current phase
 - scope boundary
 - required next action
+- required skills for the current flow, when skill use is part of the flow contract
 - pending question or blocker state
 - whether the change belongs in `000-plan.md` or the active flow record
 
@@ -37,7 +38,7 @@ At each active flow phase end, record enough state to reconstruct:
 - handoff or next-flow condition
 - whether the change belongs in `000-plan.md` or the active flow record
 
-Update `000-plan.md` when the active flow pointer, date-level required next action, planned/current sequence, self-drive status pointer, or turn-level routing changes.
+Update `000-plan.md` when the active flow pointer, date-level required next action, planned/current sequence, current/planned flow skill list, self-drive status pointer, or turn-level routing changes.
 
 Update the active flow record when the same flow's current phase, execution log, verification evidence, report outcome, residual risk, handoff condition, pending question, or blocker state changes.
 
@@ -66,6 +67,8 @@ Keep `000-plan.md` compact. Do not repeat detailed scope, evidence, verification
 Keep `Flow Index` and `Completed Flow Summaries` as one compact line per flow. Do not delete completed summaries.
 
 Keep `Planned Flow Sequence` limited to selected current or future flows. Handoff candidates from discovery or planning are not active or completed flows until selected.
+
+Keep `Flow Skill List` compact: list only skill names and usage points for active or selected future flows. Do not copy full skill text, candidate-only skills, or completed-flow detail into `000-plan.md`.
 
 When self-drive is active, `000-plan.md` stores only status and sidecar pointer. `000-self-drive.md` owns sequence-level state.
 
@@ -124,6 +127,8 @@ Distinguish record states carefully:
 - stale routing mismatch: reconcile from the latest source record or ask a clarification.
 
 Do not silently reconstruct an active record that should already exist.
+
+At a recovered flow start, reread the skills named in `000-plan.md` for the current flow. If the list is stale or missing, reconstruct only the minimum current-flow skill list from source-of-truth records before work resumes.
 
 Read-only requests usually restrict target/source changes, not session records. Do not write session records only when the user explicitly forbids all writes or record creation.
 
