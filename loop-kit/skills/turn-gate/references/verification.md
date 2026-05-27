@@ -11,7 +11,7 @@ Record both:
 
 `not-required` is not a pass. It means no separate verification action is justified. Record the reason and residual uncertainty.
 
-Progress states such as `not-started` and `requested` may appear in the Continuity Guard before a result exists. They are not result statuses and cannot support success reporting.
+Progress states such as `not-started` and `requested` may appear in compact continuity metadata before a result exists. They are not `Result.status` values and cannot support success reporting. When preserving prior flow state, keep the existing `verification_status` value and record the preservation in `continuity`; do not use `verification_status: preserved`.
 
 ## Methods
 
@@ -26,7 +26,7 @@ Use `not-required` only when a separate verification action would not add meanin
 Default to `clean-context` for:
 
 - file changes
-- release surface changes
+- generated release surface changes
 - multi-file contract changes
 - prior check failures
 - user-requested verification, review, QA, or commit-readiness
@@ -44,7 +44,7 @@ The verifier packet must include:
 - no destructive or external work
 - no commit, push, PR, publish, release, or version-bump action
 
-Skip clean-context verification only when the flow record explains why `normal` or `not-required` covers the actual risk.
+Generated release surface build/readback and commit-readiness judgment are verification or preparation evidence only. They do not authorize commit, publish, release, version bump, destructive work, or external side effects. Skip clean-context verification only when the flow record explains why `normal` or `not-required` covers the actual risk.
 
 ## Result Routing
 

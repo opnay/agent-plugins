@@ -30,11 +30,11 @@ result status는 선택된 verification method의 결과를 설명해야 합니�
 - `blocked`: user input, approval, access, external state change 없이는 verification 또는 repair를 계속할 수 없습니다.
 - `insufficient`: pass/fail을 지지하기에 evidence가 불완전하거나 약합니다.
 
-flow record의 진행 상태는 result status와 분리할 수 있습니다. verification이 아직 실행되지 않은 새 flow는 `verification_status`를 `not-started`로 둘 수 있고, clean-context verifier를 요청했지만 결과가 오기 전에는 `requested`로 둘 수 있습니다. `not-started`와 `requested`는 성공/실패 결과가 아니라 기록용 진행 상태이며, reporting에서 성공 근거로 사용할 수 없습니다.
+flow record의 진행 상태는 result status와 분리합니다. verification이 아직 실행되지 않은 새 flow는 frontmatter의 `verification_status`를 `not-started`로 둘 수 있고, clean-context verifier를 요청했지만 결과가 오기 전에는 `requested`로 둘 수 있습니다. `not-started`와 `requested`는 `Result.status` 값이 아니며, reporting에서 성공 근거로 사용할 수 없습니다. 이전 flow state를 보존할 때는 `verification_status`에 `preserved`를 쓰지 말고 기존 값을 유지한 뒤 `continuity`에 보존 사실을 씁니다.
 
 ## clean-context 기본값
 
-파일 변경, release surface 변경, 다중 파일 contract 변경, prior check failure, 사용자 요청 verification/review/QA/commit-readiness, approval-sensitive action에는 기본적으로 `clean-context`를 사용합니다.
+파일 변경, generated release surface 변경, 다중 파일 contract 변경, prior check failure, 사용자 요청 verification/review/QA/commit-readiness, approval-sensitive action에는 기본적으로 `clean-context`를 사용합니다. generated release surface build/readback이나 commit-readiness 판단은 검증 또는 준비 상태일 뿐이며, publish/release/version bump나 commit 실행 권한을 만들지 않습니다.
 
 verifier packet은 target, user intent, changed files 또는 artifacts, inspect할 checks/evidence, pass/fail criteria, no edit permission, no scope expansion, no destructive/external work, no commit/push/PR/publish/release/version-bump action을 포함해야 합니다.
 

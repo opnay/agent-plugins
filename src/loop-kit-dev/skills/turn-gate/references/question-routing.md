@@ -23,7 +23,7 @@ Use `request_user_input` when it is available and the choices are narrow. Keep o
 If the tool UI cannot include an explicit stop option, still do both:
 
 - mention in the prompt or fallback text that the user can explicitly end the turn
-- record explicit turn-end as a `Next Flow Options` item
+- record explicit turn-end in `Result.next` or temporary next options
 
 ## Plain-Text Fallback
 
@@ -40,11 +40,10 @@ An aborted, canceled, or interrupted `request_user_input` is not flow completion
 
 Record:
 
-- `user_explicit_stop: no`
-- `terminal_summary_allowed: no`
-- `confirmed_closure: no`
+- `terminal_summary_blocked` in flags
 - pending question state: `aborted`, `interrupted`, or `superseded`
 - pending question id or compact summary when known
+- no explicit-stop source unless the user actually stopped the turn
 
 For the next user message:
 

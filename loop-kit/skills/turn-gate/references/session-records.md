@@ -6,7 +6,7 @@ Use this reference whenever `turn-gate` is active and records must be created, r
 
 - `.agents/sessions/{YYYYMMDD}/000-plan.md`: date-level routing context, active flow pointer, required next action, request history, compact flow index, planned current or future sequence, current/planned flow skill list, completed summaries, explicit turn-end availability, active date-level risks, and self-drive sidecar pointer.
 - `.agents/sessions/{YYYYMMDD}/000-review.md`: optional date-level retrospective notes. Use it for reusable lessons, process corrections, and follow-up candidates. It must not own active routing state, raw flow logs, verification authority, or closure authority.
-- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`: one active flow's contract, raw request when needed, interpretation, scope, non-goals, approval boundary, execution log, verification, report, next-flow options, and residual risk.
+- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`: one active flow's compact `Contract`, `Execution Log`, and `Result`, with raw request and `Risky Action` added only when needed.
 - `.agents/sessions/{YYYYMMDD}/000-self-drive.md`: optional sequence-level self-drive state, used only when self-drive is active.
 
 Use the bundled templates in `templates/` when creating records:
@@ -16,7 +16,7 @@ Use the bundled templates in `templates/` when creating records:
 - `templates/flow-record-template.md`
 - `templates/self-drive-template.md`
 
-Flow filenames use a zero-padded counter and a lowercase English slug. Create a new flow record when the active flow boundary changes. Update an existing flow record only when the same flow remains active or when correcting that flow's own Continuity Guard before reporting.
+Flow filenames use a zero-padded counter and a lowercase English slug. Create a new flow record when the active flow boundary changes. Update an existing flow record only when the same flow remains active or when correcting that flow's own continuity metadata before reporting.
 
 ## Phase Checkpoints
 
@@ -48,19 +48,19 @@ Phase checkpoints are record maintenance checkpoints. They do not turn `preparat
 
 If a trivial read-only judgment appears to need no record mutation, record the reason in the active flow record or report so a later agent can reconstruct why no change was needed.
 
-## Minimum Flow Record Sections
+## Compact Flow Records
 
-Even a compact flow record must include:
+Use compact formal style for flow records by default. The required sections are:
 
-- `Flow Contract`
-- `Optional Risky Actions`
+- `Contract`
 - `Execution Log`
-- `Verification`
-- `Report`
-- `Next Flow Options`
-- `Residual Risk`
+- `Result`
 
-The flow record frontmatter or Continuity Guard must expose current phase, required next action, closure fields, pending or superseded question state, verification status, and continuity note.
+Keep `Execution Log`. It is the main recovery trail. Compress other sections into field-like bullets.
+
+Add `Risky Action` only when approval-sensitive action exists. Readiness, verification, build, and generated release surface updates do not by themselves authorize commit, publish, release, version bump, destructive work, or external side effects. Add raw request only when exact source wording affects interpretation. Add non-pass routing only for `fail`, `blocked`, or `insufficient` results.
+
+The flow record frontmatter must expose phase, verification status, next action, flags, question state, and continuity note. Use `answered_question` by default, add `pending_question` when a question is waiting, and do not invent synonyms such as `question_state`. Prefer compact metadata such as `flags: [turn_gate_active, terminal_summary_blocked]` over long boolean lists.
 
 ## Avoid Duplication
 
@@ -84,30 +84,24 @@ When storing raw user request text, keep it separate from interpretation or summ
 
 You may write a separate compact interpretation, but it must not replace the raw source when raw text matters.
 
-## Continuity Guard
+## Continuity Metadata
 
-Every active flow record must maintain a Continuity Guard with:
+Every active flow record must maintain compact continuity metadata with:
 
-- `turn_gate_active`
-- `question_routing_mode`
-- `user_explicit_stop`
-- `terminal_summary_allowed`
-- `required_next_action`
-- `last_refreshed_phase`
-- `confirmed_closure`
-- `closure_source_message`
-- `closure_recorded_phase`
-- `pending_question_state`
-- `pending_question_id_or_summary`
-- `superseded_question_id_or_summary`
+- `phase`
 - `verification_status`
-- `continuity_note`
+- `next_action`
+- `flags`
+- `answered_question`, and `pending_question` when a question is waiting
+- `continuity`
 
-Refresh the guard at each phase start and end, before reporting, and before next-flow reopening.
+Use `flags` for recovery-relevant states such as `turn_gate_active`, `terminal_summary_blocked`, `question_pending`, `blocked`, `approval_required`, or `explicit_stop_recorded`. If a source-recorded explicit stop exists, keep the closure source in `continuity` or another compact field.
+
+Refresh metadata at each phase start and end, before reporting, and before next-flow reopening.
 
 Only a current source-recorded explicit stop can set terminal closure authority. Reset stale or source-less closure state to open continuity and record the recovery.
 
-The guard must allow recovery after compaction or interruption. At minimum, it must show whether `turn-gate` is active, whether a pending question exists, verification status, whether closure is allowed, and the next required action.
+The metadata must allow recovery after compaction or interruption. At minimum, it must show whether `turn-gate` is active, whether a pending question exists, verification status, whether closure is allowed, and the next required action.
 
 Verification status may include progress states:
 
@@ -119,6 +113,8 @@ Verification status may include progress states:
 - `insufficient`
 
 `not-started` and `requested` are not success evidence and cannot authorize terminal closure.
+
+When preserving prior flow state, keep the existing `verification_status` value and describe preservation in `continuity`. Do not write `verification_status: preserved`.
 
 ## Recovery
 

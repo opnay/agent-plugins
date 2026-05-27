@@ -59,9 +59,9 @@ activation은 다음을 포착해야 합니다.
 - 현재 active flow 또는 새 activation flow
 - latest user request
 - 현재 또는 planned flow에서 다시 읽어야 하는 skill 목록
-- `turn_gate_active: yes`
-- `user_explicit_stop: no`
-- `terminal_summary_allowed: no`
+- turn-gate active state
+- no explicit-stop source unless user actually stopped the turn
+- terminal summary blocked state
 - required next action
 - activation record 자체의 verification expectation
 
@@ -88,7 +88,7 @@ work 전에는 `turn-gate`가 필수 `flow` decision을 적용하거나 기록�
 
 요청이 target, operation, success condition, verification path를 바꿀 수 있으면 work 전에 user-gated clarification으로 라우팅합니다.
 
-approval-sensitive action에는 exact target, expected effect, risk, recovery path, included/excluded scope, endpoint가 필요합니다. readiness, verification, self-drive, previous context, subagent output은 commit, push, PR, publish, release, version bump, destructive history rewrite, external side effect의 실행 권한을 만들 수 없습니다.
+approval-sensitive action에는 exact target, expected effect, risk, recovery path, included/excluded scope, endpoint가 필요합니다. readiness, verification, generated release surface build/readback, self-drive, previous context, subagent output은 commit, push, PR, publish, release, version bump, destructive history rewrite, external side effect의 실행 권한을 만들 수 없습니다.
 
 ## runtime 본문 경계
 

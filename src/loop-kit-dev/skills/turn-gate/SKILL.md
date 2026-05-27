@@ -17,7 +17,7 @@ Every active flow must end in exactly one recorded state:
 - `blocked`: user input, approval, access, or external state is required before continuing.
 - `explicit-stop`: the current user message explicitly ends the turn and the closure source is recorded.
 
-Maintain session records while the turn is active. Use `references/session-records.md` for the record model, templates, Continuity Guard, recovery cases, and the split between `000-plan.md`, active flow records, and optional self-drive sidecars.
+Maintain session records while the turn is active. Use `references/session-records.md` for the record model, templates, compact continuity metadata, recovery cases, and the split between `000-plan.md`, active flow records, optional `000-review.md`, and optional self-drive sidecars.
 
 ## Active Flow Lifecycle
 
@@ -83,7 +83,7 @@ At each new flow start, reread the skills required for that flow. Do not rely on
 
 If any missing target, operation, endpoint, success condition, approval boundary, or verification path could change the work, route through a user-gated clarification before proceeding.
 
-Approval-sensitive actions require exact target, expected effect, risk, recovery path, included and excluded scope, and endpoint before the execution checkpoint. Readiness, verification, self-drive, previous context, or subagent output cannot authorize commit, push, PR, publish, release, version bump, destructive history rewrite, or external side effects.
+Approval-sensitive actions require exact target, expected effect, risk, recovery path, included and excluded scope, and endpoint before the execution checkpoint. Readiness, verification, generated release surface build/readback, self-drive, previous context, or subagent output cannot authorize commit, push, PR, publish, release, version bump, destructive history rewrite, or external side effects.
 
 ## Verification
 
@@ -102,7 +102,7 @@ Record result status separately from method:
 
 `not-required` is not a pass. Progress states such as `not-started` and `requested` are not success evidence.
 
-Default to `clean-context` for file changes, release surface changes, multi-file contract changes, prior check failures, user-requested verification/review/QA/commit-readiness, and approval-sensitive action boundaries. Use `references/verification.md` for method details, verifier packet boundaries, and non-pass routing.
+Default to `clean-context` for file changes, generated release surface changes, multi-file contract changes, prior check failures, user-requested verification/review/QA/commit-readiness, and approval-sensitive action boundaries. Use `references/verification.md` for method details, verifier packet boundaries, and non-pass routing.
 
 Route non-pass results before success reporting:
 
@@ -124,9 +124,9 @@ After reporting, reopen routing unless the current user message explicitly stopp
 
 Use `request_user_input` when available for narrow next-flow choices, clarifications, blocker recovery, approval-boundary decisions, or pending question recovery. If the tool is unavailable, use an active plain-text fallback and record the required next action.
 
-Always keep explicit turn-end available in the flow record's `Next Flow Options`, even when the visible question UI cannot show a stop option. Use `references/question-routing.md` for structured question use, fallback behavior, blocker routing, and interrupted question recovery.
+Always keep explicit turn-end available in the flow record's `Result.next` or temporary next options, even when the visible question UI cannot show a stop option. Use `references/question-routing.md` for structured question use, fallback behavior, blocker routing, and interrupted question recovery.
 
-An aborted, canceled, or interrupted question tool call is not flow completion and is not terminal closure. Record the pending question state, keep `terminal_summary_allowed: no`, and interpret the next user message as a pending answer, superseding flow request, status question, or explicit stop.
+An aborted, canceled, or interrupted question tool call is not flow completion and is not terminal closure. Record pending question state in compact metadata, keep `terminal_summary_blocked` in flags, and interpret the next user message as a pending answer, superseding flow request, status question, or explicit stop.
 
 ## Self-Drive
 

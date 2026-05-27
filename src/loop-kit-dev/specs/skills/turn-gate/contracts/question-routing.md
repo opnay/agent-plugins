@@ -10,7 +10,7 @@ reporting 뒤 현재 사용자 메시지가 턴을 명시적으로 끝내지 않
 
 next-flow reopening은 final response가 아닙니다. 턴을 ongoing conversation channel에 열린 상태로 두고 필요한 다음 행동이나 선택지를 보여줍니다. terminal/final closeout을 next-flow routing의 대체물로 사용하지 않습니다.
 
-structured choices가 가능하고 도구가 사용 가능하면 `request_user_input`을 사용합니다. visible choice는 좁고 보고된 결과와 연결되어야 합니다. visible choice에 stop option을 표시하지 못하더라도 flow record의 `Next Flow Options`에는 explicit turn-end option을 남깁니다. 도구 UI 제약으로 stop choice를 직접 넣지 못하는 경우에도 user-facing prompt나 fallback text에서 사용자가 명시적으로 턴을 종료할 수 있음을 드러내야 합니다.
+structured choices가 가능하고 도구가 사용 가능하면 `request_user_input`을 사용합니다. visible choice는 좁고 보고된 결과와 연결되어야 합니다. visible choice에 stop option을 표시하지 못하더라도 flow record의 `Result.next` 또는 임시 next options에는 explicit turn-end option을 남깁니다. 도구 UI 제약으로 stop choice를 직접 넣지 못하는 경우에도 user-facing prompt나 fallback text에서 사용자가 명시적으로 턴을 종료할 수 있음을 드러내야 합니다.
 
 도구가 없으면 active plain-text fallback을 사용합니다. 도구가 없다고 밝히고, 열린 선택지를 나열하며, required next action을 기록합니다. fallback도 active routing이며 terminal summary가 아닙니다.
 
@@ -30,11 +30,10 @@ structured choices가 가능하고 도구가 사용 가능하면 `request_user_i
 
 recovery state를 다음처럼 기록합니다.
 
-- `user_explicit_stop: no`
-- `terminal_summary_allowed: no`
-- `confirmed_closure: no`
+- `terminal_summary_blocked` flag
 - pending question state는 `aborted`, `interrupted`, `superseded` 중 하나
 - 알 수 있으면 pending question id 또는 summary
+- 사용자가 실제로 턴을 멈춘 경우가 아니면 explicit-stop source를 기록하지 않음
 
 다음 사용자 메시지는 먼저 question-routing recovery로 해석합니다.
 
