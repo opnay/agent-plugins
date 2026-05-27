@@ -5,8 +5,8 @@
 - `turn-gate`는 대화 응답 자체를 제어하며, 각 phase 시작 또는 phase progress 사용자-facing 메시지는 `[intake]`, `[framing]`, `[preparation]`, `[work]`, `[verification]`, `[reporting]`, `[next-flow]` 같은 core phase prefix로 드러나야 한다.
 - `turn-gate`의 operating cycle은 `intake -> framing -> preparation -> work -> verification -> reporting -> next-flow`여야 한다.
 - concrete task는 source-recorded active flow 안에서만 진행되어야 한다.
-- active flow가 없거나 flow contract가 부족하면 sibling `flow` decision을 적용해 scope, non-goal, acceptance signal, verification expectation, handoff condition을 잠가야 한다.
-- `turn-gate`는 flow 자체를 정의하거나 flow-local strategy를 재정의하지 않고, sibling `flow`의 decision을 현재 turn에 적용하고 session record에 기록해야 한다.
+- active flow가 없거나 flow contract가 부족하면 필수 `flow` decision을 적용해 scope, non-goal, acceptance signal, verification expectation, handoff condition을 잠가야 한다.
+- `turn-gate`는 flow 자체를 정의하거나 flow-local strategy를 재정의하지 않고, 의존하는 `flow`의 decision을 현재 turn에 적용하고 session record에 기록해야 한다.
 - `turn-gate`는 flow reporting 뒤 source-recorded explicit stop이 없으면 `next-flow` phase로 이어져 다음 flow 선택지를 열어야 한다.
 - 질문, 선택지, blocker decision, 다음 flow 선택은 user-gated question routing으로 드러나야 한다.
 - 질문 도구가 사용 가능하면 필요한 user-gated routing에 적극 사용하고, 사용할 수 없으면 active plain-text question fallback과 required next action을 기록해야 한다.
@@ -28,3 +28,4 @@
 - active self-drive 중 새 사용자 메시지는 `self-drive`를 다시 언급하지 않아도 mid-sequence input으로 처리하되, explicit stop, approval boundary, scope lock, endpoint lock, user-gated routing을 대체하지 않아야 한다.
 - flow 해석, sub-flow 후보 설계, readiness/discovery, review-loop, fix-verify-loop, broad-execution, commit-readiness 판단은 `flow` intent와 spec이 소유하고, `turn-gate` intent에는 turn-level gate 책임만 남겨야 한다.
 - 각 새 flow 시작 지점에서는 현재 flow에 필요한 skill을 다시 읽어 stale instruction이나 이전 flow의 skill context에 기대지 않아야 한다.
+- active flow 도중 새 사용자 메시지가 들어오면 일반 lifecycle phase가 아닌 `interruption` 진입점으로 먼저 분류하고, inline answer, current-flow revision, background flow, later analysis reservation, supersede, blocker question, explicit stop 중 하나로 라우팅해야 한다.

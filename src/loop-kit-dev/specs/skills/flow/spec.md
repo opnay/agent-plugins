@@ -15,6 +15,7 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
   - `operational-preparation flow`와 `change-unit flow` 구분
   - active flow와 follow-up/sub-flow 후보 구분
   - flow 내부 `intake -> framing -> preparation -> work -> verification -> reporting` 계약
+  - `turn-gate`의 `interruption`은 일반 flow phase가 아니라 active flow 도중 사용자 메시지를 분류하는 entry-only routing임을 구분
   - input analysis, deep interview, goal detection, non-goal detection, authority detection
   - flow decomposition, flow design, candidate-vs-selected distinction, artifact ownership
   - active flow phase start/end record checkpoint 계약
@@ -76,6 +77,7 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
 
 - flow는 phase checklist가 아니라 이해, 리뷰, 검증, 필요 시 커밋 가능한 작업 단위입니다.
 - 하나의 flow는 `intake -> framing -> preparation -> work -> verification -> reporting`을 내부 단계로 갖습니다.
+- `interruption`은 `flow` 내부 phase가 아닙니다. active flow 도중 새 사용자 메시지가 도착하면 `turn-gate`가 entry-only routing으로 처리하고, 필요할 때 flow 계약 갱신이나 새 flow 전환에 `flow` 판단을 적용합니다.
 - `intake`는 사용자 입력 분석, deep interview, 목표/비목표/authority 탐지를 소유합니다.
 - `framing`은 flow 분리, flow 설계, candidate-vs-selected 구분, artifact ownership 판단을 소유합니다.
 - `preparation`은 선택된 active flow의 readiness, scope/non-goals/completion/verification/approval boundary lock, work 진입 가능성 판단으로 좁힙니다.

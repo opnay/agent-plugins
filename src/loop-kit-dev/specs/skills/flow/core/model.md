@@ -8,6 +8,7 @@ flow, parent flow, sub-flow candidate, active flow 관계.
 
 - flow는 phase checklist가 아니라 응집된 작업 흐름 단위입니다.
 - 하나의 flow는 `intake -> framing -> preparation -> work -> verification -> reporting`을 내부 단계로 갖습니다.
+- `interruption`은 flow 내부 단계가 아닙니다. active flow 도중 새 사용자 메시지가 도착했을 때 `turn-gate`가 여는 entry-only routing이며, 분류 결과에 따라 기존 phase로 복귀하거나 flow 계약을 갱신하거나 새 foreground flow로 전환합니다.
 - 각 phase의 시작과 종료는 기록 checkpoint를 가지며, `000-plan.md` 또는 active flow record 중 어떤 표면이 최신화돼야 하는지 판단해야 합니다.
 - flow intake는 사용자 입력, 목표, 비목표, authority-sensitive signal, discovery topic을 정리합니다.
 - flow framing은 flow 분리, candidate-vs-selected 구분, artifact ownership 판단으로 flow contract 초안을 만듭니다.

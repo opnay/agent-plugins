@@ -3,7 +3,7 @@
 ## 목적
 
 `turn-gate`는 사용자가 명시적으로 현재 턴을 끝내기 전까지 활성 Codex 턴을 열린 상태로 유지합니다.
-각 active flow에 sibling `flow` 계약을 적용하고, session record를 갱신하며, 보고 전에 검증을 처리하고, 보고 뒤에는 다음 flow 선택을 다시 엽니다.
+각 active flow에 필수 `flow` 계약을 적용하고, session record를 갱신하며, 보고 전에 검증을 처리하고, 보고 뒤에는 다음 flow 선택을 다시 엽니다.
 
 이 폴더에서는 `intent.md`가 사용자 의도 기록을 소유하고, `intent-scenarios/`가 회귀 의도 fixture를 소유합니다. 지속 실행 계약은 `contracts/`가 소유합니다.
 
@@ -18,6 +18,7 @@
   - source-recorded explicit stop 처리
   - session record와 Continuity Guard
   - next-flow question routing과 question abort recovery
+  - active flow 도중 들어온 사용자 메시지의 `interruption` routing
   - 위험 기반 verification routing
   - approval-sensitive checkpoint 경계
   - 명시적으로 준비된 overlay로서의 self-drive
@@ -43,6 +44,7 @@
 - `contracts/question-routing.md`: next-flow reopening, structured question 사용, fallback, pending question recovery, `request_user_input` abort 처리
 - `contracts/session-records.md`: `000-plan.md`, flow record, self-drive sidecar pointer, raw request, Continuity Guard, recovery case
 - `contracts/verification.md`: verification method 선택, result status, clean-context verifier 경계, non-pass routing
+- `contracts/interruption.md`: active flow 도중 들어온 사용자 메시지의 entry-only routing, foreground/background/reserved/superseded/blocked 상태 전환
 - `contracts/self-drive.md`: prepared sequence overlay, sidecar gate, interruption handling, endpoint 처리, approval boundary
 
 ## 소유권 규칙
@@ -60,18 +62,20 @@
 - activation-only 요청은 terminal activation summary가 아니라 기록된 활성 상태와 next-flow routing을 만들어야 합니다.
 - 각 새 flow 시작 지점에서는 현재 flow에 필요한 skill을 다시 읽고, `000-plan.md`에 current/planned flow skill list를 compact하게 남겨야 합니다.
 - intake는 raw input과 해석을 분리하고, goal, non-goals, authority-sensitive signal, discovery topic을 드러내야 합니다.
-- framing은 sibling `flow` contract를 적용해 active flow, parent flow, sub-flow candidate, phase, handoff를 구분하고 selected flow와 candidate를 혼동하지 않아야 합니다.
+- framing은 필수 `flow` contract를 적용해 active flow, parent flow, sub-flow candidate, phase, handoff를 구분하고 selected flow와 candidate를 혼동하지 않아야 합니다.
 - work는 active flow boundary, non-goals, acceptance signal, verification expectation, approval boundary, handoff condition이 알려졌거나 user-gated된 뒤에만 시작할 수 있습니다.
 - reporting은 먼저 기록을 갱신한 뒤 changed surfaces, verification status, material judgment calls, residual risk, required next action을 보고해야 합니다.
 - reporting 뒤에는 `next-flow`, `blocked`, 유효한 self-drive continuation, source-recorded explicit stop 중 하나로 라우팅해야 합니다.
+- active flow 도중 새 사용자 메시지가 들어오면 `interruption`으로 먼저 분류하고, 일반 lifecycle phase 또는 새 foreground flow로 빠져나가야 합니다.
 - source-recorded explicit stop만 terminal closure의 근거가 됩니다.
 
 ## 검토 질문
 
 - 현재 응답은 현재 source-recorded explicit stop이 없는 한 계속 열린 상태인가?
-- active flow는 sibling `flow` decision 또는 충분히 기록된 flow contract에 기반하는가?
+- active flow는 필수 `flow` decision 또는 충분히 기록된 flow contract에 기반하는가?
 - 새 flow 시작 때 필요한 skill을 다시 읽고 `000-plan.md` skill list가 최신인지 확인했는가?
 - reporting 뒤 next-flow routing, blocker routing, 유효한 self-drive continuation, source-recorded explicit stop 중 하나로 이어졌는가?
 - question-tool abort를 turn closure로 보거나 같은 질문 도구 호출을 무작정 반복하지 않고 recoverable routing으로 다루는가?
+- active flow 도중 사용자 메시지를 `interruption`으로 분류하고, inline answer와 flow 계약 변경, background 전환, 후속 예약, supersede, blocker, explicit stop을 구분하는가?
 - approval-sensitive action은 exact target, effect, risk, recovery path, included/excluded scope, endpoint에 기반하는가?
 - raw user message가 중요할 때 summary 또는 interpretation과 분리해 기록하는가?

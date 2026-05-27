@@ -1,6 +1,6 @@
 ---
 name: turn-gate
-description: Keep an active Codex turn open across intake, framing, preparation, work, verification, reporting, and next-flow routing until the user explicitly stops the turn; apply sibling flow contracts, maintain session records, route questions, verify before reporting, and support prepared self-drive sequences.
+description: Keep an active Codex turn open across intake, framing, preparation, work, verification, reporting, and next-flow routing until the user explicitly stops the turn; require flow contracts, maintain session records, route questions, verify before reporting, and support prepared self-drive sequences.
 ---
 
 # Turn Gate
@@ -24,19 +24,35 @@ Maintain session records while the turn is active. Use `references/session-recor
 Run each active flow through:
 
 1. `intake`: reread the skills needed for the current flow, separate source wording from interpretation, detect goal, non-goals, authority-sensitive signals, and discovery topics.
-2. `framing`: classify the item with the sibling `flow` contract, design finite candidates when needed, and distinguish selected active flow from candidate output.
+2. `framing`: classify the item with the required `flow` contract, design finite candidates when needed, and distinguish selected active flow from candidate output.
 3. `preparation`: lock readiness for the selected active flow, including scope, acceptance signal, verification expectation, approval boundary, and handoff condition.
 4. `work`: execute only inside the recorded active flow boundary.
 5. `verification`: choose a verification method, run or justify it, and record result status.
 6. `reporting`: update records first, then report continuity context rather than closing the turn.
 7. `next-flow`: route to a next-flow choice, blocker decision, valid self-drive continuation, or source-recorded explicit stop.
 
-At the start and end of each active flow phase, apply the sibling `flow` phase record checkpoint expectation. Decide which surface changed:
+At the start and end of each active flow phase, apply the required `flow` phase record checkpoint expectation. Decide which surface changed:
 
 - Update `000-plan.md` when the active flow pointer, date-level required next action, planned/current sequence, current/planned flow skill list, or turn-level routing changes.
 - Update the active flow record when the same flow's current phase, execution log, verification evidence, report outcome, residual risk, or handoff condition changes.
 
 Phase checkpoints do not make phases separate flows. `intake`, `framing`, `preparation`, `work`, `verification`, and `reporting` remain phases inside the same active flow.
+
+## Interruption
+
+Use `interruption` only when a new user message arrives while an active flow is already in progress. It is an entry-only phase, not part of the normal lifecycle, and it must exit back to normal flow routing.
+
+When an interruption starts, preserve the current foreground flow's phase, scope, non-goals, approval boundary, verification status, and required next action. Then classify the message by its effect on the active flow:
+
+- `inline-answer`: answer a question that does not change the active flow contract, then return to the preserved phase.
+- `current-flow-revision`: update scope, non-goals, completion criteria, verification expectation, approval boundary, or handoff condition, then return to `framing` or `preparation` before work continues.
+- `background-current-flow`: keep the current flow resumable in the background and start a new foreground flow.
+- `reserve-later-analysis`: record a future flow candidate, then return to the preserved phase.
+- `supersede-current-flow`: mark the active flow as superseded and start a new flow.
+- `blocker-question`: mark the active flow blocked and ask for the needed decision, approval, access, or scope clarification.
+- `explicit-stop`: allow closure only after recording the user's explicit stop source.
+
+An interruption result is not authority to commit, push, publish, release, perform destructive actions, or begin implementation that was not already authorized by the active flow contract.
 
 Use the phase prefix at the start of user-facing phase-start or phase-progress messages:
 

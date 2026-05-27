@@ -32,6 +32,7 @@ work 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, f
   - work 전 operation meaning resolution
   - `turn-gate`의 독립적인 implicit default state 유지
   - user-gated question routing 유지
+  - active flow 도중 들어온 사용자 메시지를 `interruption` entry-only routing으로 분류
   - `clean-context`, `normal`, `not-required` verification method 선택과 중복 검증을 피하는 최소 충분 evidence 구성
   - autonomous subagent question routing을 위한 self-drive runtime reference 제공
   - `turn-gate/references/` 아래 local absorbed loop contract 유지
@@ -90,6 +91,7 @@ work 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, f
 - `flow`의 phase model은 각 phase 시작/종료에서 `000-plan.md` 또는 active flow record 갱신이 필요한지 판단하는 checkpoint를 드러내야 한다.
 - `flow`는 intake discovery, framing, selected-flow readiness, ambiguity, review-loop, fix-verify-loop, broad-execution, commit-readiness handoff 같은 flow-local strategy를 소유한다.
 - `turn-gate`는 flow phase model을 재소유하지 않고, active turn에서 `flow` 계약을 적용하고 flow reporting 뒤 next-flow reopening을 강제한다.
+- `turn-gate`는 active flow 도중 들어온 사용자 메시지를 `interruption`으로 먼저 분류하고, inline answer, current-flow revision, background current flow, reserved later analysis, supersede, blocker, explicit stop 중 하나로 라우팅한다.
 - 초기 bootstrap은 `operational-preparation flow`로 기록할 수 있으며, 이 flow의 산출물은 session plan, sub-flow candidate list, scope/approval boundary다. 이 결과로 생성되는 product/work sub-flow candidates는 선택될 때 `change-unit flow`로 분리한다.
 - self-drive는 별도 skill 표면이 아니라 명시적으로 적용될 때 준비된 sequence의 진행 판단을 덮어쓰는 독립 overlay reference로 동작한다.
 - `turn-gate/contracts/self-drive.md`는 self-drive overlay의 endpoint, stop boundary, execution authority, handoff behavior에 대한 spec-side ownership을 소유한다.

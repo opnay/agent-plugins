@@ -9,6 +9,8 @@ Use this skill to turn work into a bounded flow contract before execution. A flo
 
 Each active flow has internal phases: `intake -> framing -> preparation -> work -> verification -> reporting`. Keep those phases inside the same active flow unless a separate reviewable work unit is needed.
 
+`interruption` is not a flow phase. When `turn-gate` uses interruption for a user message received during an active flow, apply this skill only to classify the contract impact: return to the preserved phase, revise the current flow, create a later candidate, or frame a new foreground flow.
+
 ## Intake
 
 Start by separating the user's source wording from your interpretation. Intake owns raw input analysis, goal detection, non-goal detection, authority-sensitive signal detection, and deep-interview topics.
