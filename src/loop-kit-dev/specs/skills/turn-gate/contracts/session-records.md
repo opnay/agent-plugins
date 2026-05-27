@@ -7,7 +7,7 @@
 ## 파일 계약
 
 - `.agents/sessions/{YYYYMMDD}/000-plan.md`: date-level routing card입니다. Frontmatter가 active flow pointer, next action, closure flags, self-drive status와 sidecar pointer, unapproved actions, active skill list를 소유합니다. Body는 compact recent request list, active/recent/archive flow index, continuity note만 소유합니다.
-- `.agents/sessions/{YYYYMMDD}/000-review.md`: optional date-level retrospective notes를 소유합니다. 이 파일은 flat tagged list로 reusable lesson, process correction, follow-up candidate를 기록하며 active routing state, raw flow log, verification authority, closure authority를 소유하지 않습니다.
+- `.agents/sessions/{YYYYMMDD}/000-review.md`: optional date-level retrospective notes를 소유합니다. 이 파일은 flat tagged list로 flow 회고 내용을 기록하며 active routing state, raw flow log, verification authority, closure authority를 소유하지 않습니다.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`: 하나의 active flow의 compact `Contract`, `Execution Log`, `Result`를 소유하고, 필요할 때만 raw request와 `Risky Action`을 추가합니다.
 - `.agents/sessions/{YYYYMMDD}/000-self-drive.md`: self-drive가 active일 때만 사용하는 optional self-drive sequence state입니다.
 
@@ -42,8 +42,9 @@ skill list는 frontmatter의 `active_skills`에 skill 이름만 기록합니다.
 self-drive가 active이면 `000-plan.md`는 status와 sidecar pointer만 저장합니다. `000-self-drive.md`가 sequence-level state를 소유합니다.
 
 `000-review.md`는 flow 순서나 카테고리별 헤더가 아니라 flat tagged list를 사용합니다. 각 항목은 `[conversation]`, `[records]`, `[docs]`, `[code-structure]`, `[verification]`, `[git]`, `[release]` 같은 bracketed axis tag 하나로 시작합니다. tag는 open-ended이며 그날 의미 있는 축에 맞게 추가하거나 바꿀 수 있습니다. 항목에는 필요한 경우 invalid/correct 예시, evidence, follow-up candidate를 짧은 sub-bullet으로 둡니다.
+각 flow 종료 시 회고할 내용이 있으면 `000-review.md`에 추가합니다. 없으면 조용히 건너뜁니다.
 
-`000-review.md`는 복구 표면이 아닙니다. 현재 active flow, required next action, pending question, verification status 같은 continuity state는 `000-plan.md`와 active flow record에 남깁니다. review item은 다음 세션이나 spec 개선에 재사용할 수 있는 관찰과 교정만 남깁니다.
+`000-review.md`는 복구 표면이 아닙니다. 현재 active flow, required next action, pending question, verification status 같은 continuity state는 `000-plan.md`와 active flow record에 남깁니다.
 
 raw user request text를 기록할 때는 interpretation 또는 summary와 분리해야 합니다. raw request field 안에서는 normalize, translate, correct, soften, merge, infer missing words를 하지 않습니다. summary와 interpretation은 별도로 작성할 수 있습니다.
 

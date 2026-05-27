@@ -5,7 +5,7 @@ Use this reference whenever `turn-gate` is active and records must be created, r
 ## Files
 
 - `.agents/sessions/{YYYYMMDD}/000-plan.md`: compact date-level routing card. Frontmatter owns active flow pointer, next action, closure flags, self-drive status and sidecar pointer, unapproved actions, and active skill list. Body owns only compact recent requests, active/recent/archive flow index, and continuity note.
-- `.agents/sessions/{YYYYMMDD}/000-review.md`: optional date-level retrospective notes. Use it for reusable lessons, process corrections, and follow-up candidates. It must not own active routing state, raw flow logs, verification authority, or closure authority.
+- `.agents/sessions/{YYYYMMDD}/000-review.md`: optional date-level retrospective notes. Use it for flow retrospection in a flat tagged list. It must not own active routing state, raw flow logs, verification authority, or closure authority.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`: one active flow's compact `Contract`, `Execution Log`, and `Result`, with raw request and `Risky Action` added only when needed.
 - `.agents/sessions/{YYYYMMDD}/000-self-drive.md`: optional sequence-level self-drive state, used only when self-drive is active.
 
@@ -74,7 +74,8 @@ Keep `Recent Requests` short. Prefer `[current] compact note` and one or two rou
 
 When self-drive is active, `000-plan.md` stores only status and sidecar pointer. `000-self-drive.md` owns sequence-level state.
 
-Use `000-review.md` only for retrospective notes that are useful after the current routing problem is solved. Keep it as a flat tagged list, not a flow-by-flow log or section-per-category document. Each item starts with one bracketed axis tag such as `[conversation]`, `[records]`, `[docs]`, `[code-structure]`, `[verification]`, `[git]`, `[release]`, or a task-specific tag. Tags are open-ended. Add compact sub-bullets only when they clarify invalid/correct examples, evidence, or follow-up candidates.
+Use `000-review.md` only for retrospective notes. Keep it as a flat tagged list, not a flow-by-flow log or section-per-category document. Each item starts with one bracketed axis tag such as `[conversation]`, `[records]`, `[docs]`, `[code-structure]`, `[verification]`, `[git]`, `[release]`, or a task-specific tag. Tags are open-ended. Add compact sub-bullets only when they clarify invalid/correct examples, evidence, or follow-up notes.
+At each flow end, append to `000-review.md` if there is anything to retrospect on. If not, skip silently.
 
 Do not use `000-review.md` to reconstruct the active turn. Active flow pointer, required next action, pending question, verification status, and closure state belong in `000-plan.md` and active flow records.
 
