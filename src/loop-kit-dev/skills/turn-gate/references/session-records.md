@@ -5,12 +5,14 @@ Use this reference whenever `turn-gate` is active and records must be created, r
 ## Files
 
 - `.agents/sessions/{YYYYMMDD}/000-plan.md`: date-level routing context, active flow pointer, required next action, request history, compact flow index, planned current or future sequence, current/planned flow skill list, completed summaries, explicit turn-end availability, active date-level risks, and self-drive sidecar pointer.
+- `.agents/sessions/{YYYYMMDD}/000-review.md`: optional date-level retrospective notes. Use it for reusable lessons, process corrections, and follow-up candidates. It must not own active routing state, raw flow logs, verification authority, or closure authority.
 - `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`: one active flow's contract, raw request when needed, interpretation, scope, non-goals, approval boundary, execution log, verification, report, next-flow options, and residual risk.
 - `.agents/sessions/{YYYYMMDD}/000-self-drive.md`: optional sequence-level self-drive state, used only when self-drive is active.
 
 Use the bundled templates in `templates/` when creating records:
 
 - `templates/plan-template.md`
+- `templates/review-template.md`
 - `templates/flow-record-template.md`
 - `templates/self-drive-template.md`
 
@@ -71,6 +73,10 @@ Keep `Planned Flow Sequence` limited to selected current or future flows. Handof
 Keep `Flow Skill List` compact: list only skill names and usage points for active or selected future flows. Do not copy full skill text, candidate-only skills, or completed-flow detail into `000-plan.md`.
 
 When self-drive is active, `000-plan.md` stores only status and sidecar pointer. `000-self-drive.md` owns sequence-level state.
+
+Use `000-review.md` only for retrospective notes that are useful after the current routing problem is solved. Keep it as a flat tagged list, not a flow-by-flow log or section-per-category document. Each item starts with one bracketed axis tag such as `[conversation]`, `[records]`, `[docs]`, `[code-structure]`, `[verification]`, `[git]`, `[release]`, or a task-specific tag. Tags are open-ended. Add compact sub-bullets only when they clarify invalid/correct examples, evidence, or follow-up candidates.
+
+Do not use `000-review.md` to reconstruct the active turn. Active flow pointer, required next action, pending question, verification status, and closure state belong in `000-plan.md` and active flow records.
 
 ## Raw Requests
 
