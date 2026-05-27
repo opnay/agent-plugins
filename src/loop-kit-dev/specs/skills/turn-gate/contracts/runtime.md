@@ -84,7 +84,7 @@ activation-only 메시지는 response가 즉시 next-flow choice를 열지 않�
 ## 준비와 승인 경계 계약
 
 work 전에는 `turn-gate`가 필수 `flow` decision을 적용하거나 기록해야 합니다. flow contract는 scope, non-goals, completion 또는 acceptance signal, verification expectation, approval boundary, handoff condition을 포함해야 합니다.
-새 active flow를 시작할 때는 해당 flow에 적용할 skill을 다시 읽고, 이전 flow에서 로드된 skill context만으로 work를 시작하지 않습니다.
+새 active flow를 시작할 때는 해당 flow에 적용할 skill을 다시 읽고, 이전 flow에서 로드된 skill context만으로 work를 시작하지 않습니다. 사용자 메시지를 받아 framing을 거쳐 preparation으로 들어갈 때는 preparation 전에 `turn-gate`와 `flow`를 다시 읽고 `000-plan.md` frontmatter의 `active_skills`에 둘 다 유지합니다.
 
 요청이 target, operation, success condition, verification path를 바꿀 수 있으면 work 전에 user-gated clarification으로 라우팅합니다.
 
@@ -100,6 +100,7 @@ Runtime `SKILL.md`는 다음을 직접 포함해야 합니다.
 - active flow lifecycle
 - active flow 도중 새 사용자 메시지를 처리하는 `interruption` entry-only phase
 - flow 시작 지점의 skill reread
+- 사용자 메시지에서 preparation으로 넘어갈 때 `turn-gate`와 `flow` reread
 - phase prefix behavior
 - flow phase record checkpoint 적용
 - preparation과 approval boundary

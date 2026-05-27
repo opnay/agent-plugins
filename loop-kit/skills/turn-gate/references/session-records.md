@@ -67,6 +67,7 @@ The flow record frontmatter must expose phase, verification status, next action,
 Keep `000-plan.md` as a compact routing card. Do not repeat git-reconstructable branch/latest-commit state, detailed scope, evidence, verification, residual risk, or self-drive sequence detail there. Store that detail in the active flow record, `000-self-drive.md`, or fresh tool readback.
 
 Store skill reread requirements in frontmatter `active_skills` as names only. Do not add usage explanations, candidate-only skills, completed-flow skill lists, or the full available skill catalog.
+For a turn-gate-managed user-message flow entering preparation, include `loop-kit:turn-gate` and `loop-kit:flow` in `active_skills`.
 
 Keep `Flow Index` to active, recent, and archive entries only. `active` is the current flow, `recent` is the immediately previous handoff flow, and `archive` points to older flow ranges recoverable from individual flow records. Do not accumulate completed flow summaries or old planned flows in `000-plan.md`.
 
@@ -74,7 +75,7 @@ Keep `Recent Requests` short. Prefer `[current] compact note` and one or two rou
 
 When self-drive is active, `000-plan.md` stores only status and sidecar pointer. `000-self-drive.md` owns sequence-level state.
 
-Use `000-review.md` only for retrospective notes. Keep it as a flat tagged list, not a flow-by-flow log or section-per-category document. Each item starts with one bracketed axis tag such as `[conversation]`, `[records]`, `[docs]`, `[code-structure]`, `[verification]`, `[git]`, `[release]`, or a task-specific tag. Tags are open-ended. Add compact sub-bullets only when they clarify invalid/correct examples, evidence, or follow-up notes.
+Use `000-review.md` only for retrospective notes. Keep it as a flat tagged list, not a flow-by-flow log or section-per-category document. Each item starts with one bracketed axis tag such as `[conversation]`, `[records]`, `[skills]`, `[docs]`, `[code-structure]`, `[verification]`, `[git]`, `[release]`, or a task-specific tag. Tags are open-ended. Include skill contract violations found during work or noticed while reviewing the flow. Add compact sub-bullets only when they clarify invalid/correct examples, evidence, or follow-up notes.
 At each flow end, append to `000-review.md` if there is anything to retrospect on. If not, skip silently.
 
 Do not use `000-review.md` to reconstruct the active turn. Active flow pointer, required next action, pending question, verification status, and closure state belong in `000-plan.md` and active flow records.

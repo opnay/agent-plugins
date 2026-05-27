@@ -122,7 +122,7 @@ If ambiguity affects the result, return to intake discovery, framing, or a paren
 
 At the start and end of each active-flow phase, decide whether `000-plan.md` or the active flow record needs an update. This skill defines the checkpoint expectation; the active turn controller applies record updates when it owns that runtime surface.
 
-When an active flow or planned sequence requires specific skills, expect `000-plan.md` to expose the skill list and where each skill is needed. Keep that list limited to the current selected flow and prepared future flows; do not record speculative candidate skills as active.
+When an active flow or planned sequence requires specific skills, expect `000-plan.md` to expose the active skill list. Keep that list limited to the current selected flow and prepared future flows; do not record speculative candidate skills as active. For turn-gate-managed user-message flows entering preparation, expect `turn-gate` and `flow` to be reread and listed.
 
 Use these checkpoint expectations:
 
@@ -139,7 +139,7 @@ Use these checkpoint expectations:
 - `reporting` start: expose reportable result, verification status, handoff condition, and unresolved question or blocker.
 - `reporting` end: expose reported outcome, residual risk, handoff condition, and any next-flow candidate without executing it.
 
-Update `000-plan.md` expectation when the active flow, turn-level required next action, or current/planned flow skill list changes. Update active flow record expectation when phase state, execution evidence, verification evidence, report outcome, or residual risk changes. If a trivial read-only judgment needs no record change, make that reason visible in the report or active flow record.
+Update `000-plan.md` expectation when the active flow, turn-level required next action, or active skill list changes. Update active flow record expectation when phase state, execution evidence, verification evidence, report outcome, or residual risk changes. If a trivial read-only judgment needs no record change, make that reason visible in the report or active flow record.
 
 ## Flow-Local Strategies
 

@@ -34,6 +34,7 @@ flow record frontmatter는 긴 boolean 나열보다 formal metadata를 우선합
 
 `000-plan.md`는 compact routing card로 유지합니다. Git으로 재구성 가능한 branch/latest commit, detailed scope, evidence, verification, residual risk, self-drive sequence detail은 plan에 반복하지 않고 active flow record, self-drive sidecar, 또는 실제 tool readback에 둡니다.
 skill list는 frontmatter의 `active_skills`에 skill 이름만 기록합니다. 사용 지점 설명, 전체 사용 가능 skill catalog, 후보 단계의 가능성, 이미 끝난 flow의 상세 사용 내역은 plan에 반복하지 않습니다.
+사용자 메시지를 받아 preparation으로 들어가는 turn-gate-managed flow에서는 `active_skills`에 `loop-kit:turn-gate`와 `loop-kit:flow`를 포함합니다.
 
 `000-plan.md`의 `Flow Index`는 active, recent, archive만 둡니다. `active`는 현재 flow, `recent`는 바로 이전 handoff flow, `archive`는 오래된 flow range와 individual flow record로의 복구 가능성을 가리킵니다. 완료 flow 전체 목록, completed summaries, planned old flows는 plan에 누적하지 않습니다.
 
@@ -41,7 +42,7 @@ skill list는 frontmatter의 `active_skills`에 skill 이름만 기록합니다.
 
 self-drive가 active이면 `000-plan.md`는 status와 sidecar pointer만 저장합니다. `000-self-drive.md`가 sequence-level state를 소유합니다.
 
-`000-review.md`는 flow 순서나 카테고리별 헤더가 아니라 flat tagged list를 사용합니다. 각 항목은 `[conversation]`, `[records]`, `[docs]`, `[code-structure]`, `[verification]`, `[git]`, `[release]` 같은 bracketed axis tag 하나로 시작합니다. tag는 open-ended이며 그날 의미 있는 축에 맞게 추가하거나 바꿀 수 있습니다. 항목에는 필요한 경우 invalid/correct 예시, evidence, follow-up candidate를 짧은 sub-bullet으로 둡니다.
+`000-review.md`는 flow 순서나 카테고리별 헤더가 아니라 flat tagged list를 사용합니다. 각 항목은 `[conversation]`, `[records]`, `[skills]`, `[docs]`, `[code-structure]`, `[verification]`, `[git]`, `[release]` 같은 bracketed axis tag 하나로 시작합니다. tag는 open-ended이며 그날 의미 있는 축에 맞게 추가하거나 바꿀 수 있습니다. `[skills]`는 작업 중 발견한 skill 계약 위반과 회고 시점에 되돌아보며 발견한 skill 계약 위반을 모두 포함합니다. 항목에는 필요한 경우 invalid/correct 예시, evidence, follow-up candidate를 짧은 sub-bullet으로 둡니다.
 각 flow 종료 시 회고할 내용이 있으면 `000-review.md`에 추가합니다. 없으면 조용히 건너뜁니다.
 
 `000-review.md`는 복구 표면이 아닙니다. 현재 active flow, required next action, pending question, verification status 같은 continuity state는 `000-plan.md`와 active flow record에 남깁니다.

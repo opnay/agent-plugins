@@ -79,7 +79,7 @@ Before work begins, ensure the active flow contract is recorded with:
 - approval boundary
 - handoff condition
 
-At each new flow start, reread the skills required for that flow. Do not rely on skill text loaded for an earlier flow when the current flow boundary has changed.
+At each new flow start, reread the skills required for that flow. When a user message is being routed through framing into preparation, reread `turn-gate` and `flow` before preparation and keep both in `000-plan.md` `active_skills`. Do not rely on skill text loaded for an earlier flow when the current flow boundary has changed.
 
 If any missing target, operation, endpoint, success condition, approval boundary, or verification path could change the work, route through a user-gated clarification before proceeding.
 
