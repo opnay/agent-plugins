@@ -24,6 +24,7 @@ work 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, f
   - turn-level loop gate contract
   - `intake -> framing -> preparation -> work -> verification -> reporting -> next-flow question-routing response` 구조 유지
   - flow를 phase나 direct user-value가 아니라 cohesive reviewable or commit-sized work unit으로 나누는 계약
+  - verification, reporting, evidence repair, blocker recovery를 별도 산출물 없는 flow로 과분해하지 않는 계약
   - 초기 의도 정렬과 sub-flow 후보 설계를 운영 flow로 기록하고, 그 결과 change-unit flow 후보를 분리하는 계약
   - intake, framing, preparation의 구분 유지
   - `flow` intent-first discovery, sub-flow candidate design, selected-flow readiness를 각각 intake/framing/preparation 계약으로 유지
@@ -69,8 +70,10 @@ work 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, f
 
 - `flow`: 메시지나 동작을 active flow, parent flow, finite sub-flow candidate, `operational-preparation flow`, `change-unit flow`로 판정하고 intake, framing, selected-flow readiness, flow-vs-phase 경계, discovery, flow-local execution strategy, handoff condition을 소유한다.
   - active flow의 phase 시작/종료 record checkpoint를 산출하고, `000-plan.md`와 active flow record 중 어떤 표면이 최신화돼야 하는지 구분한다.
+  - interruption이나 self-drive 중 새 입력이 기존 flow contract를 바꾸는지, 다음 flow identity와 handoff가 유효한지 판단하는 원천 계약을 소유한다.
   - spec: `loop-kit-dev/specs/skills/flow/spec.md`
 - `turn-gate`: turn continuity를 유지하고, 현재 턴에서 `flow` 계약을 적용하도록 강제하며, flow reporting 뒤 next-flow 질문을 연다.
+  - `flow` 판단을 재정의하지 않고 session record, question routing, explicit stop guard, verification routing, self-drive sidecar gate를 운영한다.
   - spec: `loop-kit-dev/specs/skills/turn-gate/spec.md`
 
 ## SDD 운영 원칙
@@ -91,10 +94,12 @@ work 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, f
 - `flow`의 phase model은 각 phase 시작/종료에서 `000-plan.md` 또는 active flow record 갱신이 필요한지 판단하는 checkpoint를 드러내야 한다.
 - `flow`는 intake discovery, framing, selected-flow readiness, ambiguity, review-loop, fix-verify-loop, broad-execution, commit-readiness handoff 같은 flow-local strategy를 소유한다.
 - `turn-gate`는 flow phase model을 재소유하지 않고, active turn에서 `flow` 계약을 적용하고 flow reporting 뒤 next-flow reopening을 강제한다.
-- `turn-gate`는 active flow 도중 들어온 사용자 메시지를 `interruption`으로 먼저 분류하고, inline answer, current-flow revision, background current flow, reserved later analysis, supersede, blocker, explicit stop 중 하나로 라우팅한다.
+- `turn-gate`는 active flow 도중 들어온 사용자 메시지를 `interruption`으로 먼저 열고, 계약 변경 여부와 새 flow 여부는 `flow`에 의존해 inline answer, current-flow revision, background current flow, reserved later analysis, supersede, blocker, explicit stop 중 하나로 라우팅한다.
+- `turn-gate`는 reporting 뒤 `continue`를 post-flow next-action 해석으로 다루며, recorded next action이 충분하지 않으면 next-flow 질문을 유지한다.
 - 초기 bootstrap은 `operational-preparation flow`로 기록할 수 있으며, 이 flow의 산출물은 session plan, sub-flow candidate list, scope/approval boundary다. 이 결과로 생성되는 product/work sub-flow candidates는 선택될 때 `change-unit flow`로 분리한다.
 - self-drive는 별도 skill 표면이 아니라 명시적으로 적용될 때 준비된 sequence의 진행 판단을 덮어쓰는 독립 overlay reference로 동작한다.
 - `turn-gate/contracts/self-drive.md`는 self-drive overlay의 endpoint, stop boundary, execution authority, handoff behavior에 대한 spec-side ownership을 소유한다.
+- self-drive는 finite와 infinite 모두에서 another bounded batch, inventory cycle, blocker recovery를 기록 재확인과 endpoint relock 뒤에만 이어간다.
 - 설치 후 실행 guidance는 `skills/turn-gate/references/self-drive.md`가 소유하며, runtime 문서는 dev-only spec 경로를 실행 지시로 사용하지 않는다.
 - self-drive reference는 intake/framing/preparation을 대신하지 않고, spec-side overlay 계약을 설치 후 실행 가능한 형태로 흡수해 적용한다.
 - self-drive 도중 사용자 메시지가 들어오면 멈추지 않고 현재 플로우 조정 또는 다음 플로우 우선 등록으로 처리한다.

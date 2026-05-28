@@ -2,56 +2,56 @@
 
 ## 소유 범위
 
-reporting 뒤 user-gated routing, clarification, blocker decision, structured `request_user_input`, fallback, question abort recovery.
+reporting 뒤 next-flow reopening, post-flow continue, clarification, blocker decision, structured question fallback, question abort recovery.
 
 ## 계약
 
-reporting 뒤 현재 사용자 메시지가 턴을 명시적으로 끝내지 않았다면 다음 flow를 다시 열어야 합니다.
+reporting 뒤 explicit stop이 기록되지 않았다면 `next-flow`를 엽니다.
+`next-flow`는 terminal response가 아니라 다음 행동을 고르는 열린 상태입니다.
 
-next-flow reopening은 final response가 아닙니다. 턴을 ongoing conversation channel에 열린 상태로 두고 필요한 다음 행동이나 선택지를 보여줍니다. terminal/final closeout을 next-flow routing의 대체물로 사용하지 않습니다.
+`next-flow`를 기록할 때는 다음을 복구 가능하게 남깁니다.
 
-structured choices가 가능하고 도구가 사용 가능하면 `request_user_input`을 사용합니다. visible choice는 좁고 보고된 결과와 연결되어야 합니다. visible choice에 stop option을 표시하지 못하더라도 flow record의 `Result.next` 또는 임시 next options에는 explicit turn-end option을 남깁니다. 도구 UI 제약으로 stop choice를 직접 넣지 못하는 경우에도 user-facing prompt나 fallback text에서 사용자가 명시적으로 턴을 종료할 수 있음을 드러내야 합니다.
+- lifecycle phase인지, recorded state인지, user-facing routing인지
+- 선택 가능한 next action 또는 blocker
+- 필요한 decision, access, approval, scope, endpoint, verification gap
+- explicit turn-end option의 존재
 
-도구가 없으면 active plain-text fallback을 사용합니다. 도구가 없다고 밝히고, 열린 선택지를 나열하며, required next action을 기록합니다. fallback도 active routing이며 terminal summary가 아닙니다.
+`request_user_input`을 사용할 수 있으면 좁은 선택지만 제시합니다.
+도구가 없으면 plain-text fallback을 쓰되 active routing임을 분명히 합니다.
 
-다음 항목이 실행을 바꿀 수 있으면 question routing이 필요합니다.
+## Post-Flow Continue
 
-- 다음 flow 선택
-- scope, target, endpoint, acceptance signal clarification
-- blocker recovery
-- approval-sensitive action boundary
-- pending question state와 latest user message의 충돌
+reporting 뒤 사용자가 “continue”, “계속”, “이어가”라고 하면 recorded next action을 먼저 확인합니다.
 
-질문은 지금 필요한 결정만 물어야 합니다. 가능하다는 이유만으로 관계없는 미래 작업 선택지를 묶지 않습니다.
+- next identity, target, scope, endpoint, approval boundary, verification expectation이 알려져 있으면 그 범위 안에서만 계속합니다.
+- 불명확하면 다음 flow 선택 또는 clarification을 엽니다.
+- post-flow continue는 self-drive 활성화 근거가 아니며 approval-sensitive action 권한도 만들지 않습니다.
 
-## 중단 복구 계약
+active flow 도중의 “continue”는 `interruption`에서 처리합니다.
 
-`request_user_input`이 사용자 interrupt로 abort 또는 cancel되더라도, 그것은 flow completion, explicit stop, terminal close authority가 아닙니다.
+## Question Recovery
 
-recovery state를 다음처럼 기록합니다.
+`request_user_input` abort, cancel, interrupt는 flow completion, explicit stop, terminal close authority가 아닙니다.
+pending question state를 `aborted`, `interrupted`, `superseded` 중 하나로 기록하고 다음 사용자 메시지를 먼저 recovery로 해석합니다.
 
-- `terminal_summary_blocked` flag
-- pending question state는 `aborted`, `interrupted`, `superseded` 중 하나
-- 알 수 있으면 pending question id 또는 summary
-- 사용자가 실제로 턴을 멈춘 경우가 아니면 explicit-stop source를 기록하지 않음
+다음 메시지는 네 가지 중 하나로 라우팅합니다.
 
-다음 사용자 메시지는 먼저 question-routing recovery로 해석합니다.
+- pending question의 답변
+- pending question을 대체하는 새 flow 요청
+- status/progress 질문
+- source-recorded explicit stop
 
-- pending question의 답변: 그 답변에서 계속합니다.
-- 새로운 flow 요청: pending question을 superseded로 표시하고 새 flow를 준비합니다.
-- status/progress 질문: active flow, pending question, verification state, required next action을 보고한 뒤 routing을 다시 엽니다.
-- explicit stop: source를 기록한 뒤에만 턴을 닫습니다.
+같은 question tool call을 즉시 반복해 interrupt loop를 만들지 않습니다.
+답인지 새 요청인지 모호하면 추측하지 말고 clarification을 엽니다.
 
-같은 question tool call을 즉시 반복해 interrupt loop를 만들지 않습니다. recovery state를 텍스트로 설명하거나 사용자가 제공한 선택 또는 요청에서 진행합니다.
+## Blocker Routing
 
-다음 사용자 메시지가 답변인지 새 요청인지 모호하면 추측보다 clarification을 우선합니다. 메시지가 visible label과 일치하지 않더라도 free-form answer가 명확하면 답변으로 취급합니다.
-free-form answer가 visible option과 다르지만 새 작업 지시를 분명히 포함하면 pending question을 `superseded`로 기록하고 새 flow를 준비합니다.
-free-form answer가 기존 선택지를 보완하는 note라면 선택된 답과 note를 함께 기록합니다.
+scope, target, endpoint, approval boundary, blocker state, current-flow identity가 결과나 검증 경로를 바꿀 수 있으면 user-gated routing을 사용합니다.
+blocker report에는 막힌 항목, 모은 evidence, 필요한 결정이나 access, blocker 전까지 제외되는 work를 포함합니다.
 
-pending question이 superseded되면 superseded question id 또는 summary와 새 flow source를 기록합니다. 질문이 superseded되더라도 이전 flow의 report나 verification result는 지우지 않습니다.
+## 검토 기준
 
-## 명확화와 차단 계약
-
-scope, target, endpoint, approval boundary, blocker state, current-flow identity가 성공 조건이나 verification path를 바꿀 수 있으면 user-gated routing을 사용합니다. 이 경계를 추측으로 넘지 않습니다.
-
-blocker routing은 무엇이 막혔는지, 어떤 evidence를 모았는지, 어떤 결정이나 access가 필요한지, blocker가 해결되기 전까지 어떤 work가 제외되는지 말해야 합니다.
+- reporting 뒤 terminal close 대신 next-flow가 열렸는가?
+- post-flow continue가 recorded next action 안에서만 해석되는가?
+- question abort가 closure로 처리되지 않았는가?
+- blocker recovery에 필요한 decision/access/evidence가 남아 있는가?

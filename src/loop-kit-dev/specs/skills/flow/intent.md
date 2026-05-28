@@ -22,5 +22,8 @@
 - flow는 질문 도구 실행, turn closure, session continuity, explicit stop handling, approval-sensitive execution authority를 소유하지 않는다.
 - `turn-gate`는 flow decision을 현재 turn에 적용하고 기록하지만, flow boundary, readiness, discovery, flow-local strategy를 재정의하지 않아야 한다.
 - `turn-gate`의 intent 중 flow 해석, flow 분해, readiness/discovery, review/fix/broad execution, commit-readiness 판단에 해당하는 내용은 `flow` intent와 spec이 소유해야 한다.
+- `turn-gate`에서 active flow 도중 새 사용자 메시지를 받더라도 scope, non-goals, completion criteria, verification expectation, approval boundary, handoff condition 변경 여부는 `flow`가 contract impact로 판단해야 한다.
+- self-drive가 다음 flow identity, current flow completion, non-blocked handoff를 확인할 때도 해당 원천 판단은 `flow` output과 handoff condition에 기대야 한다.
+- 상대 날짜, 기록 날짜, target 표현, operation 표현이 결과나 verification path를 바꾸면 `flow` ambiguity 또는 readiness 문제로 다뤄야 한다.
 - 각 phase의 시작과 종료에서 `plan.md`나 flow 문서를 수정하도록 해야 한다.
 - `000-plan.md`에는 현재 flow 또는 planned sequence에서 사용해야 하는 skill 목록이 드러나야 한다.

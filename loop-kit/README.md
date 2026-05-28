@@ -6,7 +6,7 @@
 `flow`는 하나의 메시지나 동작을 흐름 단위로 해석하고, 필요하면 finite `sub-flow candidates`로 나눕니다.
 또한 active flow의 각 phase가 시작되거나 끝날 때 `000-plan.md` 또는 active flow record 중 어느 기록을 갱신해야 하는지 판단하는 checkpoint를 둡니다.
 `turn-gate`는 현재 턴의 구조를 유지하면서 모든 작업이 `flow` 계약을 통과하게 하고, flow가 끝난 뒤 다음 flow 선택지를 엽니다.
-active flow 도중 새 사용자 메시지가 들어오면 `turn-gate`는 `interruption` 진입점으로 먼저 분류해 질문 답변, 현재 flow 개정, background 전환, 후속 예약, flow 대체, blocker, explicit stop 중 하나로 라우팅합니다.
+active flow 도중 새 사용자 메시지가 들어오면 `turn-gate`는 `interruption` 진입점을 열고, 계약 변경 여부와 새 flow 여부는 `flow` 판단에 의존해 질문 답변, 현재 flow 개정, background 전환, 후속 예약, flow 대체, blocker, explicit stop 중 하나로 라우팅합니다.
 초기 의도 정렬과 sub-flow 후보 설계 자체는 session plan과 approval boundary를 소유하는 운영 flow가 될 수 있고, 그 결과 만들어지는 실행 flow는 코드, 문서, fixture, 설정 같은 산출물 변경 단위로 구분합니다.
 이때 flow는 `분석`, `작업`, `검증`, `커밋 준비` 같은 진행 단계가 아니라 함께 검토하고 검증하고 필요하면 커밋할 수 있는 응집된 변경 단위입니다.
 또한 flow는 반드시 최종 사용자에게 직접 보이는 가치 단위일 필요가 없습니다.
@@ -82,7 +82,8 @@ codex plugin marketplace upgrade
 
 - `flow`: 메시지나 동작을 flow로 해석하고, intake, framing, preparation readiness, parent flow, sub-flow candidate, operational-preparation flow, change-unit flow, flow-vs-phase 경계, discovery, flow-local strategy, handoff condition을 판정합니다.
 - `flow`: phase 시작/종료 record checkpoint를 산출해 `000-plan.md`와 active flow record 중 무엇을 갱신해야 하는지 구분합니다.
-- `turn-gate`: 현재 턴에서 flow 사용을 강제하고, flow reporting 뒤 다음 flow 질문을 여는 turn-level gate입니다.
+- `flow`: interruption이나 self-drive 중 기존 flow contract 변경 여부, 다음 flow identity, handoff 유효성을 판정합니다.
+- `turn-gate`: 현재 턴에서 flow 사용을 강제하고, flow reporting 뒤 다음 flow 질문을 여는 turn-level gate입니다. flow 판단을 재정의하지 않고 기록, 질문, 검증, explicit stop guard를 운영합니다.
 
 `turn-gate`가 호출되면, 현재 세션 동안 이 skill을 1급 운영 규칙으로 활성화한 것으로 취급합니다.
 이 규칙은 skill body의 `Important` 섹션에서 먼저 드러나며, 결과 보고만으로 턴을 닫지 않고 다음 플로우 질문을 다시 여는 동작을 우선 계약으로 둡니다.
@@ -91,18 +92,23 @@ codex plugin marketplace upgrade
 
 `turn-gate`는 다음 흐름을 계속 보이게 유지합니다.
 
-1. Intake: 초기 요청의 원문과 해석을 분리하고 goal, non-goal, authority-sensitive signal, discovery topic을 확인합니다.
-2. Framing: active flow, parent flow, sub-flow candidate, phase, handoff를 구분하고 산출물 소유권과 후보/선택 상태를 정리합니다.
-3. Preparation: 선택된 active flow의 scope, readiness, verification expectation, approval boundary, handoff condition을 잠급니다.
+1. Intake: `flow` 판단으로 초기 요청의 원문과 해석을 분리하고 goal, non-goal, authority-sensitive signal, discovery topic을 확인합니다.
+2. Framing: `flow` 판단으로 active flow, parent flow, sub-flow candidate, phase, handoff를 구분하고 산출물 소유권과 후보/선택 상태를 정리합니다.
+3. Preparation: `flow` readiness/ambiguity 판단으로 선택된 active flow의 scope, readiness, verification expectation, approval boundary, handoff condition을 잠급니다.
 4. 작업: 현재 flow가 소유한 실제 작업을 수행합니다.
 5. 검증: 작업 위험도에 맞춰 `clean-context`, `normal`, `not-required` method 중 하나로 검증합니다.
 6. 보고: 이번 flow의 맥락을 정리하고 다음 flow 선택지를 명시적으로 다시 엽니다.
 7. 사용자가 종료를 요청하지 않으면 다음 flow의 intake로 계속 진행합니다.
 
-active flow 중 들어온 새 사용자 메시지는 위 lifecycle을 대체하지 않고 `interruption`으로 잠시 분류됩니다. 질문이 계약을 바꾸지 않으면 답변 후 이전 phase로 돌아가고, scope나 non-goal을 바꾸면 현재 flow를 개정한 뒤 `framing` 또는 `preparation`으로 돌아갑니다. 다른 작업이 먼저 필요하면 현재 flow를 background로 두고 새 foreground flow를 시작하며, 나중에 볼 주제는 후속 후보로 예약합니다.
+active flow 중 들어온 새 사용자 메시지는 위 lifecycle을 대체하지 않고 `interruption`으로 잠시 분류됩니다. `flow`가 계약 변경 여부를 판단하며, 질문이 계약을 바꾸지 않으면 답변 후 이전 phase로 돌아가고, scope나 non-goal을 바꾸면 현재 flow를 개정한 뒤 `framing` 또는 `preparation`으로 돌아갑니다. 다른 작업이 먼저 필요하면 현재 flow를 background로 두고 새 foreground flow를 시작하며, 나중에 볼 주제는 후속 후보로 예약합니다.
+
+보고 뒤 사용자가 `continue` 또는 `계속`이라고 하면 `turn-gate`는 기록된 next action을 먼저 확인합니다.
+다음 flow identity, target, scope, endpoint, approval boundary, verification expectation이 잠겨 있을 때만 이어가며, 그렇지 않으면 next-flow 질문을 유지합니다.
+이 표현은 self-drive 활성화나 승인 민감 작업 실행 권한이 아닙니다.
 
 각 flow는 위 1-6단계를 내부에 모두 가집니다.
 따라서 `분석`, `작업`, `검증`을 서로 다른 flow로 나누지 않습니다.
+검증, 보고, evidence repair, blocker recovery도 별도 검토 가능한 산출물을 만들지 않으면 현재 flow 내부 phase 또는 handoff입니다.
 flow를 나눌 때는 독립적으로 이해하고 리뷰하고 검증하고 커밋할 수 있는 변경 묶음인지 봅니다.
 단, 초기 의도 정렬을 통해 sub-flow 후보를 만드는 앞단은 운영 flow로 기록할 수 있으며, 이 운영 flow는 실제 제품 변경 flow와 섞지 않습니다.
 sub-flow 후보 생성은 실행이 아니며, `turn-gate` 질문 또는 준비된 self-drive sequence를 통해 선택될 때만 active flow가 됩니다.

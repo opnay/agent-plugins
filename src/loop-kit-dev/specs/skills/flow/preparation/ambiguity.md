@@ -7,6 +7,7 @@ flow contract 형성에 영향을 주는 operation/target ambiguity 잠금. Ambi
 ## 계약
 
 - 사용자 지시어의 operation 또는 target 해석에 따라 flow scope, output, verification path, handoff condition이 달라지면 ambiguity를 잠근다.
+- 상대 날짜, 기록 날짜, 이전 flow 참조, 현재 target 표현이 결과, target, verification path, reporting scope, 기록 재구성을 바꾸면 flow ambiguity 또는 readiness gap으로 다룬다.
 - `merge`, `absorb`, `move`, `promote`, `remove`, `delete`, `split`, `route`, `phase`, `surface`, `skill`, `spec`, `contract` 같은 표현은 여러 구조 단위를 가리킬 수 있으면 바로 실행하지 않는다.
 - `그`, `그 밑`, `그건`, `위`, `아래`, `현재 것`처럼 주변 문맥의 여러 대상을 가리킬 수 있는 표현도 flow contract가 달라지면 ambiguity 대상으로 본다.
 - source URL, provenance note, intent block, normative spec body가 서로 다른 target일 수 있으면 target을 잠근다.

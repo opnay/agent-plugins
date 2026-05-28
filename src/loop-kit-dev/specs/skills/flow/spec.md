@@ -19,11 +19,12 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
   - input analysis, deep interview, goal detection, non-goal detection, authority detection
   - flow decomposition, flow design, candidate-vs-selected distinction, artifact ownership
   - active flow phase start/end record checkpoint 계약
+  - active flow 도중 새 사용자 메시지가 기존 flow contract를 바꾸는지 판단하는 contract-impact 기준
   - flow readiness, intent-first requirement discovery, operation/target ambiguity 판단
   - flow-local review handling, fix-verify-reassess, broad execution strategy
   - flow completion criteria와 verification expectation 산출
   - commit-readiness 같은 flow handoff condition 판단
-  - flow가 아닌 분석, 검증, 보고, commit-readiness 항목 판정
+  - flow가 아닌 분석, 검증, 보고, evidence repair, blocker recovery, commit-readiness 항목 판정
 - 제외:
   - turn activation과 explicit stop 처리
   - 질문 도구 실행 방식과 next-flow question-routing
@@ -78,6 +79,7 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
 - flow는 phase checklist가 아니라 이해, 리뷰, 검증, 필요 시 커밋 가능한 작업 단위입니다.
 - 하나의 flow는 `intake -> framing -> preparation -> work -> verification -> reporting`을 내부 단계로 갖습니다.
 - `interruption`은 `flow` 내부 phase가 아닙니다. active flow 도중 새 사용자 메시지가 도착하면 `turn-gate`가 entry-only routing으로 처리하고, 필요할 때 flow 계약 갱신이나 새 flow 전환에 `flow` 판단을 적용합니다.
+- `flow`는 interruption 자체를 운영하지 않지만, 새 메시지가 scope, non-goals, completion criteria, verification expectation, approval boundary, handoff condition을 바꾸는지 판단하는 원천입니다.
 - `intake`는 사용자 입력 분석, deep interview, 목표/비목표/authority 탐지를 소유합니다.
 - `framing`은 flow 분리, flow 설계, candidate-vs-selected 구분, artifact ownership 판단을 소유합니다.
 - `preparation`은 선택된 active flow의 readiness, scope/non-goals/completion/verification/approval boundary lock, work 진입 가능성 판단으로 좁힙니다.
@@ -85,10 +87,13 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
 - `000-plan.md` 갱신이 필요한 경우에는 현재 flow 또는 planned sequence에서 사용할 skill 목록도 필요한 만큼 드러내야 합니다.
 - flow preparation은 이미 선택된 active flow의 readiness를 잠그는 단계이며, intake/framing에서 미해결 필드가 발견되면 work로 넘어가지 않습니다.
 - flow execution은 current flow 안에서 review-loop, fix-verify-loop, broad-execution을 선택할 수 있습니다.
+- verification, reporting, evidence repair, blocker recovery는 별도 reviewable artifact를 만들지 않으면 현재 flow 내부 phase 또는 handoff입니다.
+- evidence 부족은 current flow verification으로, metadata mismatch는 verification mismatch 해소로, scope/target/approval/verification expectation 변경은 preparation으로, access/input/approval/external blocker는 blocked handoff로 라우팅합니다.
 - review-loop는 여러 review finding 전체를 한 번에 실행하는 포괄 전략이 아니라, active flow 안의 bounded blocking finding 하나를 처리하는 전략입니다. 여러 finding이 있으면 우선순위 선택, discovery, 또는 finite follow-up 후보 설계가 먼저입니다.
 - flow가 너무 크거나 여러 산출물을 만들면 parent flow는 finite `sub-flow candidates`를 만들 수 있습니다.
 - `sub-flow candidate` 생성은 실행이 아닙니다.
 - flow handoff는 다음 사용자 질문이나 commit execution을 직접 수행하지 않고 handoff condition을 산출합니다.
+- self-drive나 turn-gate가 다음 flow identity, current flow completion, non-blocked handoff를 확인할 때도 `flow`의 output contract와 handoff condition을 원천으로 삼습니다.
 - flow가 끝났다는 사실은 turn이 끝났다는 뜻이 아닙니다.
 
 ## 검토 질문
@@ -99,6 +104,7 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
 - flow가 너무 커서 finite sub-flow 후보로 나눠야 하는가?
 - sub-flow 후보가 active execution flow처럼 실행되고 있지 않은가?
 - 각 flow에 scope, non-goals, completion criteria, verification expectation, handoff 조건이 있는가?
+- verification/reporting/repair를 새 flow로 분리하기 전에 별도 reviewable artifact가 있는지 확인했는가?
 - 각 phase 시작과 종료에서 `000-plan.md` 또는 active flow record 갱신 기준이 드러나는가?
 - `000-plan.md`에 사용할 skill 목록이 필요한 flow 또는 planned sequence 기준으로 유지되는가?
 - intake/framing/preparation 중 어느 단계가 부족한지 구분하지 않은 채 work로 넘어가지 않았는가?

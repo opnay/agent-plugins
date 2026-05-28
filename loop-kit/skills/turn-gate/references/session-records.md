@@ -70,6 +70,7 @@ Do not treat readiness, verification, build output, generated release surface, s
 
 `Phase Checklist` shows which required lifecycle phases have passed their end checkpoint.
 Frontmatter `phase` shows the current location; checklist shows completed lifecycle steps.
+Use `flow` checkpoint expectations to decide whether the phase change requires `000-plan.md`, the active flow record, or both.
 
 Default checklist:
 
@@ -94,6 +95,7 @@ Keep entries factual and compact.
 Record:
 
 - phase start or end results
+- `flow` contract-impact, readiness, ambiguity, or handoff decisions when they affect routing
 - pending and answered questions
 - approval-sensitive checkpoint state
 - edits, builds, checks, verifier results

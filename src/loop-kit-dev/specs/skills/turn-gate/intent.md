@@ -29,3 +29,5 @@
 - flow 해석, sub-flow 후보 설계, readiness/discovery, review-loop, fix-verify-loop, broad-execution, commit-readiness 판단은 `flow` intent와 spec이 소유하고, `turn-gate` intent에는 turn-level gate 책임만 남겨야 한다.
 - 각 새 flow 시작 지점에서는 현재 flow에 필요한 skill을 다시 읽어 stale instruction이나 이전 flow의 skill context에 기대지 않아야 한다.
 - active flow 도중 새 사용자 메시지가 들어오면 일반 lifecycle phase가 아닌 `interruption` 진입점으로 먼저 분류하고, inline answer, current-flow revision, background flow, later analysis reservation, supersede, blocker question, explicit stop 중 하나로 라우팅해야 한다.
+- `interruption` 중 기존 flow contract 변경 여부, 새 foreground flow 여부, future candidate 여부는 `flow` 판단에 의존하고, `turn-gate`는 그 결과를 기록·질문·라우팅해야 한다.
+- self-drive advance 중 current flow completion, next flow identity, handoff 조건은 `flow` output을 원천으로 삼고, `turn-gate`는 sidecar gate와 explicit stop/approval boundary만 운영해야 한다.

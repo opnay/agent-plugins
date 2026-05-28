@@ -41,7 +41,7 @@ session record 경로, 파일명, frontmatter 날짜, git 날짜는 기록 evide
 
 충돌이 target, verification path, reporting scope, 또는 기록 재구성을 바꾸지 않으면 시스템 날짜 기준으로 해석하고 사용한 기준을 짧게 기록합니다.
 
-충돌이 결과에 영향을 줄 수 있으면 work 전에 clarification 또는 blocker routing을 엽니다.
+충돌이 결과에 영향을 줄 수 있으면 `flow` ambiguity 또는 readiness gap으로 다루고, work 전에 clarification 또는 blocker routing을 엽니다.
 
 ## 보고 기준
 
@@ -58,5 +58,6 @@ session record 경로, 파일명, frontmatter 날짜, git 날짜는 기록 evide
 - 상대 날짜를 시스템 날짜/timezone 기준으로 해석했는가?
 - 기록 기반 맥락이 있으면 기록 날짜가 시스템 날짜를 조용히 대체하지 않게 했는가?
 - 날짜 source 차이가 target, verification path, reporting scope를 바꾸면 clarification으로 라우팅했는가?
+- 날짜 source 차이가 flow contract field를 바꾸면 `flow` ambiguity/readiness 판단에 연결했는가?
 - 결과나 기록 재구성에 영향을 주는 날짜는 절대 날짜로 남겼는가?
 - repo-wide 정책으로 범위를 넓히지 않았는가?

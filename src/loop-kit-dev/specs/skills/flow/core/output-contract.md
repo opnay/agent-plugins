@@ -20,6 +20,7 @@ flow 설계 또는 sub-flow 후보 산출물에는 최소한 다음이 드러나
 - recommended flow-local strategy
 - approval-sensitive checkpoint가 필요한지 여부
 - handoff condition
+- contract-impact result when a new message may revise an active flow
 - unresolved questions 또는 blocker
 - active flow인지, sub-flow candidate인지 여부
 
@@ -30,3 +31,4 @@ flow 설계 또는 sub-flow 후보 산출물에는 최소한 다음이 드러나
 - verification expectation이 flow 위험도에 맞게 드러나는가?
 - phase start/end에서 `000-plan.md` 또는 active flow record 중 무엇을 갱신할지 드러나는가?
 - missing contract field와 recommended strategy가 execution authority처럼 쓰이지 않는가?
+- 새 메시지나 self-drive advance가 기존 flow의 completion, handoff, verification expectation을 바꾸는지 판단할 근거가 있는가?
