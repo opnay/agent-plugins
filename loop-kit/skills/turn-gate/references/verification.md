@@ -13,6 +13,16 @@ Record both:
 
 Progress states such as `not-started` and `requested` may appear in compact continuity metadata before a result exists. They are not `Result.status` values and cannot support success reporting. When preserving prior flow state, keep the existing `verification_status` value and record the preservation in `continuity`; do not use `verification_status: preserved`.
 
+If a verifier, subagent, or tool returns a non-enum result such as `partial`, `mixed`, or `inconclusive`, reconcile it before reporting success:
+
+- use `pass` only when the remaining evidence supports the flow acceptance signal
+- use `insufficient` when evidence gaps or ambiguity remain
+- use `fail` for clear failure evidence
+- use `blocked` when input, access, approval, or external state is required
+
+When `method: not-required`, still record a separate `result_status`.
+Use `pass` only if existing evidence is enough for the acceptance signal; otherwise use `insufficient`.
+
 ## Methods
 
 Use `clean-context` for a bounded read-only verifier packet. It must not be a full-history fork.

@@ -45,6 +45,8 @@ recovery state를 다음처럼 기록합니다.
 같은 question tool call을 즉시 반복해 interrupt loop를 만들지 않습니다. recovery state를 텍스트로 설명하거나 사용자가 제공한 선택 또는 요청에서 진행합니다.
 
 다음 사용자 메시지가 답변인지 새 요청인지 모호하면 추측보다 clarification을 우선합니다. 메시지가 visible label과 일치하지 않더라도 free-form answer가 명확하면 답변으로 취급합니다.
+free-form answer가 visible option과 다르지만 새 작업 지시를 분명히 포함하면 pending question을 `superseded`로 기록하고 새 flow를 준비합니다.
+free-form answer가 기존 선택지를 보완하는 note라면 선택된 답과 note를 함께 기록합니다.
 
 pending question이 superseded되면 superseded question id 또는 summary와 새 flow source를 기록합니다. 질문이 superseded되더라도 이전 flow의 report나 verification result는 지우지 않습니다.
 

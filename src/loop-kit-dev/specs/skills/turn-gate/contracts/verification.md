@@ -30,7 +30,16 @@ result status는 선택된 verification method의 결과를 설명해야 합니�
 - `blocked`: user input, approval, access, external state change 없이는 verification 또는 repair를 계속할 수 없습니다.
 - `insufficient`: pass/fail을 지지하기에 evidence가 불완전하거나 약합니다.
 
+외부 verifier, subagent, 도구가 `partial`, `mixed`, `inconclusive`처럼 result status enum 밖의 값을 돌려주면 그대로 성공으로 승격하지 않습니다.
+flow acceptance를 지지할 만큼 충분하면 `pass`로 정합화하고 근거를 기록합니다.
+남은 evidence gap이나 ambiguity가 있으면 `insufficient`로 라우팅합니다.
+명확한 실패 증거는 `fail`, 필요한 input/access/approval/external state는 `blocked`로 매핑합니다.
+
 flow record의 진행 상태는 result status와 분리합니다. verification이 아직 실행되지 않은 새 flow는 frontmatter의 `verification_status`를 `not-started`로 둘 수 있고, clean-context verifier를 요청했지만 결과가 오기 전에는 `requested`로 둘 수 있습니다. `not-started`와 `requested`는 `Result.status` 값이 아니며, reporting에서 성공 근거로 사용할 수 없습니다. 이전 flow state를 보존할 때는 `verification_status`에 `preserved`를 쓰지 말고 기존 값을 유지한 뒤 `continuity`에 보존 사실을 씁니다.
+
+`method: not-required`를 선택했더라도 `result_status`는 별도로 기록합니다.
+별도 action 없이도 acceptance를 판단할 evidence가 충분하면 `pass`와 reason을 기록합니다.
+작은 변경이지만 evidence가 없거나 판단이 약하면 `insufficient`입니다.
 
 ## clean-context 기본값
 

@@ -51,6 +51,14 @@ Classes:
 
 For `reserve-later-analysis`, log the reserved topic in the active flow record and update `000-plan.md` only when it changes turn-level routing.
 
+Classify short natural-language instructions by effect:
+
+- reporting-only notes such as "summary only" or status questions usually stay `inline-answer`
+- "later" or "remember this" stays `reserve-later-analysis` when it does not change the current contract
+- "continue" may allow work inside the current contract, but it does not activate self-drive
+- if the same wording changes scope, endpoint, acceptance, verification, or approval boundary, use `current-flow-revision`
+- if it replaces the active work, use `supersede-current-flow` or `background-current-flow`
+
 Interruption never authorizes commit, push, PR, publish, release, version bump, destructive work, external effects, or work outside the active contract.
 
 ## Prefixes

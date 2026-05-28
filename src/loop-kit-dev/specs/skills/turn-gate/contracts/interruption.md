@@ -22,6 +22,14 @@ active flow가 이미 진행 중일 때 새 사용자 메시지가 도착한 경
 
 `interruption` 결과는 active flow 계약 밖의 work 권한을 만들지 않습니다. 특히 논의 flow는 구현 flow로 자동 전환되지 않고, commit, push, PR, publish, release, version bump, destructive action은 별도 명시 승인 없이는 실행할 수 없습니다.
 
+짧은 자연어 지시는 효과 기준으로 분류합니다.
+
+- "요약만", "상태만", "왜 멈췄어"처럼 flow 계약을 바꾸지 않는 질문이나 보고 방식 제한은 `inline-answer` 또는 reporting constraint입니다.
+- "나중에 봐", "기억해"처럼 현재 scope를 바꾸지 않는 관련 주제는 `reserve-later-analysis`입니다.
+- "계속", "알아서 계속"은 기존 contract 안의 진행 허용일 수 있지만 self-drive 활성화 근거는 아닙니다.
+- 같은 말이 scope, endpoint, acceptance, verification expectation, approval boundary를 바꾸면 `current-flow-revision`으로 승격합니다.
+- 현재 flow를 대체하는 새 작업이면 `supersede-current-flow` 또는 `background-current-flow`를 선택합니다.
+
 ## 검토 기준
 
 - 새 사용자 메시지가 active flow 도중 들어온 메시지인가, 새 flow 시작 메시지인가?

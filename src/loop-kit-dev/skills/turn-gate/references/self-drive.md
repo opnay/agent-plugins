@@ -1,19 +1,22 @@
 # Self-Drive
 
-Self-drive lets Codex continue inside a recorded boundary without asking after every flow. It never replaces the normal turn-gate lifecycle, verification, records, or approval checkpoints.
+Self-drive lets Codex continue inside a recorded boundary without asking after every flow.
+It does not replace turn-gate lifecycle, records, verification, approval checkpoints, or explicit-stop handling.
 
 ## Modes
 
 Use self-drive only when the user explicitly requests it or selects it as a next-flow mode.
 
 - `finite`: run a prepared flow sequence.
-- `infinite`: keep working until the user stops, but only through one bounded iteration at a time.
+- `infinite`: continue until the user stops, but only through counted bounded iterations.
 
-Do not infer self-drive from a long task list, successful verification, or available subagents.
+Do not infer self-drive from a long task list, passing verification, or available subagents.
 
 ## Required State
 
-Before any autonomous continuation, `000-plan.md` must point to `000-self-drive.md`. The sidecar must contain:
+Before autonomous continuation, `000-plan.md` must point to `000-self-drive.md`.
+
+The sidecar must contain:
 
 - `status`
 - `mode`
@@ -29,11 +32,21 @@ Before any autonomous continuation, `000-plan.md` must point to `000-self-drive.
 - blocker return conditions
 - ledger
 
-For `finite`, also keep `active_flow_index`, `current_flow_label`, and `planned_flow_count`.
+For `finite`, also keep:
 
-For `infinite`, keep `loop_count` and a current loop label. Do not create a large todo list just to represent infinity.
+- `active_flow_index`
+- `current_flow_label`
+- `planned_flow_count`
+- prepared sequence
 
-Start a new infinite sidecar with `loop_count: 1`. If no bounded target is known, route to target selection or blocker handling before work.
+For `infinite`, keep:
+
+- `loop_count`
+- `current_loop_label`
+- next bounded iteration
+
+Start a new infinite sidecar with `loop_count: 1`.
+If no bounded target is known, route to target selection or blocker handling before work.
 
 ## Sidecar Gate
 
@@ -51,9 +64,13 @@ Confirm:
 - blocker state
 - required next action
 
-If identity, index, loop count, pointer, endpoint, approval boundary, or active record conflicts, stop autonomous advancement and route to the user. In finite mode, `active_flow_index > planned_flow_count` is stale/corrupt sidecar state and needs reconcile. If records cannot be read while deciding endpoint or continuation, report an access blocker. Do not advance from memory.
+If identity, index, loop count, pointer, endpoint, approval boundary, or active record conflicts, stop autonomous advancement and route to the user.
+If `000-plan.md` says self-drive is inactive, any sidecar is historical.
+If records cannot be read while deciding endpoint or continuation, report an access blocker. Do not advance from memory.
 
-`000-plan.md` stores only self-drive status and the sidecar pointer. The sidecar owns sequence or loop state. The active flow record owns flow-local evidence.
+`000-plan.md` stores only self-drive status and sidecar pointer.
+The sidecar owns sequence or loop state.
+The active flow record owns flow-local evidence.
 
 ## Finite Mode
 
@@ -63,12 +80,25 @@ Advance only after:
 - handoff is not blocked
 - next flow identity is known
 - approval boundary still matches the sidecar
+- plan and sidecar gate pass again
 
-Keep the current index before reporting. After confirmed advance, update the next index, current flow label, progress note, `next_action`, and ledger.
+Keep the current index before reporting.
+Even when the other advance conditions look satisfied, recheck the plan and sidecar gate immediately before advancing.
+After confirmed advance, update the next index, current flow label, progress note, `next_action`, and ledger.
+Repair or recheck work does not count as a sequence advance; it only makes the current flow eligible to pass.
 
-Sequence completion is not terminal closure. Report completion, update records, then reopen next-flow routing unless the user explicitly stops.
+Sequence completion is not terminal closure.
+Report completion, update records, then reopen next-flow routing unless the user explicitly stops.
 
-If the endpoint says to stop self-drive after sequence exhaustion, stop autonomous advancement and report the handoff; do not terminal-close the turn. If the endpoint says to create another inventory cycle, refresh the sidecar as a new bounded finite cycle before work: first flow identity, planned count, acceptance, verification, `next_action`, and ledger.
+If the endpoint says to stop self-drive after sequence exhaustion, stop only autonomous advancement.
+If the endpoint says to create another inventory cycle, refresh the sidecar as a new bounded finite cycle before work: first flow identity, planned count, acceptance, verification, `next_action`, and ledger.
+
+Order, endpoint, scope, target, acceptance, or approval changes stop autonomous advancement.
+Return to the earliest affected phase, update sidecar and affected flow record, then continue only if the gate passes again.
+
+Ordinary notes inside the recorded boundary do not stop self-drive.
+Record them in the active flow record `Execution Log` or sidecar ledger.
+Update `000-plan.md` only if turn-level routing changes.
 
 ## Infinite Mode
 
@@ -89,9 +119,34 @@ Each iteration:
 5. Check approval boundary, blocker state, and stop condition.
 6. If continuation is still valid, increment `loop_count` and refresh `next_action`.
 
-Stop autonomous advancement for missing target, insufficient verification, repeated failure, approval need, access or external blocker, user input need, or no useful bounded work left. Treat two consecutive non-pass results for the same bounded target and cause as repeated failure.
+Increment `loop_count` only after continuation remains valid.
+If gate or record state conflicts before the next loop, keep the previous count and route recovery.
 
-Non-pass verification (`fail`, `blocked`, `insufficient`, `not-started`, or `requested`) comes before endpoint exhaustion, loop advance, and next-flow continuation. Repair, gather evidence, or route the blocker first.
+Stop autonomous advancement for:
+
+- missing target
+- non-pass or incomplete verification
+- two consecutive non-pass results for the same bounded target and cause
+- approval need
+- access or external blocker
+- user input need
+- no useful bounded work left
+- sidecar or active record conflict
+- endpoint, scope, target, order, acceptance, or approval boundary change
+
+Non-pass verification (`fail`, `blocked`, `insufficient`, `not-started`, or `requested`) comes before endpoint exhaustion, loop advance, and next-flow continuation.
+Even if work evidence looks successful, do not advance while the active flow record or sidecar metadata still has `verification_status: requested`, `not-started`, `fail`, `blocked`, or `insufficient`; update it to pass first.
+If work evidence and verification metadata conflict, route it as a verification mismatch. Do not continue or advance until the mismatch is resolved.
+For `insufficient`, gather evidence and recheck the same bounded target. Continue only after it becomes pass.
+
+If an external blocker recovers, do not continue from memory.
+Reread records, recheck sidecar gate, relock endpoint and approval boundary, then decide continuation.
+
+If the user asks for another bounded batch such as "another 8", treat it as endpoint/order update inside the current infinite sidecar.
+Preserve ledger history, set the new bounded objective or stop condition, and choose the next bounded target before continuing.
+
+If the endpoint changes from infinite continuation to a finite stop condition, stop current infinite advancement.
+Record the endpoint update in the sidecar and ledger. If a finite sequence is needed, prepare a new finite sequence before work.
 
 ## Interruption
 
@@ -104,14 +159,18 @@ During active self-drive, interpret new user input in this order:
 5. status or progress question
 6. ordinary note inside the recorded boundary
 
-Scope, endpoint, target, order, acceptance, or approval changes stop autonomous advancement and return to the earliest affected phase. Endpoint changes are relock/update events: update the sidecar endpoint, ledger, and affected flow record next action before continuing.
+For status questions, report current identity, finite index or loop count, verification state, and next required action.
+Continue only if the recorded sidecar still permits it.
 
-For status questions, report current identity, finite index or loop count, verification state, and next required action. Continue only if the recorded sidecar still permits it.
+Scope, endpoint, target, order, acceptance, or approval changes stop autonomous advancement and return to the earliest affected phase.
+Endpoint changes are relock/update events: update sidecar endpoint, ledger, and affected flow record next action before continuing.
 
 ## Approval And Stop
 
-Self-drive cannot approve commit, push, PR, publish, release, version bump, destructive action, external effect, or scope expansion. Those actions need exact target, expected effect, risk, recovery path, included/excluded scope, and explicit approval.
+Self-drive cannot approve commit, push, PR, publish, release, version bump, destructive action, external effect, or scope expansion.
+Those actions need exact target, expected effect, risk, recovery path, included/excluded scope, and explicit approval.
 
-If writes or record creation are forbidden, report in-memory continuity only. Do not use unrecorded state for later autonomous advance.
+If writes or record creation are forbidden, report in-memory continuity only.
+Do not use unrecorded state for later autonomous advance.
 
 Terminal closure requires a source-recorded explicit stop stored in the active flow record.

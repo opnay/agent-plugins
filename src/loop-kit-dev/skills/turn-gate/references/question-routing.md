@@ -53,6 +53,8 @@ For the next user message:
 - If it explicitly stops the turn, record the source before closing.
 
 Do not immediately repeat the same question tool call after an abort. If the next message is ambiguous, ask a smaller clarification instead of guessing.
+If a free-form answer does not match a visible option but clearly gives a new task, mark the pending question `superseded` and prepare that flow.
+If it selects an option and adds a note, record both the selected answer and the note.
 
 ## Blocker Routing
 
