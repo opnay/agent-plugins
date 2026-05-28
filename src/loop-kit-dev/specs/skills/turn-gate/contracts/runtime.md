@@ -24,6 +24,9 @@ task completion은 턴을 닫지 않습니다. source-recorded explicit stop만 
 
 `turn-gate`가 active이면 reporting과 next-flow reopening은 ongoing conversation channel에 남아야 합니다. terminal/final closeout을 일반 report 형태로 사용하지 않습니다. final closeout은 현재 사용자 메시지가 명시적으로 턴을 끝내고 그 closure source가 기록된 뒤에만 허용됩니다.
 
+날짜 authority는 `contracts/date-authority.md`가 소유합니다.
+Runtime `SKILL.md`는 상대 날짜의 시스템 날짜 기본값, 기록 기반 충돌의 clarification 조건, 절대 날짜 보고 기준을 직접 포함해야 합니다.
+
 ## interruption 계약
 
 `interruption`은 active flow가 이미 진행 중일 때 새 사용자 메시지가 도착한 경우에만 열리는 entry-only phase입니다. 일반 lifecycle phase가 아니며 `intake`, `framing`, `preparation`, `work`, `verification`, `reporting`, `next-flow`를 대체하지 않습니다.
@@ -98,6 +101,7 @@ Runtime `SKILL.md`는 다음을 직접 포함해야 합니다.
 - active-turn rule과 terminal summary 금지
 - explicit stop 전 final/terminal closeout 금지
 - active flow lifecycle
+- 상대 날짜의 시스템 날짜 기본값, 기록 기반 날짜 충돌의 clarification 조건, 결과 또는 기록 재구성에 영향을 주는 절대 날짜 보고 기준
 - active flow 도중 새 사용자 메시지를 처리하는 `interruption` entry-only phase
 - flow 시작 지점의 skill reread
 - 사용자 메시지에서 preparation으로 넘어갈 때 `turn-gate`와 `flow` reread

@@ -5,65 +5,36 @@ description: Keep an active Codex turn open until explicit stop; enforce flow li
 
 # Turn Gate
 
-## Rule
+## Active Turn
 
 Keep the turn open until the user explicitly stops it and the stop source is recorded.
-Do not close after completion, commit, passing checks, status answers, reports, interrupted questions, or final-looking summaries.
+Completion, commits, passing checks, status answers, reports, interrupted questions, and final-looking summaries are not closure authority.
 
-Each active flow ends as exactly one:
+Every active flow ends in exactly one recorded state:
 
-- `next-flow`: report done, records updated, next action open.
-- `blocked`: input, approval, access, or external state needed.
-- `explicit-stop`: current user message stops the turn and source is recorded.
+- `next-flow`: reporting is done, records are updated, and the next action is open.
+- `blocked`: input, approval, access, or external state is required.
+- `explicit-stop`: the current user message stops the turn and the stop source is recorded.
 
-Maintain session records. Use `references/session-records.md` for plan, flow records, `Phase Checklist`, metadata, and recovery.
+Maintain session records throughout the turn.
+Use `references/session-records.md` for `000-plan.md`, flow records, phase checklists, compact metadata, and recovery rules.
 
-## Lifecycle
+If the user only activates turn-gate, record the operating state and open scope or next-flow routing.
+Do not answer with a terminal activation summary.
 
-Run every active flow:
+## Flow Lifecycle
 
-1. `intake`: reread needed skills; separate source from interpretation; identify goal, non-goals, authority signals.
-2. `framing`: apply `flow`; classify active flow, candidate, phase, or handoff.
-3. `preparation`: lock scope, acceptance, verification, approval boundary, handoff.
-4. `work`: act only inside the recorded boundary.
-5. `verification`: choose method, run or justify, record status.
-6. `reporting`: update records first, then report.
-7. `next-flow`: route next action, blocker, self-drive continuation, or explicit stop.
+Run each active flow through this lifecycle:
 
-Update `000-plan.md` for turn-level routing.
-Update the active flow record for same-flow evidence, phase state, residual risk, pending question, and checklist.
+1. `intake`: reread needed skills, separate source wording from interpretation, identify goal, non-goals, authority-sensitive signals, date assumptions, and discovery topics.
+2. `framing`: apply `flow`; classify the item as active flow, parent flow, candidate, phase, or handoff.
+3. `preparation`: lock scope, acceptance, verification expectation, approval boundary, and handoff.
+4. `work`: act only inside the recorded flow boundary.
+5. `verification`: choose method, run or justify it, and record result status.
+6. `reporting`: update records first, then report continuity context.
+7. `next-flow`: route a next action, blocker, self-drive continuation, or explicit stop.
 
-## Interruption
-
-Use `interruption` only for a new user message during an active flow.
-Preserve current flow state, classify the message, then return to lifecycle routing.
-Record interruption in `Execution Log`, not `Phase Checklist`.
-
-Classes:
-
-- `inline-answer`
-- `current-flow-revision`
-- `background-current-flow`
-- `reserve-later-analysis`
-- `supersede-current-flow`
-- `blocker-question`
-- `explicit-stop`
-
-For `reserve-later-analysis`, log the reserved topic in the active flow record and update `000-plan.md` only when it changes turn-level routing.
-
-Classify short natural-language instructions by effect:
-
-- reporting-only notes such as "summary only" or status questions usually stay `inline-answer`
-- "later" or "remember this" stays `reserve-later-analysis` when it does not change the current contract
-- "continue" may allow work inside the current contract, but it does not activate self-drive
-- if the same wording changes scope, endpoint, acceptance, verification, or approval boundary, use `current-flow-revision`
-- if it replaces the active work, use `supersede-current-flow` or `background-current-flow`
-
-Interruption never authorizes commit, push, PR, publish, release, version bump, destructive work, external effects, or work outside the active contract.
-
-## Prefixes
-
-Use phase prefixes for visible progress:
+Use phase prefixes for visible phase-start or meaningful progress messages:
 
 - `[intake]`
 - `[framing]`
@@ -75,15 +46,64 @@ Use phase prefixes for visible progress:
 
 Do not copy prefixes into artifacts, records, command summaries, or question option labels.
 
-## Approval
+Update `000-plan.md` for turn-level routing changes.
+Update the active flow record for same-flow phase state, evidence, residual risk, pending question state, and checklist changes.
+For meaningful multi-step work, use the available plan tool to keep the current phase or task state visible.
 
-Before work, record scope, non-goals, done, verification expectation, approval boundary, and handoff.
-At new flow start, reread required skills. For user-message preparation, reread `turn-gate` and `flow`; keep both in `000-plan.md` `active_skills`.
+## Intake Details
 
-Ask before work if target, operation, endpoint, success condition, approval boundary, or verification path can change the result.
+At a new flow start, reread the skills needed for that flow.
+When a user message moves toward preparation, reread `turn-gate` and `flow`; keep both in `000-plan.md` `active_skills`.
 
-Approval-sensitive actions need exact target, effect, risk, recovery, included/excluded scope, and endpoint.
-Readiness, verification, build/readback, self-drive, previous context, or subagent output never authorizes commit, push, PR, publish, release, version bump, destructive work, or external effects.
+Interpret relative dates such as today, tomorrow, yesterday, this week, last record, and previous flow from the current system date and timezone by default.
+If a relative date affects the result, target, verification path, reporting scope, or later record reconstruction, write the absolute date.
+
+If the request points to session records, prior flows, the last record, yesterday's work, or record-based resume, do not let record dates silently override the system date.
+If the intended date source can change target, verification path, reporting scope, or record reconstruction, ask a user-gated clarification before work.
+If the conflict does not affect the result, proceed with the system-date basis and record that basis briefly.
+
+Use compact explicit wording such as `today (2026-05-28)`, `yesterday (2026-05-27, system-date basis)`, or `needs clarification: last record date or system-date yesterday`.
+
+## Preparation And Approval
+
+Before work, record:
+
+- scope and non-goals
+- completion or acceptance signal
+- verification expectation
+- approval boundary
+- handoff condition
+
+Ask before work if target, operation, endpoint, success condition, approval boundary, date source, or verification path can change the result.
+
+Approval-sensitive actions require exact target, expected effect, risk, recovery path, included and excluded scope, and endpoint.
+Readiness, verification, build/readback, self-drive, previous context, and subagent output never authorize commit, push, PR, publish, release, version bump, destructive work, or external effects.
+
+## Interruption
+
+Use `interruption` only when a new user message arrives during an active flow.
+It is an entry-only routing event, not a lifecycle phase.
+
+When interruption starts, preserve the current flow phase, scope, non-goals, approval boundary, verification status, and required next action.
+Then choose one result:
+
+- `inline-answer`: answer without changing the flow contract, then return to the preserved phase.
+- `current-flow-revision`: update changed scope, non-goals, completion criteria, verification expectation, approval boundary, or handoff; return to `framing` or `preparation`.
+- `background-current-flow`: keep the current flow resumable and start a new foreground flow.
+- `reserve-later-analysis`: record a future topic, then return to the preserved phase.
+- `supersede-current-flow`: mark the current flow superseded and start the replacement flow.
+- `blocker-question`: mark the flow blocked and ask for the needed decision, access, approval, or scope.
+- `explicit-stop`: record the stop source before terminal closure.
+
+Classify short natural-language messages by effect:
+
+- "summary only", "status only", and "why stopped?" usually stay `inline-answer`.
+- "later" or "remember this" stays `reserve-later-analysis` when it does not change the current contract.
+- "continue" may allow work inside the current contract, but it does not activate self-drive.
+- If the same wording changes scope, endpoint, acceptance, verification, date basis, or approval boundary, use `current-flow-revision`.
+- If it replaces the active work, use `supersede-current-flow` or `background-current-flow`.
+
+Interruption never authorizes work outside the active contract or approval-sensitive execution.
 
 ## Verification
 
@@ -102,25 +122,53 @@ Results:
 - `blocked`
 - `insufficient`
 
-`not-required` is not pass. `not-started` and `requested` are not success evidence.
+`not-required` is a method, not a pass; record the reason and residual uncertainty.
+`not-started` and `requested` are progress states, not success evidence.
 
-Default to `clean-context` for file changes, release surface changes, multi-file contracts, prior failures, requested QA/review/commit-readiness, and approval-sensitive boundaries.
-Route `fail`, `insufficient`, and `blocked` before success reporting.
+If a verifier, subagent, or tool returns `partial`, `mixed`, or `inconclusive`, reconcile it before success reporting:
 
-## Reporting
+- `pass`: remaining evidence supports the acceptance signal
+- `insufficient`: evidence gaps or ambiguity remain
+- `fail`: clear failure evidence exists
+- `blocked`: input, access, approval, or external state is required
 
-Before reporting, update records.
-Report changed surfaces, verification, judgment calls, residual risk, and required next action.
+Default to `clean-context` for file changes, generated release surface changes, multi-file contracts, prior failures, requested QA/review/commit-readiness, and approval-sensitive boundaries.
+Route `fail`, `insufficient`, and `blocked` before success reporting, self-drive continuation, release readiness, commit-readiness, or next-flow continuation.
+
+Use `references/verification.md` for verifier packet boundaries and detailed status routing.
+
+## Reporting And Questions
+
+Before reporting, update the active flow record and any required `000-plan.md` fields.
+Report changed surfaces, verification status, material judgment calls, residual risk, and required next action.
+
 After reporting, reopen routing unless explicit stop is recorded.
-
 Use `request_user_input` for narrow choices when available; otherwise use active plain text.
-Aborted or interrupted questions are not closure. Record pending state and route the next user message as answer, superseding request, status question, or explicit stop.
+Keep explicit turn-end available in record routing even when the visible question UI cannot show it.
+
+An aborted, canceled, or interrupted question is not closure.
+Record pending question state and route the next user message as:
+
+- answer to the pending question
+- superseding request
+- status question
+- explicit stop
+
+If a free-form answer clearly gives a new task, mark the pending question `superseded` and prepare that flow.
+If it selects an option and adds a note, record both.
+Use `references/question-routing.md` for fallback, blocker, and question recovery details.
 
 ## Self-Drive
 
-Self-drive is an explicit prepared sequence overlay, not default mode.
-Use `references/self-drive.md` only when records define objective, current flow, allowed actions, approval checkpoints, endpoint, blockers, acceptance, and verification.
+Self-drive is an explicit prepared sequence overlay, not the default turn state.
+Use `references/self-drive.md` only when records define objective, current flow or loop, allowed actions, approval checkpoints, endpoint, blockers, acceptance signal, and verification expectation.
 
-At self-drive flow start, read `000-plan.md` and `000-self-drive.md`.
-Sequence completion is not terminal closure. Report, update records, then route next-flow unless explicit stop is recorded.
-In infinite mode, two consecutive non-pass results for the same bounded target and cause count as repeated failure and stop autonomous advancement.
+At each self-drive flow or loop start, read `000-plan.md` and `000-self-drive.md`.
+Do not advance from memory.
+
+Finite mode advances only after current verification is pass, handoff is not blocked, next identity is known, approval boundary matches, and plan plus sidecar gate pass again.
+Infinite mode is counted bounded iteration, not an unlimited todo list.
+Increment `loop_count` only after continuation remains valid.
+
+Non-pass verification, repeated failure, blockers, approval need, stale sidecar state, and endpoint or scope changes stop autonomous advancement before continuation.
+Sequence completion is not terminal closure; report, update records, then route next-flow unless explicit stop is recorded.

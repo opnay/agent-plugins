@@ -41,6 +41,7 @@
 ## 계약 맵
 
 - `contracts/runtime.md`: active-turn lifecycle, activation, explicit stop, phase prefix, runtime body 경계, approval checkpoint
+- `contracts/date-authority.md`: 상대 날짜 해석, 시스템 날짜 기본값, 기록 기반 날짜 충돌, 절대 날짜 보고 기준
 - `contracts/question-routing.md`: next-flow reopening, structured question 사용, fallback, pending question recovery, `request_user_input` abort 처리
 - `contracts/session-records.md`: `000-plan.md`, flow record, self-drive sidecar pointer, raw request, Continuity Guard, recovery case
 - `contracts/verification.md`: verification method 선택, result status, clean-context verifier 경계, non-pass routing
