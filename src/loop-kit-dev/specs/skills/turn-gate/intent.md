@@ -8,6 +8,7 @@
 - active flow가 없거나 flow contract가 부족하면 필수 `flow` decision을 적용해 scope, non-goal, acceptance signal, verification expectation, handoff condition을 잠가야 한다.
 - `turn-gate`는 flow 자체를 정의하거나 flow-local strategy를 재정의하지 않고, 의존하는 `flow`의 decision을 현재 turn에 적용하고 session record에 기록해야 한다.
 - `turn-gate`는 flow reporting 뒤 source-recorded explicit stop이 없으면 `next-flow` phase로 이어져 다음 flow 선택지를 열어야 한다.
+- `turn-gate`의 reporting phase는 종료 요약이 아니라 다음 사용자 입력을 받기 위한 pre-intake 전환이어야 하며, 보고 내용은 다음 질문에 필요한 decision surface를 만들어야 한다.
 - 질문, 선택지, blocker decision, 다음 flow 선택은 user-gated question routing으로 드러나야 한다.
 - 질문 도구가 사용 가능하면 필요한 user-gated routing에 적극 사용하고, 사용할 수 없으면 active plain-text question fallback과 required next action을 기록해야 한다.
 - 질문 도구가 사용자 interrupt나 새 메시지로 중단되더라도 그것만으로 turn 종료나 terminal summary 권한이 생기지 않아야 하며, 다음 사용자 메시지는 pending question recovery 또는 superseded flow routing으로 해석해야 한다.

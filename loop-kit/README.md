@@ -83,7 +83,7 @@ codex plugin marketplace upgrade
 - `flow`: 메시지나 동작을 flow로 해석하고, intake, framing, preparation readiness, parent flow, sub-flow candidate, operational-preparation flow, change-unit flow, flow-vs-phase 경계, discovery, flow-local strategy, handoff condition을 판정합니다.
 - `flow`: phase 시작/종료 record checkpoint를 산출해 `000-plan.md`와 active flow record 중 무엇을 갱신해야 하는지 구분합니다.
 - `flow`: interruption이나 self-drive 중 기존 flow contract 변경 여부, 다음 flow identity, handoff 유효성을 판정합니다.
-- `turn-gate`: 현재 턴에서 flow 사용을 강제하고, flow reporting 뒤 다음 flow 질문을 여는 turn-level gate입니다. flow 판단을 재정의하지 않고 기록, 질문, 검증, explicit stop guard를 운영합니다.
+- `turn-gate`: 현재 턴에서 flow 사용을 강제하고, flow reporting 뒤 다음 flow 질문을 여는 turn-level gate입니다. reporting을 다음 입력의 pre-intake로 만들며, flow 판단을 재정의하지 않고 기록, 질문, 검증, explicit stop guard를 운영합니다.
 
 `turn-gate`가 호출되면, 현재 세션 동안 이 skill을 1급 운영 규칙으로 활성화한 것으로 취급합니다.
 이 규칙은 skill body의 `Important` 섹션에서 먼저 드러나며, 결과 보고만으로 턴을 닫지 않고 다음 플로우 질문을 다시 여는 동작을 우선 계약으로 둡니다.
@@ -97,8 +97,8 @@ codex plugin marketplace upgrade
 3. Preparation: `flow` readiness/ambiguity 판단으로 선택된 active flow의 scope, readiness, verification expectation, approval boundary, handoff condition을 잠급니다.
 4. 작업: 현재 flow가 소유한 실제 작업을 수행합니다.
 5. 검증: 작업 위험도에 맞춰 `clean-context`, `normal`, `not-required` method 중 하나로 검증합니다.
-6. 보고: 이번 flow의 맥락을 정리하고 다음 flow 선택지를 명시적으로 다시 엽니다.
-7. 사용자가 종료를 요청하지 않으면 다음 flow의 intake로 계속 진행합니다.
+6. 보고: 이번 flow의 맥락을 정리하고, 다음 질문을 받기 위한 pre-intake 표면을 만듭니다.
+7. 사용자가 종료를 요청하지 않으면 질문 도구나 plain-text fallback으로 다음 flow의 intake를 엽니다.
 
 active flow 중 들어온 새 사용자 메시지는 위 lifecycle을 대체하지 않고 `interruption`으로 잠시 분류됩니다. `flow`가 계약 변경 여부를 판단하며, 질문이 계약을 바꾸지 않으면 답변 후 이전 phase로 돌아가고, scope나 non-goal을 바꾸면 현재 flow를 개정한 뒤 `framing` 또는 `preparation`으로 돌아갑니다. 다른 작업이 먼저 필요하면 현재 flow를 background로 두고 새 foreground flow를 시작하며, 나중에 볼 주제는 후속 후보로 예약합니다.
 

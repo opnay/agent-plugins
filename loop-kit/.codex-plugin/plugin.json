@@ -30,7 +30,7 @@
     ],
     "defaultPrompt": [
       "Use flow to classify work into bounded flows, then use turn-gate to keep the turn open until I explicitly stop.",
-      "After each flow reports, verify as needed and reopen next-flow choices instead of ending the turn."
+      "After each flow reports, treat reporting as pre-intake for the next user decision and reopen next-flow choices instead of ending the turn."
     ],
     "brandColor": "#1D6E6E"
   }

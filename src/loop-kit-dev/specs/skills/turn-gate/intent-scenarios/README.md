@@ -34,6 +34,7 @@
 - `not-required-routing-verification.md`: routing-only 요청에서 검증할 work output이 없을 때 `not-required` method를 status와 분리해 기록하는지 확인합니다.
 - `not-required-status-result-boundary.md`: `Method: not-required`가 automatic pass가 아니며 `pass`/`insufficient`/`blocked` status와 분리되는지 20개 case로 확인합니다.
 - `phase-prefix-application.md`: phase-start/progress 메시지의 prefix 누락과 record/artifact/question option 내부 prefix 과잉 적용을 20개 case로 확인합니다.
+- `four-flow-pre-intake-routing.md`: 4개 planned flow 작업에서 flow 1~4 reporting 뒤 pre-intake decision surface가 열리는지 20개 case로 확인합니다.
 - `question-tool-autonomy-boundary.md`: 질문 도구 과잉 사용과 self-drive 질문 부족 사용을 20개 case로 구분합니다.
 - `small-copy-fix-flow.md`: 작은 문구 수정 요청을 불필요하게 여러 planned flow로 쪼개지 않는지 확인합니다.
 - `dashboard-stale-list-bug-flow.md`: 버그 수정 요청에서 원인 파악, 수정, 검증을 phase별 planned flow로 쪼개지 않는지 확인합니다.

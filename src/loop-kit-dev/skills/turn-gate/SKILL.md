@@ -1,25 +1,25 @@
 ---
 name: turn-gate
-description: Keep an active Codex turn open until explicit stop; apply flow decisions instead of redefining them; maintain session records, verification routing, interruption recovery, next-flow routing, and prepared self-drive.
+description: Keep an active Codex turn open until explicit stop; apply flow decisions instead of redefining them; maintain session records, verification routing, interruption recovery, reporting-as-pre-intake next-flow routing, and prepared self-drive.
 ---
 
 # Turn Gate
 
 ## Active Turn
 
-Keep the turn open until the user explicitly stops it and the stop source is recorded.
-Completion, commits, passing checks, status answers, reports, interrupted questions, and final-looking summaries are not closure authority.
+Keep the active Codex turn open until the user explicitly stops it and that stop source is recorded.
+Completion, commits, passing checks, status answers, reports, interrupted questions, final-looking summaries, and final responses are not closure authority.
 
 Every active flow ends in exactly one recorded state:
 
-- `next-flow`: reporting is done, records are updated, and the next action is open
+- `next-flow`: reporting is done, records are updated, and the next user decision is open
 - `blocked`: input, approval, access, or external state is required
 - `explicit-stop`: the current user message stops the turn and the stop source is recorded
 
 Maintain session records throughout the turn.
 Use `references/session-records.md` for `000-plan.md`, flow records, phase checklists, compact metadata, and recovery rules.
 
-If the user only activates turn-gate, record the operating state and open scope or next-flow routing.
+If the user only activates `turn-gate`, record the operating state and open scope or next-flow routing.
 Do not answer with a terminal activation summary.
 
 ## Flow Dependency
@@ -38,7 +38,7 @@ Run each active flow through:
 3. `preparation`: apply `flow` readiness and ambiguity decisions before work.
 4. `work`: act only inside the recorded flow boundary.
 5. `verification`: choose method, run or justify it, and record result status.
-6. `reporting`: update records first, then report continuity context.
+6. `reporting`: update records, report continuity context, and create the next decision surface.
 7. `next-flow`: route a next action, blocker, self-drive continuation, or explicit stop.
 
 Use phase prefixes for visible phase-start or meaningful progress messages: `[intake]`, `[framing]`, `[preparation]`, `[work]`, `[verification]`, `[reporting]`, `[next-flow]`.
@@ -49,6 +49,25 @@ For meaningful multi-step work, use the available plan tool to keep current phas
 
 At a new flow start, reread the skills needed for that flow.
 When a user message moves toward preparation, reread `turn-gate` and `flow`; keep both in `000-plan.md` `active_skills`.
+
+## Reporting As Pre-Intake
+
+When `turn-gate` is active, reporting is not terminal closeout.
+Reporting is the pre-intake transition for the next user decision.
+
+Before reporting, update the active flow record and any required `000-plan.md` fields.
+Then report the result, verification status, material judgment calls, residual risk, and required next action.
+After that, create the next decision surface:
+
+- Use `request_user_input` when it is available and the choices are narrow.
+- If the question tool is unavailable, keep the turn open with an active plain-text question.
+- If a valid self-drive continuation is already prepared, route through that continuation gate.
+- If an explicit stop is present, record the stop source before closure.
+
+If `turn_gate_active` is true and no explicit stop is recorded, do not use a final/terminal closeout as the last action.
+Compression, status-only reporting, or summary wording cannot remove the next-flow question, blocker question, or valid self-drive handoff.
+
+Use `references/question-routing.md` for next-flow choices, post-flow continue, fallback text, and question recovery.
 
 ## Dates
 
@@ -107,10 +126,7 @@ Default to `clean-context` for file changes, generated release surface changes, 
 Route `fail`, `insufficient`, and `blocked` before success reporting, self-drive continuation, release readiness, commit-readiness, or next-flow continuation.
 Use `references/verification.md` for verifier packet boundaries and detailed status routing.
 
-## Reporting And Questions
-
-Before reporting, update the active flow record and any required `000-plan.md` fields.
-Report changed surfaces, verification status, material judgment calls, residual risk, and required next action.
+## Questions And Next Flow
 
 After reporting, reopen routing unless explicit stop is recorded.
 `next-flow` is an open routing state, not a final answer.

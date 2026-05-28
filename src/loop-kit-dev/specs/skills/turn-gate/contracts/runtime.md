@@ -19,7 +19,7 @@ phase별 책임은 다음처럼 압축합니다.
 - `preparation`: `flow` readiness/ambiguity 결과로 work 전 계약을 잠급니다.
 - `work`: active flow boundary 안에서만 실행합니다.
 - `verification`: method와 result status를 분리해 기록합니다.
-- `reporting`: terminal close가 아니라 continuity context를 보고합니다.
+- `reporting`: terminal close가 아니라 continuity context를 보고하고, 다음 사용자 입력을 받기 위한 pre-intake decision surface를 만듭니다.
 - `next-flow`: next action, blocker, self-drive continuation, explicit stop 중 하나로 라우팅합니다.
 
 task completion은 턴을 닫지 않습니다.
@@ -27,6 +27,21 @@ source-recorded explicit stop만 terminal close를 허용할 수 있습니다.
 
 `turn-gate`가 active이면 reporting과 next-flow reopening은 ongoing conversation channel에 남아야 합니다.
 terminal/final closeout은 현재 사용자 메시지가 명시적으로 턴을 끝내고 그 closure source가 기록된 뒤에만 허용됩니다.
+
+## Reporting As Pre-Intake
+
+`reporting`은 완료 요약으로 턴을 닫는 phase가 아닙니다.
+`turn-gate`가 active이면 reporting은 다음 사용자 응답을 받기 위한 pre-intake 단계로 동작해야 합니다.
+
+reporting은 다음을 순서대로 수행합니다.
+
+1. active flow record와 필요한 `000-plan.md`를 먼저 갱신합니다.
+2. 결과, 검증 상태, residual risk, material judgment, required next action을 짧게 보고합니다.
+3. 다음 사용자 입력이 선택해야 할 decision surface를 만듭니다.
+4. `request_user_input`이 가능하고 선택지가 좁으면 바로 질문 도구를 열고, 가능하지 않으면 active plain-text question fallback을 씁니다.
+
+explicit stop이 source-recorded되지 않은 상태에서 `turn-gate` 보고를 `final` 또는 terminal closeout으로 끝내면 계약 위반입니다.
+압축 응답 모드가 활성화돼도 이 pre-intake 질문 표면은 제거할 수 없습니다.
 
 ## 기록 계약
 
@@ -92,6 +107,7 @@ Runtime `SKILL.md`는 다음을 직접 포함해야 합니다.
 - active-turn rule, terminal summary 금지, required ending states
 - `flow` dependency와 turn-gate owned responsibilities
 - compact lifecycle
+- reporting-as-pre-intake와 final-response guard
 - relative date 기본값과 기록 기반 충돌의 clarification 경계
 - interruption entry-only phase의 적용 방식
 - flow 시작 지점의 skill reread

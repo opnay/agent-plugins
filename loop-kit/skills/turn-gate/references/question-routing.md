@@ -2,6 +2,22 @@
 
 Use this reference when a flow needs user choice, clarification, blocker recovery, next-flow reopening, or recovery after an interrupted question tool call.
 
+## Reporting As Pre-Intake
+
+When `turn-gate` is active, reporting prepares the next user input.
+It is not a terminal summary.
+
+After reporting, do all of these unless explicit stop is source-recorded:
+
+1. Keep routing open in the active flow record.
+2. Identify the next decision, blocker recovery, approval, scope choice, or self-drive continuation gate.
+3. Ask through `request_user_input` when the choices are narrow and the tool is available.
+4. If the tool is unavailable, ask an active plain-text question and avoid terminal closeout wording.
+
+Do not finish with a final/terminal closeout while `turn_gate_active` is true and no explicit stop is recorded.
+Final-looking wording and actual final responses are not closure authority.
+Compression or status-only mode cannot remove the next question, blocker question, or valid self-drive handoff.
+
 ## When To Ask
 
 Route through a user question when the answer can change:
@@ -14,11 +30,14 @@ Route through a user question when the answer can change:
 - current-flow identity
 - whether a pending question has been answered or superseded
 
-Ask only for the decision needed now. Do not bundle unrelated future work just because it is possible.
+Ask only for the decision needed now.
+Do not bundle unrelated future work just because it is possible.
 
 ## Structured Tool
 
-Use `request_user_input` when it is available and the choices are narrow. Keep options tied to the report or blocker that led to the question. Prefer two or three mutually exclusive choices.
+Use `request_user_input` when it is available and the choices are narrow.
+Keep options tied to the report or blocker that led to the question.
+Prefer two or three mutually exclusive choices.
 
 If the tool UI cannot include an explicit stop option, still do both:
 
@@ -52,7 +71,8 @@ For the next user message:
 - If it asks for status, report active flow, pending question, verification state, and required next action, then reopen routing.
 - If it explicitly stops the turn, record the source before closing.
 
-Do not immediately repeat the same question tool call after an abort. If the next message is ambiguous, ask a smaller clarification instead of guessing.
+Do not immediately repeat the same question tool call after an abort.
+If the next message is ambiguous, ask a smaller clarification instead of guessing.
 If a free-form answer does not match a visible option but clearly gives a new task, mark the pending question `superseded` and prepare that flow.
 If it selects an option and adds a note, record both the selected answer and the note.
 

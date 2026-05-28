@@ -8,6 +8,8 @@ reporting 뒤 next-flow reopening, post-flow continue, clarification, blocker de
 
 reporting 뒤 explicit stop이 기록되지 않았다면 `next-flow`를 엽니다.
 `next-flow`는 terminal response가 아니라 다음 행동을 고르는 열린 상태입니다.
+따라서 reporting은 다음 질문을 받기 위한 pre-intake surface를 만드는 과정입니다.
+보고가 끝나면 사용자에게 필요한 다음 decision을 묻거나, self-drive continuation처럼 이미 준비된 다음 입력 경로로 넘겨야 합니다.
 
 `next-flow`를 기록할 때는 다음을 복구 가능하게 남깁니다.
 
@@ -16,8 +18,12 @@ reporting 뒤 explicit stop이 기록되지 않았다면 `next-flow`를 엽니�
 - 필요한 decision, access, approval, scope, endpoint, verification gap
 - explicit turn-end option의 존재
 
-`request_user_input`을 사용할 수 있으면 좁은 선택지만 제시합니다.
+`request_user_input`을 사용할 수 있고 선택지가 좁으면 반드시 질문 도구를 엽니다.
 도구가 없으면 plain-text fallback을 쓰되 active routing임을 분명히 합니다.
+
+`turn-gate`가 active이고 explicit stop이 기록되지 않았다면 reporting 뒤 final/terminal closeout은 금지됩니다.
+final-looking wording뿐 아니라 실제 final response도 closure authority가 아닙니다.
+간결 모드나 요약 요청도 next-flow 질문, blocker 질문, 또는 valid self-drive handoff를 제거할 수 없습니다.
 
 ## Post-Flow Continue
 
@@ -52,6 +58,8 @@ blocker report에는 막힌 항목, 모은 evidence, 필요한 결정이나 acce
 ## 검토 기준
 
 - reporting 뒤 terminal close 대신 next-flow가 열렸는가?
+- reporting이 다음 사용자 입력을 받기 위한 pre-intake decision surface를 만들었는가?
+- explicit stop 없이 final/terminal closeout으로 끝내지 않았는가?
 - post-flow continue가 recorded next action 안에서만 해석되는가?
 - question abort가 closure로 처리되지 않았는가?
 - blocker recovery에 필요한 decision/access/evidence가 남아 있는가?
