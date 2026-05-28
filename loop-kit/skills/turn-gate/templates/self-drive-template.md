@@ -1,41 +1,47 @@
 ---
 status: active
-active_flow_index: {index}
-current_flow_label: {label}
+mode: finite | infinite
 active_flow_record: {record-path-or-id}
-planned_flow_count: {count}
 next_action: {required-next-action}
 progress_note: {compact-current-progress}
 blocker_state: none | {blocker-summary}
 blocker_impact: none | {acceptance|verification|approval|access|external|user-input|internal-repair}
 flags: [turn_gate_active, terminal_summary_blocked]
+# finite only
+active_flow_index: {index}
+current_flow_label: {label}
+planned_flow_count: {count}
+# infinite only
+loop_count: {start-at-1-and-increment-after-verified-handoff}
+current_loop_label: {label}
 ---
 
 # Turn Gate Self-Drive
 
-## Contract
+## Goal
 
-- objective: `{objective}`
-- endpoint: `{endpoint}`
+```text
+{source-backed-goal-or-user-message}
+```
+
+- endpoint: `{endpoint-or-stop-condition}`
 - acceptance: `{acceptance-signal}`
 - verification: `{verification-expectation}`
-- repeat: `{cycle-boundary}; {limit-or-condition}; verification {per-cycle-verification}; stop {user-gated-stop-condition}`
-- boundary: allow `{allowed-autonomous-actions}`; deny `{prohibited-actions}`
-- approval: `{exact-action}; target {target}; effect {expected-effect}; risk {risk}; recovery {recovery-path}; scope {included/excluded}`
-- blockers: `{blocker-return-conditions}`
+- boundary: allow `{allowed-autonomous-actions}`; checkpoint `{approval-sensitive-actions}`
 
 ## Sequence
 
 1. `{flow-label}`: `{scope}`; endpoint `{endpoint}`; verification `{expectation}`
 
+Omit `Sequence` for `mode: infinite` unless the current iteration needs a short local checklist. Frontmatter owns `loop_count` and `next_action`.
+
 ## Ledger
 
-- `{timestamp}` `{flow-label}`: `{material-update}`
+- `{timestamp}` `{identity}`: `{material-update}`
 - `{append material updates; do not replace history with only the current summary}`
-- report: `{history-preserved; new material update named}`
 
 ## Handoff
 
-- next: `{handoff-condition-or-next-flow}`
-- advance: `{verification pass; non-blocked handoff; next identity known; approval boundary matches}`
-- index: `{keep current index until advance is confirmed}`
+- next: `{handoff-condition-or-next-action}`
+- advance: `{verification pass; not blocked; next identity known; approval boundary unchanged}`
+- position: `{keep current index or loop_count until advance is confirmed}`

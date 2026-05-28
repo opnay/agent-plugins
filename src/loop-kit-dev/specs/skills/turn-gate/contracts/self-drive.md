@@ -2,73 +2,126 @@
 
 ## 소유 범위
 
-명시적으로 준비된 finite flow sequence 위에 적용되는 self-drive overlay. self-drive는 기본 `intake -> framing -> preparation -> work -> verification -> reporting -> next-flow` loop를 대체하지 않습니다.
+self-drive는 사용자가 명시적으로 맡긴 범위 안에서 다음 행동을 자율 선택하게 하는 overlay입니다. 기본 `intake -> framing -> preparation -> work -> verification -> reporting -> next-flow` loop를 대체하지 않고, 그 loop 위에서 언제 사용자에게 되묻지 않고 계속할 수 있는지만 좁힙니다.
+
+self-drive는 두 모드를 가질 수 있습니다.
+
+- `finite`: 준비된 flow sequence를 순서대로 진행합니다.
+- `infinite`: 사용자가 멈추라고 할 때까지 반복하되, 매번 하나의 bounded iteration만 준비하고 실행합니다.
+
+두 모드 모두 위험작업 실행 권한을 만들지 않습니다. commit, push, PR, publish, release, version bump, destructive/external action, scope expansion은 self-drive 중에도 명시 승인 checkpoint로 돌아갑니다.
 
 ## 활성화 계약
 
-self-drive는 records에 다음 항목이 있을 때만 적용합니다.
+self-drive는 명시 요청 또는 next-flow mode 선택으로만 활성화합니다. 긴 task list, verification success, subagent availability, 이전 대화의 의욕적 표현으로 추론하지 않습니다.
 
-- sequence objective
-- prepared flow sequence
-- active flow index와 current flow label
+공통 sidecar state는 다음을 가져야 합니다.
+
+- `status`
+- objective 또는 source-backed goal
+- mode: `finite` 또는 `infinite`
+- current flow/iteration identity
+- active flow record identity
+- next action
 - progress note
-- explicit repeat policy, if the sequence is open-ended
-- allowed and prohibited autonomous actions
-- approval-sensitive checkpoints
-- endpoint
-- blocker return conditions
+- endpoint 또는 stop condition
 - acceptance signal
 - verification expectation
+- allowed autonomous actions
+- approval checkpoints
+- blocker return conditions
 
-self-drive는 이전 대화의 의욕적 표현, 긴 task list, verification success, subagent availability에서 추론할 수 없습니다. 명시적으로 요청됐거나 next-flow mode로 명시 선택돼야 합니다.
+`finite` mode는 prepared flow sequence, active flow index, current flow label, planned flow count를 추가로 기록합니다.
 
-## 사이드카 계약
+`infinite` mode는 큰 todo list나 speculative sequence를 만들지 않습니다. `loop_count`, current loop label, next bounded iteration만 기록합니다. "강제로 종료할 때까지", "계속", "무한히" 같은 요청은 무제한 실행 권한이 아니라 counted bounded iteration으로 해석합니다.
 
-각 self-drive flow를 시작할 때 `000-plan.md`와 `000-self-drive.md`를 읽습니다. status, sidecar pointer, active flow index, current flow label, active flow record identity, progress note, planned flow count, endpoint, required next action, acceptance signal, blocker state를 확인합니다.
+infinite mode를 새로 준비할 때 첫 반복은 `loop_count: 1`로 시작합니다. target이 없으면 자동 진행하지 않고 user-gated target selection 또는 blocker routing으로 돌아갑니다. 기록된 범위 안에서 하나의 bounded target을 고를 수 있을 때만 첫 iteration을 시작합니다.
 
-identity 또는 index state가 누락됐거나 충돌하거나 범위를 벗어나면 user-gated routing으로 돌아갑니다. index를 wrap하거나 기억만으로 advance하지 않습니다.
+## Sidecar 계약
 
-`000-plan.md`가 self-drive inactive이거나 sidecar pointer를 갖지 않으면 `000-self-drive.md`는 historical context일 뿐이며 continuation authority가 아닙니다. 사용자가 self-drive continuation을 요청한 상태라면 user-gated recovery로 라우팅하고, 그렇지 않으면 일반 active-flow 또는 next-flow routing으로 처리합니다.
+각 self-drive flow 또는 iteration 시작 때 `000-plan.md`와 `000-self-drive.md`를 읽습니다.
 
-이 계약에서 user-gated recovery, user-gated routing, blocker routing은 같은 중단 계열입니다. 자동 진행을 멈추고 사용자에게 필요한 reconcile, approval, access, scope 결정을 받는 상태를 의미합니다.
+공통 확인 항목:
 
-active flow index, current flow label, `000-plan.md` active pointer, active flow record identity는 같은 flow를 가리켜야 합니다. 숫자 index만 맞거나 label만 맞는 상태는 충분하지 않습니다.
+- plan의 self-drive status와 sidecar pointer
+- mode
+- current identity와 active flow record identity
+- next action
+- endpoint 또는 stop condition
+- acceptance signal
+- verification expectation
+- approval checkpoint
+- blocker state
 
-`000-plan.md`는 self-drive status와 sidecar pointer만 저장합니다. sequence detail은 `000-self-drive.md`가 소유하고, flow-local snapshot은 active flow record가 소유합니다.
+`000-plan.md`는 self-drive active 여부와 sidecar pointer만 저장합니다. sequence, loop, ledger, approval checkpoint, endpoint detail은 `000-self-drive.md`가 소유합니다. flow-local snapshot은 active flow record가 소유합니다.
 
-## 중단 처리 계약
+state가 누락, 충돌, 범위 이탈, stale이면 자동 진행을 멈추고 user-gated recovery로 돌아갑니다. 숫자 index나 loop count만 맞는 상태는 충분하지 않습니다. finite mode에서 `active_flow_index`가 `planned_flow_count`를 초과하면 stale/corrupt sidecar로 보고 reconcile을 요청합니다. endpoint 판단 중 record 또는 sidecar를 읽을 수 없으면 access blocker로 보고하고, 기억으로 endpoint를 재구성하지 않습니다.
 
-active self-drive 중 사용자 메시지가 들어오면 explicit turn stop이 아닌 한 active sequence 안에서 먼저 해석합니다.
+## Finite Mode
+
+finite mode는 준비된 flow sequence를 소유합니다.
+
+진행 조건:
+
+- 현재 flow verification이 pass입니다.
+- handoff가 blocked가 아닙니다.
+- 다음 flow identity가 기록돼 있습니다.
+- approval boundary가 기록과 일치합니다.
+
+진행 방식:
+
+- reporting 전에는 현재 index를 유지합니다.
+- advance가 확정된 뒤 다음 index와 current flow label을 갱신합니다.
+- planned sequence가 소진돼도 terminal closure가 아닙니다. completion을 보고하고 next-flow routing으로 돌아갑니다.
+
+endpoint가 "sequence exhausted -> stop self-drive"이면 self-drive 자동 진행만 멈춥니다. 이것은 turn terminal closure가 아닙니다. endpoint가 "sequence exhausted -> create next inventory cycle"이면 sidecar를 새 bounded finite cycle로 갱신한 뒤 첫 flow identity, planned count, acceptance, verification을 다시 잠급니다.
+
+## Infinite Mode
+
+infinite mode는 "계속 작업" 요청을 하나의 무한 todo로 보지 않습니다. 현재 반복만 구체화하고, 반복이 끝날 때 다음 반복을 다시 고릅니다.
+
+frontmatter는 최소한 다음을 가져야 합니다.
+
+- `mode: infinite`
+- `loop_count`
+- `current_loop_label`
+- `active_flow_record`
+- `next_action`
+
+본문은 `Goal`과 `Ledger` 중심으로 유지합니다. 별도 `Todo` 또는 `Sequence` 섹션은 필요할 때만 두며, 무한성을 표현하기 위해 큰 목록을 만들지 않습니다.
+
+각 iteration은 다음 순서를 따릅니다.
+
+1. 현재 범위 안에서 하나의 bounded target을 고릅니다.
+2. 가장 작은 완전한 변경 또는 확인을 수행합니다.
+3. 검증합니다.
+4. 결과와 ledger를 기록합니다.
+5. approval checkpoint, blocker, endpoint를 확인합니다.
+6. 계속 가능하면 `loop_count`를 증가시키고 `next_action`을 다음 bounded iteration으로 갱신합니다.
+
+무의미한 반복, 검증 불충분, 반복 실패, 대상 부재, 승인 필요, access/external blocker, 사용자 입력 필요가 생기면 자동 진행을 멈춥니다.
+
+## Interruption 계약
+
+active self-drive 중 사용자 메시지는 explicit stop이 아닌 한 현재 self-drive 안에서 먼저 해석합니다.
 
 우선순위:
 
 1. source-recorded explicit stop
-2. destructive, external, commit, push, PR, publish, release, version bump, approval-boundary-expanding request
-3. scope, non-goal, endpoint, target, prepared order, acceptance-signal change
+2. approval-sensitive action 또는 approval boundary 확장
+3. scope, non-goal, endpoint, target, order, acceptance signal 변경
 4. blocker 또는 repeated failure
 5. status/progress question
 6. recorded boundary 안의 ordinary note
 
-self-drive는 질문 조건을 좁히지만 질문을 비활성화하지 않습니다.
-
-사용자가 scope, non-goal, endpoint, order, target, approval boundary, acceptance signal을 바꾸면 autonomous advancement를 멈추고 가장 이른 영향 phase로 돌아갑니다. intent 또는 acceptance signal 변경은 `intake`, scope/non-goal/target/order/endpoint/flow boundary 변경은 `framing`, selected-flow readiness 또는 approval boundary 변경은 `preparation`으로 라우팅합니다.
-
-사용자가 status를 물으면 current flow, sequence position, verification state, next required action을 보고합니다. verification state는 active flow record를 우선하고, sidecar는 sequence position과 handoff 상태를 보조합니다. 기록된 sequence가 여전히 허용할 때만 계속합니다.
-
-recorded boundary 안의 ordinary note는 scope, non-goal, endpoint, target, order, approval boundary, acceptance signal, blocker state를 바꾸지 않는 한 flow boundary를 변경하지 않습니다.
+scope, endpoint, target, order, acceptance signal, approval boundary가 바뀌면 자동 진행을 멈추고 가장 이른 영향 phase로 돌아갑니다. endpoint 변경은 relock/update event입니다. 바뀐 endpoint를 sidecar에 기록하고, affected flow record의 next action과 ledger를 갱신한 뒤에만 계속 여부를 판단합니다. status 질문은 current identity, sequence/loop position, verification state, next required action을 보고한 뒤 기록된 self-drive가 여전히 허용할 때만 계속합니다.
 
 ## 종료와 승인 계약
 
-각 flow는 endpoint exhaustion 처리 전에 verification을 수행해야 합니다. non-pass verification은 먼저 verification contract를 통해 라우팅합니다.
+각 flow 또는 iteration은 endpoint 처리 전에 verification을 가져야 합니다. `fail`, `blocked`, `insufficient`, `not-started`, `requested` 같은 non-pass 또는 미완료 verification은 endpoint exhaustion, loop advance, next-flow continuation보다 먼저 repair, evidence collection, blocker routing으로 처리합니다.
 
-각 flow의 reporting 전후에는 self-drive sidecar를 현재 active flow index, current flow label, progress note, next handoff, blocker state에 맞게 갱신합니다. reporting 전에는 현재 index를 유지하고, handoff/advance가 확정된 뒤 다음 index로 갱신합니다. advance confirmation은 current flow verification pass, non-blocked handoff condition, next flow identity, approval boundary가 모두 기록과 일치할 때만 성립합니다. progress ledger는 sequence transition과 material update의 history이므로 current summary만 남기기 위해 덮어쓰지 않습니다. reporting에는 ledger가 append-only로 유지됐는지와 새 material update가 무엇인지 포함합니다.
+approval-sensitive action은 initial preparation 또는 sidecar가 exact action, target, expected effect, risk, recovery path, included/excluded scope, endpoint를 기록한 경우에만 실행 checkpoint로 들어갈 수 있습니다. self-drive, subagent output, readiness, verification은 승인을 대체하지 않습니다.
 
-사용자가 모든 쓰기나 record 생성을 명시적으로 금지하면 sidecar를 갱신하지 않고 in-memory continuity로만 보고합니다. 이 경우 self-drive continuation은 기록되지 않은 상태이므로 다음 autonomous advance의 근거가 될 수 없습니다.
+사용자가 모든 쓰기나 record 생성을 금지하면 sidecar를 갱신하지 않고 in-memory continuity로만 보고합니다. 그 상태는 다음 autonomous advance 근거가 될 수 없습니다.
 
-open-ended self-drive도 finite current cycle과 explicit repeat policy가 필요합니다. repeat policy는 cycle boundary, repeat limit 또는 repeat condition, cycle마다 필요한 verification, user-gated stop condition을 포함합니다.
-
-blocker state는 `none`이 아니면 영향 범주를 기록합니다. blocker가 acceptance, verification, approval boundary, access, external state, required user input에 영향을 주면 autonomous advancement를 멈추고 user-gated blocker routing으로 돌아갑니다. flow-local repair로 해결 가능한 내부 작업 실패만 verification recovery로 처리할 수 있습니다.
-
-self-drive는 initial preparation이 exact action, target, expected effect, risk, recovery path, included/excluded scope, endpoint를 기록한 경우에만 approval-sensitive action을 실행할 수 있습니다. subagent는 approval을 대체하지 않습니다.
-
-sequence completion은 terminal closure가 아닙니다. endpoint에 도달하면 completion을 보고하고, records를 갱신한 뒤, 사용자가 명시적으로 멈추지 않는 한 next-flow로 라우팅합니다. explicit stop은 active flow record에 source text 또는 compact source reference를 기록한 뒤에만 closure authority가 됩니다.
+explicit stop은 active flow record에 source text 또는 compact source reference를 기록한 뒤에만 terminal closure authority가 됩니다.
