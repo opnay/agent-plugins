@@ -89,7 +89,7 @@ Each iteration:
 5. Check approval boundary, blocker state, and stop condition.
 6. If continuation is still valid, increment `loop_count` and refresh `next_action`.
 
-Stop autonomous advancement for missing target, insufficient verification, repeated failure, approval need, access or external blocker, user input need, or no useful bounded work left.
+Stop autonomous advancement for missing target, insufficient verification, repeated failure, approval need, access or external blocker, user input need, or no useful bounded work left. Treat two consecutive non-pass results for the same bounded target and cause as repeated failure.
 
 Non-pass verification (`fail`, `blocked`, `insufficient`, `not-started`, or `requested`) comes before endpoint exhaustion, loop advance, and next-flow continuation. Repair, gather evidence, or route the blocker first.
 
