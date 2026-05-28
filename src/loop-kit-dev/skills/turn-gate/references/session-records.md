@@ -1,139 +1,176 @@
 # Session Records
 
-Use this reference whenever `turn-gate` is active and records must be created, refreshed, recovered, or inspected after interruption or compaction.
+Use this reference when `turn-gate` is active and session records must be created, updated, recovered, or checked after interruption or compaction.
 
 ## Files
 
-- `.agents/sessions/{YYYYMMDD}/000-plan.md`: compact date-level routing card. Frontmatter owns active flow pointer, next action, closure flags, self-drive status and sidecar pointer, unapproved actions, and active skill list. Body owns only compact recent requests, active/recent/archive flow index, and continuity note.
-- `.agents/sessions/{YYYYMMDD}/000-review.md`: optional date-level retrospective notes. Use it for flow retrospection in a flat tagged list. It must not own active routing state, raw flow logs, verification authority, or closure authority.
-- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`: one active flow's compact `Contract`, `Execution Log`, and `Result`, with raw request and `Risky Action` added only when needed.
-- `.agents/sessions/{YYYYMMDD}/000-self-drive.md`: optional sequence-level self-drive state, used only when self-drive is active.
+- `.agents/sessions/{YYYYMMDD}/000-plan.md`: compact date-level routing card.
+- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`: one active flow record.
+- `.agents/sessions/{YYYYMMDD}/000-self-drive.md`: optional self-drive sequence state, only when self-drive is active.
+- `.agents/sessions/{YYYYMMDD}/000-review.md`: optional retrospective notes.
 
-Use the bundled templates in `templates/` when creating records:
+Use bundled templates in `templates/`:
 
 - `templates/plan-template.md`
-- `templates/review-template.md`
 - `templates/flow-record-template.md`
 - `templates/self-drive-template.md`
+- `templates/review-template.md`
 
-Flow filenames use a zero-padded counter and a lowercase English slug. Create a new flow record when the active flow boundary changes. Update an existing flow record only when the same flow remains active or when correcting that flow's own continuity metadata before reporting.
+Do not make users read dev-only specs at runtime. This reference and the templates are the runtime contract.
 
-## Phase Checkpoints
+## 000-plan.md
 
-Refresh records incrementally. Do not wait for a completed flow.
+Keep `000-plan.md` small. It owns routing state, not detailed history.
 
-At each active flow phase start, record enough state to reconstruct:
+Frontmatter owns:
 
-- current phase
-- scope boundary
-- required next action
-- required skills for the current flow, when skill use is part of the flow contract
-- pending question or blocker state
-- whether the change belongs in `000-plan.md` or the active flow record
+- `turn_gate_active`
+- `active_flow`
+- `next_action`
+- closure state
+- `self_drive` and `self_drive_sidecar`
+- `unapproved_actions`
+- `active_skills`
 
-At each active flow phase end, record enough state to reconstruct:
+Body owns only:
 
-- phase result
-- next phase or next required action
-- verification status change
-- residual risk
-- handoff or next-flow condition
-- whether the change belongs in `000-plan.md` or the active flow record
+- compact recent requests
+- active/recent/archive flow index
+- continuity note
 
-Update `000-plan.md` frontmatter when the active flow pointer, date-level required next action, active skill list, self-drive status, unapproved action state, or turn-level routing changes.
+Do not accumulate completed flow summaries, full history, detailed verification evidence, branch/latest-commit state, or self-drive sequence detail in `000-plan.md`.
 
-Update the active flow record when the same flow's current phase, execution log, verification evidence, report outcome, residual risk, handoff condition, pending question, or blocker state changes.
+## Flow Records
 
-Phase checkpoints are record maintenance checkpoints. They do not turn `preparation`, `work`, `verification`, or `reporting` into separate flows.
+Create a new flow record when the active flow boundary changes.
+Use a zero-padded counter and lowercase English slug.
+Update an existing flow record only while the same flow remains active or when correcting that flow's own continuity metadata before reporting.
 
-If a trivial read-only judgment appears to need no record mutation, record the reason in the active flow record or report so a later agent can reconstruct why no change was needed.
-
-## Compact Flow Records
-
-Use compact formal style for flow records by default. The required sections are:
+Every flow record keeps these default sections:
 
 - `Contract`
+- `Phase Checklist`
 - `Execution Log`
 - `Result`
 
-Keep `Execution Log`. It is the main recovery trail. Compress other sections into field-like bullets.
+Add `Risky Action` only for approval-sensitive actions.
+Add raw request text only when exact source wording affects interpretation.
+Add non-pass routing under `Result` only for `fail`, `blocked`, or `insufficient` results.
 
-Add `Risky Action` only when approval-sensitive action exists. Readiness, verification, build, and generated release surface updates do not by themselves authorize commit, publish, release, version bump, destructive work, or external side effects. Add raw request only when exact source wording affects interpretation. Add non-pass routing only for `fail`, `blocked`, or `insufficient` results.
+`Contract` must keep:
 
-The flow record frontmatter must expose phase, verification status, next action, flags, question state, and continuity note. Use `answered_question` by default, add `pending_question` when a question is waiting, and do not invent synonyms such as `question_state`. Prefer compact metadata such as `flags: [turn_gate_active, terminal_summary_blocked]` over long boolean lists.
+- `scope`
+- `exclude`
+- `done`
+- `boundary`
 
-## Avoid Duplication
+Do not treat readiness, verification, build output, generated release surface, self-drive state, previous context, or subagent output as authority to commit, push, publish, release, version bump, or perform destructive/external work.
 
-Keep `000-plan.md` as a compact routing card. Do not repeat git-reconstructable branch/latest-commit state, detailed scope, evidence, verification, residual risk, or self-drive sequence detail there. Store that detail in the active flow record, `000-self-drive.md`, or fresh tool readback.
+## Phase Checklist
 
-Store skill reread requirements in frontmatter `active_skills` as names only. Do not add usage explanations, candidate-only skills, completed-flow skill lists, or the full available skill catalog.
-For a turn-gate-managed user-message flow entering preparation, include `loop-kit:turn-gate` and `loop-kit:flow` in `active_skills`.
+`Phase Checklist` shows which required lifecycle phases have passed their end checkpoint.
+Frontmatter `phase` shows the current location; checklist shows completed lifecycle steps.
 
-Keep `Flow Index` to active, recent, and archive entries only. `active` is the current flow, `recent` is the immediately previous handoff flow, and `archive` points to older flow ranges recoverable from individual flow records. Do not accumulate completed flow summaries or old planned flows in `000-plan.md`.
+Default checklist:
 
-Keep `Recent Requests` short. Prefer `[current] compact note` and one or two routing-relevant previous entries over sentence-form request history. Older raw requests and interpretations belong in individual flow records.
+- `intake`
+- `framing`
+- `preparation`
+- `work`
+- `verification`
+- `reporting`
+- `next-flow`
 
-When self-drive is active, `000-plan.md` stores only status and sidecar pointer. `000-self-drive.md` owns sequence-level state.
+Check a phase only after its end checkpoint is recorded.
+Do not check a phase just because it started.
 
-Use `000-review.md` only for retrospective notes. Keep it as a flat tagged list, not a flow-by-flow log or section-per-category document. Each item starts with one bracketed axis tag such as `[conversation]`, `[records]`, `[skills]`, `[docs]`, `[code-structure]`, `[verification]`, `[git]`, `[release]`, or a task-specific tag. Tags are open-ended. Include skill contract violations found during work or noticed while reviewing the flow. Add compact sub-bullets only when they clarify invalid/correct examples, evidence, or follow-up notes.
-At each flow end, append to `000-review.md` if there is anything to retrospect on. If not, skip silently.
+`interruption` is not a checklist item. It is an entry-only event while another flow is active. Record it in `Execution Log`, then continue with the lifecycle phase it returns to.
 
-Do not use `000-review.md` to reconstruct the active turn. Active flow pointer, required next action, pending question, verification status, and closure state belong in `000-plan.md` and active flow records.
+## Execution Log
 
-## Raw Requests
+Use `Execution Log` as the main recovery trail.
+Keep entries factual and compact.
 
-When storing raw user request text, keep it separate from interpretation or summary. Do not normalize, translate, correct, soften, merge, or infer missing words inside the raw request field.
+Record:
 
-You may write a separate compact interpretation, but it must not replace the raw source when raw text matters.
+- phase start or end results
+- pending and answered questions
+- approval-sensitive checkpoint state
+- edits, builds, checks, verifier results
+- interruption classification and routing
+- reporting outcome and next-flow reopening
+
+Do not hide failed checks, skipped verification, insufficient evidence, blockers, or approval gaps.
 
 ## Continuity Metadata
 
-Every active flow record must maintain compact continuity metadata with:
+Every active flow record frontmatter must expose:
 
 - `phase`
 - `verification_status`
 - `next_action`
 - `flags`
-- `answered_question`, and `pending_question` when a question is waiting
+- `answered_question`
+- `pending_question`, when a question is waiting
 - `continuity`
 
-Use `flags` for recovery-relevant states such as `turn_gate_active`, `terminal_summary_blocked`, `question_pending`, `blocked`, `approval_required`, or `explicit_stop_recorded`. If a source-recorded explicit stop exists, keep the closure source in `continuity` or another compact field.
+Use `flags` only for recovery-relevant states, such as:
 
-Refresh metadata at each phase start and end, before reporting, and before next-flow reopening.
+- `turn_gate_active`
+- `terminal_summary_blocked`
+- `question_pending`
+- `blocked`
+- `approval_required`
+- `explicit_stop_recorded`
 
-Only a current source-recorded explicit stop can set terminal closure authority. Reset stale or source-less closure state to open continuity and record the recovery.
+Use only these `verification_status` values:
 
-The metadata must allow recovery after compaction or interruption. At minimum, it must show whether `turn-gate` is active, whether a pending question exists, verification status, whether closure is allowed, and the next required action.
-
-Verification status may include progress states:
-
-- `not-started`: verification has not begun.
-- `requested`: a verifier or check has been requested but no result exists yet.
+- `not-started`
+- `requested`
 - `pass`
 - `fail`
 - `blocked`
 - `insufficient`
 
 `not-started` and `requested` are not success evidence and cannot authorize terminal closure.
+When preserving a previous flow state, keep the existing status and record the preservation in `continuity`; do not create a `preserved` status.
 
-When preserving prior flow state, keep the existing `verification_status` value and describe preservation in `continuity`. Do not write `verification_status: preserved`.
+Refresh metadata at phase start, phase end, before reporting, and before next-flow reopening.
+Only a current source-recorded explicit stop can authorize terminal closure.
+Reset stale or source-less closure state to open continuity and record the recovery.
+
+## Questions And Next Flow
+
+After reporting, reopen routing unless the current user message explicitly stopped the turn and that stop source is recorded.
+
+Use `request_user_input` when available for narrow next-flow choices, clarifications, blocker recovery, approval-boundary decisions, and pending question recovery.
+If it is unavailable, ask with a concise plain-text fallback.
+
+An aborted, canceled, or interrupted question tool call is not flow completion and is not terminal closure.
+Record the pending question, keep `terminal_summary_blocked`, and interpret the next user message as one of:
+
+- pending question answer
+- superseding new flow request
+- status/progress question
+- explicit stop
+
+Use `answered_question` and `pending_question` for question state.
+Do not invent `question_state` or similar synonyms.
 
 ## Recovery
 
-Distinguish record states carefully:
+Distinguish missing states:
 
-- not-yet-created plan: create the first plan from `templates/plan-template.md`.
-- not-yet-created flow: create the selected flow record from `templates/flow-record-template.md`.
-- unexpectedly missing active record: route to blocker recovery or ask the user how to recover.
-- inaccessible active record: report the access blocker until access is restored or the user chooses recovery.
-- stale closure state: reset closure authority and record the recovery.
-- stale self-drive sidecar: if `000-plan.md` says self-drive is inactive, treat the sidecar as historical.
-- stale routing mismatch: reconcile from the latest source record or ask a clarification.
+- not-yet-created plan: create the first plan from the runtime template.
+- not-yet-created flow: create the selected flow record from the runtime template.
+- unexpectedly missing active record: report blocker or ask for recovery choice.
+- inaccessible active record: keep blocker until access is restored or the user chooses recovery.
+- stale closure state: reset closure authority and record recovery.
+- stale self-drive sidecar: if plan says self-drive is inactive, treat the sidecar as historical.
+- stale routing mismatch: reconcile from the latest source or ask a clarification.
 
 Do not silently reconstruct an active record that should already exist.
 
-At a recovered flow start, reread the skills named in `000-plan.md` for the current flow. If the list is stale or missing, reconstruct only the minimum current-flow skill list from source-of-truth records before work resumes.
-
-Read-only requests usually restrict target/source changes, not session records. Do not write session records only when the user explicitly forbids all writes or record creation.
-
-If wording such as `no-record`, `do not record`, or `without session records` is ambiguous about whether reading existing session records is also forbidden, ask for clarification before reading them. Until clarified, maintain only minimal in-memory continuity.
+Read-only requests usually restrict target/source changes, not session records.
+Do not write session records only when the user explicitly forbids all writes or record creation.
+If `no-record`, `do not record`, or similar wording is ambiguous about reading existing records, ask before reading them.

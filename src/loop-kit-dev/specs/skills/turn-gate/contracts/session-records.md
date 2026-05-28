@@ -2,89 +2,171 @@
 
 ## 소유 범위
 
-활성 `turn-gate` work에서 사용하는 operational continuity record.
+이 문서는 `turn-gate` 활성 중 유지되는 session record 계약을 소유합니다.
+session record는 현재 flow, 다음 행동, 질문 대기 상태, 검증 상태, 명시적 종료 여부를 compaction 또는 interruption 뒤에도 복구할 수 있게 하는 operational continuity 표면입니다.
+
+session record는 작업 산출물 자체가 아닙니다.
+Git이나 tool readback으로 복구 가능한 긴 이력은 반복하지 않습니다.
 
 ## 파일 계약
 
-- `.agents/sessions/{YYYYMMDD}/000-plan.md`: date-level routing card입니다. Frontmatter가 active flow pointer, next action, closure flags, self-drive status와 sidecar pointer, unapproved actions, active skill list를 소유합니다. Body는 compact recent request list, active/recent/archive flow index, continuity note만 소유합니다.
-- `.agents/sessions/{YYYYMMDD}/000-review.md`: optional date-level retrospective notes를 소유합니다. 이 파일은 flat tagged list로 flow 회고 내용을 기록하며 active routing state, raw flow log, verification authority, closure authority를 소유하지 않습니다.
-- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`: 하나의 active flow의 compact `Contract`, `Execution Log`, `Result`를 소유하고, 필요할 때만 raw request와 `Risky Action`을 추가합니다.
-- `.agents/sessions/{YYYYMMDD}/000-self-drive.md`: self-drive가 active일 때만 사용하는 optional self-drive sequence state입니다.
+- `.agents/sessions/{YYYYMMDD}/000-plan.md`: date-level routing card입니다. Active flow pointer, next action, closure flags, self-drive pointer, unapproved actions, active skill list를 소유합니다.
+- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`: 하나의 active flow record입니다. Flow contract, phase checklist, execution log, verification evidence, result, residual risk, handoff 또는 next action을 소유합니다.
+- `.agents/sessions/{YYYYMMDD}/000-self-drive.md`: self-drive active 상태에서만 쓰는 optional sequence-level state입니다. `000-plan.md`는 pointer만 갖습니다.
+- `.agents/sessions/{YYYYMMDD}/000-review.md`: optional retrospective note입니다. Flat tagged list만 소유하며 active routing, raw flow log, verification authority, closure authority를 소유하지 않습니다.
 
-runtime template은 `skills/turn-gate/templates/`의 파일을 사용합니다.
+runtime template은 `skills/turn-gate/templates/`가 소유합니다.
+spec은 template 의미와 최소 계약만 정의하며, runtime reader가 dev-only spec path를 읽어야 한다고 요구하지 않습니다.
 
-flow filename은 zero-padded counter와 lowercase English slug를 사용합니다. active flow boundary가 바뀌면 새 flow record가 필요합니다. 같은 flow가 계속 active이거나 reporting 전 자기 continuity metadata를 고치는 경우에만 이전 flow를 갱신할 수 있습니다.
+## plan record 계약
 
-flow record는 completed flow를 기다리지 않고 각 phase 시작과 종료마다 현재 상태로 증분 갱신합니다.
-`flow`가 산출한 phase start/end record checkpoint expectation을 적용해 `000-plan.md`와 active flow record 중 어느 표면이 갱신돼야 하는지 구분합니다.
-active flow pointer, date-level required next action, active skill list, self-drive status, unapproved action state, turn-level routing이 바뀌면 `000-plan.md` frontmatter를 갱신합니다.
-같은 active flow 내부의 current phase, execution log, verification evidence, report outcome, residual risk, handoff condition이 바뀌면 active flow record를 갱신합니다.
+`000-plan.md`는 가장 작은 routing card로 유지합니다.
 
-flow record는 기본적으로 compact formal style을 사용합니다. 기본 섹션은 다음입니다.
+Frontmatter에는 다음이 드러나야 합니다.
+
+- `turn_gate_active`
+- `active_flow`
+- `next_action`
+- closure state
+- `self_drive`와 `self_drive_sidecar`
+- `unapproved_actions`
+- `active_skills`
+
+Body에는 다음만 둡니다.
+
+- 현재 요청과 복구에 필요한 직전 routing signal
+- active/recent/archive flow index
+- continuity note
+
+완료 flow summary, 전체 flow history, detailed evidence, Git으로 재구성 가능한 상태, self-drive detail은 plan에 누적하지 않습니다.
+
+## flow record 계약
+
+flow filename은 zero-padded counter와 lowercase English slug를 사용합니다.
+active flow boundary가 바뀌면 새 flow record를 만듭니다.
+같은 flow가 계속 active이거나 reporting 전 자기 metadata를 고치는 경우에만 기존 flow record를 갱신합니다.
+있어야 하는 active flow record가 unexpectedly missing이면 조용히 재구성하지 않고 blocker recovery로 라우팅합니다.
+
+기본 섹션은 다음입니다.
 
 - `Contract`
+- `Phase Checklist`
 - `Execution Log`
 - `Result`
 
-approval-sensitive action이 있으면 `Risky Action` 섹션을 추가합니다. readiness, verification, build, generated release surface 갱신은 그 자체로 commit, publish, release, version bump, destructive/external action 실행 권한을 만들지 않습니다. 실패, blocked, insufficient 결과에는 `Result` 아래에 non-pass routing을 추가할 수 있습니다. raw user text가 중요할 때만 `Contract`에 raw request를 추가합니다.
+approval-sensitive action이 있으면 `Risky Action`을 추가합니다.
+raw user request text가 해석에 영향을 주면 summary 또는 interpretation과 분리해 `Contract`에 기록합니다.
+`fail`, `blocked`, `insufficient` 결과에는 필요할 때 `Result` 아래 non-pass routing을 추가할 수 있습니다.
 
-flow record frontmatter는 긴 boolean 나열보다 formal metadata를 우선합니다. 현재 phase, verification status, next action, turn-gate/terminal-summary/pending-question 같은 flags, question state, continuity note가 드러나야 합니다. 기본 필드는 `answered_question`이고, 대기 중인 질문이 있으면 `pending_question`을 추가합니다. `question_state`처럼 새 동의어를 만들지 않습니다. 정확한 template 문구는 runtime template이 소유하지만, 이 최소 정보가 빠지면 compaction 또는 interruption 뒤 다음 행동을 복구하기 어렵습니다.
+`Contract`는 scope, exclude, done, boundary를 최소 필드로 둡니다.
+boundary는 commit, push, PR, publish, release, version bump, destructive/external action의 제외 또는 승인 상태를 드러내야 합니다.
+readiness, verification, build, generated release surface, self-drive, 이전 맥락은 승인 민감 작업의 실행 권한이 아닙니다.
 
-## 중복 방지 계약
+## Phase Checklist 계약
 
-`000-plan.md`는 compact routing card로 유지합니다. Git으로 재구성 가능한 branch/latest commit, detailed scope, evidence, verification, residual risk, self-drive sequence detail은 plan에 반복하지 않고 active flow record, self-drive sidecar, 또는 실제 tool readback에 둡니다.
-skill list는 frontmatter의 `active_skills`에 skill 이름만 기록합니다. 사용 지점 설명, 전체 사용 가능 skill catalog, 후보 단계의 가능성, 이미 끝난 flow의 상세 사용 내역은 plan에 반복하지 않습니다.
-사용자 메시지를 받아 preparation으로 들어가는 turn-gate-managed flow에서는 `active_skills`에 `loop-kit:turn-gate`와 `loop-kit:flow`를 포함합니다.
+`Phase Checklist`는 active flow가 필수 lifecycle 단계를 종료 checkpoint까지 통과했는지 보여주는 복구 표면입니다.
+frontmatter의 `phase`는 현재 위치를, checklist는 이미 지난 단계를 나타냅니다.
 
-`000-plan.md`의 `Flow Index`는 active, recent, archive만 둡니다. `active`는 현재 flow, `recent`는 바로 이전 handoff flow, `archive`는 오래된 flow range와 individual flow record로의 복구 가능성을 가리킵니다. 완료 flow 전체 목록, completed summaries, planned old flows는 plan에 누적하지 않습니다.
+기본 항목은 다음입니다.
 
-`Recent Requests`는 현재 요청과 복구에 필요한 직전 routing signal만 짧게 둡니다. `user requested ...` 같은 문장형 이력보다 `[current] compact note` 형식을 우선합니다. 오래된 raw request와 interpretation은 개별 flow record가 소유합니다.
+- `intake`
+- `framing`
+- `preparation`
+- `work`
+- `verification`
+- `reporting`
+- `next-flow`
 
-self-drive가 active이면 `000-plan.md`는 status와 sidecar pointer만 저장합니다. `000-self-drive.md`가 sequence-level state를 소유합니다.
+각 항목은 해당 phase의 end checkpoint가 기록된 뒤에만 체크합니다.
+phase 시작만으로 체크하지 않습니다.
+검증 결과가 `fail`, `blocked`, `insufficient`이면 verification end checkpoint와 non-pass routing을 기록한 뒤 현재 사실에 맞게 checklist를 둡니다.
 
-`000-review.md`는 flow 순서나 카테고리별 헤더가 아니라 flat tagged list를 사용합니다. 각 항목은 `[conversation]`, `[records]`, `[skills]`, `[docs]`, `[code-structure]`, `[verification]`, `[git]`, `[release]` 같은 bracketed axis tag 하나로 시작합니다. tag는 open-ended이며 그날 의미 있는 축에 맞게 추가하거나 바꿀 수 있습니다. `[skills]`는 작업 중 발견한 skill 계약 위반과 회고 시점에 되돌아보며 발견한 skill 계약 위반을 모두 포함합니다. 항목에는 필요한 경우 invalid/correct 예시, evidence, follow-up candidate를 짧은 sub-bullet으로 둡니다.
-각 flow 종료 시 회고할 내용이 있으면 `000-review.md`에 추가합니다. 없으면 조용히 건너뜁니다.
+`interruption`은 checklist 항목이 아닙니다.
+active flow 중 들어온 사용자 메시지를 분류하는 entry-only event이므로 `Execution Log`에 기록합니다.
 
-`000-review.md`는 복구 표면이 아닙니다. 현재 active flow, required next action, pending question, verification status 같은 continuity state는 `000-plan.md`와 active flow record에 남깁니다.
+## Execution Log 계약
 
-raw user request text를 기록할 때는 interpretation 또는 summary와 분리해야 합니다. raw request field 안에서는 normalize, translate, correct, soften, merge, infer missing words를 하지 않습니다. summary와 interpretation은 별도로 작성할 수 있습니다.
+`Execution Log`는 flow 복구의 주 기록입니다.
+각 항목은 phase prefix 또는 event label과 함께 기록합니다.
+
+기록 대상:
+
+- phase 시작 또는 종료 결과
+- user-gated question, pending question, answered question
+- approval-sensitive checkpoint 상태
+- 편집, build, 검증, verifier 결과
+- interruption 분류와 라우팅
+- reporting outcome과 next-flow reopening
+
+로그는 복구 가능한 운영 사실만 남깁니다.
+검증 실패, skipped verification, insufficient evidence, blocker는 숨기지 않습니다.
 
 ## Continuity Metadata 계약
 
-모든 flow record는 compact continuity metadata를 둡니다.
+모든 active flow record frontmatter는 다음 metadata를 유지합니다.
 
 - `phase`
 - `verification_status`
 - `next_action`
 - `flags`
-- `answered_question`, 그리고 대기 중인 질문이 있으면 `pending_question`
+- `answered_question`
+- 대기 중인 질문이 있으면 `pending_question`
 - `continuity`
 
-`flags`는 `turn_gate_active`, `terminal_summary_blocked`, `question_pending`, `blocked`, `approval_required`, `explicit_stop_recorded`처럼 recovery에 필요한 상태만 나열합니다. source-recorded explicit stop이 있으면 closure source를 `continuity` 또는 별도 compact field에 남깁니다.
+`flags`는 recovery에 필요한 상태만 나열합니다.
+예: `turn_gate_active`, `terminal_summary_blocked`, `question_pending`, `blocked`, `approval_required`, `explicit_stop_recorded`.
 
-metadata는 각 phase 시작과 종료, reporting, next-flow reopening 전에 갱신합니다.
+`verification_status`는 다음 값만 사용합니다.
 
-현재 source-recorded explicit stop만 terminal closure authority를 설정할 수 있습니다. stale 또는 source-less closure state는 열린 continuity 상태로 reset해야 합니다.
+- `not-started`
+- `requested`
+- `pass`
+- `fail`
+- `blocked`
+- `insufficient`
 
-metadata는 compaction 또는 interruption 뒤에도 다음 행동을 알 수 있게 해야 합니다. 최소한 `turn-gate` active 여부, pending question 여부, verification status, closure 허용 여부, 다음 required action을 보여야 합니다.
-flow start recovery 때는 `000-plan.md`의 current/planned skill list를 기준으로 필요한 skill을 다시 읽고, 이전 runtime context에 남은 skill 본문만 신뢰하지 않습니다.
+`not-started`와 `requested`는 성공 근거가 아니며 terminal closure 또는 successful reporting 근거가 될 수 없습니다.
+이전 flow state를 보존할 때는 기존 status를 유지하고 보존 사실을 `continuity`에 기록합니다.
 
-`verification_status`는 기록 진행 상태와 결과 상태를 모두 표현할 수 있습니다. work 전 또는 검증 전에는 `not-started`, verifier 요청 후 결과 전에는 `requested`, 검증 결과가 있으면 `pass`, `fail`, `blocked`, `insufficient` 중 하나를 사용합니다. 이전 flow state를 보존할 때 `preserved` 같은 새 status 값을 만들지 말고 기존 값을 그대로 유지한 뒤 보존 사실을 `continuity`에 기록합니다. `not-started`와 `requested`는 terminal close나 successful reporting 근거가 아닙니다.
+metadata는 phase 시작, phase 종료, reporting 전, next-flow reopening 전에 갱신합니다.
+현재 source-recorded explicit stop만 terminal closure authority를 만들 수 있습니다.
+stale 또는 source-less closure state는 열린 continuity로 reset하고 recovery 사실을 기록합니다.
+
+## 질문과 next-flow 계약
+
+reporting 뒤 explicit stop이 없으면 next-flow routing을 엽니다.
+질문 도구가 있으면 좁은 선택지를 쓰고, 없으면 plain-text fallback으로 다음 행동을 묻습니다.
+질문 도구 abort, cancel, interruption은 terminal closure가 아닙니다.
+
+pending question이 있으면 다음 사용자 메시지를 먼저 다음 중 하나로 해석합니다.
+
+- pending question answer
+- superseding new flow request
+- status/progress question
+- explicit stop
+
+질문 상태는 `answered_question`과 `pending_question`으로 기록하고 `question_state` 같은 동의어를 만들지 않습니다.
 
 ## 복구 계약
 
-missing/not-created record와 unexpectedly missing 또는 inaccessible active record를 구분합니다. 있어야 하는 active record를 조용히 재구성하지 않습니다. inaccessible active record는 blocker recovery로 라우팅합니다.
-
-recovery case:
-
 - not-yet-created plan: runtime template으로 첫 plan을 만듭니다.
 - not-yet-created flow: runtime template으로 선택된 새 flow record를 만듭니다.
-- unexpectedly missing active record: blocker를 보고하거나 recovery를 질문합니다.
-- inaccessible active record: access가 복구되거나 사용자가 recovery를 선택할 때까지 blocker를 보고합니다.
+- unexpectedly missing active record: blocker를 보고하거나 recovery 선택을 묻습니다.
+- inaccessible active record: 접근이 복구되거나 사용자가 recovery를 선택할 때까지 blocker로 둡니다.
 - stale closure state: closure authority를 reset하고 recovery를 기록합니다.
-- stale self-drive sidecar: plan이 self-drive inactive라고 하면 historical로 취급합니다.
+- stale self-drive sidecar: plan이 self-drive inactive이면 historical context로 취급합니다.
 - stale routing mismatch: latest source에서 reconcile하거나 질문합니다.
 
-read-only 요청은 보통 target/source 변경을 금지하는 것이지 session record를 금지하는 것이 아닙니다. 사용자가 모든 write 또는 record 생성을 금지한 경우에만 record를 쓰지 않습니다.
+read-only 요청은 보통 source artifact 변경을 금지하는 것이지 session record 쓰기까지 금지하는 것이 아닙니다.
+사용자가 모든 write 또는 record 생성을 금지한 경우에만 session record를 쓰지 않습니다.
+`no-record`, `기록 남기지 마`, `세션 기록 없이`처럼 session record 읽기까지 금지하는지 모호하면 기존 record를 읽기 전에 clarification으로 라우팅합니다.
 
-사용자 표현이 `no-record`, `기록 남기지 마`, `세션 기록 없이`처럼 session record의 읽기까지 금지하는지, 새 기록 생성/수정만 금지하는지 모호하면 기존 session record를 읽기 전에 clarification으로 라우팅합니다. 모호성이 풀리기 전에는 최소한의 in-memory continuity만 유지합니다.
+## 검토 기준
+
+- `000-plan.md`가 active flow와 next action을 과도한 이력 없이 복구하는가?
+- flow record가 `Contract`, `Phase Checklist`, `Execution Log`, `Result`를 유지하는가?
+- checklist가 phase 시작이 아니라 종료 checkpoint 통과 여부를 나타내는가?
+- `interruption`이 checklist 항목이 아니라 log event로 남는가?
+- frontmatter metadata와 checklist 의미가 겹치지 않는가?
+- pending question, verification status, explicit stop state가 compaction 뒤에도 복구 가능한가?
+- 승인 민감 작업이 readiness, verification, build, self-drive, 이전 맥락에서 암묵 승인되지 않는가?

@@ -23,6 +23,16 @@ continuity: update_before_reporting_or_next_flow
 - `{action}`: target `{target}`; effect `{effect}`; risk `{risk}`; recovery `{path}`; approval `{not-requested|required|granted|blocked}`.
 - `{readiness, verification, build, or generated release surface update is not commit, release, publish, version bump, destructive, or external-action authority}`
 
+## Phase Checklist
+
+- [ ] intake
+- [ ] framing
+- [ ] preparation
+- [ ] work
+- [ ] verification
+- [ ] reporting
+- [ ] next-flow
+
 ## Execution Log
 
 - `[intake]` `{event}`
