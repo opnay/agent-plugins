@@ -23,6 +23,8 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
   - flow readiness, intent-first requirement discovery, operation/target ambiguity 판단
   - flow-local review handling, fix-verify-reassess, broad execution strategy
   - flow completion criteria와 verification expectation 산출
+  - `레포지토리 목적 > 모노레포 목적 > 구조적 목적 > 변경 목적` 같은 지속 목적 계층 해석
+  - `flow`만 해석하고 사용할 수 있는 목적 사슬 파일 계약
   - commit-readiness 같은 flow handoff condition 판단
   - flow가 아닌 분석, 검증, 보고, evidence repair, blocker recovery, commit-readiness 항목 판정
 - 제외:
@@ -40,6 +42,8 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
 - 큰 요청을 parent flow로 받고 finite `sub-flow candidates`로 나눠야 하는 작업
 - 어떤 항목이 flow인지 phase인지, 또는 handoff/reporting인지 판정해야 하는 작업
 - flow별 scope, non-goals, completion criteria, verification expectation, handoff 조건을 설계해야 하는 작업
+- 여러 flow가 이어질 때 상위 목적은 유지하고 변경 목적만 바뀌는지 판단해야 하는 작업
+- 목적 사슬을 별도 파일로 드러내되, 그 파일이 flow 전용 판단 표면이어야 하는 작업
 - flow contract를 만들기 위한 intent, scope, tradeoff, acceptance 질문 또는 operation/target ambiguity를 판정해야 하는 작업
 - 사용자 입력을 분석하고 목표, 비목표, authority, 모호성을 탐지해야 하는 작업
 - flow 후보를 분리하고 각 후보의 산출물과 실행 경계를 설계해야 하는 작업
@@ -61,6 +65,7 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
 - `core/types.md`: `operational-preparation flow`와 `change-unit flow` 구분
 - `core/boundaries.md`: flow-vs-phase, flow가 아닌 항목, reviewable artifact 기준
 - `core/output-contract.md`: flow 설계 또는 sub-flow 후보 산출물의 필수 필드
+- `core/object.md`: `flow` 전용 목적 사슬 파일 계약
 - `core/turn-gate-relationship.md`: `flow`와 `turn-gate`의 소유권 경계
 - `core/phase-record-checkpoints.md`: active flow phase start/end에서 필요한 plan 또는 flow record checkpoint
 - `intake.md`: 사용자 입력 분석, deep interview, goal/non-goal/authority 탐지
@@ -86,6 +91,8 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
 - 각 active flow phase 시작과 종료는 `000-plan.md` 또는 active flow record 중 갱신 표면을 드러내야 합니다.
 - `000-plan.md` 갱신이 필요한 경우에는 현재 flow 또는 planned sequence에서 사용할 skill 목록도 필요한 만큼 드러내야 합니다.
 - flow preparation은 이미 선택된 active flow의 readiness를 잠그는 단계이며, intake/framing에서 미해결 필드가 발견되면 work로 넘어가지 않습니다.
+- flow contract는 필요한 경우 목적 계층을 드러냅니다. 상위 목적은 repository/monorepo/structure 같은 지속 관점으로 유지하고, 현재 변경 목적은 active flow scope와 함께 잠급니다.
+- 목적 사슬 파일이 필요한 경우 그 의미와 사용 권한은 `flow`가 소유합니다. 파일은 상태, 검증, continuity rule이 아니라 객체 사슬만 담습니다.
 - flow execution은 current flow 안에서 review-loop, fix-verify-loop, broad-execution을 선택할 수 있습니다.
 - verification, reporting, evidence repair, blocker recovery는 별도 reviewable artifact를 만들지 않으면 현재 flow 내부 phase 또는 handoff입니다.
 - evidence 부족은 current flow verification으로, metadata mismatch는 verification mismatch 해소로, scope/target/approval/verification expectation 변경은 preparation으로, access/input/approval/external blocker는 blocked handoff로 라우팅합니다.
@@ -104,6 +111,8 @@ next-flow 질문, 세션 지속, terminal closure는 `turn-gate`가 소유합니
 - flow가 너무 커서 finite sub-flow 후보로 나눠야 하는가?
 - sub-flow 후보가 active execution flow처럼 실행되고 있지 않은가?
 - 각 flow에 scope, non-goals, completion criteria, verification expectation, handoff 조건이 있는가?
+- 연속 flow에서 상위 목적과 현재 변경 목적을 구분했는가?
+- 목적 사슬 파일을 `turn-gate` 라우팅이나 세션 상태 파일처럼 사용하지 않았는가?
 - verification/reporting/repair를 새 flow로 분리하기 전에 별도 reviewable artifact가 있는지 확인했는가?
 - 각 phase 시작과 종료에서 `000-plan.md` 또는 active flow record 갱신 기준이 드러나는가?
 - `000-plan.md`에 사용할 skill 목록이 필요한 flow 또는 planned sequence 기준으로 유지되는가?

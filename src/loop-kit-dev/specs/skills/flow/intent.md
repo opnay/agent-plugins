@@ -25,5 +25,10 @@
 - `turn-gate`에서 active flow 도중 새 사용자 메시지를 받더라도 scope, non-goals, completion criteria, verification expectation, approval boundary, handoff condition 변경 여부는 `flow`가 contract impact로 판단해야 한다.
 - self-drive가 다음 flow identity, current flow completion, non-blocked handoff를 확인할 때도 해당 원천 판단은 `flow` output과 handoff condition에 기대야 한다.
 - 상대 날짜, 기록 날짜, target 표현, operation 표현이 결과나 verification path를 바꾸면 `flow` ambiguity 또는 readiness 문제로 다뤄야 한다.
-- 각 phase의 시작과 종료에서 `plan.md`나 flow 문서를 수정하도록 해야 한다.
+- 각 phase의 시작과 종료에서 `plan.md`나 flow 문서의 갱신 필요 여부를 판단하도록 해야 한다.
 - `000-plan.md`에는 현재 flow 또는 planned sequence에서 사용해야 하는 skill 목록이 드러나야 한다.
+- 연속된 flow를 사용하더라도 목적 자체는 쉽게 바뀌지 않으므로, flow는 `레포지토리 목적 > 모노레포 목적 > 구조적 목적 > 변경 목적` 같은 지속 목적 계층을 해석해 현재 flow가 어떤 상위 목적을 보존하는지 드러내야 한다.
+  - `purpose hierarchy` 설계 선택
+    - `flow 전용` [선택됨, 추가 메시지: `turn-gate가 flow를 의존하는 형태라고. 그러면 공존이잖아`]
+- 목적 계층은 `flow` 스킬만 해석하고 사용할 수 있어야 한다. `turn-gate`는 `flow` 판단에 의존하더라도 목적 계층의 의미를 재정의하거나 라우팅 권한으로 사용하지 않아야 한다.
+- 현재 세션의 `000-object.md` 같은 목적 사슬 파일은 상태, 검증, continuity rule을 담지 않고, 저장소 전체 목적에서 현재 변경 목적까지 내려오는 객체 사슬만 담아야 한다.

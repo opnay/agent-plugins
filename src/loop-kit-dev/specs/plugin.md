@@ -70,6 +70,7 @@ work 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, f
 ## 내장 skill 체계
 
 - `flow`: 메시지나 동작을 active flow, parent flow, finite sub-flow candidate, `operational-preparation flow`, `change-unit flow`로 판정하고 intake, framing, selected-flow readiness, flow-vs-phase 경계, discovery, flow-local execution strategy, handoff condition을 소유한다.
+  - 연속 flow에서 유지되는 상위 목적과 현재 변경 목적을 구분하기 위해 `레포지토리 목적 > 모노레포 목적 > 구조적 목적 > 변경 목적` 같은 목적 계층을 필요할 때 산출한다.
   - active flow의 phase 시작/종료 record checkpoint를 산출하고, `000-plan.md`와 active flow record 중 어떤 표면이 최신화돼야 하는지 구분한다.
   - interruption이나 self-drive 중 새 입력이 기존 flow contract를 바꾸는지, 다음 flow identity와 handoff가 유효한지 판단하는 원천 계약을 소유한다.
   - spec: `loop-kit-dev/specs/skills/flow/spec.md`

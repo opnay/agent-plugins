@@ -10,6 +10,8 @@ flow 설계 또는 sub-flow 후보 산출물에는 최소한 다음이 드러나
 
 - flow label 또는 slug
 - flow type: `operational-preparation` 또는 `change-unit`
+- 연속 flow의 지속 관점에 영향을 주는 경우 목적 계층: 레포지토리 목적 > 모노레포 목적 > 구조적 목적 > 변경 목적
+- 목적 사슬 파일을 쓰는 경우 `flow` 전용 object chain
 - scope
 - non-goals
 - completion criteria
@@ -28,6 +30,8 @@ flow 설계 또는 sub-flow 후보 산출물에는 최소한 다음이 드러나
 
 - 후보가 active flow인지 sub-flow candidate인지 명확한가?
 - completion criteria와 handoff condition이 분리되어 있는가?
+- 목적 계층이 필요한 경우 상위 목적과 현재 변경 목적이 구분되는가?
+- 목적 사슬 파일이 필요한 경우 상태나 라우팅 정보 없이 object chain만 담는가?
 - verification expectation이 flow 위험도에 맞게 드러나는가?
 - phase start/end에서 `000-plan.md` 또는 active flow record 중 무엇을 갱신할지 드러나는가?
 - missing contract field와 recommended strategy가 execution authority처럼 쓰이지 않는가?

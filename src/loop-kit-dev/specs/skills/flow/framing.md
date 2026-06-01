@@ -11,6 +11,7 @@ intake 결과를 바탕으로 flow를 분리하고, active flow 또는 finite su
 - framing은 candidate와 selected active flow를 구분한다. candidate 생성은 실행이 아니다.
 - framing은 각 flow 또는 candidate의 artifact ownership을 드러낸다.
 - framing은 flow boundary, scope edge, non-goals, completion criteria, verification expectation, handoff condition의 초안을 만든다.
+- framing은 필요할 때 목적 계층을 `레포지토리 목적 > 모노레포 목적 > 구조적 목적 > 변경 목적`처럼 상위 목적에서 현재 변경 목적으로 내려오게 정리한다.
 - framing 결과가 선택된 active flow로 확정된 뒤에만 preparation으로 넘어간다.
 
 ## 검토 기준
@@ -18,4 +19,5 @@ intake 결과를 바탕으로 flow를 분리하고, active flow 또는 finite su
 - flow 후보가 phase list가 아니라 review/verification/commit 가능한 작업 단위인가?
 - candidate와 selected flow를 혼동하지 않았는가?
 - artifact ownership이 드러나는가?
+- 상위 목적은 flow가 바뀌어도 보존되는 관점으로, 변경 목적은 현재 flow의 scope로 구분되는가?
 - framing 결과가 work 실행 권한으로 확대되지 않았는가?
