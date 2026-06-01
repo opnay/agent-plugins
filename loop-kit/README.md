@@ -35,7 +35,7 @@ codex plugin marketplace upgrade
 1. 메시지 인터뷰: intent snapshot, alignment risk, high-leverage question, answer pressure test, locked brief
 2. 플로우 설계: active flow, parent flow, candidate, phase, handoff, artifact ownership, flow contract
 3. 메인 플로우: `intake -> framing -> preparation -> work -> verification -> reporting`
-4. 메인 플로우 회고: 필요한 경우 `000-review.md`에 retrospective note를 남깁니다.
+4. 메인 플로우 회고: 항상 `000-review.md`를 갱신하고, finding이 없으면 no-finding 결과로 짧게 남깁니다.
 5. handoff condition: result, verification, residual risk, next intake condition, commit-readiness
 
 사용자-facing 진행 메시지는 현재 phase label을 사용할 수 있고, artifact, 기록, command summary, 질문 option label에는 label을 전파하지 않습니다.

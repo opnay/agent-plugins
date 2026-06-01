@@ -72,7 +72,8 @@ If target, operation, scope, verification path, approval boundary, or acceptance
 
 ## Main-Flow Review
 
-After the main flow group completes, write `000-review.md` only when there is a retrospective note worth keeping.
+After the main flow group completes, run main-flow review and update `000-review.md`.
+Record a compact tagged review result for the completed main flow, including a no-finding result when no retrospective finding exists.
 Do this before the handoff condition.
 The review record is not active routing, raw flow log, verification authority, commit/release authority, or closure authority.
 
@@ -88,7 +89,7 @@ Commit, push, PR, publish, release, version bump, and destructive work require s
 
 For non-pass evidence, route to verification, reconciliation, preparation/design relock, or blocked handoff.
 Reporting may produce the next main-flow intake condition.
-After optional main-flow review, completion produces the handoff condition.
+After main-flow review, completion produces the handoff condition.
 Commit-readiness is a handoff judgment over intended change unit, diff scope, unrelated changes, verification evidence, and residual risk. Execution needs separate authority.
 
 ## Contract Impact

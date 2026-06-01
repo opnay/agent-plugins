@@ -7,5 +7,5 @@
 - parent: pending candidates 또는 flow config 산출.
 - candidate: 선택되기 전 pending option.
 - reporting: result, verification, residual risk, next intake condition.
-- main-flow review: optional `000-review.md` retrospective note after main flow group, before handoff.
+- main-flow review: always update `000-review.md` after main flow group, before handoff.
 - completion: main-flow review 뒤 handoff condition 산출.

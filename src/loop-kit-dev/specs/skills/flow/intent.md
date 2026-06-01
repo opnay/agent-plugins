@@ -83,5 +83,6 @@ graph TD
 - flow별 계약 작성은 scope, non-goals, completion criteria, verification expectation, approval boundary, handoff condition을 정리합니다.
 - 진행 순서 정리는 다음에 들어갈 메인 flow와 이후 후보를 구분하고 `000-plan.md` 갱신 시점입니다.
 - flow record는 메인 플로우 phase, evidence, verification, reporting 시점에서 갱신합니다.
-- `000-review.md`는 메인 플로우 그룹 이후, `handoff condition` 직전에 회고 note가 있을 때만 갱신하고, active routing이나 handoff authority로 쓰지 않습니다.
+- `000-review.md`는 메인 플로우 그룹 이후, `handoff condition` 직전에 항상 갱신하고, active routing이나 handoff authority로 쓰지 않습니다.
+- 회고 finding이 없으면 no-finding 결과로 짧게 기록합니다.
 - 목적 사슬은 contract에 영향을 줄 때 `000-plan.md`의 목적 섹션에 흡수합니다.

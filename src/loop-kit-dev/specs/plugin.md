@@ -13,7 +13,7 @@
 - 플로우 설계: locked brief에서 active flow, parent flow, sub-flow candidate, phase, handoff를 구분하고 진행할 flow 구성을 만듭니다.
 - 메인 플로우: `intake -> framing -> preparation -> work -> verification -> reporting`
 - 사용자-facing 진행 메시지: 현재 phase label을 산출하되, 기록이나 산출물 본문에는 label을 전파하지 않습니다.
-- 메인 플로우 회고: 필요한 경우 `000-review.md`에 retrospective note를 남깁니다.
+- 메인 플로우 회고: 항상 `000-review.md`를 갱신하고, finding이 없으면 no-finding 결과로 짧게 남깁니다.
 - handoff condition: 메인 플로우와 필요한 회고 뒤 result, verification, residual risk, next intake condition, commit-readiness 같은 종료 조건을 산출합니다.
 - 여러 flow가 필요하면 플로우 설계가 여러 메인 플로우 후보를 만들고, 선택된 flow가 메인 플로우 lifecycle로 들어갑니다.
 
