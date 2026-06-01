@@ -7,11 +7,11 @@ description: Interpret a user message through message interview, flow design, ma
 
 Shape: `message interview -> flow design -> main flow -> handoff condition`.
 
-A flow is a reviewable work unit with scope, non-goals, completion criteria, verification expectation, approval boundary, and handoff condition. Phase checklists, QA, reports, repair, blockers, and commit execution stay inside their owning phase or handoff surface.
+A flow is a reviewable work unit with scope, non-goals, completion criteria, verification expectation, approval boundary, and handoff condition. Phase checklists, QA, reports, repair, blockers, and commit-readiness stay inside their owning phase or handoff surface.
 
 ## Message Interview
 
-Use the internal interview loop when intent, scope, tradeoff, acceptance, approval boundary, or decision boundary needs alignment:
+Use the internal deep-interview loop when intent, scope, tradeoff, acceptance, approval boundary, or decision boundary needs alignment:
 
 1. Capture `initial alignment snapshot`.
 2. Pick the highest alignment risk.
@@ -25,20 +25,20 @@ Clear low-risk messages can collapse to snapshot plus brief.
 
 ## Flow Design
 
-Classify the current item:
+Classify the current item and create a list-up result:
 
 - `active flow`: selected main flow
 - `parent flow`: flow configuration or candidate producer
-- `sub-flow candidate`: pending option until routed
+- `sub-flow candidate`: pending option, not an active flow
 - `phase`: internal active-flow step
 - `handoff`: readiness, blocker, next intake condition, or routing result
 
-For selected flows and candidates, lock identity, type, artifact ownership, scope, non-goals, completion criteria, verification expectation, approval boundary, handoff condition, and unresolved blocker.
+For selected flows and candidates, lock identity, type, scope, non-goals, completion criteria, verification expectation, approval boundary, handoff condition, and unresolved blocker.
 
 `operational-preparation` creates briefs, flow configuration, candidates, or next-main-flow contracts.
 `change-unit` owns reviewable artifact changes.
-Candidates become active through `turn-gate` routing or a prepared self-drive sequence.
-`000-plan.md` and active flow records are record surfaces attached to the current stage.
+Candidates stay pending until selected as a main flow.
+`000-plan.md` and active flow records are record surfaces attached to the current phase.
 Purpose chains live in the `000-plan.md` purpose section when they affect scope, acceptance, verification, approval, or handoff.
 
 ## Main Flow
@@ -64,13 +64,13 @@ Inside one selected active flow, choose:
 - `fix-verify-loop`: smallest useful fix or check, then immediate verification
 - `broad-execution`: one locked active flow end to end
 
-Multi-flow continuation, candidate activation, self-drive advance, commit, push, PR, publish, release, version bump, and destructive work use their own routing or approval authority.
+Commit, push, PR, publish, release, version bump, and destructive work require separate approval authority.
 
 For non-pass evidence, route to verification, reconciliation, preparation/design relock, or blocked handoff.
-Reporting may produce the next main-flow intake condition; `turn-gate` owns next-flow question routing, explicit stop, active-turn continuity, and self-drive gate application.
+Reporting may produce the next main-flow intake condition.
 Commit-readiness is a handoff judgment over intended change unit, diff scope, unrelated changes, verification evidence, and residual risk. Execution needs separate authority.
 
 ## Contract Impact
 
-For a new message during an active flow, decide whether it is inline answer, current-flow revision, new foreground flow, future candidate, supersede, blocker question, or explicit stop.
-`turn-gate` applies that decision to active-turn routing and records.
+For a new message during an active flow, decide whether it is inline answer, current-flow revision, new foreground flow, future candidate, supersede, or blocker question.
+Return the contract-impact decision as flow output.

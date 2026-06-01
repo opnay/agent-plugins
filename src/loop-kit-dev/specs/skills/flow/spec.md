@@ -8,7 +8,7 @@
 ## 경계
 
 - 포함: 메시지 인터뷰, locked brief, flow 분류, flow 구성, active flow contract, phase checkpoint, reporting handoff, contract-impact 판단.
-- 제외: turn activation, explicit stop, next-flow question-routing, active turn continuity, self-drive advance 실행, commit/push/PR/release/version bump 실행.
+- 제외: flow 밖 실행 제어, 질문 실행, 연속 진행 제어, commit/push/PR/release/version bump 실행.
 
 ## 계약 맵
 
@@ -20,7 +20,6 @@
 - `core/boundaries.md`: active/parent/candidate/phase/handoff
 - `core/output-contract.md`: 산출 필드
 - `core/phase-record-checkpoints.md`: 기록 표면
-- `core/turn-gate-relationship.md`: turn-gate 적용 경계
 - `core/object.md`: `000-plan.md` 목적 섹션
 - `preparation/*`: readiness/discovery/ambiguity relock
 - `execution/*`: 메인 flow 내부 전략
@@ -31,17 +30,17 @@
 
 - 메시지 인터뷰는 `snapshot -> alignment risk -> high-leverage question -> answer -> pressure test`를 반복해 locked brief를 만듭니다.
 - 플로우 설계는 locked brief에서 active flow, parent flow, sub-flow candidate, phase, handoff를 구분하고 flow별 contract를 작성합니다.
-- candidate는 routing 전 pending option입니다.
+- candidate는 선택되기 전 pending option입니다.
 - 메인 플로우는 선택된 active flow의 lifecycle입니다.
 - reporting은 result, verification, residual risk, handoff condition, 다음 intake 조건을 산출합니다.
-- flow completion은 turn-gate가 적용할 handoff condition을 남깁니다.
+- flow completion은 handoff condition을 남깁니다.
 
 ## 검토 질문
 
 - alignment risk가 잠겼는가?
 - active flow와 candidate가 구분되는가?
 - scope, non-goals, completion, verification, approval, handoff가 있는가?
-- 다음 intake 조건과 turn-gate question-routing이 구분되는가?
+- 다음 intake 조건이 flow 산출물로 구분되는가?
 
 ## 확장 원칙
 

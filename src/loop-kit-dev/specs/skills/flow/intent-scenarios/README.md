@@ -7,7 +7,7 @@ runtime skill 본문은 현재 spec에서 재작성되며, 이 fixture는 releas
 
 - scenario는 메시지 인터뷰, 플로우 설계, 메인 플로우, handoff 중 하나의 판단을 검증합니다.
 - expected behavior는 locked brief, flow 구성, active flow, candidate, phase, handoff 중 필요한 산출물을 드러냅니다.
-- forbidden behavior는 candidate 실행, phase 승격, turn-gate 권한 침범을 드러냅니다.
+- forbidden behavior는 candidate 실행과 phase 승격을 드러냅니다.
 
 ## 현재 fixture
 

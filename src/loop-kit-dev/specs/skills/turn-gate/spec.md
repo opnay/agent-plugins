@@ -44,6 +44,7 @@ flow identity, readiness, ambiguity, contract impact, handoff 판단은 `flow`�
 - `contracts/verification.md`: method/status, clean-context, non-pass routing
 - `contracts/interruption.md`: active-flow 중 새 사용자 메시지 routing
 - `contracts/self-drive.md`: prepared sequence overlay와 sidecar gate
+- `contracts/flow-relationship.md`: flow 산출물 적용 경계
 
 ## 소유권 규칙
 

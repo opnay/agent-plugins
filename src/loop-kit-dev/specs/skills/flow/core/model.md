@@ -5,6 +5,6 @@
 - design: locked brief -> classification + flow config.
 - main flow: intake -> framing -> preparation -> work -> verification -> reporting.
 - parent: pending candidates 또는 flow config 산출.
-- candidate: routing 전 pending option.
+- candidate: 선택되기 전 pending option.
 - reporting: result, verification, residual risk, handoff, next intake condition.
-- completion: turn-gate handoff 입력.
+- completion: handoff condition 산출.

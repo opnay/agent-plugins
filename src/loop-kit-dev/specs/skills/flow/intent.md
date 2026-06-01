@@ -75,36 +75,6 @@ graph TD
 - 플로우 설계는 진행할 flow 구성을 만들고 바로 메인 flow `intake`로 들어갑니다.
 - `000-plan.md`와 flow record는 각 그래프 노드의 업데이트 시점으로 표시합니다.
 
-## handoff condition
-
-```mermaid
-graph TD
-  REPORT[reporting] --> HANDOFF[handoff condition]
-  HANDOFF --> TURN_GATE[turn-gate 적용]
-  TURN_GATE --> NEXT[다음 사용자 메시지 또는 자체적인 다음 플로우 준비]
-```
-
-## 단계 메시지 표기
-
-```mermaid
-graph TD
-  INTAKE[intake] --> P1["[intake]"]
-  FRAMING[framing] --> P2["[framing]"]
-  PREP[preparation] --> P3["[preparation]"]
-  WORK[work] --> P4["[work]"]
-  VERIFY[verification] --> P5["[verification]"]
-  REPORT[reporting] --> P6["[reporting]"]
-  NEXT[next-flow] --> P7["[next-flow]"]
-```
-
-## 단계 메시지 표기 핵심
-
-- 기존 규칙 위치: `turn-gate` runtime 계약과 phase-prefix scenario.
-- `flow`는 phase 이름과 의미를 제공합니다.
-- `turn-gate`는 사용자에게 보이는 phase 시작 또는 의미 있는 진행 메시지에 prefix를 적용합니다.
-- prefix 목록은 `[intake]`, `[framing]`, `[preparation]`, `[work]`, `[verification]`, `[reporting]`, `[next-flow]`입니다.
-- artifact, record, command summary, question option label은 각 표면의 원래 형식을 유지합니다.
-
 ## 플로우 설계 핵심
 
 - 항목 분류는 active flow, parent flow, sub-flow candidate, phase, handoff를 구분합니다.

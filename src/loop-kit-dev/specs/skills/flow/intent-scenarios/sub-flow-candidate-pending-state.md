@@ -11,7 +11,7 @@ sub-flow candidate 생성은 pending flow option을 만듭니다.
 ## Expected Behavior
 
 - 세 항목은 선택 전까지 sub-flow candidates입니다.
-- next main flow는 user-gated next-flow decision 또는 prepared self-drive sequence가 선택합니다.
+- next main flow는 candidate 중 하나가 선택될 때 정해집니다.
 - candidate 목록에는 handoff condition과 unresolved approval checkpoint가 드러나야 합니다.
 
 ## Boundary Behavior
