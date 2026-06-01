@@ -4,50 +4,61 @@
 
 ```mermaid
 graph TD
-  MESSAGE[메시지] --> INTERVIEW[메시지 인터뷰]
-  INTERVIEW --> DESIGN[플로우 설계]
-  DESIGN --> MAIN[메인 플로우]
-  MAIN --> HANDOFF[handoff condition]
+  MESSAGE[메시지] --> INTERVIEW
+
+  subgraph FLOW[flow]
+    direction TB
+    INTERVIEW[메시지 인터뷰] --> DESIGN[플로우 설계]
+    DESIGN --> MAIN
+
+    subgraph MAIN[메인 플로우]
+      direction TB
+      INTAKE[intake - flow record] --> FRAMING[framing - flow record]
+      FRAMING --> PREP[preparation - flow record]
+      PREP --> WORK[work - flow record]
+      WORK --> VERIFY[verification - flow record]
+      VERIFY --> REPORT[reporting - flow record]
+    end
+
+    REPORT -->|다음 플로우| INTAKE
+    MAIN --> HANDOFF[handoff condition - flow record]
+  end
 ```
 
 ## 메시지 인터뷰
 
 ```mermaid
 graph TD
-  MESSAGE[메시지] --> SNAPSHOT[초기 의도 스냅샷]
-  SNAPSHOT --> RISK[alignment risk 식별 - 000-plan.md]
-  RISK --> ASK[high-leverage 질문 하나]
-  ASK --> ANSWER[답변 반영]
-  ANSWER --> TEST[예시/반례/비목표/tradeoff 압력 테스트]
-  TEST --> READY{실행 brief 충분}
-  READY -->|추가 정렬| RISK
-  READY -->|brief 잠금| BRIEF[locked execution brief - 000-plan.md]
-  BRIEF --> DESIGN[플로우 설계]
+  MESSAGE[메시지] --> DEEP_INTERVIEW
+
+  subgraph DEEP_INTERVIEW[deep-interview]
+    direction TB
+    SNAPSHOT[초기 의도 스냅샷] --> RISK[alignment risk 식별 - 000-plan.md]
+    RISK --> ASK[high-leverage 질문 하나]
+    ASK --> ANSWER[답변 반영]
+    ANSWER --> TEST[예시/반례/비목표/tradeoff 압력 테스트]
+    TEST -->|검증 실패| RISK
+    TEST --> BRIEF[locked execution brief - 000-plan.md]
+  end
+
+  DEEP_INTERVIEW --> DESIGN[플로우 설계]
 ```
 
 ## 플로우 설계
 
 ```mermaid
 graph TD
-  BRIEF[locked execution brief] --> CLASSIFY[항목 분류]
-  CLASSIFY --> DECOMPOSE[flow 분해]
-  DECOMPOSE --> OWNERSHIP[산출물 소유권 확인]
-  OWNERSHIP --> CONTRACT[flow별 계약 작성 - 목적 사슬 필요 시]
-  CONTRACT --> ORDER[진행 순서 정리 - 000-plan.md 갱신]
-  ORDER --> MAIN[메인 플로우 선택]
-```
+  BRIEF[locked execution brief] --> LIST_UP
 
-## 메인 플로우
+  subgraph LIST_UP[list-up]
+    direction TB
+    CLASSIFY[항목 분류] --> DECOMPOSE[flow 분해]
+    DECOMPOSE --> CONTRACT[flow별 계약 작성 - 목적 사슬 필요 시]
+    CONTRACT --> ORDER[진행 순서 정리 - 000-plan.md 갱신]
+    ORDER -->|검증 실패| CLASSIFY
+  end
 
-```mermaid
-graph TD
-  INTAKE[intake - flow record] --> FRAMING[framing - flow record]
-  FRAMING --> PREP[preparation - flow record]
-  PREP --> WORK[work - flow record]
-  WORK --> VERIFY[verification - flow record]
-  VERIFY --> REPORT[reporting - flow record]
-  REPORT -->|다음 플로우| INTAKE
-  REPORT --> HANDOFF[handoff condition - flow record]
+  LIST_UP --> MAIN[메인 플로우 선택]
 ```
 
 ## 핵심
@@ -98,7 +109,6 @@ graph TD
 
 - 항목 분류는 active flow, parent flow, sub-flow candidate, phase, handoff를 구분합니다.
 - flow 분해는 단일 메인 flow로 충분한지, 여러 메인 flow가 필요한지 정리합니다.
-- 산출물 소유권 확인은 어떤 flow가 어떤 artifact 변경을 소유하는지 드러냅니다.
 - flow별 계약 작성은 scope, non-goals, completion criteria, verification expectation, approval boundary, handoff condition을 정리합니다.
 - 진행 순서 정리는 다음에 들어갈 메인 flow와 이후 후보를 구분하고 `000-plan.md` 갱신 시점입니다.
 - flow record는 메인 플로우 phase, evidence, verification, reporting 시점에서 갱신합니다.
