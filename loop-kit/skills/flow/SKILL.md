@@ -5,9 +5,9 @@ description: Interpret a user message through message interview, flow design, ma
 
 # Flow
 
-Shape: `message interview -> flow design -> main flow -> handoff condition`.
+Shape: `message interview -> flow design -> main flow -> main-flow review -> handoff condition`.
 
-A flow is a reviewable work unit with scope, non-goals, completion criteria, verification expectation, approval boundary, and handoff condition. Phase checklists, QA, reports, repair, blockers, and commit-readiness stay inside their owning phase or handoff surface.
+A flow is a reviewable work unit with scope, non-goals, completion criteria, verification expectation, approval boundary, and handoff condition. Phase checklists, QA, reports, repair, blockers, main-flow review, and commit-readiness stay inside their owning surface.
 Record template meaning belongs to flow; turn-gate applies and updates records during an active turn.
 
 ## Message Interview
@@ -67,6 +67,12 @@ Each selected main flow runs:
 
 If target, operation, scope, verification path, approval boundary, or acceptance changes, return to the earliest safe message-interview, flow-design, or preparation point.
 
+## Main-Flow Review
+
+After the main flow group completes, write `000-review.md` only when there is a retrospective note worth keeping.
+Do this before the handoff condition.
+The review record is not active routing, raw flow log, verification authority, commit/release authority, or closure authority.
+
 ## Strategy And Handoff
 
 Inside one selected active flow, choose:
@@ -79,6 +85,7 @@ Commit, push, PR, publish, release, version bump, and destructive work require s
 
 For non-pass evidence, route to verification, reconciliation, preparation/design relock, or blocked handoff.
 Reporting may produce the next main-flow intake condition.
+After optional main-flow review, completion produces the handoff condition.
 Commit-readiness is a handoff judgment over intended change unit, diff scope, unrelated changes, verification evidence, and residual risk. Execution needs separate authority.
 
 ## Contract Impact

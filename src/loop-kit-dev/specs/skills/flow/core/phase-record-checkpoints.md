@@ -6,3 +6,4 @@
 - interview record: risk, question, answer, locked brief.
 - design record: next flow, candidates, per-flow contract, blocker.
 - phase record: input, classification, readiness, work, verification, reporting.
+- review record: optional `000-review.md` after main flow group and before handoff.

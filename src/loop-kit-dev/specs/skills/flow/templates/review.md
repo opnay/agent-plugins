@@ -10,6 +10,7 @@ review record는 active routing, flow log, verification authority, closure autho
 
 - 파일명: `.agents/sessions/{YYYYMMDD}/000-review.md`.
 - 생성 규칙: session date마다 optional 파일 하나만 둡니다.
+- 작성 타이밍: 메인 플로우 그룹 이후, `handoff condition` 직전에 회고 note가 있을 때만 작성합니다.
 - 형식: flat tagged list.
 - 항목: `[axis]` note, optional invalid example, corrected pattern, follow-up owner 또는 candidate.
 - 태그 예: `[conversation]`, `[records]`, `[skills]`, `[docs]`, `[code-structure]`, `[verification]`, `[git]`, `[release]`.

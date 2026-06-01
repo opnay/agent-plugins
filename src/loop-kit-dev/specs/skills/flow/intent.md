@@ -18,10 +18,11 @@ graph TD
       PREP --> WORK[work - flow record]
       WORK --> VERIFY[verification - flow record]
       VERIFY --> REPORT[reporting - flow record]
+      REPORT -->|다음 플로우| INTAKE
     end
 
-    REPORT -->|다음 플로우| INTAKE
-    MAIN --> HANDOFF[handoff condition - flow record]
+    MAIN --> REVIEW[메인 플로우 회고 - 000-review.md]
+    REVIEW --> HANDOFF[handoff condition - flow record]
   end
 ```
 
@@ -65,8 +66,8 @@ graph TD
 
 - 메시지가 들어오면 `flow`는 메시지를 해석하고 실제 진행할 flow를 함께 설계합니다.
 - 실제 진행할 플로우가 정해지면 각 메인 플로우는 `intake -> framing -> preparation -> work -> verification -> reporting`으로 진행합니다.
-- 메인 플로우는 `reporting`에서 종료하고 `handoff condition`을 산출합니다.
 - 다음 flow가 있으면 `reporting`에서 다음 `intake`로 라우팅합니다.
+- 메인 플로우 그룹 이후 결과는 `메인 플로우 회고 -> handoff condition`입니다.
 - `handoff condition`은 메인 플로우 종료 뒤 산출되는 종료 조건입니다.
 - 여러 플로우가 필요하면 리스트업 결과가 여러 메인 플로우가 될 수 있습니다.
 - 메시지 인터뷰는 deep-interview 역할을 flow 내부 해석 단계로 흡수합니다.
@@ -82,4 +83,5 @@ graph TD
 - flow별 계약 작성은 scope, non-goals, completion criteria, verification expectation, approval boundary, handoff condition을 정리합니다.
 - 진행 순서 정리는 다음에 들어갈 메인 flow와 이후 후보를 구분하고 `000-plan.md` 갱신 시점입니다.
 - flow record는 메인 플로우 phase, evidence, verification, reporting 시점에서 갱신합니다.
+- `000-review.md`는 메인 플로우 그룹 이후, `handoff condition` 직전에 회고 note가 있을 때만 갱신하고, active routing이나 handoff authority로 쓰지 않습니다.
 - 목적 사슬은 contract에 영향을 줄 때 `000-plan.md`의 목적 섹션에 흡수합니다.
