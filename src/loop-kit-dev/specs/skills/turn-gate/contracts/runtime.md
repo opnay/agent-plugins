@@ -3,14 +3,17 @@
 ## 소유 범위
 
 `turn-gate` runtime은 graph wrapper를 소유합니다.
-`flow skill` 내부 의미인 `flow.message -> flow.main-flows -> flow.end`는 `flow`가 소유합니다.
+`flow skill` 내부 의미는 `flow`가 소유하며, `turn-gate` runtime은 이를 재정의하지 않고 적용합니다.
 
 ## wrapper 계약
 
-- entry: 사용자 메시지를 `flow skill`에 적용합니다.
-- exit: `flow.end` 이후 `next turn-flow / 메시지 수신`을 엽니다.
-- loop: 일반 모드는 다음 메시지를 기다리고, self-drive 모드는 자체 해석으로 다시 `flow skill`에 들어갑니다.
-- stop: 종료 요청은 전 과정에서 감지하고 source-recorded explicit stop으로만 현재 turn을 닫습니다.
+- entry: 사용자 메시지는 `turn-gate` wrapper 안의 `flow skill` 그룹으로 진입합니다.
+- exit: `flow skill: handoff` 이후 `next-flow gate`를 엽니다.
+- loop: 일반 모드는 `next-flow gate`에서 `사용중인 스킬 다시 읽기 -> 질문 도구: 다음 플로우 선택 -> 000-plan.md 업데이트`를 거쳐 다음 flow 입력을 확정하고, `flow: deep-interview`와 같은 인터뷰 흐름으로 충분히 구체화한 뒤 `flow skill: interview`에 들어갑니다.
+- self-drive: 명시적으로 준비된 sequence gate가 통과한 경우에만 질문 도구를 대체합니다.
+- stop: 종료 요청은 `turn-gate / 메인`의 모든 시점에서 감지하고 종료 페이즈로 이동합니다.
+- stop phase: `작업 중이던 플로우 정리 -> explicit-stop 기록 - active turn 종료` 순서로 처리합니다.
+- stop authority: source-recorded explicit stop으로만 active turn을 닫습니다.
 
 ## runtime 본문 경계
 
@@ -18,18 +21,17 @@ Runtime `SKILL.md`는 다음만 직접 포함합니다.
 
 - active-turn rule
 - `flow` wrapper dependency
-- next turn-flow reopening
+- handoff routing reopening
 - explicit-stop authority
 - question recovery
-- record application/recovery entrypoint
-- verification method/result separation
+- record recovery entrypoint
+- non-pass routing
 - self-drive gate
 - approval-sensitive guardrail
 
 Runtime은 flow taxonomy, flow lifecycle, shared template shape, readiness/discovery/ambiguity, handoff meaning을 반복하지 않습니다.
 
-## phase prefix 계약
+## 표시 계약
 
-turn-gate-owned wrapper progress에는 `[intake]`, `[work]`, `[verification]`, `[reporting]`, `[next-flow]`를 사용합니다.
-`[framing]`과 `[preparation]`은 visible step이 명시적으로 `flow` 세부 phase일 때만 사용합니다.
-prefix는 generated artifact, record, command summary, question option label에 복사하지 않습니다.
+Visible progress label은 wrapper 상태를 돕는 표시일 뿐 메인 그래프 노드가 아닙니다.
+prefix나 lifecycle label을 artifact, record, command summary, question option label에 복사하지 않습니다.

@@ -1,21 +1,24 @@
 # Question Routing
 
-Use this reference for `next turn-flow / 메시지 수신` and question recovery after `flow.end`.
+Use this reference for question routing and question recovery after `flow skill: handoff`.
 
 ## Open Routing
 
-When `turn-gate` is active, a report is not terminal closure.
-After `flow.end`, keep routing open unless an explicit stop is source-recorded.
+When `turn-gate` is active, `flow skill: handoff` is not terminal closure.
+After handoff, run `next-flow gate`: reread the currently needed skills, keep routing open unless an explicit stop is source-recorded, then update `000-plan.md`.
 
-Valid next input paths:
+`next-flow gate` paths:
 
-- user message
-- self-drive interpretation
-- blocker decision
-- approval decision
-- explicit stop
+- reread currently needed skills
+- `request_user_input` answer or user message
+- update `000-plan.md`
+- the same interview flow as `flow: deep-interview`
+- reenter `flow skill: interview` with clarified input
+- prepared self-drive gate
 
-Do not treat final-looking wording, status-only reporting, compression, or a successful `flow.end` as turn closure.
+Blocker decisions, approval decisions, and explicit stop are handled by global routing and approval boundaries, not as separate main graph nodes.
+
+Do not treat final-looking wording, status-only answers, compression, or a successful `flow skill: handoff` as turn closure.
 Closure requires explicit stop.
 
 ## Asking
@@ -30,9 +33,10 @@ Ask only for the decision needed now when it can change:
 - current-flow identity
 - whether a pending question has been answered or superseded
 
-Use `request_user_input` when it is available and the choices are narrow.
+Use `request_user_input` when it is available and the choices are narrow. Label the visible choice surface as `질문 도구: 다음 플로우 선택` when describing the graph.
 Prefer two or three mutually exclusive choices.
 When the tool is unavailable, ask an active plain-text question and record the required next action.
+Always update `000-plan.md` after the question answer, fallback answer, abort state, or pending question state is known.
 
 ## Abort Recovery
 

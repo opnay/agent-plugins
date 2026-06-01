@@ -1,77 +1,62 @@
 ---
 name: turn-gate
-description: Keep an active Codex turn open until explicit stop; apply flow decisions instead of redefining them; maintain session records, verification routing, interruption recovery, next turn-flow/message routing, and prepared self-drive.
+description: Keep an active Codex turn open until explicit stop; apply the flow skill as-is; route flow handoff through next-flow questions or prepared self-drive.
 ---
 
 # Turn Gate
 
-## Active Turn
+## Wrapper Loop
 
-Keep the current Codex turn open until the user explicitly stops it and that stop source is recorded.
+Keep the active Codex turn open until the user explicitly stops it and that stop source is recorded.
 Completion, commits, passing checks, status answers, reports, interrupted questions, final-looking summaries, and final responses are not closure authority.
 
-Explicit stop closes only the current turn.
-When the next user message arrives, reactivate `turn-gate` as a fresh active turn.
-
-Every active flow routes to exactly one recorded state:
-
-- `next turn-flow / 메시지 수신`: reporting is done and the next input route is open
-- `blocked`: input, approval, access, or external state is required
-- `explicit-stop`: the current user message stops the turn and the stop source is recorded
-
-## Flow Dependency
-
-`turn-gate` wraps `flow`.
-Do not define or restate flow taxonomy, lifecycle, readiness, discovery, ambiguity, contract impact, checkpoint expectations, flow-local strategy, template meaning, or handoff meaning.
-
-Use `flow` for `flow.message -> flow.main-flows -> flow.end`, the work-unit contract, and the result.
-`turn-gate` only applies that result to active-turn continuity, records, questions, verification routing, self-drive gate, approval guardrails, and explicit stop handling.
-
-## Wrapper Loop
+Apply `flow` as-is.
+Do not define or restate flow taxonomy, lifecycle, readiness, discovery, ambiguity, contract impact, flow-local strategy, template meaning, or handoff meaning.
 
 Use this wrapper loop:
 
-1. `flow skill`: apply `flow.message -> flow.main-flows -> flow.end`.
-2. `next turn-flow / 메시지 수신`: wait for the next user message, blocker decision, approval decision, self-drive continuation, or explicit stop.
-3. self-drive mode may route from `next turn-flow / 메시지 수신` back into `flow skill` through recorded sidecar gate.
+1. Route the user message into the `flow skill` group inside the `turn-gate` wrapper.
+2. Treat the internal path from interview to handoff as `생략...`; do not model it inside `turn-gate`.
+3. From `flow skill: handoff`, run `next-flow gate`:
+   - reread the skills currently needed for the next-flow question
+   - open `질문 도구: 다음 플로우 선택`
+   - update `000-plan.md`
+4. Use the same interview flow as `flow: deep-interview` to clarify the next flow input.
+5. Reenter `flow skill: interview` with the clarified input and prioritize flow-design questions.
 
-Use phase prefixes for visible phase-start or meaningful progress messages.
-Use `[intake]`, `[work]`, `[verification]`, `[reporting]`, and `[next-flow]` for turn-gate-owned wrapper work.
-Use `[framing]` and `[preparation]` only when the visible step is explicitly delegated to `flow`.
-Do not copy prefixes into artifacts, records, command summaries, or question option labels.
+If `request_user_input` is available and choices are narrow, use it for `질문 도구: 다음 플로우 선택`.
+If unavailable, keep the turn open with an active plain-text question.
+Update `000-plan.md` every time `next-flow gate` runs, including active skills, selected or pending question state, next action, and self-drive pointer when relevant.
+
+Self-drive is not a graph node.
+Use it only when an explicit prepared sequence gate can replace the question tool.
 
 ## Records
 
-Use `references/session-records.md` for record application and recovery.
-Use the `flow` skill's bundled templates for plan, flow record, and review file structure.
+Use `references/session-records.md` only to keep active-turn routing recoverable.
+Records support the wrapper loop; they are not extra graph nodes.
 Use `turn-gate/templates/self-drive-template.md` only for self-drive sidecar state.
 
-Before reporting, update the active flow record and any required `000-plan.md` fields.
-Record failed, skipped, blocked, or insufficient verification.
 Do not treat readiness, verification, generated release surface, previous context, self-drive, or subagent output as authority for commit, push, PR, publish, release, version bump, destructive work, or external effects.
 
-## Reporting And Questions
+## Questions
 
-Reporting opens `next turn-flow / 메시지 수신`; it is not terminal closeout.
-After reporting, reopen routing unless explicit stop is recorded.
+After `flow skill: handoff`, reread the currently needed skills, reopen routing unless explicit stop is recorded, then update `000-plan.md`.
+The next routing surface is not terminal closeout.
 
-Use `request_user_input` when it is available and choices are narrow.
-If it is unavailable, keep the turn open with an active plain-text question.
-
-If a question tool call is aborted, canceled, or interrupted, record the pending question and treat the next user message as one of:
+If a question tool call is aborted, canceled, or interrupted, preserve the pending question and treat the next user message as one of:
 
 - answer to the pending question
 - superseding new flow request
 - status/progress question
-- explicit stop
+- explicit-stop
 
-If the user says "continue", "계속", or "이어가" after a report, inspect the recorded next action first.
-Continue only when identity, target, scope, endpoint, approval boundary, and verification expectation are known.
+If the user says "continue", "계속", or "이어가", continue only when the next flow input is already concrete enough to reenter `flow skill: interview`.
 
 ## Interruption
 
-When a new user message arrives during an active flow, preserve current phase, scope, approval boundary, verification status, and required next action.
-Apply `flow` contract-impact and route the result as inline answer, current-flow revision, new foreground flow, future candidate, supersede, blocker question, or explicit stop.
+When a new user message arrives during an active turn, preserve pending question, approval boundary, verification status, and required next action.
+Apply `flow` contract-impact and route the result as `inline-answer`, `current-flow-revision`, `background-current-flow`, `reserve-later-analysis`, `supersede-current-flow`, `blocker-question`, or `explicit-stop`.
 Interruption never authorizes work outside the active contract or approval-sensitive execution.
 
 ## Verification
@@ -83,7 +68,7 @@ Results: `pass`, `fail`, `blocked`, `insufficient`.
 
 `not-required` is a method, not a pass.
 `not-started` and `requested` are progress states, not success evidence.
-Route non-pass results before success reporting, self-drive continuation, release readiness, commit-readiness, or `next turn-flow / 메시지 수신`.
+Route non-pass results before question routing, self-drive continuation, release readiness, commit-readiness, or handoff routing.
 Use `references/verification.md` for verifier packet boundaries and detailed status routing.
 
 ## Self-Drive
@@ -92,6 +77,6 @@ Self-drive is an explicit prepared sequence overlay, not the default turn state.
 Use `references/self-drive.md` only when records define objective, current flow or loop, allowed actions, approval checkpoints, endpoint, blockers, acceptance signal, and verification expectation.
 
 At each self-drive step, read `000-plan.md` and `000-self-drive.md`.
-Advance only after pass verification, non-blocked `flow` handoff, known next identity, matching approval boundary, and a passing sidecar gate.
+Replace the question tool only after pass verification, non-blocked `flow` handoff, known next identity, matching approval boundary, and a passing sidecar gate.
 
 Non-pass verification, blockers, approval need, stale sidecar state, endpoint changes, or scope changes stop autonomous advancement before continuation.

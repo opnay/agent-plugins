@@ -43,5 +43,5 @@ Omit `Sequence` for `mode: infinite` unless the current iteration needs a short 
 ## Handoff
 
 - next: `{handoff-condition-or-next-action}`
-- advance: `{verification pass; not blocked; next turn-flow identity known; approval boundary unchanged}`
+- advance: `{verification pass; not blocked; next flow identity known; approval boundary unchanged}`
 - position: `{keep current index or loop_count until advance is confirmed}`

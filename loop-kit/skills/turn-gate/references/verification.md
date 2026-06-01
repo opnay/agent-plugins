@@ -1,6 +1,6 @@
 # Verification
 
-Use this reference to record verification method/result and route non-pass results before `next turn-flow / 메시지 수신`.
+Use this reference to record verification method/result and route non-pass results before handoff question routing.
 
 ## Method Is Separate From Result
 
@@ -13,7 +13,7 @@ Record both:
 
 Progress states such as `not-started` and `requested` may appear in compact continuity metadata before a result exists. They are not `Result.status` values and cannot support success reporting. When preserving prior flow state, keep the existing `verification_status` value and record the preservation in `continuity`; do not use `verification_status: preserved`.
 
-If a verifier, subagent, or tool returns a non-enum result such as `partial`, `mixed`, or `inconclusive`, reconcile it before reporting success:
+If a verifier, subagent, or tool returns a non-enum result such as `partial`, `mixed`, or `inconclusive`, reconcile it before handoff question routing:
 
 - use `pass` only when the remaining evidence supports the flow acceptance signal
 - use `insufficient` when evidence gaps or ambiguity remain
@@ -58,11 +58,11 @@ Generated release surface build/readback and commit-readiness judgment are verif
 
 ## Result Routing
 
-Before success reporting:
+Before handoff question routing:
 
-- `pass`: report evidence that supports the acceptance signal.
+- `pass`: continue to handoff question routing or a prepared self-drive gate.
 - `fail`: return to the earliest safe repair or work point.
 - `insufficient`: collect more evidence or strengthen verification.
 - `blocked`: open blocker routing for the needed input, access, approval, or external state change.
 
-Non-pass status takes priority over self-drive continuation, endpoint exhaustion, release readiness, commit-readiness, and `next turn-flow / 메시지 수신`.
+Non-pass status takes priority over self-drive continuation, endpoint exhaustion, release readiness, commit-readiness, and handoff routing.

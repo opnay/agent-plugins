@@ -1,6 +1,6 @@
 # Session Records
 
-Use this reference when `turn-gate` is active and session records must be created, updated, recovered, or checked after interruption or compaction.
+Use this reference when `turn-gate` is active and records are needed to recover handoff question routing, pending question state, explicit stop state, or self-drive gate state.
 
 ## Ownership
 
@@ -10,7 +10,7 @@ Use this reference when `turn-gate` is active and session records must be create
 - `flow-record.md`
 - `review.md`
 
-`turn-gate` owns active-turn application and recovery:
+`turn-gate` owns active-turn recovery:
 
 - active flow pointer
 - required next action
@@ -19,6 +19,7 @@ Use this reference when `turn-gate` is active and session records must be create
 - explicit stop state
 - self-drive pointer
 - unapproved action state
+- active skill list for the next-flow question
 
 `turn-gate` owns only one bundled template:
 
@@ -64,7 +65,7 @@ If the user forbids all writes or record creation, do not write records and do n
 
 ## Questions
 
-After reporting, reopen `next turn-flow / 메시지 수신` unless explicit stop is recorded.
+After `flow skill: handoff`, run `next-flow gate`: reread currently needed skills, reopen handoff question routing unless explicit stop is recorded, and update `000-plan.md`.
 Use `answered_question` and `pending_question` for question recovery.
 Do not invent alternate question-state fields.
 

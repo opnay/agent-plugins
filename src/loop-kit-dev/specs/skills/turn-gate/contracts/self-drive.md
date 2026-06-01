@@ -2,7 +2,7 @@
 
 ## 소유 범위
 
-self-drive는 `next turn-flow / 메시지 수신`에서 사용자 메시지 없이 자체 해석으로 다시 `flow skill`에 들어갈 수 있는지 판단하는 gate입니다.
+self-drive는 `flow skill: handoff` 뒤 질문 도구를 대체할 수 있는 prepared sequence gate입니다.
 
 ## 계약
 
@@ -23,7 +23,7 @@ sidecar는 다음을 복구 가능하게 둡니다.
 - blocker return condition
 - ledger
 
-advance 조건:
+질문 도구 대체 조건:
 
 - current flow verification is `pass`
 - `flow` handoff is not blocked
@@ -36,5 +36,5 @@ non-pass verification, blocker, approval need, stale sidecar, endpoint/scope/tar
 ## 검토 기준
 
 - self-drive가 명시 없이 시작되지 않는가?
-- next turn-flow 역방향이 recorded sidecar gate를 통과하는가?
+- `self-drive` 경로가 recorded sidecar state 확인 뒤에만 질문 도구를 대체하는가?
 - approval-sensitive action을 자체 승인하지 않는가?
