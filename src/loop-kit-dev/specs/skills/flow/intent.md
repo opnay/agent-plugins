@@ -1,34 +1,105 @@
-## 사용자 스펙 의도
+# flow 사용자 의도
 
-- `flow`는 하나의 메시지, 동작, 계획 항목, 검토 finding, handoff를 응집된 flow 단위로 해석해야 한다.
-- flow는 phase checklist가 아니라 함께 이해하고, 검토하고, 검증하고, 필요하면 커밋할 수 있는 작업 단위여야 한다.
-- 각 flow는 내부 단계로 `intake -> framing -> preparation -> work -> verification -> reporting`을 갖지만, 여러 flow 사이의 turn 지속이나 next-flow 질문은 소유하지 않는다.
-- 큰 요청은 parent flow가 될 수 있고, parent flow는 finite `sub-flow candidates`를 만들 수 있어야 한다.
-- `sub-flow candidate` 생성은 실행이 아니며, active flow 전환은 `turn-gate` next-flow routing 또는 준비된 self-drive sequence를 통해서만 가능해야 한다.
-- flow는 `operational-preparation flow`와 `change-unit flow`를 구분해야 한다.
-- 사용자 메시지를 받아 의도, scope, non-goal, acceptance signal, approval boundary, verification expectation, planned flow list를 정리하는 일 자체도 산출물을 가진 `operational-preparation flow`가 될 수 있어야 한다.
-- 실제 코드, 문서, fixture, 설정, release surface 변경은 `change-unit flow`로 분리되어야 한다.
-- requirement discovery는 주로 `intake`, flow 분해와 후보 설계는 `framing`, readiness와 뒤늦게 발견된 operation/target ambiguity 잠금은 `preparation` 계약으로 나눠야 한다.
-- 사용자 입력 분석, deep interview, 목표 탐지, non-goal과 authority 탐지는 `intake`가 소유해야 한다.
-- flow 분리, flow 설계, candidate와 selected flow 구분, artifact ownership 판단은 `framing`이 소유해야 한다.
-- `preparation`은 선택된 active flow가 work로 들어갈 수 있는지 readiness를 잠그는 단계로 좁혀야 한다.
-- discovery는 질문 도구 실행 방식이 아니라 사용자 intent, scope edge, non-goal, tradeoff, acceptance signal을 압력 테스트해 flow contract를 잠그는 역할이어야 한다.
-- discovery는 단순히 빈 필드를 채우는 것이 아니라, 사용자가 실제로 원하는 결과와 거절할 tradeoff를 드러내야 한다.
-- discovery 질문은 가능하면 한 번에 하나의 high-leverage question으로 좁히고, bounded choice가 가능하면 선택지와 tradeoff를 함께 산출해야 한다.
-- review-loop, fix-verify-loop, broad-execution은 active flow 안에서 선택되는 flow-local strategy여야 한다.
-- review-loop는 여러 review/QA/self-review finding 전체를 한 번에 실행하는 전략이 아니라, active flow 안의 bounded blocking finding 하나를 처리하는 전략이어야 한다.
-- 여러 finding이 있으면 우선순위가 가장 높은 bounded blocking finding 하나를 선택하거나, discovery/parent flow로 finite follow-up 후보를 만들어야 한다.
-- commit-readiness는 commit 실행이 아니라 flow handoff condition으로 판단해야 한다.
-- flow는 질문 도구 실행, turn closure, session continuity, explicit stop handling, approval-sensitive execution authority를 소유하지 않는다.
-- `turn-gate`는 flow decision을 현재 turn에 적용하고 기록하지만, flow boundary, readiness, discovery, flow-local strategy를 재정의하지 않아야 한다.
-- `turn-gate`의 intent 중 flow 해석, flow 분해, readiness/discovery, review/fix/broad execution, commit-readiness 판단에 해당하는 내용은 `flow` intent와 spec이 소유해야 한다.
-- `turn-gate`에서 active flow 도중 새 사용자 메시지를 받더라도 scope, non-goals, completion criteria, verification expectation, approval boundary, handoff condition 변경 여부는 `flow`가 contract impact로 판단해야 한다.
-- self-drive가 다음 flow identity, current flow completion, non-blocked handoff를 확인할 때도 해당 원천 판단은 `flow` output과 handoff condition에 기대야 한다.
-- 상대 날짜, 기록 날짜, target 표현, operation 표현이 결과나 verification path를 바꾸면 `flow` ambiguity 또는 readiness 문제로 다뤄야 한다.
-- 각 phase의 시작과 종료에서 `plan.md`나 flow 문서의 갱신 필요 여부를 판단하도록 해야 한다.
-- `000-plan.md`에는 현재 flow 또는 planned sequence에서 사용해야 하는 skill 목록이 드러나야 한다.
-- 연속된 flow를 사용하더라도 목적 자체는 쉽게 바뀌지 않으므로, flow는 `레포지토리 목적 > 모노레포 목적 > 구조적 목적 > 변경 목적` 같은 지속 목적 계층을 해석해 현재 flow가 어떤 상위 목적을 보존하는지 드러내야 한다.
-  - `purpose hierarchy` 설계 선택
-    - `flow 전용` [선택됨, 추가 메시지: `turn-gate가 flow를 의존하는 형태라고. 그러면 공존이잖아`]
-- 목적 계층은 `flow` 스킬만 해석하고 사용할 수 있어야 한다. `turn-gate`는 `flow` 판단에 의존하더라도 목적 계층의 의미를 재정의하거나 라우팅 권한으로 사용하지 않아야 한다.
-- 현재 세션의 `000-object.md` 같은 목적 사슬 파일은 상태, 검증, continuity rule을 담지 않고, 저장소 전체 목적에서 현재 변경 목적까지 내려오는 객체 사슬만 담아야 한다.
+## 전체 구조
+
+```mermaid
+graph TD
+  MESSAGE[메시지] --> INTERVIEW[메시지 인터뷰]
+  INTERVIEW --> DESIGN[플로우 설계]
+  DESIGN --> MAIN[메인 플로우]
+  MAIN --> HANDOFF[handoff condition]
+```
+
+## 메시지 인터뷰
+
+```mermaid
+graph TD
+  MESSAGE[메시지] --> SNAPSHOT[초기 의도 스냅샷]
+  SNAPSHOT --> RISK[alignment risk 식별 - 000-plan.md]
+  RISK --> ASK[high-leverage 질문 하나]
+  ASK --> ANSWER[답변 반영]
+  ANSWER --> TEST[예시/반례/비목표/tradeoff 압력 테스트]
+  TEST --> READY{실행 brief 충분}
+  READY -->|추가 정렬| RISK
+  READY -->|brief 잠금| BRIEF[locked execution brief - 000-plan.md]
+  BRIEF --> DESIGN[플로우 설계]
+```
+
+## 플로우 설계
+
+```mermaid
+graph TD
+  BRIEF[locked execution brief] --> CLASSIFY[항목 분류]
+  CLASSIFY --> DECOMPOSE[flow 분해]
+  DECOMPOSE --> OWNERSHIP[산출물 소유권 확인]
+  OWNERSHIP --> CONTRACT[flow별 계약 작성 - 목적 사슬 필요 시]
+  CONTRACT --> ORDER[진행 순서 정리 - 000-plan.md 갱신]
+  ORDER --> MAIN[메인 플로우 선택]
+```
+
+## 메인 플로우
+
+```mermaid
+graph TD
+  INTAKE[intake - flow record] --> FRAMING[framing - flow record]
+  FRAMING --> PREP[preparation - flow record]
+  PREP --> WORK[work - flow record]
+  WORK --> VERIFY[verification - flow record]
+  VERIFY --> REPORT[reporting - flow record]
+  REPORT -->|다음 플로우| INTAKE
+  REPORT --> HANDOFF[handoff condition - flow record]
+```
+
+## 핵심
+
+- 메시지가 들어오면 `flow`는 메시지를 해석하고 실제 진행할 flow를 함께 설계합니다.
+- 실제 진행할 플로우가 정해지면 각 메인 플로우는 `intake -> framing -> preparation -> work -> verification -> reporting`으로 진행합니다.
+- 메인 플로우는 `reporting`에서 종료하고 `handoff condition`을 산출합니다.
+- 다음 flow가 있으면 `reporting`에서 다음 `intake`로 라우팅합니다.
+- `handoff condition`은 메인 플로우 종료 뒤 산출되는 종료 조건입니다.
+- 여러 플로우가 필요하면 리스트업 결과가 여러 메인 플로우가 될 수 있습니다.
+- 메시지 인터뷰는 deep-interview 역할을 flow 내부 해석 단계로 흡수합니다.
+- flow 내부 deep-interview는 alignment risk를 식별하고, 한 번에 하나의 high-leverage 질문으로 답변을 압력 테스트합니다.
+- 답변이 여전히 모호하면 같은 alignment risk를 다시 좁힙니다.
+- 플로우 설계는 진행할 flow 구성을 만들고 바로 메인 flow `intake`로 들어갑니다.
+- `000-plan.md`와 flow record는 각 그래프 노드의 업데이트 시점으로 표시합니다.
+
+## handoff condition
+
+```mermaid
+graph TD
+  REPORT[reporting] --> HANDOFF[handoff condition]
+  HANDOFF --> TURN_GATE[turn-gate 적용]
+  TURN_GATE --> NEXT[다음 사용자 메시지 또는 자체적인 다음 플로우 준비]
+```
+
+## 단계 메시지 표기
+
+```mermaid
+graph TD
+  INTAKE[intake] --> P1["[intake]"]
+  FRAMING[framing] --> P2["[framing]"]
+  PREP[preparation] --> P3["[preparation]"]
+  WORK[work] --> P4["[work]"]
+  VERIFY[verification] --> P5["[verification]"]
+  REPORT[reporting] --> P6["[reporting]"]
+  NEXT[next-flow] --> P7["[next-flow]"]
+```
+
+## 단계 메시지 표기 핵심
+
+- 기존 규칙 위치: `turn-gate` runtime 계약과 phase-prefix scenario.
+- `flow`는 phase 이름과 의미를 제공합니다.
+- `turn-gate`는 사용자에게 보이는 phase 시작 또는 의미 있는 진행 메시지에 prefix를 적용합니다.
+- prefix 목록은 `[intake]`, `[framing]`, `[preparation]`, `[work]`, `[verification]`, `[reporting]`, `[next-flow]`입니다.
+- artifact, record, command summary, question option label은 각 표면의 원래 형식을 유지합니다.
+
+## 플로우 설계 핵심
+
+- 항목 분류는 active flow, parent flow, sub-flow candidate, phase, handoff를 구분합니다.
+- flow 분해는 단일 메인 flow로 충분한지, 여러 메인 flow가 필요한지 정리합니다.
+- 산출물 소유권 확인은 어떤 flow가 어떤 artifact 변경을 소유하는지 드러냅니다.
+- flow별 계약 작성은 scope, non-goals, completion criteria, verification expectation, approval boundary, handoff condition을 정리합니다.
+- 진행 순서 정리는 다음에 들어갈 메인 flow와 이후 후보를 구분하고 `000-plan.md` 갱신 시점입니다.
+- flow record는 메인 플로우 phase, evidence, verification, reporting 시점에서 갱신합니다.
+- 목적 사슬은 contract에 영향을 줄 때 `000-plan.md`의 목적 섹션에 흡수합니다.

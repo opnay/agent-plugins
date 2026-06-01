@@ -1,23 +1,10 @@
-# flow intake 계약
+# flow 메시지 인터뷰 계약
 
-## 소유 범위
-
-사용자 입력을 flow 후보로 해석하기 전의 입력 분석, deep interview, 목표 탐지.
-
-## 계약
-
-- intake는 raw user input을 해석하되 source wording과 해석을 섞지 않는다.
-- intake는 사용자가 원하는 goal, 거절할 non-goal, scope edge, tradeoff, acceptance signal을 탐지한다.
-- intake는 사용자가 드러낸 지속 목적과 현재 변경 목적을 구분한다. 지속 목적은 repository, monorepo, structure 같은 상위 목적일 수 있고, 현재 변경 목적은 이번 active flow가 달성해야 하는 결과다.
-- intake는 commit, push, PR, publish, release, version bump, destructive action 같은 authority-sensitive 표현을 초기에 표시한다.
-- intake는 모호성이나 누락 필드가 있으면 deep interview 질문 주제를 산출한다.
-- deep interview는 단계명이 아니라 intake 안의 전략이다.
-- intake는 flow를 실행하지 않고, framing이 flow 후보를 설계할 수 있는 입력 계약을 만든다.
-
-## 검토 기준
-
-- goal과 non-goal이 분리돼 있는가?
-- 지속 목적과 현재 변경 목적이 섞이지 않았는가?
-- authority-sensitive 표현이 실행 승인으로 오해되지 않게 표시됐는가?
-- 질문이 필요하다면 어떤 contract field를 잠그기 위한 질문인지 드러나는가?
-- raw request와 해석이 섞이지 않았는가?
+- 소유: message -> locked execution brief.
+- 구조: snapshot -> alignment risk -> one question -> answer -> pressure test -> locked brief.
+- risk: intent, target outcome, scope edge, non-goal, tradeoff, decision boundary, constraint, acceptance, approval boundary.
+- 질문: 하나씩. bounded choice 가능하면 tradeoff 포함.
+- 압력 테스트: example, counterexample, explicit non-goal, rejected tradeoff.
+- 반복: 같은 risk가 흐리면 같은 risk를 좁힘.
+- fast path: 명확한 메시지는 snapshot + brief.
+- 산출: locked brief, in/out scope, autonomous decision boundary, remaining confirmation, residual ambiguity.
