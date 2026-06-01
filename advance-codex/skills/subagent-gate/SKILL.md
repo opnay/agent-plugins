@@ -5,64 +5,60 @@ description: Prepare a subagent handoff before spawning or messaging a subagent,
 
 # Subagent Gate
 
-Use this skill before spawning a subagent or sending a substantial new message to an existing subagent. Produce a handoff packet the subagent can act on without inheriting unnecessary main-thread context.
+Use before spawning a subagent or sending a substantial new message to one. Produce a handoff packet only when the task is bounded, separable, and useful outside the main thread.
 
-## Decide Whether To Hand Off
+## Gate
 
-Use a subagent only when the work is bounded, separable, and useful to run outside the main thread. Keep the task local when the next main-thread step is immediately blocked, the scope cannot be cleanly owned, or the task depends on user-gated decisions.
+Keep work local or return `no-handoff` when:
 
-For unsafe or out-of-scope delegation, return a no-handoff note instead of a prompt. Common no-handoff cases:
-
-- the core work is user-gated approval
-- custom agent definition is still unsettled
-- scenario-based instruction evaluation must be designed and judged in the same thread
+- user approval is the core task
+- custom agent definition is unsettled
+- evaluation design and judgment must stay in the main thread
 - destructive, external, commit, push, PR, publish, release, or version-bump decisions are central
-- the return point or stop boundary cannot be stated clearly
+- return point or stop boundary cannot be stated clearly
 
-## Start With The Exit Plan
+## Packet Order
 
-Before task details, write:
+Write the exit plan before task details:
 
-- `Return when`: the exact condition for sending one result back
-- `Stop if`: conditions that require returning without continuing
-- `Close plan`: whether to close after one result or remain available for follow-up
-- `Main-thread blocked state`: what the main thread cannot do until the result arrives, or what it can safely do in parallel
+1. `Return when`: exact condition for one result.
+2. `Stop if`: approval need, ambiguity, scope breach, conflict, or blocker.
+3. `Close plan`: close after one result or remain for bounded follow-up.
+4. `Main-thread blocked state`: what waits for the result, or what can proceed in parallel.
 
-## Build The Minimal Context Packet
+Then add only needed context:
 
-Include only what the subagent needs from its point of view:
+- `Goal`
+- `Relevant facts`
+- `Assigned scope`
+- `Constraints`
+- `Expected output`
+- `Assumptions`
 
-- `Goal`: the concrete objective
-- `Relevant facts`: facts the subagent must preserve
-- `Assigned scope`: files, modules, questions, or responsibilities it owns
-- `Constraints`: write limits, style rules, safety rules, and coordination notes
-- `Expected output`: exact fields or artifact shape to return
-- `Assumptions`: assumptions to preserve, verify, or report
+If edits are possible, say the subagent is not alone in the codebase and must not revert or overwrite unrelated changes.
 
-Tell the subagent it is not alone in the codebase when edits are possible. It must not revert or overwrite unrelated changes, and it should adapt to changes made by others.
+## Approval Limits
 
-## Set Approval Limits
+Do not ask a subagent to approve or execute user-gated, destructive, external, commit, push, PR, publish, release, or version-bump actions. If one is needed, it reports evidence and options to the main thread.
 
-Do not ask a subagent to approve or execute user-gated, destructive, external, commit, push, PR, publish, release, or version-bump actions. If one becomes necessary, the subagent should report the need, evidence, and options back to the main thread.
+## Output
 
-## Output Contract
-
-Request an output the main thread can immediately inspect:
+Require fields the main thread can inspect immediately:
 
 - changed paths, if any
 - decisions made
 - assumptions
 - validation run
-- validation not run and why
+- validation skipped and why
 - residual risk
 - blockers or approval needs
 
-## Handoff Template
+## Template
 
 ```text
 Return when: <result condition>
-Stop if: <approval boundary, scope breach, ambiguity, or blocker>
-Close plan: <close after one result | remain available for follow-up>
+Stop if: <approval boundary, scope breach, ambiguity, conflict, or blocker>
+Close plan: <close after one result | remain for bounded follow-up>
 Main-thread blocked state: <blocked on X | not blocked; main can do Y>
 
 Task: <bounded task>

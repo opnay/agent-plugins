@@ -1,59 +1,59 @@
 ---
 name: subagent-work
-description: Run a reviewable work unit through a strict worker subagent lifecycle, from defining scope and spawning with a complete handoff packet through sync, verification, integration review, compact handoff, and close/dispose. worker subagent, subagent lifecycle, reviewable work unit, subagent handoff, close dispose, compact handoff
+description: Run a reviewable work unit through a strict worker subagent lifecycle, from defining scope and spawning with a complete handoff packet through sync, verification, integration review, compact handoff, and close/dispose. worker subagent lifecycle, reviewable work unit, subagent handoff, close dispose, compact handoff
 ---
 
 # Subagent Work
 
-Use this skill when a worker subagent should own one reviewable work unit while the main thread keeps user conversation, approvals, scope decisions, and final integration judgment.
+Use when one worker subagent should own one reviewable work unit while the main thread keeps user conversation, approvals, scope decisions, and final integration judgment.
 
-Treat each worker as disposable. Open a worker for one clear work unit, review its result, close it when that unit is reviewable, and start the next unit with a compact handoff instead of carrying accumulated worker context forward.
+Treat workers as disposable. Open one worker for one clear unit, review its result, then close it. Start the next unit with a compact handoff instead of accumulated worker context.
 
 ## Lifecycle
 
-1. Prepare: define the reviewable work unit, main-owned decisions, worker-owned execution, approval boundary, and close criteria.
-2. Spawn: send a self-contained worker packet with only the context needed to execute the unit.
-3. Operate: let the worker implement and run first-pass validation while the main thread handles user-facing decisions and non-overlapping orchestration.
-4. Sync: require the worker to return at checkpoints or blockers with changed paths, decisions, validation, and risk.
-5. Integrate: inspect the worker output and changed files before treating the work as complete.
-6. Close: close or dispose the worker once the work unit is reviewable, blocked on approval, or no longer matches the original packet.
-7. Handoff: if more work remains, write a compact handoff for the next worker with completed work, remaining scope, constraints, and risks.
+1. `Prepare`: define work unit, main-owned decisions, worker-owned execution, approval boundary, close criteria.
+2. `Spawn`: send a self-contained packet with only needed context.
+3. `Operate`: worker implements and runs first-pass validation; main thread handles user-facing decisions and non-overlapping orchestration.
+4. `Sync`: worker returns at checkpoints or blockers with changed paths, decisions, validation, and risk.
+5. `Integrate`: main thread inspects output and changed files before accepting.
+6. `Close`: close/dispose when reviewable, approval-blocked, or outside the original packet.
+7. `Handoff`: for a next unit, write a compact handoff with completed work, remaining scope, constraints, and risks.
 
-## Split Responsibilities
+## Responsibility Split
 
-Keep these responsibilities in the main thread:
+Main thread owns:
 
 - user questions and requirement negotiation
 - approval-sensitive choices
 - destructive, external, commit, push, PR, publish, release, and version-bump decisions
 - final review of worker output
-- deciding whether to rework, ask the user, split a new unit, or stop
+- rework, user question, new unit, or stop decisions
 
-Give the worker only bounded execution work:
+Worker owns only:
 
-- implementation within assigned ownership
+- implementation inside assigned scope
 - local investigation needed for that implementation
 - first-pass validation
-- clear reporting of assumptions, blockers, and residual risk
+- assumptions, blockers, and residual risk reporting
 
-If the worker can edit files, tell it that it is not alone in the codebase and must not revert or overwrite unrelated changes.
+If edits are possible, tell the worker it is not alone in the codebase and must not revert or overwrite unrelated changes.
 
-## Worker Packet Template
+## Worker Packet
 
 ```text
-Return when: <the exact condition for returning one reviewable result>
-Stop if: <scope breach, approval need, ambiguity, conflicting edits, missing dependency, failed validation, or other blocker>
-Close plan: <close after one result | close when blocked | remain only if the same work unit needs a bounded follow-up>
-Main-thread blocked state: <what the main thread is blocked on, or what can proceed in parallel>
+Return when: <condition for one reviewable result>
+Stop if: <scope breach, approval need, ambiguity, conflicting edits, missing dependency, failed validation, or blocker>
+Close plan: <close after one result | close when blocked | remain only for same-unit bounded follow-up>
+Main-thread blocked state: <blocked on X | not blocked; main can do Y>
 
 Task: <one reviewable work unit>
 
 Context:
 - You are not alone in the codebase. Do not revert or overwrite unrelated changes.
-- <minimal facts needed to perform the work>
+- <minimal facts needed for the unit>
 
 Main-owned decisions:
-- <questions, approvals, or integration choices the worker must route back>
+- <questions, approvals, or integration choices to route back>
 
 Assigned work unit:
 - <implementation or verification responsibility>
@@ -62,7 +62,7 @@ Editable scope:
 - <files, directories, modules, or "read-only">
 
 Do not touch:
-- <files, surfaces, workflows, or actions outside the unit>
+- <excluded files, surfaces, workflows, or actions>
 - Do not approve or execute destructive, external, commit, push, PR, publish, release, or version-bump actions.
 
 Validation:
@@ -73,50 +73,48 @@ Output:
 - Summary of work
 - Decisions or assumptions
 - Validation run
-- Validation not run and why
+- Validation skipped and why
 - Blockers or approval needs
 - Residual risk
 ```
 
-## Sync And Escalation
+## Sync And Stop
 
-Set sync points before spawning when the unit is not a single short pass. Use checkpoints such as "after investigation," "after first patch," or "after validation failure."
+Set checkpoints before spawning when the unit is not a single short pass, such as after investigation, first patch, or validation failure.
 
-Tell the worker to stop and return evidence when it hits any of these conditions:
+Worker stops and returns evidence when:
 
-- the assigned scope is too small or points at the wrong files
-- a user-gated approval is needed
-- requirements are ambiguous enough to change behavior
-- existing edits conflict with the intended change
-- validation fails and the fix is not obvious within scope
-- a dependency, credential, network action, or external system is required
-- the task would require destructive, commit, push, PR, publish, release, or version-bump action
-- nested delegation would exceed the assigned scope or bypass an approval boundary
+- scope is wrong or too small
+- approval is needed
+- requirements are behavior-changing ambiguous
+- existing edits conflict
+- validation fails and the fix is not obvious in scope
+- dependency, credential, network, or external system is required
+- destructive, commit, push, PR, publish, release, or version-bump action is needed
+- nested delegation would exceed assigned scope or bypass approval
 
-Nested subagents are allowed only inside the worker's assigned scope. Do not let nested delegation launder approval-sensitive work.
+Nested subagents are allowed only inside the worker's assigned scope. They cannot launder approval-sensitive work.
 
-## Review And Integrate
+## Integrate
 
-Do not forward the worker result as the final answer without review. In the main thread:
+Never forward worker output as final without review. In the main thread:
 
-- inspect the changed paths and make sure they match the editable scope
-- compare the result against the task, constraints, and validation expectation
-- check that assumptions and residual risk are explicit
-- run or request any additional validation needed for integration confidence
-- decide whether to accept, send a bounded follow-up to the same worker, ask the user, or split a new work unit
+- inspect changed paths against editable scope
+- compare result with task, constraints, and validation expectation
+- check assumptions and residual risk
+- run or request added validation when needed
+- accept, send same-unit follow-up, ask the user, or split a new unit
 
-Use the same worker only for bounded follow-up on the same work unit. If the scope changes materially, close it and create a new packet.
+Reuse the same worker only for bounded follow-up with the same goal, ownership, approval limits, and close criteria.
 
 ## Compact Handoff
-
-When the next unit needs a new worker, write a compact handoff instead of passing the whole prior conversation:
 
 ```text
 Completed:
 - <what is now true>
 
 Changed paths:
-- <paths from the completed unit>
+- <paths from completed unit>
 
 Remaining scope:
 - <next reviewable work unit only>
@@ -131,14 +129,6 @@ Residual risk:
 - <what the next worker or main thread must watch>
 ```
 
-## Close And Dispose Rules
+## Close
 
-Close or dispose the worker when:
-
-- implementation and first-pass validation for the work unit are done
-- the main thread receives a commit-ready, saved, complete, or next-unit signal
-- approval, ambiguity, conflict, or missing dependency blocks progress
-- the requested scope changes enough to require a new packet
-- accumulated worker context is less clear than a compact handoff
-
-Do not keep a worker alive across multiple reviewable work units. The only exception is a narrow follow-up that preserves the same goal, ownership, approval limits, and close criteria.
+Close or dispose the worker when implementation and first-pass validation are done, a commit-ready/saved/complete/next-unit signal arrives, approval or ambiguity blocks progress, scope changes, or compact handoff is clearer than accumulated worker context.
