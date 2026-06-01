@@ -38,6 +38,7 @@ codex plugin marketplace upgrade
 4. 메인 플로우 회고: 필요한 경우 `000-review.md`에 retrospective note를 남깁니다.
 5. handoff condition: result, verification, residual risk, next intake condition, commit-readiness
 
+사용자-facing 진행 메시지는 현재 phase label을 사용할 수 있고, artifact, 기록, command summary, 질문 option label에는 label을 전파하지 않습니다.
 여러 flow가 필요하면 플로우 설계가 메인 플로우 후보를 만들고, 선택된 flow가 `intake`로 들어갑니다.
 `reporting`과 필요한 회고 뒤 다음 flow가 준비되면 다음 `intake`로 라우팅합니다.
 
@@ -50,6 +51,7 @@ codex plugin marketplace upgrade
 질문 도구는 `flow: deep-interview`와 같은 인터뷰 흐름으로 입력을 구체화한 뒤 다시 `flow`로 들어갑니다.
 Self-drive가 명시되면 그래프 노드가 아니라 준비된 sequence gate가 질문 도구를 대체합니다.
 Record, verification, interruption, date 처리는 메인 그래프 노드가 아니라 active turn을 복구하고 안전하게 라우팅하기 위한 지원 계약입니다.
+사용자-facing 진행 메시지는 source skill이 소유한 phase prefix로 현재 단계를 드러냅니다. `turn-gate`는 `flow` phase label을 재정의하지 않고 적용하며, `next-flow gate`에서는 `[next-flow]`를 소유합니다. Artifact, 기록, command summary, 질문 option label에는 prefix를 전파하지 않습니다.
 
 ## 검증
 

@@ -31,7 +31,13 @@ Runtime `SKILL.md`는 다음만 직접 포함합니다.
 
 Runtime은 flow taxonomy, flow lifecycle, shared template shape, readiness/discovery/ambiguity, handoff meaning을 반복하지 않습니다.
 
-## 표시 계약
+## phase prefix 계약
 
 Visible progress label은 wrapper 상태를 돕는 표시일 뿐 메인 그래프 노드가 아닙니다.
-prefix나 lifecycle label을 artifact, record, command summary, question option label에 복사하지 않습니다.
+사용자-facing phase 시작 또는 의미 있는 진행 메시지는 현재 단계 prefix로 시작합니다.
+
+`turn-gate`는 `flow`가 산출한 phase prefix를 재정의하지 않고 적용합니다.
+`turn-gate`가 직접 소유하는 prefix는 `[next-flow]`이며, handoff 뒤 다음 flow 선택, 질문 도구, self-drive continuation을 여는 메시지에 사용합니다.
+
+prefix나 lifecycle label을 artifact body, record body, raw command output, command output summary, question option label에 기계적으로 복사하지 않습니다.
+이미 prefix가 붙은 사용자-facing 메시지 안의 모든 문장이나 bullet에 prefix를 반복하지 않습니다.

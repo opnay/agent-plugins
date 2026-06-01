@@ -39,6 +39,8 @@
 - reporting은 result, verification, residual risk, 다음 intake 조건을 산출합니다.
 - flow completion은 handoff condition을 남깁니다.
 - 기록 템플릿 계약은 `flow`가 소유하고, active turn 적용과 실제 기록 갱신은 `turn-gate`가 수행합니다.
+- 사용자-facing phase 시작 또는 의미 있는 진행 메시지에는 현재 phase label을 산출합니다. 기본 label은 `[intake]`, `[framing]`, `[preparation]`, `[work]`, `[verification]`, `[reporting]`입니다.
+- phase label은 사용자-facing 진행 표시이며, artifact 본문, record 본문, command output summary, question option label에 전파하지 않습니다.
 
 ## 검토 질문
 
@@ -46,6 +48,7 @@
 - active flow와 candidate가 구분되는가?
 - scope, non-goals, completion, verification, approval, handoff가 있는가?
 - 다음 intake 조건이 flow 산출물로 구분되는가?
+- 사용자-facing phase/progress label이 phase model에서 산출되고, artifact/record/command/question option 표면에는 전파되지 않는가?
 - 메인 플로우 회고가 active routing이나 handoff authority를 소유하지 않는가?
 - plan, flow-record, review 템플릿이 각자 소유할 정보와 금지할 정보를 구분하는가?
 

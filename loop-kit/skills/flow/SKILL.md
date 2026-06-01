@@ -65,6 +65,9 @@ Each selected main flow runs:
 - `verification`: verify or record missing evidence.
 - `reporting`: report result, verification, residual risk, handoff.
 
+For user-facing phase-start or meaningful progress messages, produce the current phase label: `[intake]`, `[framing]`, `[preparation]`, `[work]`, `[verification]`, or `[reporting]`.
+Do not mechanically copy phase labels into artifact bodies, records, command summaries, or question option labels.
+
 If target, operation, scope, verification path, approval boundary, or acceptance changes, return to the earliest safe message-interview, flow-design, or preparation point.
 
 ## Main-Flow Review

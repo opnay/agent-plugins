@@ -12,6 +12,7 @@
 - 메시지 인터뷰: 사용자 메시지에서 intent snapshot, alignment risk, high-leverage question, answer pressure test, locked execution brief를 만듭니다.
 - 플로우 설계: locked brief에서 active flow, parent flow, sub-flow candidate, phase, handoff를 구분하고 진행할 flow 구성을 만듭니다.
 - 메인 플로우: `intake -> framing -> preparation -> work -> verification -> reporting`
+- 사용자-facing 진행 메시지: 현재 phase label을 산출하되, 기록이나 산출물 본문에는 label을 전파하지 않습니다.
 - 메인 플로우 회고: 필요한 경우 `000-review.md`에 retrospective note를 남깁니다.
 - handoff condition: 메인 플로우와 필요한 회고 뒤 result, verification, residual risk, next intake condition, commit-readiness 같은 종료 조건을 산출합니다.
 - 여러 flow가 필요하면 플로우 설계가 여러 메인 플로우 후보를 만들고, 선택된 flow가 메인 플로우 lifecycle로 들어갑니다.
@@ -23,6 +24,8 @@
 - `flow skill: handoff` 뒤에는 `질문 도구: 다음 플로우 선택`으로 다음 flow 입력을 고릅니다.
 - `next-flow gate`에서 사용중인 skill을 다시 읽고, 질문 뒤 `000-plan.md`를 매번 업데이트합니다.
 - 질문 도구는 `flow: deep-interview`와 같은 인터뷰 흐름으로 입력을 구체화한 뒤 다시 `flow`로 들어갑니다.
+- 사용자-facing 진행 메시지는 source skill이 소유한 phase prefix로 현재 단계를 드러냅니다. `turn-gate`는 `flow` phase label을 재정의하지 않고 적용하며, `next-flow gate`에서는 `[next-flow]`를 소유합니다.
+- phase prefix는 artifact, record, command summary, question option label에 전파하지 않습니다.
 - self-drive가 명시되면 그래프 노드가 아니라 준비된 sequence gate가 질문 도구를 대체합니다.
 - record, verification, interruption, date 처리는 메인 그래프 노드가 아니라 active turn을 복구하고 안전하게 라우팅하기 위한 지원 계약입니다.
 

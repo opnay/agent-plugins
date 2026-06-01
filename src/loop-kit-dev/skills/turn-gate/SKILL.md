@@ -31,6 +31,15 @@ Update `000-plan.md` every time `next-flow gate` runs, including active skills, 
 Self-drive is not a graph node.
 Use it only when an explicit prepared sequence gate can replace the question tool.
 
+## Phase Prefixes
+
+Start user-facing phase-start or meaningful progress messages with the current phase prefix.
+Apply phase prefixes produced by `flow`; do not redefine flow-owned phase labels inside `turn-gate`.
+Use `[next-flow]` for post-handoff next-flow questions, question tool opening, or self-drive continuation.
+
+Do not mechanically copy phase prefixes into artifact bodies, records, raw command output, command summaries, or question option labels.
+Do not prefix every sentence or bullet inside an already prefixed user-facing message.
+
 ## Records
 
 Use `references/session-records.md` only to keep active-turn routing recoverable.

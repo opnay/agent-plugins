@@ -55,6 +55,9 @@ graph TD
 - 질문 도구는 `flow: deep-interview`와 같은 인터뷰 흐름으로 다음 flow 입력을 충분히 구체화합니다.
 - `000-plan.md 업데이트`는 선택된 다음 flow 입력, 사용 skill, pending/answered question 상태, next action을 매번 반영합니다.
 - `flow skill: interview` 재진입 뒤에는 구체화된 입력을 기준으로 flow design에 필요한 질문을 우선합니다.
+- phase label은 사용자-facing phase 시작 또는 의미 있는 진행 메시지에 붙입니다.
+- `turn-gate`는 `flow`가 산출한 phase label을 재정의하지 않고 적용합니다. `next-flow gate`를 열 때는 `turn-gate`가 `[next-flow]` label을 소유합니다.
+- phase label은 진행 표시이며 artifact 본문, record 본문, command output summary, 질문 option label에 전파하지 않습니다.
 - self-drive는 그래프 노드가 아니라 준비된 sequence gate가 질문 도구를 대체하는 핵심 경로입니다.
 - 종료 플로우는 별도 그래프로 두고, `turn-gate / 메인`의 모든 시점에서 종료 요청이 오면 `종료 페이즈`로 이동합니다.
 - 종료 페이즈는 `작업 중이던 플로우 정리 -> explicit-stop 기록 - active turn 종료` 순서입니다.

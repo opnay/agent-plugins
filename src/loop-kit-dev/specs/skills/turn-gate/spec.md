@@ -34,6 +34,8 @@
 - 질문 도구는 `flow: deep-interview`와 같은 인터뷰 흐름으로 다음 flow 입력을 충분히 구체화합니다.
 - `000-plan.md 업데이트`는 선택된 다음 flow 입력, 사용 skill, pending/answered question 상태, next action을 매번 반영합니다.
 - `flow skill: interview` 재진입 뒤에는 구체화된 입력을 기준으로 flow design에 필요한 질문을 우선합니다.
+- 사용자-facing phase 시작 또는 의미 있는 진행 메시지는 현재 단계 prefix를 사용합니다. `turn-gate`는 `flow`가 산출한 phase prefix를 재정의하지 않고 적용하며, `next-flow gate`에서는 `[next-flow]`를 소유합니다.
+- phase prefix는 진행 표시이며, artifact 본문, record 본문, command output summary, 질문 option label에 기계적으로 복사하지 않습니다.
 - self-drive는 그래프 노드가 아니라 준비된 sequence gate가 질문 도구를 대체하는 핵심 경로입니다.
 - 종료 요청은 `turn-gate / 메인`의 모든 시점에서 감지하며, 종료 페이즈로 이동합니다.
 - 종료 페이즈는 `작업 중이던 플로우 정리 -> explicit-stop 기록 - active turn 종료` 순서입니다.
@@ -44,6 +46,7 @@
 
 - `turn-gate`가 `flow` 의미를 재정의하지 않고 wrapper로 적용하는가?
 - handoff 뒤 사용중인 skill을 다시 읽고, 질문 도구를 열고, `000-plan.md`를 업데이트한 뒤 interview로 돌아오는가?
+- 사용자-facing phase/progress 메시지에는 source skill이 소유한 phase prefix를 쓰고, artifact/record/command/question option에는 prefix를 전파하지 않는가?
 - self-drive가 명시된 gate 없이 자동 시작되지 않는가?
 - 종료 요청이 source-recorded explicit stop으로만 닫히는가?
 - record, verification, interruption, date 계약이 메인 그래프 노드로 승격되지 않는가?
