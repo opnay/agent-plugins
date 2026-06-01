@@ -8,6 +8,7 @@ description: Interpret a user message through message interview, flow design, ma
 Shape: `message interview -> flow design -> main flow -> handoff condition`.
 
 A flow is a reviewable work unit with scope, non-goals, completion criteria, verification expectation, approval boundary, and handoff condition. Phase checklists, QA, reports, repair, blockers, and commit-readiness stay inside their owning phase or handoff surface.
+Record template meaning belongs to flow; turn-gate applies and updates records during an active turn.
 
 ## Message Interview
 
@@ -40,6 +41,16 @@ For selected flows and candidates, lock identity, type, scope, non-goals, comple
 Candidates stay pending until selected as a main flow.
 `000-plan.md` and active flow records are record surfaces attached to the current phase.
 Purpose chains live in the `000-plan.md` purpose section when they affect scope, acceptance, verification, approval, or handoff.
+
+## Record Templates
+
+When defining or checking record surfaces:
+
+- Use exact bundled templates from `templates/plan.md`, `templates/flow-record.md`, and `templates/review.md` when creating those record types.
+- `plan`: keep a compact flow routing card with active flow, next action, handoff condition, approval boundary, verification expectation, active skills, current request, purpose, flow index, and continuity note.
+- `flow record`: keep one reviewable work unit with contract, phase checklist, execution log, result, metadata, optional pending question, and approval-sensitive action section only when needed.
+- `000-review.md`: keep retrospective notes as a flat tagged list; do not use it for active routing, raw logs, verification authority, commit/release authority, or closure authority.
+- Do not let readiness, verification, build output, previous context, or generated surfaces authorize commit, push, PR, publish, release, version bump, destructive, or external actions.
 
 ## Main Flow
 

@@ -20,6 +20,9 @@
 - `core/boundaries.md`: active/parent/candidate/phase/handoff
 - `core/output-contract.md`: 산출 필드
 - `core/phase-record-checkpoints.md`: 기록 표면
+- `templates/plan.md`: flow plan 템플릿 계약
+- `templates/flow-record.md`: active flow record 템플릿 계약
+- `templates/review.md`: retrospective review 템플릿 계약
 - `core/object.md`: `000-plan.md` 목적 섹션
 - `preparation/*`: readiness/discovery/ambiguity relock
 - `execution/*`: 메인 flow 내부 전략
@@ -34,6 +37,7 @@
 - 메인 플로우는 선택된 active flow의 lifecycle입니다.
 - reporting은 result, verification, residual risk, handoff condition, 다음 intake 조건을 산출합니다.
 - flow completion은 handoff condition을 남깁니다.
+- 기록 템플릿 계약은 `flow`가 소유하고, active turn 적용과 실제 기록 갱신은 `turn-gate`가 수행합니다.
 
 ## 검토 질문
 
@@ -41,8 +45,10 @@
 - active flow와 candidate가 구분되는가?
 - scope, non-goals, completion, verification, approval, handoff가 있는가?
 - 다음 intake 조건이 flow 산출물로 구분되는가?
+- plan, flow-record, review 템플릿이 각자 소유할 정보와 금지할 정보를 구분하는가?
 
 ## 확장 원칙
 
 새 규칙은 메시지 인터뷰, 플로우 설계, 메인 플로우, handoff 중 하나에 귀속합니다.
 목적 사슬, 실행 전략, commit-readiness는 보조 child spec에서 필요할 때 적용합니다.
+기록 템플릿은 flow 산출물과 복구 표면의 의미를 설명하고, runtime 적용 제어는 turn-gate로 둡니다.
