@@ -168,6 +168,7 @@ Distinguish missing states:
 - unexpectedly missing active record: report blocker or ask for recovery choice.
 - inaccessible active record: keep blocker until access is restored or the user chooses recovery.
 - stale closure state: reset closure authority and record recovery.
+- prior explicit-stop or terminal-looking closure followed by a new user message: reactivate `turn-gate` as a fresh active turn and record the new intake before work.
 - stale self-drive sidecar: if plan says self-drive is inactive, treat the sidecar as historical.
 - stale routing mismatch: reconcile from the latest source or ask a clarification.
 

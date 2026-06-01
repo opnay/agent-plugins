@@ -18,6 +18,8 @@ Do not finish with a final/terminal closeout while `turn_gate_active` is true an
 Final-looking wording and actual final responses are not closure authority.
 Compression or status-only mode cannot remove the next question, blocker question, or valid self-drive handoff.
 
+An explicit stop closes only the current turn. If any later user message arrives, route it as a fresh `turn-gate` activation before deciding the next flow.
+
 ## When To Ask
 
 Route through a user question when the answer can change:

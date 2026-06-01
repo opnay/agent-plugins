@@ -10,6 +10,8 @@ description: Keep an active Codex turn open until explicit stop; apply flow deci
 Keep the active Codex turn open until the user explicitly stops it and that stop source is recorded.
 Completion, commits, passing checks, status answers, reports, interrupted questions, final-looking summaries, and final responses are not closure authority.
 
+Explicit stop closes only the current turn. When the next user message arrives, reactivate `turn-gate` as a new active turn regardless of whether the previous stop was intentional, accidental, interrupted, or terminal-looking.
+
 Every active flow ends in exactly one recorded state:
 
 - `next-flow`: reporting is done, records are updated, and the next user decision is open
@@ -21,6 +23,8 @@ Use `references/session-records.md` for `000-plan.md`, flow records, phase check
 
 If the user only activates `turn-gate`, record the operating state and open scope or next-flow routing.
 Do not answer with a terminal activation summary.
+
+If the previous record shows `explicit-stop` or stale closure, treat the new user message as fresh intake, reset closure authority, and record the reactivation before work.
 
 ## Flow Dependency
 

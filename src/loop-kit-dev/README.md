@@ -87,6 +87,7 @@ codex plugin marketplace upgrade
 
 `turn-gate`가 호출되면, 현재 세션 동안 이 skill을 1급 운영 규칙으로 활성화한 것으로 취급합니다.
 이 규칙은 skill body의 `Important` 섹션에서 먼저 드러나며, 결과 보고만으로 턴을 닫지 않고 다음 플로우 질문을 다시 여는 동작을 우선 계약으로 둡니다.
+사용자가 명시적으로 종료해도 그 종료는 현재 turn에만 적용됩니다. 이후 새 사용자 메시지를 받으면 `turn-gate`는 다시 활성화되어 새 intake를 시작해야 합니다.
 
 ## 턴 구조
 

@@ -11,6 +11,7 @@ flow identity, readiness, ambiguity, contract impact, handoff 판단은 `flow`�
 ## 포함 범위
 
 - active-turn continuity와 explicit-stop 처리
+- explicit-stop 또는 의도치 않은 종료 뒤 다음 사용자 메시지에서 turn-gate 재활성화
 - `intake -> framing -> preparation -> work -> verification -> reporting -> next-flow` 운영
 - session record와 Continuity Guard
 - active flow 도중 사용자 메시지의 entry-only interruption routing
@@ -30,7 +31,8 @@ flow identity, readiness, ambiguity, contract impact, handoff 판단은 `flow`�
 
 - Runtime skill: `src/loop-kit-dev/skills/turn-gate/SKILL.md`
 - Runtime references/templates: `src/loop-kit-dev/skills/turn-gate/references/`, `templates/`
-- User intent: `src/loop-kit-dev/specs/skills/turn-gate/intent.md`
+- Current intent diagram: `src/loop-kit-dev/specs/skills/turn-gate/intent.md`
+- Legacy user intent: `src/loop-kit-dev/specs/skills/turn-gate/intent-legacy.md`
 - Regression intent fixtures: `src/loop-kit-dev/specs/skills/turn-gate/intent-scenarios/`
 
 ## 계약 맵
@@ -57,6 +59,7 @@ Runtime `SKILL.md`는 설치 후 실제로 존재하는 `SKILL.md`, `references/
 - reporting 전에는 record를 갱신하고, reporting 뒤에는 next-flow, blocker, valid self-drive continuation, explicit-stop 중 하나로 라우팅해야 합니다.
 - active flow 도중 새 사용자 메시지가 오면 current phase를 보존하고 `flow` contract-impact를 적용해야 합니다.
 - source-recorded explicit stop만 terminal closure 근거가 됩니다.
+- explicit stop은 현재 turn만 닫습니다. 다음 사용자 메시지를 받으면 이전 종료가 의도적이었는지와 무관하게 새 `turn-gate` activation으로 기록하고 lifecycle을 다시 시작해야 합니다.
 
 ## 검토 질문
 
@@ -64,4 +67,5 @@ Runtime `SKILL.md`는 설치 후 실제로 존재하는 `SKILL.md`, `references/
 - `turn-gate`가 flow 판단을 재정의하지 않고 적용만 하는가?
 - 보고 뒤 next action 또는 blocker가 기록과 사용자-facing routing에 남아 있는가?
 - question abort, completed checks, final-looking wording이 closure로 오해되지 않는가?
+- 이전 explicit stop이나 의도치 않은 terminal-looking response 뒤 다음 사용자 메시지에서 새 turn-gate activation이 일어나는가?
 - 승인 민감 작업은 별도 명시 승인 없이는 실행되지 않는가?

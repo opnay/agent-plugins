@@ -1,0 +1,35 @@
+## 사용자 스펙 의도
+
+- `turn-gate` 활성화는 세션 단위의 1급 응답 규칙이어야 한다.
+- 이 skill이 활성화된 turn은 사용자가 명시적으로 현재 turn을 종료하자고 요청할 때까지 일반적인 terminal summary로 닫히지 않아야 한다.
+- `turn-gate`는 대화 응답 자체를 제어하며, 각 phase 시작 또는 phase progress 사용자-facing 메시지는 `[intake]`, `[framing]`, `[preparation]`, `[work]`, `[verification]`, `[reporting]`, `[next-flow]` 같은 core phase prefix로 드러나야 한다.
+- `turn-gate`의 operating cycle은 `intake -> framing -> preparation -> work -> verification -> reporting -> next-flow`여야 한다.
+- concrete task는 source-recorded active flow 안에서만 진행되어야 한다.
+- active flow가 없거나 flow contract가 부족하면 필수 `flow` decision을 적용해 scope, non-goal, acceptance signal, verification expectation, handoff condition을 잠가야 한다.
+- `turn-gate`는 flow 자체를 정의하거나 flow-local strategy를 재정의하지 않고, 의존하는 `flow`의 decision을 현재 turn에 적용하고 session record에 기록해야 한다.
+- `turn-gate`는 flow reporting 뒤 source-recorded explicit stop이 없으면 `next-flow` phase로 이어져 다음 flow 선택지를 열어야 한다.
+- `turn-gate`의 reporting phase는 종료 요약이 아니라 다음 사용자 입력을 받기 위한 pre-intake 전환이어야 하며, 보고 내용은 다음 질문에 필요한 decision surface를 만들어야 한다.
+- 질문, 선택지, blocker decision, 다음 flow 선택은 user-gated question routing으로 드러나야 한다.
+- 질문 도구가 사용 가능하면 필요한 user-gated routing에 적극 사용하고, 사용할 수 없으면 active plain-text question fallback과 required next action을 기록해야 한다.
+- 질문 도구가 사용자 interrupt나 새 메시지로 중단되더라도 그것만으로 turn 종료나 terminal summary 권한이 생기지 않아야 하며, 다음 사용자 메시지는 pending question recovery 또는 superseded flow routing으로 해석해야 한다.
+- visible next-flow 선택지에 turn-end option을 표시하지 못하더라도 flow record의 `Next Flow Options`에는 explicit turn-end option이 항상 남아야 한다.
+- `.agents/sessions/{YYYYMMDD}/000-plan.md`는 date-level index, active snapshot, planned flow sequence, required next action을 소유해야 한다.
+- `.agents/sessions/{YYYYMMDD}/{count-pad3}-{eng-lower-slug}.md`는 개별 flow의 contract, boundary, execution log, verification, report, next-flow options를 소유해야 한다.
+- session record에는 Continuity Guard가 있어야 하며, stale closure, inaccessible record, missing active record, routing mismatch를 terminal closure authority로 사용하지 않아야 한다.
+- 사용자 메시지 원문을 저장할 때는 요약/해석과 분리하고, 원문을 재가공, 수정, 번역, 오탈자 정정, 완곡화, 맥락 병합하지 않아야 한다.
+- verification은 작업 위험도에 따라 `clean-context`, `normal`, `not-required` method 중 하나를 선택해야 한다.
+- verification method와 result status는 분리해야 하며, `not-required`는 automatic pass나 terminal closure authority가 아니어야 한다.
+- 파일 변경, release surface, 다중 파일 계약, 실패 이력, 사용자 요청 검증, approval-sensitive action에는 기본적으로 bounded read-only clean-context verifier를 사용해야 한다.
+- clean-context verifier의 사전 허용은 검증 전용이며, 파일 수정, scope 확장, destructive/external action, commit/push/PR/publish/release/version-bump approval 생성에는 적용되지 않는다.
+- `turn-gate`는 destructive, irreversible, external, commit, push, PR, publish, release, version bump 같은 approval-sensitive action의 실행 권한을 readiness, verification, self-drive, 이전 맥락에서 추론하지 않아야 한다.
+- approval-sensitive action은 정확한 target, expected effect, risk, recovery path, include/exclude scope, endpoint가 확인된 뒤에만 실행 checkpoint로 넘어갈 수 있어야 한다.
+- self-drive는 기본 상태가 아니라 명시적으로 준비된 flow sequence 위에 적용되는 overlay여야 한다.
+- self-drive가 active일 때 sequence objective, planned flow list, active flow index, allowed/prohibited autonomous actions, approval-sensitive checkpoints, endpoint, blocker return conditions, progress note는 `000-self-drive.md`가 소유해야 한다.
+- `000-plan.md`는 self-drive active 여부와 sidecar pointer만 소유하고, self-drive detail은 일반 plan/flow template에 상시 노출하지 않아야 한다.
+- active self-drive 중 새 사용자 메시지는 `self-drive`를 다시 언급하지 않아도 mid-sequence input으로 처리하되, explicit stop, approval boundary, scope lock, endpoint lock, user-gated routing을 대체하지 않아야 한다.
+- flow 해석, sub-flow 후보 설계, readiness/discovery, review-loop, fix-verify-loop, broad-execution, commit-readiness 판단은 `flow` intent와 spec이 소유하고, `turn-gate` intent에는 turn-level gate 책임만 남겨야 한다.
+- 각 새 flow 시작 지점에서는 현재 flow에 필요한 skill을 다시 읽어 stale instruction이나 이전 flow의 skill context에 기대지 않아야 한다.
+- active flow 도중 새 사용자 메시지가 들어오면 일반 lifecycle phase가 아닌 `interruption` 진입점으로 먼저 분류하고, inline answer, current-flow revision, background flow, later analysis reservation, supersede, blocker question, explicit stop 중 하나로 라우팅해야 한다.
+- `interruption` 중 기존 flow contract 변경 여부, 새 foreground flow 여부, future candidate 여부는 `flow` 판단에 의존하고, `turn-gate`는 그 결과를 기록·질문·라우팅해야 한다.
+- self-drive advance 중 current flow completion, next flow identity, handoff 조건은 `flow` output을 원천으로 삼고, `turn-gate`는 sidecar gate와 explicit stop/approval boundary만 운영해야 한다.
+- `turn-gate`가 의도적으로 explicit stop으로 끝났든, 질문 중단이나 terminal-looking response 같은 의도치 않은 방식으로 끊겼든, 다음 사용자 메시지를 받으면 다시 `turn-gate`를 활성화해야 한다.

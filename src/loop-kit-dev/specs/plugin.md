@@ -33,6 +33,7 @@ work 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, f
   - prepared flow sequence에 적용될 수 있는 별도 self-drive overlay reference 제공
   - work 전 operation meaning resolution
   - `turn-gate`의 독립적인 implicit default state 유지
+  - explicit stop 또는 의도치 않은 종료 뒤 다음 사용자 메시지에서 `turn-gate` 재활성화
   - user-gated question routing 유지
   - active flow 도중 들어온 사용자 메시지를 `interruption` entry-only routing으로 분류
   - `clean-context`, `normal`, `not-required` verification method 선택과 중복 검증을 피하는 최소 충분 evidence 구성
@@ -76,6 +77,7 @@ work 전에는 사용자 지시어의 operation 의미가 파일, skill, spec, f
   - spec: `loop-kit-dev/specs/skills/flow/spec.md`
 - `turn-gate`: turn continuity를 유지하고, 현재 턴에서 `flow` 계약을 적용하도록 강제하며, flow reporting 뒤 next-flow 질문을 열어 reporting을 다음 입력의 pre-intake로 만든다.
   - `flow` 판단을 재정의하지 않고 session record, question routing, explicit stop guard, verification routing, self-drive sidecar gate를 운영한다.
+  - explicit stop은 현재 turn만 닫으며, 다음 사용자 메시지를 받으면 새 active turn으로 재활성화한다.
   - spec: `loop-kit-dev/specs/skills/turn-gate/spec.md`
 
 ## SDD 운영 원칙
