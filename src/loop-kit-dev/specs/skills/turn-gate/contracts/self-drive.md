@@ -3,7 +3,7 @@
 ## 소유 범위
 
 self-drive는 사용자가 명시적으로 맡긴 범위 안에서 다음 flow 또는 loop를 자율 진행할 수 있는지 판단하는 overlay입니다.
-기본 `intake -> framing -> preparation -> work -> verification -> reporting -> next-flow` lifecycle, 기록, 검증, 승인 checkpoint를 대체하지 않습니다.
+기본 `flow.intake -> flow.reporting -> next-flow` wrapper, 기록, 검증, 승인 checkpoint를 대체하지 않습니다.
 
 모드는 둘입니다.
 

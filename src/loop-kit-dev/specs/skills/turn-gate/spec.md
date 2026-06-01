@@ -12,7 +12,7 @@ flow identity, readiness, ambiguity, contract impact, handoff 판단은 `flow`�
 
 - active-turn continuity와 explicit-stop 처리
 - explicit-stop 또는 의도치 않은 종료 뒤 다음 사용자 메시지에서 turn-gate 재활성화
-- `intake -> framing -> preparation -> work -> verification -> reporting -> next-flow` 운영
+- `flow.intake -> flow.reporting -> next-flow` wrapper 운영
 - session record와 Continuity Guard
 - active flow 도중 사용자 메시지의 entry-only interruption routing
 - reporting 뒤 next-flow, blocker, question recovery routing
@@ -56,7 +56,7 @@ Runtime `SKILL.md`는 설치 후 실제로 존재하는 `SKILL.md`, `references/
 
 - activation-only 요청도 기록된 active state와 next-flow routing을 만들어야 합니다.
 - 새 flow 시작 지점에서는 필요한 skill을 다시 읽고 `000-plan.md`의 active skill list를 갱신해야 합니다.
-- work 전에는 `flow`가 산출한 scope, non-goals, acceptance, verification, approval, handoff 계약을 적용해야 합니다.
+- work 전에는 `flow`가 산출한 계약을 적용해야 합니다.
 - reporting 전에는 record를 갱신하고, reporting 뒤에는 next-flow, blocker, valid self-drive continuation, explicit-stop 중 하나로 라우팅해야 합니다.
 - active flow 도중 새 사용자 메시지가 오면 current phase를 보존하고 `flow` contract-impact를 적용해야 합니다.
 - source-recorded explicit stop만 terminal closure 근거가 됩니다.
