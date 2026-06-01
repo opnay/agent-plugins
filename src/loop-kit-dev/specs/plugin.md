@@ -5,7 +5,7 @@
 `loop-kit-dev`는 `flow`와 `turn-gate`를 함께 제공하는 loop 운영 플러그인입니다.
 
 - `flow`: `메시지 인터뷰 -> 플로우 설계 -> 메인 플로우 -> handoff condition`
-- `turn-gate`: active turn 유지, phase prefix, record, verification, next-flow routing
+- `turn-gate`: active turn 유지, phase prefix, record, verification, next turn-flow/message routing
 
 ## Flow 계약
 
@@ -28,8 +28,8 @@
   - `[reporting]`
   - `[next-flow]`
 - prefix는 artifact, record, command output, question option label의 원래 형식을 보존합니다.
-- `reporting`은 다음 사용자 결정의 pre-intake 표면입니다.
-- self-drive가 명시되면 prepared sequence의 다음 flow 준비를 자체적으로 진행합니다.
+- `reporting` 뒤에는 `next turn-flow / 메시지 수신`을 열고, explicit stop이 있을 때만 현재 턴을 닫습니다.
+- self-drive가 명시되면 recorded sidecar gate를 통과한 뒤 다음 flow를 자체 해석으로 준비합니다.
 
 ## 포함 범위
 
@@ -64,7 +64,7 @@
 ## 내장 Skill
 
 - `flow`: 사용자 메시지를 해석하고 실제 진행할 flow를 설계합니다. active flow, parent flow, candidate, phase, handoff, readiness, ambiguity, output contract를 소유합니다.
-- `turn-gate`: active turn을 유지하고, `flow` 판단을 적용하며, phase prefix, session record, verification routing, next-flow question routing, self-drive gate를 운영합니다.
+- `turn-gate`: active turn을 유지하고, `flow` 판단을 적용하며, phase prefix, session record, verification routing, next turn-flow/message routing, self-drive gate를 운영합니다.
 
 ## SDD 운영
 

@@ -1,6 +1,6 @@
 ---
 name: turn-gate
-description: Keep an active Codex turn open until explicit stop; apply flow decisions instead of redefining them; maintain session records, verification routing, interruption recovery, reporting-as-pre-intake next-flow routing, and prepared self-drive.
+description: Keep an active Codex turn open until explicit stop; apply flow decisions instead of redefining them; maintain session records, verification routing, interruption recovery, next turn-flow/message routing, and prepared self-drive.
 ---
 
 # Turn Gate
@@ -15,7 +15,7 @@ When the next user message arrives, reactivate `turn-gate` as a fresh active tur
 
 Every active flow routes to exactly one recorded state:
 
-- `next-flow`: reporting is done and the next user decision is open
+- `next turn-flow / 메시지 수신`: reporting is done and the next input route is open
 - `blocked`: input, approval, access, or external state is required
 - `explicit-stop`: the current user message stops the turn and the stop source is recorded
 
@@ -24,16 +24,16 @@ Every active flow routes to exactly one recorded state:
 `turn-gate` wraps `flow`.
 Do not define or restate flow taxonomy, lifecycle, readiness, discovery, ambiguity, contract impact, checkpoint expectations, flow-local strategy, template meaning, or handoff meaning.
 
-Use `flow` for the work-unit contract and result.
+Use `flow` for `flow.message -> flow.main-flows -> flow.end`, the work-unit contract, and the result.
 `turn-gate` only applies that result to active-turn continuity, records, questions, verification routing, self-drive gate, approval guardrails, and explicit stop handling.
 
 ## Wrapper Loop
 
 Use this wrapper loop:
 
-1. `flow.intake`: reread needed skills and apply the `flow` contract.
-2. `flow.reporting`: record the `flow` result, verification state, risk, and handoff or next-intake condition.
-3. `next-flow`: route a next action, blocker, self-drive continuation, or explicit stop.
+1. `flow skill`: apply `flow.message -> flow.main-flows -> flow.end`.
+2. `next turn-flow / 메시지 수신`: wait for the next user message, blocker decision, approval decision, self-drive continuation, or explicit stop.
+3. self-drive mode may route from `next turn-flow / 메시지 수신` back into `flow skill` through recorded sidecar gate.
 
 Use phase prefixes for visible phase-start or meaningful progress messages.
 Use `[intake]`, `[work]`, `[verification]`, `[reporting]`, and `[next-flow]` for turn-gate-owned wrapper work.
@@ -52,7 +52,7 @@ Do not treat readiness, verification, generated release surface, previous contex
 
 ## Reporting And Questions
 
-Reporting is a pre-intake transition, not terminal closeout.
+Reporting opens `next turn-flow / 메시지 수신`; it is not terminal closeout.
 After reporting, reopen routing unless explicit stop is recorded.
 
 Use `request_user_input` when it is available and choices are narrow.
@@ -83,7 +83,7 @@ Results: `pass`, `fail`, `blocked`, `insufficient`.
 
 `not-required` is a method, not a pass.
 `not-started` and `requested` are progress states, not success evidence.
-Route non-pass results before success reporting, self-drive continuation, release readiness, commit-readiness, or next-flow continuation.
+Route non-pass results before success reporting, self-drive continuation, release readiness, commit-readiness, or `next turn-flow / 메시지 수신`.
 Use `references/verification.md` for verifier packet boundaries and detailed status routing.
 
 ## Self-Drive

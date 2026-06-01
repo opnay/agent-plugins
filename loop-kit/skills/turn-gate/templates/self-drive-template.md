@@ -2,7 +2,7 @@
 status: active
 mode: finite | infinite
 active_flow_record: {record-path-or-id}
-next_action: {required-next-action}
+next_action: {required-next-turn-flow-or-message-action}
 progress_note: {compact-current-progress}
 blocker_state: none | {blocker-summary}
 blocker_impact: none | {acceptance|verification|approval|access|external|user-input|internal-repair}
@@ -16,7 +16,7 @@ loop_count: {start-at-1-and-increment-after-verified-handoff}
 current_loop_label: {label}
 ---
 
-# Turn Gate Self-Drive
+# Turn Gate Self-Drive Sidecar
 
 ## Goal
 
@@ -43,5 +43,5 @@ Omit `Sequence` for `mode: infinite` unless the current iteration needs a short 
 ## Handoff
 
 - next: `{handoff-condition-or-next-action}`
-- advance: `{verification pass; not blocked; next identity known; approval boundary unchanged}`
+- advance: `{verification pass; not blocked; next turn-flow identity known; approval boundary unchanged}`
 - position: `{keep current index or loop_count until advance is confirmed}`

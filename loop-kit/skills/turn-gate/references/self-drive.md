@@ -3,7 +3,7 @@
 Self-drive lets Codex continue inside a recorded boundary without asking after every flow.
 It does not replace `flow`, records, verification, approval checkpoints, or explicit-stop handling.
 
-Use self-drive only when the user explicitly requests it or selects it as a next-flow mode.
+Use self-drive only when the user explicitly requests it or selects it as a `next turn-flow / 메시지 수신` mode.
 Do not infer it from a long task list, passing checks, available subagents, or a plain "continue" request.
 
 ## Modes
@@ -67,7 +67,7 @@ Advance only after:
 - plan and sidecar gate pass again
 
 Repair and recheck stay in the current flow until it passes.
-Sequence completion or endpoint exhaustion stops autonomous advancement, reports status, updates records, and reopens next-flow routing unless the user explicitly stops.
+Sequence completion or endpoint exhaustion stops autonomous advancement, reports status, updates records, and reopens `next turn-flow / 메시지 수신` unless the user explicitly stops.
 
 ## Updates
 

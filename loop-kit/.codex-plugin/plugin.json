@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "Loop Kit",
     "shortDescription": "Flow design plus turn-gated continuity for multi-flow agent work.",
-    "longDescription": "Provides flow for message interview, flow design, main-flow lifecycle, and handoff conditions, plus turn-gate for phase prefixes, verification, next-flow routing, and active turn continuity.",
+    "longDescription": "Provides flow for message interview, flow design, main-flow lifecycle, and handoff conditions, plus turn-gate for phase prefixes, verification, next turn-flow/message routing, and active turn continuity.",
     "developerName": "opnay",
     "category": "Productivity",
     "capabilities": [
@@ -30,7 +30,7 @@
     ],
     "defaultPrompt": [
       "Use flow as message interview -> flow design -> main flow -> handoff condition, then use turn-gate to keep the turn open until I explicitly stop.",
-      "Use phase prefixes for visible phase-start or meaningful progress messages, and treat reporting as pre-intake for the next user decision.",
+      "Use phase prefixes for visible phase-start or meaningful progress messages, and after reporting open next turn-flow/message routing unless I explicitly stop.",
       "If a later user message arrives after an explicit or accidental stop, reactivate turn-gate and start fresh intake."
     ],
     "brandColor": "#1D6E6E"

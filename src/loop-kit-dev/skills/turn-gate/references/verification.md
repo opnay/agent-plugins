@@ -1,6 +1,6 @@
 # Verification
 
-Use this reference to select and record verification before reporting.
+Use this reference to record verification method/result and route non-pass results before `next turn-flow / 메시지 수신`.
 
 ## Method Is Separate From Result
 
@@ -25,11 +25,11 @@ Use `pass` only if existing evidence is enough for the acceptance signal; otherw
 
 ## Methods
 
-Use `clean-context` for a bounded read-only verifier packet. It must not be a full-history fork.
+`clean-context`: bounded read-only verifier packet. It must not be a full-history fork.
 
-Use `normal` for main-thread checks, readback, evidence review, and logical counterexample review.
+`normal`: main-thread checks, readback, evidence review, and logical counterexample review.
 
-Use `not-required` only when a separate verification action would not add meaningful confidence for the recorded risk.
+`not-required`: use only when a separate verification action would not add meaningful confidence for the recorded risk.
 
 ## Clean-Context Default
 
@@ -65,4 +65,4 @@ Before success reporting:
 - `insufficient`: collect more evidence or strengthen verification.
 - `blocked`: open blocker routing for the needed input, access, approval, or external state change.
 
-Non-pass status takes priority over self-drive continuation, endpoint exhaustion, release readiness, commit-readiness, and next-flow continuation.
+Non-pass status takes priority over self-drive continuation, endpoint exhaustion, release readiness, commit-readiness, and `next turn-flow / 메시지 수신`.

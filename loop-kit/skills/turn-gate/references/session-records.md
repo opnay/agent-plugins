@@ -64,7 +64,7 @@ If the user forbids all writes or record creation, do not write records and do n
 
 ## Questions
 
-After reporting, reopen next-flow routing unless explicit stop is recorded.
+After reporting, reopen `next turn-flow / 메시지 수신` unless explicit stop is recorded.
 Use `answered_question` and `pending_question` for question recovery.
 Do not invent alternate question-state fields.
 

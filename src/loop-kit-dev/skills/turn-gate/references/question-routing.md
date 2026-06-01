@@ -1,59 +1,38 @@
 # Question Routing
 
-Use this reference when a flow needs user choice, clarification, blocker recovery, next-flow reopening, or recovery after an interrupted question tool call.
+Use this reference for `next turn-flow / 메시지 수신` and question recovery after `flow.end`.
 
-## Reporting As Pre-Intake
+## Open Routing
 
-When `turn-gate` is active, reporting prepares the next user input.
-It is not a terminal summary.
+When `turn-gate` is active, a report is not terminal closure.
+After `flow.end`, keep routing open unless an explicit stop is source-recorded.
 
-After reporting, do all of these unless explicit stop is source-recorded:
+Valid next input paths:
 
-1. Keep routing open in the active flow record.
-2. Identify the next decision, blocker recovery, approval, scope choice, or self-drive continuation gate.
-3. Ask through `request_user_input` when the choices are narrow and the tool is available.
-4. If the tool is unavailable, ask an active plain-text question and avoid terminal closeout wording.
+- user message
+- self-drive interpretation
+- blocker decision
+- approval decision
+- explicit stop
 
-Do not finish with a final/terminal closeout while `turn_gate_active` is true and no explicit stop is recorded.
-Final-looking wording and actual final responses are not closure authority.
-Compression or status-only mode cannot remove the next question, blocker question, or valid self-drive handoff.
+Do not treat final-looking wording, status-only reporting, compression, or a successful `flow.end` as turn closure.
+Closure requires explicit stop.
 
-An explicit stop closes only the current turn. If any later user message arrives, route it as a fresh `turn-gate` activation before deciding the next flow.
+## Asking
 
-## When To Ask
-
-Route through a user question when the answer can change:
+Ask only for the decision needed now when it can change:
 
 - next flow selection
-- scope, target, endpoint, or acceptance signal
+- target, scope, endpoint, or acceptance signal
 - approval-sensitive boundary
 - verification path
 - blocker recovery
 - current-flow identity
 - whether a pending question has been answered or superseded
 
-Ask only for the decision needed now.
-Do not bundle unrelated future work just because it is possible.
-
-## Structured Tool
-
 Use `request_user_input` when it is available and the choices are narrow.
-Keep options tied to the report or blocker that led to the question.
 Prefer two or three mutually exclusive choices.
-
-If the tool UI cannot include an explicit stop option, still do both:
-
-- mention in the prompt or fallback text that the user can explicitly end the turn
-- record explicit turn-end in `Result.next` or temporary next options
-
-## Plain-Text Fallback
-
-When no structured question tool is available, keep the turn active with plain text:
-
-1. State that the structured question tool is unavailable.
-2. List the narrow choices.
-3. Mark the required next action in the record.
-4. Avoid terminal closeout language.
+When the tool is unavailable, ask an active plain-text question and record the required next action.
 
 ## Abort Recovery
 
@@ -80,11 +59,10 @@ If it selects an option and adds a note, record both the selected answer and the
 
 ## Blocker Routing
 
-A blocker question or report must say:
+A blocker question or report keeps the turn open unless explicit stop is recorded.
+It must say:
 
 - what is blocked
 - what evidence was collected
 - what decision, access, approval, or external state change is needed
 - what work is excluded until the blocker is resolved
-
-Blocker routing keeps the turn open unless the user explicitly stops it.

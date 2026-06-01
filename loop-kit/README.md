@@ -3,7 +3,7 @@
 `loop-kit`는 Codex 작업 턴을 flow 단위로 유지하는 플러그인입니다.
 
 - `flow`: `메시지 인터뷰 -> 플로우 설계 -> 메인 플로우 -> handoff condition`
-- `turn-gate`: active turn continuity, phase prefix, verification, next-flow routing
+- `turn-gate`: active turn continuity, phase prefix, verification, next turn-flow/message routing
 
 > [!WARNING]
 > Codex의 개발 중인 기능인 `default_mode_request_user_input`를 활성화해야 합니다.
@@ -55,8 +55,8 @@ codex plugin marketplace upgrade
 - `[next-flow]`
 
 Artifact, record, command output, question option label은 각 표면의 원래 형식을 유지합니다.
-`reporting`은 다음 사용자 결정의 pre-intake 표면입니다.
-Self-drive가 명시되면 준비된 sequence의 다음 flow 준비를 자체적으로 진행합니다.
+`reporting` 뒤에는 `next turn-flow / 메시지 수신`을 열고, explicit stop이 있을 때만 현재 턴을 닫습니다.
+Self-drive가 명시되면 recorded sidecar gate를 통과한 뒤 다음 flow를 자체 해석으로 준비합니다.
 
 ## 검증
 
