@@ -1,0 +1,74 @@
+# git-committer Skill Spec
+
+## 목적
+
+`git-committer`는 readiness 판단이 끝난 변경을 실제 task-scoped commit으로 마무리하는 finalization skill입니다.
+핵심은 커밋 준비, 명시적 commit 실행 권한, staged 검증, commit message 품질, post-commit 확인을 하나의 좁은 실행 계약으로 묶는 것입니다.
+
+## 경계
+
+- 포함:
+  - 실제 commit 실행 승인 확인
+  - commit 범위 분리와 staged diff 검토
+  - staged 검증과 필요한 보조 확인의 skip/failure 보고
+  - colon-separated commit message와 body 작성 규율
+  - 최종 commit 생성과 metadata 확인
+- 제외:
+  - readiness 판단 자체
+  - unrelated change cleanup
+  - interactive git tutoring 전반
+  - implementation 자체의 설계
+  - push, PR, release, publish, version bump 승인
+
+## 처리하려는 작업 형태
+
+- 사용자가 작업을 commit으로 마무리하거나 실제 commit 실행을 요청한 경우
+- mixed change를 task-scoped commit 단위로 나눠야 하는 경우
+- commit message quality와 staged 검증이 중요한 경우
+
+## 대표 표면
+
+- 대표 runtime 표면: `advance-codex-dev/skills/git-committer/SKILL.md`
+- 사용자 스펙 의도: `advance-codex-dev/specs/skills/git-committer/intent.md`
+- skill spec index: `advance-codex-dev/specs/skills/git-committer/spec.md`
+- sub-spec directory: `advance-codex-dev/specs/skills/git-committer/`
+
+## 상세 계약 구조
+
+- `intent.md`: 사용자 스펙 의도와 commit flow graph
+- `workflow.md`: commit preparation, commit execution authority, commit execution
+- `message.md`: commit type, subject, body 작성 규칙
+- `verification.md`: staged 검증, 필요한 보조 확인, skip/failure, post-commit 확인
+
+## 핵심 처리 계약
+
+- `git-committer`는 사용자 요청 작업을 커밋 준비, 커밋 실행 권한, 커밋 실행으로 나눠 처리합니다.
+- commit, push, PR, release, publish, version bump는 서로 다른 approval-sensitive boundary입니다.
+- readiness 통과, 검증 통과, handoff, session record만으로 commit 실행 승인을 만들지 않습니다.
+- 커밋 준비는 프로젝트의 커밋 준비 단계와 커밋할 범위 선택을 포함합니다.
+- 커밋 실행 권한은 사용자의 실제 commit 실행 승인을 확인하는 별도 단계입니다.
+- 커밋 실행은 staged 검증, 메시지 준비, 커밋 생성을 포함합니다.
+- staged 검증이나 필요한 보조 확인은 실행 불가/스킵 이유와 residual risk를 기록할 수 있어야 합니다.
+- 커밋 메시지는 `type: detailed subject` 형식과 bullet body를 사용합니다.
+- 커밋 후에는 최신 commit metadata와 working tree 상태를 확인해 결과를 보고합니다.
+
+## 독립성 원칙
+
+`git-committer`는 독립 실행 가능한 runtime skill이어야 합니다.
+본문은 sibling skill 이름을 handoff 기준으로 언급할 수 있지만, 실행을 위해 dev-only spec 경로나 hidden context를 읽으라고 지시하지 않습니다.
+다른 skill은 readiness 판단까지만 맡고, 실제 commit finalization 규칙은 이 skill이 소유합니다.
+
+## 검증 기준
+
+- dev runtime skill이 `skills/git-committer/SKILL.md`에 존재해야 한다.
+- release build 후 root `advance-codex/skills/git-committer/SKILL.md`가 dev source와 맞아야 한다.
+- plugin spec, README, manifest prompt가 `git-committer`의 역할과 사용 기준을 언급해야 한다.
+- runtime skill 본문은 dev-only `specs/` 또는 `src/advance-codex-dev` 경로를 실행 지시로 포함하지 않아야 한다.
+- runtime skill은 commit execution approval boundary와 skip/failure verification reporting을 명시해야 한다.
+
+## 확장 원칙
+
+- 사용자 의도와 흐름도는 `intent.md`에 둡니다.
+- lifecycle, message, verification 규칙은 각 child spec이 소유합니다.
+- runtime skill은 folderized spec 전체를 짧고 실행 가능한 지시로 압축합니다.
+- 새 reference는 command safety, message quality, verification reliability에 직접 기여할 때만 추가합니다.

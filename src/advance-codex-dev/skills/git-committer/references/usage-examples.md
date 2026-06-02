@@ -40,7 +40,9 @@ feat: login page for google oauth 2.0
   - table name typo fix commit
   - missing index fix commit
 
-## Verification example (scenario-based)
+## Staged verification example (scenario-based)
 
-- Example only: if you modify components in a Vite project, run checks that validate output (lint, typecheck, build).
-- Choose verification steps based on the actual project and change scope.
+- Always confirm staged scope with `git status` and `git diff --staged` before commit.
+- Example only: if staged verification does not cover risk for modified Vite components, run a supporting check such as lint, typecheck, or build.
+- Choose supporting checks based on the actual project and staged scope.
+- If staged verification or a supporting check is skipped or unavailable, report the skip reason and residual risk; do not call it pass.

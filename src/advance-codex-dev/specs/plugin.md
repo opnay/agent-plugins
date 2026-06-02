@@ -42,8 +42,8 @@
   - spec: `advance-codex-dev/specs/skills/skill-scenario-testing.md`
 - `plugin-creator`: top-down plugin boundary와 manifest-aligned packaging 규칙을 강화한다.
   - spec: `advance-codex-dev/specs/skills/plugin-creator.md`
-- `git-committer`: 검증 가능한 task-scoped commit finalization 규율을 제공한다.
-  - spec: `advance-codex-dev/specs/skills/git-committer.md`
+- `git-committer`: task-scoped commit 준비, 실행 권한 확인, staged 검증, 메시지, commit 실행 규율을 제공한다.
+  - spec: `advance-codex-dev/specs/skills/git-committer/spec.md`
 - `pro-engineering`: 코드 작성과 문제 해결에서 엔지니어링 판단, 원인 분석, 구현 규율, 검증 기준을 제공한다.
   - spec: `advance-codex-dev/specs/skills/pro-engineering/spec.md`
 - `optimize-token`: 응답과 작업 전 판단 문장을 간결하게 압축하되 정확성, 검증 상태, 승인 경계, 필수 출력 형식을 보존하는 기준을 제공한다.

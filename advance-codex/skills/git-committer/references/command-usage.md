@@ -1,17 +1,18 @@
 # Command Usage
 
 ## Purpose
-Capture best/worst/smell patterns for git commit commands and related checks.
+Capture best/worst/smell patterns for commit preparation, staged verification, commit message input, and supporting checks.
 
 ## Cases (Best / Worst / Smells)
 
-### Case 0. Review changes before staging
+### Case 0. Commit preparation and scope selection
 - Best: Use `git status`, `git diff`, and `git diff --staged` to understand scope.
 - Worst: Stage and commit without checking the diff.
 - Smell: Unexpected files or unrelated changes appear in the commit.
 
 ### Case 1. Commit message input method
-- Best: Use `git commit -F -` with a heredoc for multi-line bodies.
+- Best: Use a prepared commit message file or stdin method that preserves exact newlines and can be reviewed before execution.
+- Acceptable: Use `git commit -F -` with a heredoc when command approval and shell quoting are clear.
 - Worst: Use multiple `-m` flags or `\n` escapes that introduce extra blank lines.
 - Smell: The commit body shows unexpected empty lines or literal `\n` sequences.
 - Example:
@@ -34,7 +35,8 @@ EOF
 - Worst: Bundle unrelated changes in a single commit.
 - Smell: Commit messages that mention multiple unrelated topics.
 
-### Case 4. Manual CI before commit
-- Best: Run relevant `typecheck/lint/test` scripts and keep results green.
-- Worst: Skip checks and rely on CI to catch issues later.
+### Case 4. Supporting checks before commit
+- Best: Run the narrowest supporting check when staged verification alone does not cover the risk.
+- Acceptable: If a supporting check is unavailable or intentionally skipped, record the reason and residual risk before commit.
+- Worst: Skip staged verification or supporting checks without reporting the skip.
 - Smell: Frequent post-commit CI failures or quick follow-up fix commits.
