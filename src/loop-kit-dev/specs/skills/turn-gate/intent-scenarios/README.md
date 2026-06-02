@@ -23,28 +23,22 @@
 조건부 문구만으로 "아무 method나 허용"하지 않으며, file-change, release/build, approval-sensitive, strong regression fixture는 단일 expected method를 유지합니다.
 경량화 시나리오라도 approval-sensitive boundary, 파일 변경 시 검증 기본값, non-pass routing을 약화하면 안 됩니다.
 
+## 보존 기준
+
+`turn-gate` 고유 경계를 직접 압박하는 fixture만 보존합니다.
+일반 flow 분류 예시, verification 정책 예시, 중복 status/routing 예시는 제거합니다.
+
 ## 현재 fixture
 
 - `commit-completion-continuation-flow.md`: 커밋 완료가 explicit stop이 아니며, 보고 뒤 next-flow question-routing으로 이어지는지 확인합니다.
-- `approval-sensitive-release-verification.md`: release/version/publish 계열 요청에서 approval-sensitive boundary와 stronger verification이 경량화보다 우선하는지 확인합니다.
-- `file-change-verifier-default.md`: 파일 변경이 있는 fixture 추가 요청에서 clean-context verifier 기본값이 유지되는지 확인합니다.
-- `login-page-flow.md`: 넓은 기능 요청이 곧바로 구현 flow로 가지 않고 Flow 0에서 scope와 후속 실행 후보로 정리되는지 확인합니다.
-- `micro-readonly-research-verification.md`: no-edit read-only 조사 요청에서 verification phase는 유지하되 evidence checklist/source readback으로 충분할 수 있는지 확인합니다.
-- documentation-only research artifact 변경은 no-edit research가 아니므로 clean-context 기본값을 유지하되, verifier packet은 changed topic/session file readback과 evidence gap 확인으로 좁힙니다.
-- `not-required-routing-verification.md`: routing-only 요청에서 검증할 work output이 없을 때 `not-required` method를 status와 분리해 기록하는지 확인합니다.
-- `not-required-status-result-boundary.md`: `Method: not-required`가 automatic pass가 아니며 `pass`/`insufficient`/`blocked` status와 분리되는지 20개 case로 확인합니다.
-- `phase-prefix-application.md`: phase-start/progress 메시지의 prefix 누락과 record/artifact/question option 내부 prefix 과잉 적용을 20개 case로 확인합니다.
-- `four-flow-pre-intake-routing.md`: 4개 planned flow 작업에서 flow 1~4 reporting 뒤 pre-intake decision surface가 열리는지 20개 case로 확인합니다.
-- `question-tool-autonomy-boundary.md`: 질문 도구 과잉 사용과 self-drive 질문 부족 사용을 20개 case로 구분합니다.
-- `small-copy-fix-flow.md`: 작은 문구 수정 요청을 불필요하게 여러 planned flow로 쪼개지 않는지 확인합니다.
-- `dashboard-stale-list-bug-flow.md`: 버그 수정 요청에서 원인 파악, 수정, 검증을 phase별 planned flow로 쪼개지 않는지 확인합니다.
-- `explicit-stop-source-matching.md`: current explicit stop, future endpoint stop, source-less/stale closure, compaction summary ambiguity를 20개 case로 구분합니다.
-- `self-drive-reporting-auto-advance.md`: active self-drive reporting 뒤 정상 자동 전환과 user-gated 복귀 조건을 20개 case로 구분합니다.
+- `explicit-stop-source-matching.md`: current explicit stop, future endpoint stop, source-less/stale closure, compaction summary ambiguity를 구분합니다.
+- `non-pass-verification-routing.md`: `fail`, `insufficient`, `blocked` verification 결과가 성공 보고, terminal summary, next-flow continuation으로 잘못 흡수되지 않는지 확인합니다.
+- `not-required-status-result-boundary.md`: `Method: not-required`가 automatic pass가 아니며 `pass`/`insufficient`/`blocked` status와 분리되는지 확인합니다.
+- `phase-prefix-application.md`: phase-start/progress 메시지의 prefix 누락과 record/artifact/question option 내부 prefix 과잉 적용을 확인합니다.
+- `question-tool-autonomy-boundary.md`: 질문 도구 과잉 사용과 self-drive 질문 부족 사용을 구분합니다.
+- `read-only-session-record-boundary.md`: target/source read-only와 workspace-wide no-write/no-record 요청을 분리해 session record 운영 기록 작성 여부를 확인합니다.
+- `self-drive-reporting-auto-advance.md`: active self-drive reporting 뒤 정상 자동 전환과 user-gated 복귀 조건을 구분합니다.
 - `self-drive-sequence-record.md`: self-drive 긴 planned flow sequence에서 sequence-level record와 flow-local snapshot이 분리되는지 확인합니다.
-- `unbounded-self-drive-endpoint.md`: open-ended self-drive 요청을 finite cycle과 endpoint/repeat policy로 안전하게 기록하는지 20개 case로 확인합니다.
-- `self-drive-mid-sequence-status.md`: self-drive 실행 중 status/progress 질문이 terminal close나 next-flow replacement가 아니라 상태 보고 뒤 continuation으로 처리되는지 확인합니다.
-- `self-drive-priority-change.md`: self-drive 실행 중 planned flow 우선순위나 scope가 바뀌면 autonomous continuation을 멈추고 updated sequence를 다시 잠그는지 확인합니다.
-- `session-record-reconstruction-boundary.md`: session record first creation, active missing, inaccessible, stale closure, stale sidecar의 회복 경계가 silent reconstruction으로 뭉개지지 않는지 20개 case로 확인합니다.
-- `stale-session-record-authority.md`: stale sidecar, source-less/stale closure, stale routing mismatch, inaccessible/corrupt record가 terminal closure나 autonomous continuation authority로 잘못 승격되지 않는지 20개 case로 확인합니다.
-- `non-pass-verification-routing.md`: `fail`, `insufficient`, `blocked` verification 결과가 성공 보고, terminal summary, next-flow continuation으로 잘못 흡수되지 않는지 20개 case로 확인합니다.
-- `read-only-session-record-boundary.md`: target/source read-only와 workspace-wide no-write/no-record 요청을 분리해 session record 운영 기록 작성 여부를 20개 case로 확인합니다.
+- `session-record-reconstruction-boundary.md`: session record first creation, active missing, inaccessible, stale closure, stale sidecar의 회복 경계가 silent reconstruction으로 뭉개지지 않는지 확인합니다.
+- `stale-session-record-authority.md`: stale sidecar, source-less/stale closure, stale routing mismatch, inaccessible/corrupt record가 terminal closure나 autonomous continuation authority로 잘못 승격되지 않는지 확인합니다.
+- `unbounded-self-drive-endpoint.md`: open-ended self-drive 요청을 finite cycle과 endpoint/repeat policy로 안전하게 기록하는지 확인합니다.
