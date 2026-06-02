@@ -13,7 +13,7 @@ runtime template은 `skills/flow/templates/plan.md`가 제공합니다.
 - frontmatter: `flow_plan_active`, `active_flow`, `next_action`, `handoff_condition`, `approval_boundary`, `verification_expectation`, `active_skills`.
 - body: current request 또는 routing signal, purpose, active/planned/recent/archive flow index, continuity note.
 - 목적 사슬은 scope, acceptance, verification, approval, handoff에 영향을 줄 때만 compact purpose로 둡니다.
-- active skills는 다음 flow 복구에 필요한 skill만 기록합니다.
+- active skills는 다음 flow 질문 직전 `skill reconfigure`가 식별한 세션에서 사용중인 전체 skill 목록을 기록합니다.
 
 ## 제외
 

@@ -18,7 +18,7 @@ Use this wrapper loop:
 1. Route the user message into the `flow skill` group inside the `turn-gate` wrapper.
 2. Treat the internal path from interview to handoff as `생략...`; do not model it inside `turn-gate`.
 3. From `flow skill: handoff`, run `next-flow gate`:
-   - reread the skills currently needed for the next-flow question
+   - run the `skill reconfigure` group: identify the full session active skill list, reread each skill body, and accept them as the new active skill set
    - open `질문 도구: 다음 플로우 선택`
    - update `000-plan.md`
 4. Use the same interview flow as `flow: deep-interview` to clarify the next flow input.

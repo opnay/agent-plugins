@@ -11,13 +11,13 @@
 
 `next-flow gate` 순서:
 
-- 사용중인 스킬 다시 읽기
+- `skill reconfigure`
 - 질문 도구 응답 또는 메시지 수신
 - `000-plan.md` 업데이트
 - `flow: deep-interview`와 같은 인터뷰 흐름으로 다음 flow 입력 구체화
 - 구체화된 입력으로 `flow skill: interview` 재진입
 
-사용중인 스킬 다시 읽기는 다음 flow 질문을 만들기 전에 항상 수행합니다.
+`skill reconfigure` 그룹은 `flow skill: handoff`에서 시작해 다음 flow 질문을 만들기 전에 세션에서 사용중인 전체 skill 목록을 식별하고, 각 skill 본문을 새로 읽고, 새 active skill set으로 수용하는 과정입니다.
 `000-plan.md` 업데이트는 선택된 다음 flow 입력, 사용 skill, pending/answered question 상태, next action을 매번 반영합니다.
 `request_user_input`을 사용할 수 있고 선택지가 좁으면 `질문 도구: 다음 플로우 선택`으로 표시합니다.
 도구가 없으면 active plain-text question fallback을 씁니다.
