@@ -19,12 +19,13 @@ Use this wrapper loop:
 2. Treat the internal path from interview to handoff as `생략...`; do not model it inside `turn-gate`.
 3. From `flow skill: handoff`, run `next-flow gate`:
    - run the `skill reconfigure` group: identify the full session active skill list, reread each skill body, and accept them as the new active skill set
-   - open `질문 도구: 다음 플로우 선택`
+   - select the next flow through the question tool or a prepared self-drive gate
+   - if self-drive is active, update `000-self-drive.md`
    - update `000-plan.md`
 4. Use the same interview flow as `flow: deep-interview` to clarify the next flow input.
 5. Reenter `flow skill: interview` with the clarified input and prioritize flow-design questions.
 
-If `request_user_input` is available and choices are narrow, use it for `질문 도구: 다음 플로우 선택`.
+If `request_user_input` is available and choices are narrow, use it for question-tool next-flow selection.
 If unavailable, keep the turn open with an active plain-text question.
 Update `000-plan.md` every time `next-flow gate` runs, including active skills, selected or pending question state, next action, and self-drive pointer when relevant.
 
@@ -50,7 +51,7 @@ Do not treat readiness, verification, generated release surface, previous contex
 
 ## Questions
 
-After `flow skill: handoff`, reread the currently needed skills, reopen routing unless explicit stop is recorded, then update `000-plan.md`.
+After `flow skill: handoff`, run `skill reconfigure`, reopen routing unless explicit stop is recorded, update `000-self-drive.md` when self-drive is active, then update `000-plan.md`.
 The next routing surface is not terminal closeout.
 
 If a question tool call is aborted, canceled, or interrupted, preserve the pending question and treat the next user message as one of:

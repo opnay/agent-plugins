@@ -3,7 +3,7 @@
 ## 소유 범위
 
 `turn-gate`는 active turn을 복구할 수 있을 만큼의 record 적용과 복구를 소유합니다.
-record는 메인 그래프 노드가 아니며, `flow skill: interview -> flow skill: handoff -> 질문 도구` 루프를 보조합니다.
+record는 메인 그래프 노드가 아니며, `flow skill: interview -> flow skill: handoff -> next-flow gate` 루프를 보조합니다.
 shared record template 의미와 파일명 규칙은 `flow`가 소유합니다.
 
 ## 적용 계약
@@ -24,6 +24,7 @@ shared record template 의미와 파일명 규칙은 `flow`가 소유합니다.
 - source-recorded explicit stop만 terminal closure authority입니다.
 - pending question은 `answered_question`과 `pending_question`으로 복구합니다.
 - `flow skill: handoff` 뒤 `next-flow gate`를 통과할 때마다 `000-plan.md`를 업데이트합니다.
+- self-drive 경로에서는 통합 plan 업데이트 전에 `000-self-drive.md`를 업데이트합니다.
 
 ## 검토 기준
 

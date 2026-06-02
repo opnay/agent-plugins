@@ -18,11 +18,15 @@ graph TD
     subgraph QR[next-flow gate]
       direction TB
       SKILLRECONFIG[skill reconfigure]
-      ASK[질문 도구: 다음 플로우 선택]
+      NEXTFLOW[다음 플로우 선택]
+      SELFDRIVE[000-self-drive.md 업데이트]
       PLAN[000-plan.md 업데이트]
 
-      SKILLRECONFIG --> ASK
-      ASK --> PLAN
+      SKILLRECONFIG -->|질문 도구| NEXTFLOW
+      SKILLRECONFIG -->|self-drive| NEXTFLOW
+      NEXTFLOW --> PLAN
+      NEXTFLOW -->|self-drive| SELFDRIVE
+      SELFDRIVE --> PLAN
     end
 
     HANDOFF --> SKILLRECONFIG
@@ -46,7 +50,7 @@ graph TD
     REREAD --> ACCEPT
     ACCEPT --> RECORD
   end
-  RECORD --> ASK[질문 도구: 다음 플로우 선택]
+  RECORD --> NEXTFLOW[다음 플로우 선택]
 ```
 
 ## 종료 플로우
@@ -76,11 +80,12 @@ graph TD
 
 ### next-flow gate
 
-- `next-flow gate`는 `flow skill: handoff -> skill reconfigure 그룹 -> 질문 도구: 다음 플로우 선택 -> 000-plan.md 업데이트` 순서입니다.
+- `next-flow gate`는 `flow skill: handoff -> skill reconfigure 그룹 -> 다음 플로우 선택 -> 000-plan.md 업데이트`를 기본 경로로 둡니다.
 - `skill reconfigure` 그룹은 다음 flow 질문을 만들기 전에 세션에서 사용중인 전체 skill 목록을 식별하고, 각 skill 본문을 새로 읽고, 이전 대화의 stale skill context가 아니라 새 active skill set으로 수용합니다.
-- `질문 도구: 다음 플로우 선택`은 다음 flow 입력을 고르는 question-routing 표면입니다.
+- `다음 플로우 선택`은 질문 도구 또는 self-drive로 다음 flow 입력을 고르는 question-routing 표면입니다.
 - 질문 도구는 `flow: deep-interview`와 같은 인터뷰 흐름으로 다음 flow 입력을 충분히 구체화합니다.
-- `000-plan.md 업데이트`는 선택된 다음 flow 입력, 사용 skill, pending/answered question 상태, next action을 매번 반영합니다.
+- self-drive 진입은 질문 도구를 사용하지 않습니다.
+- self-drive 경로는 `다음 플로우 선택` 뒤 `000-self-drive.md 업데이트`를 거쳐 통합 `000-plan.md 업데이트`로 들어갑니다.
 - `flow skill: interview` 재진입 뒤에는 구체화된 입력을 기준으로 flow design에 필요한 질문을 우선합니다.
 
 ### 표시와 종료
