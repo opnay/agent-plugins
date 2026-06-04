@@ -21,7 +21,7 @@ frontmatter는 반복되는 workflow/job metadata를 줄이는 용도로 사용�
 
 Workflow section은 다음을 포함합니다.
 
-- frontmatter: objective, integration branch, dispatch fit, dispatch reason, global risks
+- frontmatter: objective, integration branch, dispatch mode, dispatch reason, global risks
 - body: workflow-level verification, cleanup, residual risk
 
 ## Job Section
@@ -69,6 +69,7 @@ subagent job은 acceptance와 handoff를 반드시 가집니다.
 ## Planning Rules
 
 - `manager`는 plan 없이 subagent를 dispatch하지 않습니다.
+- `manager`가 선택된 요청은 항상 최소 하나의 job을 계획합니다.
 - `needs`는 정적 dependency graph입니다. 실행 중 갱신하지 않습니다.
 - job 시작 가능 여부는 `needs` 대상 job의 body checklist completion과 handoff evidence로 판단합니다.
 - `needs: []`인 job은 동시에 시작 가능한 후보입니다.
@@ -93,34 +94,34 @@ workflow: <workflow-name>
 objective: <사용자 요청을 완료 상태 기준으로 한 문장으로 적는다>
 integration_branch: <branch-name-or-unknown>
 dispatch:
-  fit: <yes | no>
-  reason: <왜 이 실행 모드인지>
+  mode: <single-job | multi-job | blocked>
+  reason: <왜 이 작업 분해와 실행 모드인지>
   global_risk: <shared-contract | generated-output | secret | migration | unknown-scope | none>
 jobs:
   - id: job-1
     title: <job-title>
     needs: []
-    worktree: <none | ../worktrees/<name>>
-    workstream: <feature | bug | docs | verification | release-surface | other>
+    worktree: <../worktrees/<name> | pending-approval | pending-input>
+    workstream: <feature | bug | docs | verification | release-surface | research | planning | other>
     write_scope: <module/screen/API/doc/generated-artifact this job may change>
     parallel_blockers: <none | shared-file | shared-contract | generated-output | migration | secret-surface>
     handoff:
       requires_commit: <yes | no>
       requires_rebase: <yes | no>
       import_uncommitted_changes: no
-      report: <commit hash, rebase target HEAD, verification, changed files, residual risk>
+      report: <commit hash and rebase target HEAD when commit-required, or no-commit evidence; verification, changed files state, residual risk>
   - id: job-2
     title: <job-title>
     needs: [job-1]
-    worktree: <none | ../worktrees/<name>>
-    workstream: <feature | bug | docs | verification | release-surface | other>
+    worktree: <../worktrees/<name> | pending-approval | pending-input>
+    workstream: <feature | bug | docs | verification | release-surface | research | planning | other>
     write_scope: <module/screen/API/doc/generated-artifact this job may change>
     parallel_blockers: <none | shared-file | shared-contract | generated-output | migration | secret-surface>
     handoff:
       requires_commit: <yes | no>
       requires_rebase: <yes | no>
       import_uncommitted_changes: no
-      report: <required handoff evidence>
+      report: <commit handoff or no-commit evidence required for this job>
 ---
 
 # Workflow

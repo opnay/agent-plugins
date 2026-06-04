@@ -1,86 +1,88 @@
 ---
 name: manager
-description: Manage task decomposition across isolated git worktrees with fresh subagents, committed and rebased handoffs, prepared commit integration, and worktree cleanup. Use when the main agent should coordinate bounded subagent work without doing the slice work directly. worktree orchestration, subagent lifecycle, commit handoff, rebase handoff, task decomposition, baton relay
+description: Manage plan-first task decomposition across isolated git worktrees with fresh subagents, committed or evidence-based handoffs, prepared commit integration, and worktree cleanup. Use when the main agent should coordinate work through a workflow plan and subagent relay, even when the request becomes one job. worktree orchestration, subagent lifecycle, commit handoff, evidence handoff, rebase handoff, task decomposition, baton relay
 ---
 
 # Manager
 
 ## Overview
 
-Use this skill when a task should be planned as a repository workflow and executed by fresh subagents in isolated worktrees.
-The main agent acts as the manager: write a Markdown workflow plan, assign jobs, verify committed and rebased handoffs, integrate prepared commits, and clean up worktrees.
-
-Do not use this skill for a small single edit, a purely read-only answer, or work that cannot be separated into commit-sized slices.
+Use this skill to make the main agent a workflow manager.
+Every selected request starts with a Markdown `Workflow > Jobs > Runs` todo plan and at least one subagent job.
+The main agent plans, dispatches, verifies handoffs, imports prepared commits when present, records evidence, and cleans worktrees after verification.
 
 ## Core Contract
 
-- The main agent orchestrates; subagents perform bounded task work.
-- Write a Markdown `Workflow > Jobs > Runs` todo plan before dispatching subagents.
+- Write a Markdown `Workflow > Jobs > Runs` plan before any subagent dispatch.
+- Create at least one job for every selected request, including small, read-only, planning, verification, or cleanup requests.
 - One subagent owns one job and one git worktree.
-- Do not reuse a completed subagent for the next slice; create a fresh subagent.
-- This skill does not grant commit authority by itself; confirm local subagent commit authority before dispatch.
-- A subagent is complete only after work, verification, git commit, and rebase onto the main agent's current integration branch.
-- The main agent must not import uncommitted changes from a subagent worktree.
-- The main agent integrates only prepared commits.
-- Worktree cleanup happens only after commit import and required verification.
-- Commit, push, PR, publish, release, version bump, destructive work, and external effects still require their own approval authority.
+- Do not reuse a completed subagent for another job.
+- Confirm local commit authority before dispatching commit-required work.
+- If commit authority, approval, input, or secret/destructive boundaries are missing, keep the job as `blocked`, `pending-approval`, or `pending-input` instead of dropping the relay.
+- A commit-required subagent is complete only after work, verification, git commit, and rebase onto the current integration branch.
+- A no-commit subagent is complete only after it reports the required evidence, changed-files state if relevant, verification result or gap, and residual risk.
+- The main agent never imports uncommitted work.
+- Worktree cleanup happens only after useful evidence, prepared commit state, import, and required verification are handled.
+- Commit, push, PR, publish, release, version bump, destructive work, and external effects keep separate approval authority.
 
 ## Workflow
 
-1. Decide whether worktree orchestration is warranted.
-2. Capture the integration branch and current HEAD.
-3. Write a Markdown workflow plan with jobs, runs, needs, acceptance, and handoff rules.
-4. Choose parallel or sequential execution from job dependencies and parallel blockers.
-5. Create a branch and worktree for each selected subagent job.
-6. Spawn a fresh subagent per worktree with a complete dispatch packet derived from the plan.
-7. Require each subagent to work, verify, commit, and wait for merge-prep instruction.
-8. Ask the subagent to rebase onto the current integration branch when its slice is ready.
-9. Confirm the subagent reports the rebase target HEAD, commit hash, verification result, changed files, and residual risk.
-10. If the integration branch HEAD still matches the subagent's rebase target HEAD, import the prepared commit.
-11. If the integration branch moved, request a new rebase or resequence integration.
-12. Run required integration verification.
-13. Clean up completed worktrees.
-
-If orchestration does not fit, report `Orchestration fit: no`, `Spawn plan: none`, the caller-local handling path, verification expectation, and residual risk.
+1. Capture the integration branch and current HEAD.
+2. Write a Markdown workflow plan with jobs, runs, needs, acceptance, and handoff rules.
+3. Use `single-job`, `multi-job`, or `blocked` as the dispatch mode.
+4. Decompose by workstream, write scope, dependency, parallel blockers, acceptance, and handoff.
+5. Create a branch and worktree for each dispatchable subagent job.
+6. Spawn a fresh subagent per worktree with a complete dispatch packet from the plan.
+7. Require each subagent to work inside its worktree, verify, and produce the planned handoff.
+8. For commit-required jobs, require commit, merge-prep wait, rebase onto the current integration branch, and handoff report.
+9. Check handoff evidence before importing or recording the result.
+10. If the reported rebase target HEAD differs from current integration HEAD, request a new rebase or resequence integration.
+11. Import only prepared commits; record no-commit evidence without commit import.
+12. Run narrow verification for the imported or recorded slice, and broader checks for contracts, shared code, generated surfaces, or release surfaces.
+13. Clean completed worktrees only after verification and evidence handling.
 
 ## Workflow Plan
 
+Use `templates/workflow-plan.md` as the base when available.
 The plan is a Markdown todo document, not a data file.
-When writing the plan, use `templates/workflow-plan.md` as the base template.
 Use frontmatter for stable workflow and job metadata.
 Treat the plan as static except for the mutable allowlist: job `Status`, checklist states, evidence text appended under checklist items, and `Residual Risk`.
-If the template file is unavailable, use this shape:
+
+If the template is unavailable, use this shape:
 
 - `# Workflow: <name>`
-- frontmatter: workflow objective, integration branch, dispatch fit, static job dependencies, worktree, write scope, parallel blockers, handoff conditions
+- frontmatter: objective, integration branch, dispatch mode, static job dependencies, worktree, write scope, parallel blockers, handoff conditions
 - `## Jobs`
 - `### Job N. <title>`
-- `Status: planned`
+- `Status: planned | running | blocked | handoff-ready | integrated | done`
 - `#### Runs`
 - `#### Acceptance`
 - `#### Handoff`
+- `## Workflow Verification`
+- `## Cleanup`
+- `## Residual Risk`
 
-Each `Run` must be an executable checklist item.
-Each subagent job must include worktree, write scope, acceptance, and handoff.
-Treat `needs` as a static dependency graph; do not update it during execution.
+Each job must include worktree or pending state, write scope, acceptance, and handoff.
+Each run must be executable by the assigned subagent.
+Treat `needs` as a static dependency graph.
 Start a job only after every job named in `needs` has completed its body checklist and handoff evidence.
-Jobs with empty `needs` may start together unless parallel blockers make them sequential.
-Update only the mutable allowlist as job status changes.
+Jobs with `needs: []` may start together only when write scopes are disjoint and no parallel blocker exists.
 
 ## Decomposition Rules
 
-Use practical repository-management criteria before finalizing jobs:
+- `workstream`: feature, bug, docs, verification, release-surface, research, planning, or other practical lane.
+- `write_scope`: module, screen, API, document surface, generated artifact, or explicit read-only scope.
+- `dependency`: contract, source change, setup, approval, input, or verification that must finish first.
+- `parallel_blockers`: shared file, shared contract, migration, generated output, secret surface, or none.
+- `acceptance`: verification, evidence, commit when required, rebase when required, and report conditions.
 
-- workstream: feature, bug, docs, verification, release-surface, or other practical work lane
-- write scope: module, screen, API, document surface, or generated artifact this job may change
-- dependency: contract, source change, setup, or verification that must finish first
-- parallel blockers: shared file, shared contract, migration, generated output, or secret surface
-- acceptance: verification, commit, rebase, and report conditions for job completion
-
-Parallelize only jobs with disjoint write scopes, empty parallel blockers, and no dependency edge.
-Make shared-file, shared-contract, generated-output, migration, and secret-surface jobs sequential.
-Make generated-output updates sequential after source changes unless the repository policy says otherwise.
-Do not make pure investigation, triage, or hypothesis elimination a subagent job until it becomes a commit-sized fix job.
+Use one job for one small task.
+Use multiple jobs only when scope, dependency, or verification is meaningfully separable.
+Parallelize only disjoint jobs.
+Make shared-file, shared-contract, generated-output, migration, schema/API, and secret-surface work sequential.
+Put generated-output updates after their source changes unless repository policy says otherwise.
+Represent pure investigation, triage, or planning as read-only subagent jobs.
+If the result becomes implementation work, relock the plan before dispatching write jobs.
 
 ## Dispatch Packet
 
@@ -101,76 +103,51 @@ Send each subagent:
 - `handoff_output`
 - `stop_condition`
 
-Tell the subagent it must stay inside its worktree, avoid reverting unrelated changes, and stop after reporting a committed and rebased handoff.
-If local commit authority is missing, do not dispatch a worker that must commit.
-
-## Subagent Lifecycle
-
-Start:
-
-- create task slice
-- create branch and worktree
-- spawn fresh subagent
-- provide dispatch packet
-
-Work:
-
-- inspect only needed context
-- implement or investigate inside the worktree
-- verify the slice
-- create a git commit
-
-Merge prep:
-
-- wait for the main agent's merge-prep request
-- rebase onto the main agent's current integration branch
-- resolve rebase conflicts inside the subagent worktree
-- report commit hash, rebase target HEAD, verification, changed files, and residual risk
-
-Stop:
-
-- after successful rebase handoff, the subagent terminates
-- the next task uses a new subagent
+Tell the subagent it must stay inside its worktree, avoid reverting unrelated changes, and stop after the planned handoff.
+For commit-required jobs, the handoff must include commit hash, rebase target HEAD, verification result, changed files, and residual risk.
+For no-commit jobs, the handoff must include evidence, verification result or gap, changed-files state if relevant, and residual risk.
 
 ## Handoff Gate
 
-Before importing a subagent commit, the main agent checks:
+Before importing a commit or accepting no-commit evidence, check:
 
-- the subagent produced a commit
-- the commit is within the assigned scope
-- required slice verification passed or the gap is explicit
-- the subagent rebased onto the requested integration branch
-- the reported rebase target HEAD equals the current integration branch HEAD
+- the handoff matches the assigned job scope
+- required verification passed or the gap is explicit
+- commit-required jobs produced a commit
+- commit-required jobs rebased onto the requested integration branch
+- reported rebase target HEAD equals current integration branch HEAD
 - no uncommitted work is being imported
+- no-commit jobs explicitly report no commit and provide the planned evidence
 
-If the HEAD check fails, do not import the commit.
-Request a rebase onto the new HEAD or redesign the integration order.
+If any gate fails, do not import.
+Request correction, rebase onto the new HEAD, additional verification, scope reduction, or resequencing.
 
 ## Integration
 
 Prefer the repository's normal non-destructive integration method.
-Common options are cherry-pick, merge, or fast-forward where appropriate.
+Common options are cherry-pick, merge, or fast-forward.
 
-After import:
+After import or no-commit evidence acceptance:
 
-- inspect the integrated diff
-- run narrow checks for the imported slice
-- run broader checks when contracts, shared code, or generated surfaces changed
-- clean the subagent worktree only after the imported result is verified enough for the active task
+- inspect the integrated diff or recorded evidence
+- run narrow checks for the slice
+- run broader checks when contracts, shared code, generated surfaces, release surfaces, or approval-sensitive boundaries changed
+- update only the allowed mutable plan fields
+- clean the subagent worktree only after evidence and verification are handled
 
 ## Failure Handling
 
-- No commit: keep or discard the worktree based on evidence value; do not import changes.
-- Uncommitted changes only: do not import; ask the same subagent to verify, commit, and rebase within scope, or preserve/discard the worktree based on evidence value.
-- Rebase conflict unresolved: mark the slice blocked and decide whether to shrink scope, resequence, or handle manually with explicit approval.
-- For unresolved conflict, request conflict files, rebase state, attempted resolution, verification gap, and next suggested action; do not clean up the worktree.
+- No commit on a commit-required job: do not import; request commit, rebase, and handoff, or mark blocked.
+- Uncommitted changes only: do not import; ask the same subagent to verify, commit, and rebase within scope, or preserve the worktree for evidence.
+- Missing verification: request verification or reject the handoff. Import with recorded risk only when verification is impossible and explicit approval covers the exception.
+- Rebase conflict unresolved: mark the slice blocked; request conflict files, rebase state, attempted resolution, verification gap, and next suggested action.
 - Out-of-scope commit: reject the handoff and request correction.
-- Missing verification: default to requesting verification or rejecting the handoff. Import with recorded risk only when verification is impossible and explicit approval covers the exception.
-- Repeated failure: stop parallelism and split into smaller sequential slices.
+- Repeated failure: stop parallelism and split into smaller sequential jobs.
+- Approval/input missing: keep the job blocked with the exact question, approval boundary, and next intake condition.
 
 ## Output
 
-- `Orchestration fit`
+- `Workflow plan`
 - `Decomposition`
 - `Execution mode`
 - `Dispatch packets`
@@ -179,12 +156,16 @@ After import:
 - `Integration plan`
 - `Cleanup plan`
 - `Verification`
+- `Ambiguities`
+- `Judgment calls`
+- `Retries or recovery attempts`
 - `Residual risk`
 
 ## Guardrails
 
-- Do not make subagent use automatic.
+- Do not dispatch before writing the plan.
 - Do not spawn overlapping writers for the same file or contract.
 - Do not let a subagent's commit bypass main-agent review.
 - Do not treat rebase success as approval for push, PR, release, destructive work, or external effects.
-- Do not clean a worktree before its useful evidence and prepared commit state have been handled.
+- Do not import uncommitted changes.
+- Do not clean a worktree before useful evidence and prepared commit state are handled.

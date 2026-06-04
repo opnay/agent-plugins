@@ -8,7 +8,8 @@
 
 메인 에이전트는 subagent handoff를 import하기 전에 다음을 확인합니다.
 
-- subagent가 commit을 만들었는가
+- job handoff가 commit을 요구하면 subagent가 commit을 만들었는가
+- job handoff가 commit을 요구하지 않으면 no-commit evidence와 산출물이 명시됐는가
 - commit이 assigned scope 안에 있는가
 - required slice verification이 통과했는가, 또는 gap이 명시됐는가
 - subagent가 요청된 integration branch로 rebase했는가
@@ -17,7 +18,8 @@
 
 ## Integration
 
-- gate가 통과하면 prepared commit을 cherry-pick, merge, fast-forward, 또는 repo에 맞는 비파괴 통합 방식으로 회수합니다.
+- gate가 통과하고 commit이 있으면 prepared commit을 cherry-pick, merge, fast-forward, 또는 repo에 맞는 비파괴 통합 방식으로 회수합니다.
+- commit 없는 read-only/planning/verification job은 commit import 없이 evidence를 workflow plan에 회수합니다.
 - 기준 HEAD가 subagent rebase 이후 변했으면 import하지 않고 현재 HEAD 기준 rebase를 다시 요청하거나 integration 순서를 재설계합니다.
 - 메인 에이전트는 subagent output을 검증 없이 최종 결과로 승격하지 않습니다.
 - 통합 후 메인 에이전트는 imported slice diff를 확인합니다.

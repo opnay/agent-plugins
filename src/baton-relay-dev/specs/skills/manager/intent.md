@@ -4,14 +4,13 @@
 
 ```mermaid
 graph TD
-  START[작업 요청] --> FIT
+  START[작업 요청] --> PLAN
 
   subgraph MGR[manager / 메인]
     direction TB
-    FIT[orchestration fit 판단]
-    NOUSE[no-use / no-spawn 보고]
     PLAN[workflow plan todo 작성]
     DECOMP[job 분해]
+    BLOCKED[blocked / approval needed 기록]
     DISPATCH[worktree + fresh subagent dispatch]
     SUBCYCLE[subagent 작업 사이클]
     HANDOFF[commit / rebase handoff]
@@ -20,10 +19,10 @@ graph TD
     CLEANUP[worktree cleanup]
     REPORT[결과 보고]
 
-    FIT -->|부적합| NOUSE
-    FIT -->|적합| PLAN
     PLAN --> DECOMP
-    DECOMP --> DISPATCH
+    DECOMP -->|dispatch 가능| DISPATCH
+    DECOMP -->|입력/승인/권한 필요| BLOCKED
+    BLOCKED --> REPORT
     DISPATCH --> SUBCYCLE
     SUBCYCLE --> HANDOFF
     HANDOFF -->|통과| INTEGRATE
@@ -31,7 +30,6 @@ graph TD
     INTEGRATE --> VERIFY
     VERIFY --> CLEANUP
     CLEANUP --> REPORT
-    NOUSE --> REPORT
   end
 ```
 
@@ -93,6 +91,7 @@ graph TD
 - subagent 사이클도 지정해야 한다. 작업 시작부터 작업 완료까지 subagent가 동작하고, 작업 완료가 되면 subagent는 종료한다. 다음 작업을 위해 새로 생성한다. subagent의 작업 완료는 git commit 이후, 메인 에이전트가 병합 준비를 요청하면 subagent가 메인 에이전트가 동작하는 브랜치로 rebase하고, 완료되면 메인 에이전트가 해당 커밋을 가져온다. rebase는 완료된 상태이기 때문에 conflict는 발생할 가능성이 없다.
 - 플러그인 이름은 `baton-relay`로 정한다. 스킬 이름은 `manager`로 정한다.
 - `manager` 스펙을 폴더화하고, `src/loop-kit-dev/specs/skills/turn-gate/intent.md`처럼 단순한 전체 플로우 그래프를 둔다.
+- `manager`의 orchestration fit 판단을 제거한다. 한 개 작업이라도 plan을 만들고 subagent 작업이 되어야 한다.
 
 ## 핵심
 
@@ -105,9 +104,9 @@ graph TD
 
 ### relay loop
 
-- 작업 요청은 먼저 orchestration fit 판단으로 들어갑니다.
-- 부적합하면 `no-use / no-spawn`으로 보고하고 caller-local handling을 제시합니다.
-- 적합하면 먼저 `Workflow > Jobs > Runs` 계층의 Markdown todo 계획 문서를 작성합니다.
+- 작업 요청은 먼저 `Workflow > Jobs > Runs` 계층의 Markdown todo 계획 문서 작성으로 들어갑니다.
+- 한 개 작업도 최소 하나의 job으로 계획하고 fresh subagent 작업으로 처리합니다.
+- 즉시 dispatch할 수 없는 요청은 blocked 또는 approval-needed job으로 기록합니다.
 - 메인 에이전트는 repo PM처럼 workstream, write scope, dependency, parallel blockers, acceptance 기준으로 job을 나눕니다.
 - 각 subagent job은 worktree, runs, acceptance, handoff 기준을 가진 실행 가능한 todo 단위여야 합니다.
 - subagent는 작업, 검증, commit, rebase, handoff 보고 후 종료합니다.

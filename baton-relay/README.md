@@ -9,5 +9,5 @@ It keeps the main agent in a manager role: split the work, create isolated git w
 
 ## Use
 
-Use this plugin when one task is large enough to benefit from isolated subagent execution across git worktrees.
-Do not use it for a small single edit, direct code review, release publication, PR creation, or any action that needs approval outside the current task boundary.
+Use this plugin when the main agent should manage work through a plan-first subagent relay, even for a single small task.
+Do not use it to bypass approval for release publication, PR creation, version bumps, destructive work, or external actions.

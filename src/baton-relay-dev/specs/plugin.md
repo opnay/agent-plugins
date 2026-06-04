@@ -10,7 +10,7 @@
 
 ## 플러그인 목적
 
-`baton-relay-dev`는 큰 작업을 git worktree 단위로 나누고 fresh subagent에게 실행을 맡긴 뒤, commit과 rebase가 완료된 작업 단위만 메인 작업 위치로 회수하는 orchestration plugin입니다.
+`baton-relay-dev`는 작업을 git worktree 단위로 나누고 fresh subagent에게 실행을 맡긴 뒤, commit-required job은 commit/rebase 완료 후 prepared commit으로, no-commit job은 evidence handoff로 메인 작업 위치에 회수하는 orchestration plugin입니다.
 핵심 책임은 메인 에이전트를 구현자가 아니라 manager로 세우고, subagent 작업 시작부터 완료, handoff, 통합, worktree cleanup까지 하나의 안전한 relay loop로 다루게 하는 것입니다.
 
 ## 플러그인 경계와 비목표
@@ -26,7 +26,6 @@
   - 실패, 기준 HEAD 변경, rebase 재요청 판단
 - 제외:
   - subagent runtime 자체 제공
-  - 모든 작업에 subagent 사용 강제
   - 승인 없는 commit, push, PR, publish, release, version bump, destructive work
   - subagent 결과를 검증 없이 최종 결과로 승격
   - 특정 언어, 제품, 도메인별 구현 전략 소유
@@ -34,10 +33,11 @@
 ## 처리하려는 작업 형태
 
 - 여러 독립 작업으로 나눌 수 있는 구현, 조사, 검증, 문서화 작업
+- 단일 job으로 표현되는 작은 작업
 - 파일 또는 module ownership을 분리할 수 있는 변경
 - 문제 가설, 코드 영역, workflow 단계, API 계약, 검증 경로별로 나눌 수 있는 작업
 - 병렬 또는 순차 subagent 실행이 메인 에이전트의 통합 판단을 줄이는 작업
-- 각 하위 작업이 commit 단위로 회수될 수 있는 작업
+- 각 하위 작업이 commit 또는 evidence handoff 단위로 회수될 수 있는 작업
 
 ## 대표 표면
 
@@ -47,7 +47,7 @@
 
 ## 내장 skill 체계
 
-- `manager`: 작업을 구조분해하고, worktree별 fresh subagent를 배정하며, commit/rebase handoff와 prepared commit 통합, cleanup gate를 관리한다.
+- `manager`: 모든 작업을 최소 하나의 job으로 계획하고, worktree별 fresh subagent를 배정하며, commit/rebase 또는 evidence handoff와 prepared commit 통합, cleanup gate를 관리한다.
   - spec: `baton-relay-dev/specs/skills/manager/spec.md`
   - intent and flow graph: `baton-relay-dev/specs/skills/manager/intent.md`
 
@@ -55,8 +55,8 @@
 
 - plugin boundary는 "worktree relay orchestration"으로 유지하고, 일반 subagent role 설계나 범용 autopilot으로 넓히지 않는다.
 - subagent는 하나의 task slice와 하나의 worktree에만 묶는다.
-- subagent 완료 조건은 commit과 메인 기준 branch rebase 완료를 포함한다.
-- 메인 에이전트는 미커밋 변경을 가져오지 않고, prepared commit만 회수한다.
+- commit-required subagent 완료 조건은 commit과 메인 기준 branch rebase 완료를 포함한다.
+- 메인 에이전트는 미커밋 변경을 가져오지 않고, prepared commit 또는 no-commit evidence만 회수한다.
 - 기준 HEAD가 rebase 이후 움직였으면 메인 에이전트는 통합 전에 rebase 재요청을 선택한다.
 
 ## 현재 구조 메모

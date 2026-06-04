@@ -27,7 +27,7 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Use manager when a task should be decomposed and executed by fresh subagents in isolated git worktrees.",
+      "Use manager when a task should be planned first and executed by fresh subagents in isolated git worktrees, even if it becomes one job.",
       "Keep the main agent as orchestrator: decompose work, dispatch subagents, verify committed and rebased handoffs, integrate prepared commits, and clean worktrees."
     ],
     "brandColor": "#2F6F73"
