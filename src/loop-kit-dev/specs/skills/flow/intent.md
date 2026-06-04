@@ -92,3 +92,13 @@ graph TD
 - `000-review.md`는 메인 플로우 그룹 이후, `handoff condition` 직전에 항상 갱신하고, active routing이나 handoff authority로 쓰지 않습니다.
 - 회고 finding이 없으면 no-finding 결과로 짧게 기록합니다.
 - 목적 사슬은 contract에 영향을 줄 때 `000-plan.md`의 목적 섹션에 흡수합니다.
+
+## Phase 단위
+
+- phase는 선택된 active flow를 실행하기 위한 내부 진행 단위입니다.
+- `intake`, `framing`, `preparation`, `work`, `verification`, `reporting`은 고정된 phase 집합입니다.
+- phase는 active flow의 현재 위치, 다음 행동, 기록 갱신 시점을 드러냅니다.
+- phase는 독립 실행 단위가 아니며 flow 후보, handoff, 회고, next-flow 선택지를 대체하지 않습니다.
+- phase가 별도 검토 가능한 산출물, 완료 기준, 승인 경계, handoff 조건을 갖기 시작하면 flow 설계에서 새 flow나 sub-flow candidate로 다시 분류합니다.
+- 사용자에게 보이는 메시지가 특정 phase에서 나오면 `[<phase-name>]` 형식의 메시지 앞 라벨을 붙입니다.
+- phase 라벨은 진행 표시입니다. 산출물 본문, 기록 본문, 명령 요약, 질문 선택지 라벨에 기계적으로 전파하지 않습니다.

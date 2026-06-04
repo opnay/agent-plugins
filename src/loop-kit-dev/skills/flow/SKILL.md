@@ -62,6 +62,10 @@ intake -> framing -> preparation -> work -> verification -> reporting
 - `verification`: check output against the contract.
 - `reporting`: record result, verification, residual risk, next intake, or handoff condition.
 
+These names are fixed phases inside the active flow. A phase shows the active flow's current position, next action, and record update point. User-facing messages from a phase must start with the `[<phase-name>]` label pattern. Phase labels are progress markers; do not mechanically copy them into artifact bodies, record bodies, command summaries, or question option labels.
+
+If a phase starts to own a reviewable artifact, completion criteria, approval boundary, or handoff condition, route it through flow design as a new flow or sub-flow candidate instead of treating the phase label as the flow identity.
+
 The contracted output may be an artifact change, answer, explanation, summary, status report, verification result, or other requested result.
 If another flow follows, route from `reporting` to the next `intake`.
 
