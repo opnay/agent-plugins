@@ -1,109 +1,129 @@
 ---
 name: flow
-description: Interpret every user message through message interview, flow design, main-flow lifecycle, main-flow review, and handoff condition; route questions, status checks, explanations, work requests, phases, candidates, and handoffs through the same flow graph; lock scope, non-goals, verification, approval boundary, next intake condition, and candidate execution boundaries.
+description: Route every user message through message interview, flow design, main-flow lifecycle, main-flow review, and handoff condition; classify active flows, parent flows, candidates, phases, and handoffs; preserve flow records and handoff boundaries.
 ---
 
 # Flow
 
-Shape: `message interview -> flow design -> main flow -> main-flow review -> handoff condition`.
+Use this shape for every user message:
 
-Every user message enters this shape.
-If a high-leverage question would not change the contract, continue without asking the user.
-Still produce an alignment snapshot, risk check, pressure test, locked brief, flow design, selected main flow, review, and handoff condition.
+```text
+message interview -> flow design -> main flow -> main-flow review -> handoff condition
+```
 
-A flow is a reviewable work unit with scope, non-goals, completion criteria, verification expectation, approval boundary, and handoff condition.
-Questions, status checks, explanations, and short answers are selected `active flow` items.
-Their work output may be a deeper answer, explanation, summary, comparison, or status result.
-Phase checklists, QA, reports, repair, blockers, main-flow review, and commit-readiness stay inside their owning surface.
-Record template meaning belongs to flow; turn-gate applies and updates records during an active turn.
+Questions, status checks, explanations, short answers, and work requests all enter the same shape.
+Do not create an inline answer path outside the graph.
+If a user question would not change the flow contract, continue without asking the user, but still produce the interviewed brief and flow design.
+
+`flow` owns message interpretation, flow design, selected main-flow lifecycle, main-flow review, handoff condition, and the meaning of `000-plan.md`, flow record, and `000-review.md` update points.
+`flow` does not own question-tool execution, active-turn continuity, next-flow question routing, self-drive control, or approval-sensitive execution such as commit, push, pull request, release, version bump, or destructive action.
 
 ## Message Interview
 
-Run the internal deep-interview loop for every user message:
+Run message interview for every user message:
 
-1. Capture `initial alignment snapshot`.
-2. Pick the highest alignment risk.
+1. Capture the initial intent snapshot.
+2. Identify the highest alignment risk.
 3. Ask one high-leverage question only when the answer can change the flow contract.
-4. If no question is needed, record why the contract is already locked enough.
-5. Prefer bounded choices with tradeoffs when they lock the contract.
-6. Pressure-test the brief with an example, counterexample, explicit non-goal, or rejected tradeoff.
-7. Stay on the same risk while it remains vague.
-8. Produce `locked execution brief`.
+4. Apply the answer to the same risk.
+5. Pressure-test the brief with an example, counterexample, explicit non-goal, or tradeoff.
+6. If the pressure test fails, narrow the same alignment risk again.
+7. Produce the locked execution brief.
 
-Interview risks include intent, target outcome, scope edge, non-goal, tradeoff, decision boundary, constraint, acceptance, and approval boundary.
-The no-question path is not a skip; it is an interviewed message with a locked brief and residual ambiguity recorded.
+If no user question is needed, record that the brief is locked enough and move to flow design.
+The no-question path is still an interview path.
+
+Interview output includes the snapshot, risk, question or no-question decision, answer effect, pressure-test result, locked execution brief, and whether `000-plan.md` should be updated.
 
 ## Flow Design
 
-Classify the locked brief and create a list-up result:
+Convert the locked execution brief into the flow configuration:
 
-- `active flow`: selected main flow
-- `parent flow`: flow configuration or candidate producer
-- `sub-flow candidate`: pending option, not an active flow
-- `phase`: internal active-flow step
-- `handoff`: readiness, blocker, next intake condition, or routing result
+1. Classify items as `active flow`, `parent flow`, `sub-flow candidate`, `phase`, or `handoff`.
+2. Decide whether one main flow is enough or multiple main flows are needed.
+3. Write the contract for each flow.
+4. Order the next main flow and later candidates.
+5. Select the main flow to enter.
 
-For selected flows and candidates, lock identity, type, scope, non-goals, completion criteria, verification expectation, approval boundary, handoff condition, and unresolved blocker.
+Questions, status checks, and explanation requests can be selected as active flows.
+Candidates remain pending until selected.
+Phases stay inside the active flow.
+Handoffs are post-main-flow conditions and do not create execution authority.
 
-`operational-preparation` creates briefs, flow configuration, candidates, or next-main-flow contracts.
-`change-unit` owns reviewable artifact changes.
-Candidates stay pending until selected as a main flow.
-`000-plan.md` and active flow records are record surfaces attached to the current phase.
-Purpose chains live in the `000-plan.md` purpose section when they affect scope, acceptance, verification, approval, or handoff.
-
-## Record Templates
-
-When defining or checking record surfaces:
-
-- Use exact bundled templates from `templates/plan.md`, `templates/flow-record.md`, and `templates/review.md` when creating those record types.
-- `plan`: keep a compact flow routing card with active flow, next action, handoff condition, approval boundary, verification expectation, active skills, current request, purpose, flow index, and continuity note.
-- `flow record`: keep one reviewable work unit with contract, phase checklist, execution log, result, metadata, optional pending question, and approval-sensitive action section only when needed.
-- `000-review.md`: keep retrospective notes as a flat tagged list; do not use it for active routing, raw logs, verification authority, commit/release authority, or closure authority.
-- Do not let readiness, verification, build output, previous context, or generated surfaces authorize commit, push, PR, publish, release, version bump, destructive, or external actions.
+Each flow contract includes identity, scope, non-goals, completion criteria, verification expectation, approval boundary, and handoff condition.
+If a purpose chain affects the contract, absorb it into the purpose section of `000-plan.md`.
 
 ## Main Flow
 
-Each selected main flow runs:
+Run each selected active flow in this order:
 
-`intake -> framing -> preparation -> work -> verification -> reporting`
+```text
+intake -> framing -> preparation -> work -> verification -> reporting
+```
 
-- `intake`: confirm input, interpretation boundary, missing fields, and locked brief source.
-- `framing`: confirm classification, ownership, candidate-vs-selected state, and active-flow output.
-- `preparation`: lock scope, non-goals, completion, verification, approval, and handoff.
-- `work`: act inside the active-flow boundary.
-- `verification`: verify or record missing evidence against the locked brief and scope.
-- `reporting`: report result, verification, residual risk, and handoff.
+- `intake`: confirm the locked execution brief and current active-flow input.
+- `framing`: confirm classification, ownership, selected-vs-candidate state, phase, and handoff boundaries.
+- `preparation`: lock scope, non-goals, completion criteria, verification expectation, approval boundary, and handoff condition before work.
+- `work`: act inside the active-flow contract or produce the answer, explanation, summary, comparison, or status result.
+- `verification`: verify against the locked execution brief and active-flow contract, or record insufficient evidence.
+- `reporting`: report result, verification, residual risk, and the next intake or handoff condition.
 
-For user-facing phase-start or meaningful progress messages, produce the current phase label: `[intake]`, `[framing]`, `[preparation]`, `[work]`, `[verification]`, or `[reporting]`.
-Do not mechanically copy phase labels into artifact bodies, records, command summaries, or question option labels.
+If another flow follows, route from `reporting` to the next `intake`.
+If target, scope, operation, verification expectation, approval boundary, or acceptance changes, return to the earliest safe interview, design, or preparation point.
+If an artifact change becomes an independent reviewable unit, route it back through flow design as a candidate or selected flow.
 
-If target, operation, scope, verification path, approval boundary, or acceptance changes, return to the earliest safe message-interview, flow-design, or preparation point.
+## Records
+
+Use records to make routing recoverable; do not treat records as approval.
+
+- `000-plan.md`: update from message interview and flow design with active flow, candidates, order, purpose chain, and next action.
+- Flow record: update at main-flow phases with input, classification, evidence, verification, reporting, and handoff condition.
+- `000-review.md`: update after the main-flow group and before handoff condition.
+
+When creating record files, use the bundled templates:
+
+- `templates/plan.md`
+- `templates/flow-record.md`
+- `templates/review.md`
+
+Records, generated surfaces, verification notes, and previous context do not authorize commit, push, pull request, release, version bump, destructive action, or other approval-sensitive execution.
 
 ## Main-Flow Review
 
-After the main flow group completes, run main-flow review and update `000-review.md`.
-Record a compact tagged review result for the completed main flow, including a no-finding result when no retrospective finding exists.
-Do this before the handoff condition.
-The review record is not active routing, raw flow log, verification authority, commit/release authority, or closure authority.
+After a main-flow group completes, run main-flow review before handoff condition.
+Update `000-review.md`.
+Record findings, or record a short no-finding result when there are none.
 
-## Strategy And Handoff
+Main-flow review is not active routing.
+It is not handoff authority, raw log storage, verification authority, commit authority, release authority, or closure authority.
 
-Inside one selected active flow, choose:
+## Handoff Condition
 
-- `review-loop`: one bounded blocking review/QA/self-review finding
-- `fix-verify-loop`: smallest useful fix or check, then immediate verification
-- `broad-execution`: one locked active flow end to end
+After main-flow review, produce the handoff condition.
 
-Commit, push, PR, publish, release, version bump, and destructive work require separate approval authority.
+The handoff condition includes:
 
-For non-pass evidence, route to verification, reconciliation, preparation/design relock, or blocked handoff.
-Reporting may produce the next main-flow intake condition.
-After main-flow review, completion produces the handoff condition.
-Commit-readiness is a handoff judgment over intended change unit, diff scope, unrelated changes, verification evidence, and residual risk. Execution needs separate authority.
+- completion state
+- verification state
+- residual risk
+- next intake condition
+- blocker or insufficient evidence
+- approval-sensitive action status
+
+Commit-readiness can be a handoff judgment, but commit execution requires separate authority.
+Push, pull request, release, version bump, and destructive action also require separate authority.
 
 ## Contract Impact
 
-For a new message during an active flow, first route the message through message interview and flow design.
-Then decide whether it revises the current flow, starts a new foreground flow, becomes a future candidate, supersedes the current flow, answers a blocker question, or selects a new active flow.
-Return the contract-impact decision as flow output.
+When a new user message arrives during an active flow, route it through message interview and flow design first.
+Then return the contract-impact result as one of the flow outputs:
+
+- revise the current flow
+- start a new foreground active flow
+- keep a future candidate
+- supersede the current flow
+- answer a blocker question
+- select a new active flow
+- produce an explicit-stop handoff signal when the stop source is clear
+
 Do not answer inline outside the flow graph.
