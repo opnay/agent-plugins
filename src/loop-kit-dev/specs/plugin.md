@@ -10,6 +10,7 @@
 ## Flow 계약
 
 - 메시지 인터뷰: 사용자 메시지에서 intent snapshot, alignment risk, high-leverage question, answer pressure test, locked execution brief를 만듭니다.
+- 모든 사용자 메시지는 같은 flow 경로를 탑니다. 메시지 인터뷰가 충분히 잠긴 brief를 만들면 사용자 질문 없이 플로우 설계로 진행할 수 있습니다.
 - 플로우 설계: locked brief에서 active flow, parent flow, sub-flow candidate, phase, handoff를 구분하고 진행할 flow 구성을 만듭니다.
 - 메인 플로우: `intake -> framing -> preparation -> work -> verification -> reporting`
 - 사용자-facing 진행 메시지: 현재 phase label을 산출하되, 기록이나 산출물 본문에는 label을 전파하지 않습니다.

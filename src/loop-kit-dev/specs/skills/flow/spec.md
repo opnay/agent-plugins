@@ -4,6 +4,7 @@
 
 `flow`는 새 사용자 메시지를 `메시지 인터뷰 -> 플로우 설계 -> 메인 플로우 -> 메인 플로우 회고 -> handoff condition`으로 해석합니다.
 메시지 인터뷰는 flow 내부 alignment loop이고, 플로우 설계는 locked brief에서 진행할 flow 구성을 만들며, 메인 플로우는 `intake -> framing -> preparation -> work -> verification -> reporting`으로 실행됩니다.
+모든 사용자 메시지는 같은 구조로 해석됩니다.
 
 ## 경계
 
@@ -32,7 +33,9 @@
 ## 핵심 계약
 
 - 메시지 인터뷰는 `snapshot -> alignment risk -> high-leverage question -> answer -> pressure test`를 반복해 locked brief를 만듭니다.
+- high-leverage question이 계약을 바꾸지 않으면 사용자 질문 없이 locked brief로 진행합니다.
 - 플로우 설계는 locked brief에서 active flow, parent flow, sub-flow candidate, phase, handoff를 구분하고 flow별 contract를 작성합니다.
+- 질문 답변, 상태 확인, 설명 요청은 active flow로 선택해 메인 플로우 lifecycle에서 처리합니다.
 - candidate는 선택되기 전 pending option입니다.
 - 메인 플로우는 선택된 active flow의 lifecycle이며 `reporting -> intake` loop로 다음 flow를 연결할 수 있습니다.
 - 메인 플로우 그룹 이후에는 항상 메인 플로우 회고를 수행하고 `000-review.md`를 갱신한 뒤 handoff condition을 산출합니다.
@@ -46,6 +49,7 @@
 ## 검토 질문
 
 - alignment risk가 잠겼는가?
+- 모든 사용자 메시지가 message interview와 flow design을 거쳤는가?
 - active flow와 candidate가 구분되는가?
 - scope, non-goals, completion, verification, approval, handoff가 있는가?
 - 다음 intake 조건이 flow 산출물로 구분되는가?

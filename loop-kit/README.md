@@ -31,6 +31,7 @@ codex plugin marketplace upgrade
 ## Flow
 
 `flow`는 새 사용자 메시지를 실행 가능한 flow 구성으로 바꿉니다.
+모든 사용자 메시지는 같은 경로를 탑니다.
 
 1. 메시지 인터뷰: intent snapshot, alignment risk, high-leverage question, answer pressure test, locked brief
 2. 플로우 설계: active flow, parent flow, candidate, phase, handoff, artifact ownership, flow contract

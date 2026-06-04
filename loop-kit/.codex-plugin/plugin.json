@@ -29,7 +29,7 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Use flow as message interview -> flow design -> main flow -> handoff condition, then use turn-gate to keep the turn open until I explicitly stop.",
+      "Use flow for every user message as message interview -> flow design -> main flow -> handoff condition, then use turn-gate to keep the turn open until I explicitly stop.",
       "Use phase prefixes for visible phase-start or meaningful progress messages, and after reporting open next turn-flow/message routing unless I explicitly stop.",
       "If a later user message arrives after an explicit or accidental stop, reactivate turn-gate and start fresh intake."
     ],

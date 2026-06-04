@@ -73,6 +73,8 @@ graph TD
 - 메시지 인터뷰는 deep-interview 역할을 flow 내부 해석 단계로 흡수합니다.
 - flow 내부 deep-interview는 alignment risk를 식별하고, 한 번에 하나의 high-leverage 질문으로 답변을 압력 테스트합니다.
 - 답변이 여전히 모호하면 같은 alignment risk를 다시 좁힙니다.
+- 모든 사용자 메시지는 같은 메시지 인터뷰와 플로우 설계 경로를 거쳐 메인 플로우로 처리합니다.
+- 메시지 인터뷰가 충분히 잠긴 brief를 만들면 사용자 질문 없이 플로우 설계로 진행합니다.
 - 플로우 설계는 진행할 flow 구성을 만들고 바로 메인 flow `intake`로 들어갑니다.
 - `000-plan.md`와 flow record는 각 그래프 노드의 업데이트 시점으로 표시합니다.
 

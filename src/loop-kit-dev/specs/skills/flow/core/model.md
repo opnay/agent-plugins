@@ -1,6 +1,7 @@
 # flow core model 계약
 
 - 구조: message interview -> flow design -> main flow -> main-flow review -> handoff condition.
+- 모든 사용자 메시지는 이 구조로 들어갑니다.
 - interview: alignment risk -> locked brief.
 - design: locked brief -> classification + flow config.
 - main flow: intake -> framing -> preparation -> work -> verification -> reporting.
