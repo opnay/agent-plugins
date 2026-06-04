@@ -39,6 +39,17 @@ If these conditions are missing, continue discovery or ask the user for the prod
 
 Prefer the repository's existing patterns, helpers, names, error handling, and test style. Introduce a new pattern only when existing patterns cannot meet the goal or are part of the problem.
 
+Check ownership boundaries when a change may move, expose, duplicate, or blur responsibility for behavior, rules, state, validation, or fallback behavior. Put the contract where responsibility belongs: caller, callee, domain layer, adapter, storage, UI, or test harness. A nearby file is not automatically the right boundary.
+
+Treat these as boundary-leak signals:
+
+- A caller must know a callee's internal state, storage order, cache policy, or recovery detail.
+- UI code owns domain validation or persistence rules.
+- An adapter makes product or domain decisions.
+- A shared helper mixes decisions from multiple ownership layers.
+
+If ownership is unclear, narrow the contract name, call direction, state owner, and failure responsibility before implementing. Put validation at the earliest boundary that can catch the issue without duplicating the rule across layers. Use fallbacks only when the owning layer can expose when they were used and what failure they handled.
+
 Add abstraction only when it removes real duplication, centralizes a rule, improves testability, clarifies ownership, or matches an existing design. Do not add abstraction for speculative future use.
 
 Make contracts visible. Inputs, outputs, errors, side effects, and ownership boundaries should be clear in code or tests. For fragile boundaries such as strings, JSON, external inputs, and process or network edges, prefer structured parsing, validation, schemas, or explicit failure handling over ad hoc assumptions.
@@ -49,6 +60,8 @@ Require stronger evidence and verification when the change touches concurrency, 
 
 Start with the simplest complete implementation that directly addresses the selected cause. Small does not mean partial: include the normal path, relevant failure path, and meaningful verification.
 
+Small changes still need the right owner when they touch responsibility boundaries. Do not patch the closest file if the behavior belongs in another layer or contract boundary.
+
 Then improve within the same task:
 
 1. Check whether names, control flow, duplication, edge handling, and failure reporting are clear.
@@ -57,7 +70,7 @@ Then improve within the same task:
 
 Keep changes inside the ownership boundary. Do not mix unrelated cleanup, formatting churn, speculative hardening, or broad restructuring into the fix. If nearby files already contain unrelated changes, treat them as user-owned and adapt to the current state rather than reverting them.
 
-Avoid fixes that only hide symptoms, silent fallbacks that mask failures, weakened assertions, and future-proofing that is not tied to the observed problem or an explicit contract.
+Avoid fixes that only hide symptoms, silent fallbacks that mask failures, weakened assertions, responsibility leaks, and future-proofing that is not tied to the observed problem or an explicit contract.
 
 ## Verification
 
