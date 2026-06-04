@@ -34,12 +34,12 @@ graph TD
 
   subgraph DEEP_INTERVIEW[deep-interview]
     direction TB
-    SNAPSHOT[초기 의도 스냅샷] --> RISK[alignment risk 식별 - 000-plan.md]
+    SNAPSHOT[초기 의도 스냅샷 - 원하는 결과/대상/범위/제약] --> RISK[alignment risk 식별 - 000-plan.md]
     RISK --> ASK[high-leverage 질문 하나]
     ASK --> ANSWER[답변 반영]
     ANSWER --> TEST[예시/반례/비목표/tradeoff 압력 테스트]
     TEST -->|검증 실패| RISK
-    TEST --> BRIEF[locked execution brief - 000-plan.md]
+    TEST --> BRIEF[locked execution brief - 목적/대상/범위/비목표/완료기준/검증기대/승인경계/근거 - 000-plan.md]
   end
 
   DEEP_INTERVIEW --> DESIGN[플로우 설계]
@@ -73,6 +73,10 @@ graph TD
 - 메시지 인터뷰는 deep-interview 역할을 flow 내부 해석 단계로 흡수합니다.
 - flow 내부 deep-interview는 alignment risk를 식별하고, 한 번에 하나의 high-leverage 질문으로 답변을 압력 테스트합니다.
 - 답변이 여전히 모호하면 같은 alignment risk를 다시 좁힙니다.
+- 초기 의도 스냅샷은 원하는 결과, 대상, 범위, 제약을 드러냅니다.
+- alignment risk는 locked execution brief를 실행 입력으로 쓰기 어렵게 만드는 가장 큰 불확실성입니다.
+- high-leverage 질문은 하나의 alignment risk를 좁히기 위해 사용합니다.
+- locked execution brief는 목적, 대상, 범위, 비목표, 완료 기준, 검증 기대, 승인 경계, 근거, 해소된 alignment risk, 남은 모호성을 현재 확정 상태로 남깁니다.
 - 모든 사용자 메시지는 같은 메시지 인터뷰와 플로우 설계 경로를 거쳐 메인 플로우로 처리합니다.
 - 메시지 인터뷰가 충분히 잠긴 brief를 만들면 사용자 질문 없이 플로우 설계로 진행합니다.
 - 플로우 설계는 진행할 flow 구성을 만들고 바로 메인 flow `intake`로 들어갑니다.
