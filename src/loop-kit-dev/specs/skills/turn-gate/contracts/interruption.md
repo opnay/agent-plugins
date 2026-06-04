@@ -11,7 +11,7 @@ active turn 중 새 사용자 메시지가 도착한 경우의 entry-only routin
 
 결과는 하나만 기록합니다.
 
-- inline-answer
+- active-flow
 - current-flow-revision
 - background-current-flow
 - reserve-later-analysis

@@ -66,7 +66,7 @@ If the user says "continue", "계속", or "이어가", continue only when the ne
 ## Interruption
 
 When a new user message arrives during an active turn, preserve pending question, approval boundary, verification status, and required next action.
-Apply `flow` contract-impact and route the result as `inline-answer`, `current-flow-revision`, `background-current-flow`, `reserve-later-analysis`, `supersede-current-flow`, `blocker-question`, or `explicit-stop`.
+Apply `flow` contract-impact and route the result as `active-flow`, `current-flow-revision`, `background-current-flow`, `reserve-later-analysis`, `supersede-current-flow`, `blocker-question`, or `explicit-stop`.
 Interruption never authorizes work outside the active contract or approval-sensitive execution.
 
 ## Verification
