@@ -46,7 +46,7 @@
   - spec: `advance-codex-dev/specs/skills/git-committer/spec.md`
 - `pro-engineering`: 코드 작성과 문제 해결에서 엔지니어링 판단, 원인 분석, 구현 규율, 검증 기준을 제공한다.
   - spec: `advance-codex-dev/specs/skills/pro-engineering/spec.md`
-- `optimize-token`: 응답과 작업 전 판단 문장을 간결하게 압축하되 정확성, 검증 상태, 승인 경계, 필수 출력 형식을 보존하는 기준을 제공한다.
+- `optimize-token`: 에이전트 응답, 진행 보고, 상태 문구, 검증·승인 문구의 토큰 사용을 줄이되 정확성, 검증 상태, 승인 경계, 필수 출력 형식, 현재 상태 기준을 보존하는 기준을 제공한다.
   - spec: `advance-codex-dev/specs/skills/optimize-token/spec.md`
 
 ## SDD 운영 원칙

@@ -14,3 +14,10 @@
 - 각 압축 단계는 단순한 스타일 이름이 아니라, 적용 전 통과해야 하는 gate를 가진다. 특히 `extreme`은 명시 호출이 있어도 안전, 승인, 검증, clarity gate를 통과하지 못하면 필요한 부분을 더 약한 단계로 강등해야 한다.
 - 단계나 흐름을 설명할 때는 `standard` 단계에서 `>`를 사용해 읽는 순서를 보여주고 싶다. 예: `` `light` > `standard` > `extreme` 순으로 읽어야합니다. ``
 - `light`, `standard`, `extreme` 관련 규칙은 증분되고 덮어씌워지도록 해서 스펙 문서를 간결하게 만들고 싶다.
+- `optimize-token` 스킬 스펙에서 현재 `response`와 `thinking`으로 구분된 축을 더 늘리고 싶다.
+  - `optimize-token`에서 어떤 축을 추가하는 방향으로 스펙을 수정할까요?
+    - `용도별 축 (추천)` 선택.
+- `optimize-token`의 축을 뒤엎고, response/thinking 및 용도별 surface 축은 전부 제거한다. `levels/light`, `levels/standard`, `levels/extreme` 세 단계는 전반적으로 모두 적용하되, 저장해야 되는 작성물은 `writing` 축으로만 별도 적용 관리한다.
+- `optimize-token`은 user-facing 문구에만 적용되는 것이 아니라, user-facing이 아닌 부분까지 전부 적용되어야 한다.
+- `levels`는 `writing`을 제외한 나머지 모든 상황에서 기본 적용된다.
+- `optimize-token`은 작성에 대한 내용으로 초점이 맞춰지면 안 되고, 에이전트 토큰 최적화가 주된 내용이어야 한다.
