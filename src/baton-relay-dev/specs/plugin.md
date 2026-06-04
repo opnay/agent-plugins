@@ -43,12 +43,13 @@
 
 - 대표 실행 표면: `manager`
 - 대표 스펙: `baton-relay-dev/specs/plugin.md`
-- skill 상세 스펙 위치: `baton-relay-dev/specs/skills/manager.md`
+- skill 상세 스펙 위치: `baton-relay-dev/specs/skills/manager/spec.md`
 
 ## 내장 skill 체계
 
 - `manager`: 작업을 구조분해하고, worktree별 fresh subagent를 배정하며, commit/rebase handoff와 prepared commit 통합, cleanup gate를 관리한다.
-  - spec: `baton-relay-dev/specs/skills/manager.md`
+  - spec: `baton-relay-dev/specs/skills/manager/spec.md`
+  - intent and flow graph: `baton-relay-dev/specs/skills/manager/intent.md`
 
 ## SDD 운영 원칙
 

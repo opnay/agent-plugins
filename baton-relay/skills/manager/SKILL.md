@@ -7,15 +7,16 @@ description: Manage task decomposition across isolated git worktrees with fresh 
 
 ## Overview
 
-Use this skill when a task should be split into isolated worktree tasks and executed by fresh subagents.
-The main agent acts as the manager: decompose the work, assign each slice, verify committed and rebased handoffs, integrate prepared commits, and clean up worktrees.
+Use this skill when a task should be planned as a repository workflow and executed by fresh subagents in isolated worktrees.
+The main agent acts as the manager: write a Markdown workflow plan, assign jobs, verify committed and rebased handoffs, integrate prepared commits, and clean up worktrees.
 
 Do not use this skill for a small single edit, a purely read-only answer, or work that cannot be separated into commit-sized slices.
 
 ## Core Contract
 
 - The main agent orchestrates; subagents perform bounded task work.
-- One subagent owns one task slice and one git worktree.
+- Write a Markdown `Workflow > Jobs > Runs` todo plan before dispatching subagents.
+- One subagent owns one job and one git worktree.
 - Do not reuse a completed subagent for the next slice; create a fresh subagent.
 - This skill does not grant commit authority by itself; confirm local subagent commit authority before dispatch.
 - A subagent is complete only after work, verification, git commit, and rebase onto the main agent's current integration branch.
@@ -28,10 +29,10 @@ Do not use this skill for a small single edit, a purely read-only answer, or wor
 
 1. Decide whether worktree orchestration is warranted.
 2. Capture the integration branch and current HEAD.
-3. Decompose the task into commit-sized slices.
-4. Choose parallel or sequential execution.
-5. Create a branch and worktree for each selected slice.
-6. Spawn a fresh subagent per worktree with a complete dispatch packet.
+3. Write a Markdown workflow plan with jobs, runs, needs, acceptance, and handoff rules.
+4. Choose parallel or sequential execution from job dependencies and parallel blockers.
+5. Create a branch and worktree for each selected subagent job.
+6. Spawn a fresh subagent per worktree with a complete dispatch packet derived from the plan.
 7. Require each subagent to work, verify, commit, and wait for merge-prep instruction.
 8. Ask the subagent to rebase onto the current integration branch when its slice is ready.
 9. Confirm the subagent reports the rebase target HEAD, commit hash, verification result, changed files, and residual risk.
@@ -42,33 +43,56 @@ Do not use this skill for a small single edit, a purely read-only answer, or wor
 
 If orchestration does not fit, report `Orchestration fit: no`, `Spawn plan: none`, the caller-local handling path, verification expectation, and residual risk.
 
-## Decomposition Axes
+## Workflow Plan
 
-Use more than one axis before finalizing slices:
+The plan is a Markdown todo document, not a data file.
+When writing the plan, use `templates/workflow-plan.md` as the base template.
+Use frontmatter for stable workflow and job metadata.
+Treat the plan as static except for the mutable allowlist: job `Status`, checklist states, evidence text appended under checklist items, and `Residual Risk`.
+If the template file is unavailable, use this shape:
 
-- problem: root-cause hypothesis, requirement, risk, blocker
-- code: package, module, layer, frontend, backend, docs, tests, infra
-- workflow: discovery, implementation, verification, documentation, refactor
-- contract: schema, API, service, client, UI, test contract
-- verification: lint, typecheck, unit test, integration test, build, smoke
-- conflict: shared files, shared contracts, generated outputs, migrations
-- generated output: treat generated release surfaces, generated clients, and generated migration outputs as integration/build artifacts unless the repository explicitly owns them as source
-- security: keep secrets, token rotation, live credentials, external auth calls, and unredacted logs or fixtures out of subagent scope unless separately approved
-- read-only: do not make pure investigation, triage, or hypothesis elimination a manager slice until it becomes a commit-sized fix slice
+- `# Workflow: <name>`
+- frontmatter: workflow objective, integration branch, dispatch fit, static job dependencies, worktree, write scope, parallel blockers, handoff conditions
+- `## Jobs`
+- `### Job N. <title>`
+- `Status: planned`
+- `#### Runs`
+- `#### Acceptance`
+- `#### Handoff`
 
-Parallelize only disjoint slices.
-Make shared-file or shared-contract slices sequential.
+Each `Run` must be an executable checklist item.
+Each subagent job must include worktree, write scope, acceptance, and handoff.
+Treat `needs` as a static dependency graph; do not update it during execution.
+Start a job only after every job named in `needs` has completed its body checklist and handoff evidence.
+Jobs with empty `needs` may start together unless parallel blockers make them sequential.
+Update only the mutable allowlist as job status changes.
+
+## Decomposition Rules
+
+Use practical repository-management criteria before finalizing jobs:
+
+- workstream: feature, bug, docs, verification, release-surface, or other practical work lane
+- write scope: module, screen, API, document surface, or generated artifact this job may change
+- dependency: contract, source change, setup, or verification that must finish first
+- parallel blockers: shared file, shared contract, migration, generated output, or secret surface
+- acceptance: verification, commit, rebase, and report conditions for job completion
+
+Parallelize only jobs with disjoint write scopes, empty parallel blockers, and no dependency edge.
+Make shared-file, shared-contract, generated-output, migration, and secret-surface jobs sequential.
 Make generated-output updates sequential after source changes unless the repository policy says otherwise.
+Do not make pure investigation, triage, or hypothesis elimination a subagent job until it becomes a commit-sized fix job.
 
 ## Dispatch Packet
 
 Send each subagent:
 
+- `job_id`
 - `objective`
 - `worktree_path`
 - `branch`
 - `base_or_integration_branch`
 - `write_scope`
+- `runs`
 - `non_goals`
 - `verification_required`
 - `commit_approval_state`
