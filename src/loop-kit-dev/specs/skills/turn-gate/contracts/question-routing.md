@@ -28,12 +28,17 @@ blocker, approval, explicit stop은 메인 그래프 안의 세부 노드가 아
 ## question recovery
 
 question abort, cancel, interrupt는 flow completion이나 terminal closure가 아닙니다.
-pending question을 기록하고 다음 사용자 메시지를 먼저 다음 중 하나로 해석합니다.
+pending question을 기록하고 다음 사용자 메시지를 active turn 안의 열린 입력으로 해석합니다.
+현재 메시지가 source-recorded explicit stop이 아니면 terminal closure로 닫지 않습니다.
+필요할 때만 다음 효과 중 하나로 정리합니다.
 
 - pending question answer
 - superseding new flow request
 - status/progress question
 - explicit stop
+
+방향 전환, 작업 변경, 추가 질문, 오류 지적은 pending question을 supersede할 수 있지만 turn 종료 권한은 만들지 않습니다.
+다음 입력이 충분히 구체적이지 않으면 같은 인터뷰 흐름으로 다시 구체화합니다.
 
 ## continue
 

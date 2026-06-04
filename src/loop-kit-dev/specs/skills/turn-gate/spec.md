@@ -42,6 +42,7 @@
 - 종료 요청은 `turn-gate / 메인`의 모든 시점에서 감지하며, 종료 페이즈로 이동합니다.
 - 종료 페이즈는 `작업 중이던 플로우 정리 -> explicit-stop 기록 - active turn 종료` 순서입니다.
 - source-recorded explicit stop이 있을 때만 active turn을 닫습니다.
+- 새 사용자 메시지, 질문, 상태 확인, 작업 변경, 방향 전환, 오류 지적, 추가 요구는 기본적으로 active turn 안의 열린 입력입니다.
 - 완료, 검증 통과, 커밋, 보고, final-looking 문구, 질문 중단은 explicit stop을 대체하지 않습니다.
 
 ## 검토 질문
@@ -51,4 +52,5 @@
 - 사용자-facing phase/progress 메시지에는 source skill이 소유한 phase prefix를 쓰고, artifact/record/command/question option에는 prefix를 전파하지 않는가?
 - self-drive가 명시된 gate 없이 자동 시작되지 않는가?
 - 종료 요청이 source-recorded explicit stop으로만 닫히는가?
+- non-stop 메시지가 terminal closure가 아니라 열린 입력으로 유지되는가?
 - record, verification, interruption, date 계약이 메인 그래프 노드로 승격되지 않는가?

@@ -14,6 +14,7 @@
 - stop: 종료 요청은 `turn-gate / 메인`의 모든 시점에서 감지하고 종료 페이즈로 이동합니다.
 - stop phase: `작업 중이던 플로우 정리 -> explicit-stop 기록 - active turn 종료` 순서로 처리합니다.
 - stop authority: source-recorded explicit stop으로만 active turn을 닫습니다.
+- default continuation: 새 사용자 메시지, 질문, 상태 확인, 작업 변경, 방향 전환, 오류 지적, 추가 요구는 기본적으로 active turn 안의 열린 입력입니다. 현재 메시지가 명시적 종료 요청이 아니면 terminal closeout으로 닫지 않습니다.
 
 ## runtime 본문 경계
 
@@ -24,6 +25,7 @@ Runtime `SKILL.md`는 다음만 직접 포함합니다.
 - handoff routing reopening
 - explicit-stop authority
 - question recovery
+- default continuation for non-stop messages
 - record recovery entrypoint
 - non-pass routing
 - self-drive gate

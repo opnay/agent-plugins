@@ -9,6 +9,7 @@ description: Keep an active Codex turn open until explicit stop; apply the flow 
 
 Keep the active Codex turn open until the user explicitly stops it and that stop source is recorded.
 Completion, commits, passing checks, status answers, reports, interrupted questions, final-looking summaries, and final responses are not closure authority.
+Treat every new user message as open input inside the active turn by default. Questions, status checks, task changes, direction changes, corrections, and follow-up requests are not stop signals unless the user explicitly says to end the active turn.
 
 Apply `flow` as-is.
 Do not define or restate flow taxonomy, lifecycle, readiness, discovery, ambiguity, contract impact, flow-local strategy, template meaning, or handoff meaning.
@@ -61,12 +62,15 @@ If a question tool call is aborted, canceled, or interrupted, preserve the pendi
 - status/progress question
 - explicit-stop
 
+The non-stop cases above keep the turn open. If the new input is not concrete enough to continue, return to the same interview flow to clarify it instead of closing the turn.
+
 If the user says "continue", "계속", or "이어가", continue only when the next flow input is already concrete enough to reenter `flow skill: interview`.
 
 ## Interruption
 
 When a new user message arrives during an active turn, preserve pending question, approval boundary, verification status, and required next action.
 Apply `flow` contract-impact and route the result as `active-flow`, `current-flow-revision`, `background-current-flow`, `reserve-later-analysis`, `supersede-current-flow`, `blocker-question`, or `explicit-stop`.
+Use `explicit-stop` only when the current message clearly asks to end the active turn.
 Interruption never authorizes work outside the active contract or approval-sensitive execution.
 
 ## Verification
