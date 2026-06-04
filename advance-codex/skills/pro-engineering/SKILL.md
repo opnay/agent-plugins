@@ -50,6 +50,8 @@ Treat these as boundary-leak signals:
 
 If ownership is unclear, narrow the contract name, call direction, state owner, and failure responsibility before implementing. Put validation at the earliest boundary that can catch the issue without duplicating the rule across layers. Use fallbacks only when the owning layer can expose when they were used and what failure they handled.
 
+Define allowlist-style contracts before expanding blocklist cases. Prefer code that names the valid inputs, states, transitions, effects, and failure conditions, then routes unknown or invalid values to explicit failure. Use blocklist cases as narrow supplemental safeguards; a growing blocklist usually means the owner, model, or validation boundary needs another look.
+
 Add abstraction only when it removes real duplication, centralizes a rule, improves testability, clarifies ownership, or matches an existing design. Do not add abstraction for speculative future use.
 
 Make contracts visible. Inputs, outputs, errors, side effects, and ownership boundaries should be clear in code or tests. For fragile boundaries such as strings, JSON, external inputs, and process or network edges, prefer structured parsing, validation, schemas, or explicit failure handling over ad hoc assumptions.
@@ -68,9 +70,11 @@ Then improve within the same task:
 2. Refine only the parts that are actually hard to read, risky, or inconsistent with local patterns.
 3. Confirm the original acceptance signal still holds after cleanup.
 
+Prefer early returns for guards, validation failures, and cannot-handle states when they reduce nesting and make the normal path easier to read. Keep a single-exit structure when cleanup, transactions, locks, or `finally`-style safety makes that clearer or safer.
+
 Keep changes inside the ownership boundary. Do not mix unrelated cleanup, formatting churn, speculative hardening, or broad restructuring into the fix. If nearby files already contain unrelated changes, treat them as user-owned and adapt to the current state rather than reverting them.
 
-Avoid fixes that only hide symptoms, silent fallbacks that mask failures, weakened assertions, responsibility leaks, and future-proofing that is not tied to the observed problem or an explicit contract.
+Avoid fixes that only hide symptoms, silent fallbacks that mask failures, weakened assertions, responsibility leaks, blocklist-only patches without an allowlist-style contract, and future-proofing that is not tied to the observed problem or an explicit contract.
 
 ## Verification
 
