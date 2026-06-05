@@ -139,6 +139,7 @@ function copyPath(sourcePath, targetPath, devName, releaseName) {
   if (stat.isDirectory()) {
     fs.mkdirSync(targetPath, { recursive: true });
     for (const entry of fs.readdirSync(sourcePath)) {
+      if (shouldSkipRuntimeEntry(sourcePath, entry)) continue;
       copyPath(
         path.join(sourcePath, entry),
         path.join(targetPath, rewritePathSegment(entry, devName, releaseName)),
@@ -159,6 +160,10 @@ function copyPath(sourcePath, targetPath, devName, releaseName) {
   } else {
     fs.writeFileSync(targetPath, data);
   }
+}
+
+function shouldSkipRuntimeEntry(sourcePath, entry) {
+  return path.basename(sourcePath) === "scripts" && entry === "tests";
 }
 
 function isTextFile(filePath) {
