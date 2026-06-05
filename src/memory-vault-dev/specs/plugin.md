@@ -8,6 +8,7 @@
 - skill 이름은 플러그인 이름과 같은 `memory-vault`를 사용합니다.
 - 지식 저장하는 스킬은 만들었는데, 전략을 뭘로 가져가야될까? 이 플러그인을 설치한 에이전트에게 뭔가를 시키면 자연스레 습득하는 지식들을 모아 관리하는 방식을 생각하고있거든.
 - 이건 프로젝트 타겟이 아니야. 어떤 상황에서든 에이전트를 사용하다보면 기억해야되는 내용들과 지식들을 저장하는 스킬이야.
+- `INDEX.md`는 정보를 나열하는 인덱싱 파일로 유지합니다. 예를 들어 `Programming/001-some-knowledge.md`, `Programming/React/001-hook-rules.md` 같은 지식 문서를 폴더별 `INDEX.md`에서 나열합니다. 지식 문서 파일명은 `<index>-<slug|lowercase|hyphen-case>.md` 형식입니다.
 
 ---
 
@@ -23,6 +24,7 @@
 - 포함:
   - 사용자가 제공한 폴더 또는 기본 개인 vault root를 장기 메모리 저장소로 관리
   - 기본 메모리 문서와 1-2 depth 카테고리 `INDEX.md` 생성
+  - 카테고리별 지식 문서 생성과 `INDEX.md` 문서 목록 갱신
   - vault root의 `AGENTS.md`에 메모리 읽기/쓰기 규칙과 카테고리 맵 관리
   - 에이전트 작업 시작 전 관련 메모리 읽기
   - 에이전트 작업 종료 전 재사용 가능한 기억 후보 선별
@@ -42,7 +44,8 @@
 - 에이전트가 작업 중 반복 적용 가능한 사용자 선호, 환경, workflow, 용어, 운영 결정을 발견한 경우
 - `~/Workspace/Memory-vault` 같은 개인 vault root를 초기화하거나 보완하는 요청
 - 이미 만들어진 vault root 문서를 읽고 현재 작업에 필요한 기억을 적용하는 요청
-- `Agents/Prompting`, `Tools/Codex`, `Coding/TypeScript`처럼 1-2 depth 카테고리 인덱스를 추가하거나 갱신하는 요청
+  - `Agents/Prompting`, `Tools/Codex`, `Coding/TypeScript`처럼 1-2 depth 카테고리 인덱스를 추가하거나 갱신하는 요청
+  - `Programming/React/hook-rules`처럼 1-2 depth 카테고리 아래 번호가 붙은 지식 문서를 만들거나 목록에 연결하는 요청
 
 ## 대표 표면
 
@@ -69,3 +72,4 @@
 - 대상 폴더 자체를 vault root로 유지하고, 하위 `memory-vault/` 폴더를 만들지 않습니다.
 - 기본 운영 대상은 개인 vault root이며, 특정 프로젝트 폴더를 대상으로 삼는 것은 사용자가 명시한 경우에만 허용합니다.
 - `AGENTS.md` 변경은 표식 섹션만 갱신하는 allowlist 방식으로 유지합니다.
+- 카테고리 `INDEX.md`는 요약 문서가 아니라 해당 폴더의 지식 문서와 하위 카테고리 링크를 나열하는 인덱스입니다.

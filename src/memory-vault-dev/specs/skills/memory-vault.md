@@ -7,6 +7,7 @@
 - skill 이름은 플러그인 이름과 같은 `memory-vault`를 사용합니다.
 - 지식 저장하는 스킬은 만들었는데, 전략을 뭘로 가져가야될까? 이 플러그인을 설치한 에이전트에게 뭔가를 시키면 자연스레 습득하는 지식들을 모아 관리하는 방식을 생각하고있거든.
 - 이건 프로젝트 타겟이 아니야. 어떤 상황에서든 에이전트를 사용하다보면 기억해야되는 내용들과 지식들을 저장하는 스킬이야.
+- `INDEX.md`는 정보를 나열하는 인덱싱 파일로 유지합니다. 예를 들어 `Programming/001-some-knowledge.md`, `Programming/React/001-hook-rules.md` 같은 지식 문서를 폴더별 `INDEX.md`에서 나열합니다. 지식 문서 파일명은 `<index>-<slug|lowercase|hyphen-case>.md` 형식입니다.
 
 ---
 
@@ -23,6 +24,8 @@
   - 대상 vault root 확인 또는 기본 개인 vault root 사용
   - 대상 폴더의 `README.md`, `INDEX.md`, `preferences.md`, `decisions.md`, `environment.md`, `workflows.md`, `glossary.md`, `open-questions.md` 생성
   - 1-2 depth 카테고리 폴더의 `INDEX.md` 생성
+  - 1-2 depth 카테고리 폴더 아래 지식 문서 생성
+  - 카테고리 `INDEX.md`에 지식 문서와 하위 카테고리 링크 나열
   - `AGENTS.md`의 `Memory Vault` 표식 섹션 생성 또는 갱신
   - root `AGENTS.md`에 1-2차 카테고리 맵 갱신
   - 작업 전 관련 메모리 읽기
@@ -34,6 +37,8 @@
   - 대상 폴더 밖 파일 변경
   - 기존 vault 문서 삭제 또는 임의 재작성
   - 대상 폴더 아래 별도 `memory-vault/` 하위 폴더 생성
+  - 2 depth를 초과하는 지식 문서 경로 생성
+  - 번호 없는 지식 문서 또는 대문자/공백 slug 파일 생성
   - 표식 없는 기존 `AGENTS.md` 본문 재작성
   - 대화 전문, 임시 작업 로그, 추측, 민감 정보의 자동 저장
 
@@ -45,6 +50,7 @@
 - 기존 memory vault의 기본 문서를 읽고 필요한 기억을 현재 작업에 적용하는 작업
 - 기존 vault 문서에 선호, 결정, 환경, workflow, 용어, 질문을 정리하는 작업
 - `Agents/Prompting`처럼 1-2 depth 카테고리를 만들고 각 폴더의 `INDEX.md`로 내용을 관리하는 작업
+- `Programming/some-knowledge`, `Programming/React/hook-rules`처럼 지식 문서를 만들고 폴더별 `INDEX.md`에 연결하는 작업
 
 ## 엔트리포인트 / 대표 표면
 
@@ -59,7 +65,12 @@
 - 대상 폴더가 없으면 기본 vault root `~/Workspace/Memory-vault`를 사용합니다.
 - 대상 폴더만 변경 대상으로 잠급니다.
 - 기본 변경은 대상 폴더의 기본 문서, 1-2 depth 카테고리 `INDEX.md`, `AGENTS.md` 표식 섹션으로 제한합니다.
-- 기존 파일은 덮어쓰지 않고, `AGENTS.md`의 표식 섹션만 갱신합니다.
+- 지식 문서를 만들 때는 `<category>/<index>-<slug>.md` 또는 `<category>/<subcategory>/<index>-<slug>.md`만 허용합니다.
+- slug는 lowercase hyphen-case로 정규화하고, index는 같은 폴더의 다음 3자리 번호를 사용합니다.
+- 카테고리 `INDEX.md`는 본문 지식 요약이 아니라 해당 폴더의 지식 문서와 하위 카테고리 링크를 나열합니다.
+- 일반 메모리 문서와 지식 문서는 덮어쓰지 않습니다.
+- 인덱스 파일은 현재 카테고리와 지식 문서 목록을 반영하도록 갱신할 수 있습니다.
+- `AGENTS.md`는 표식 섹션만 갱신합니다.
 - 스크립트를 사용할 수 있으면 `--dry-run`으로 예정 변경을 확인한 뒤 실제 실행합니다.
 - 실행 뒤에는 생성/갱신/보존된 파일과 검증 결과를 보고합니다.
 
@@ -91,8 +102,10 @@
 - `workflows.md`: 반복 작업 절차, 검증 루틴, 선호하는 문제 해결 방식
 - `glossary.md`: 사용자 또는 작업 전반에서 반복되는 용어와 약어
 - `open-questions.md`: 아직 확정되지 않은 기억 후보와 확인 질문
-- `INDEX.md`: vault 전체 요약, 주요 문서, 카테고리 맵
-- `<category>/INDEX.md`: 해당 카테고리의 범위와 연결 문서
+- `INDEX.md`: vault root의 기본 문서와 1-2 depth 카테고리 맵
+- `<category>/INDEX.md`: 해당 폴더의 지식 문서 목록과 하위 카테고리 링크
+- `<category>/<index>-<slug>.md`: 1차 카테고리 지식 문서
+- `<category>/<subcategory>/<index>-<slug>.md`: 2차 카테고리 지식 문서
 
 ## Passive Trigger 계약
 
@@ -119,6 +132,8 @@
 - 민감 정보나 일회성 로그를 저장하지 않는가?
 - 변경 대상이 대상 vault root 내부 allowlist에 머무르는가?
 - 카테고리 경로가 상대 경로이며 1-2 depth를 넘지 않는가?
+- 지식 문서 파일명이 `<index>-<lowercase-hyphen-slug>.md` 형식인가?
+- 관련 `INDEX.md`가 지식 문서 링크를 나열하는가?
 
 ## 독립성 원칙
 
