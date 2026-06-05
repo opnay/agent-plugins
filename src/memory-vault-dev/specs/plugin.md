@@ -5,6 +5,7 @@
     - `memory-vault`[직접 입력]
 - 정정: 사용자는 직접 관리하는 폴더를 제공합니다. 해당 폴더 그 자체를 관리하는 스킬입니다.
 - 스크립트 이름은 `memv.py`로 바꾸고, 2-depth 정도의 카테고리 인덱싱을 추가합니다. 예: `Programming - React`. 각 폴더별로 `INDEX.md`를 만들고, root `AGENTS.md`에는 1-2차 카테고리 맵을 둡니다.
+- skill 이름은 플러그인 이름과 같은 `memory-vault`를 사용합니다.
 
 ---
 
@@ -41,14 +42,14 @@
 ## 대표 표면
 
 - 대표 스펙: `memory-vault-dev/specs/plugin.md`
-- skill 상세 스펙 위치: `memory-vault-dev/specs/skills/manage-memory-vault.md`
-- runtime skill: `memory-vault-dev/skills/manage-memory-vault/SKILL.md`
+- skill 상세 스펙 위치: `memory-vault-dev/specs/skills/memory-vault.md`
+- runtime skill: `memory-vault-dev/skills/memory-vault/SKILL.md`
 - helper script: `memory-vault-dev/scripts/memv.py`
 
 ## 내장 skill 체계
 
-- `manage-memory-vault`: 지정 폴더 자체의 기본 지식 문서, 카테고리 `INDEX.md`, `AGENTS.md` 규칙 섹션을 생성, 갱신, 검증한다.
-  - spec: `memory-vault-dev/specs/skills/manage-memory-vault.md`
+- `memory-vault`: 지정 폴더 자체의 기본 지식 문서, 카테고리 `INDEX.md`, `AGENTS.md` 규칙 섹션을 생성, 갱신, 검증한다.
+  - spec: `memory-vault-dev/specs/skills/memory-vault.md`
 
 ## SDD 운영 원칙
 

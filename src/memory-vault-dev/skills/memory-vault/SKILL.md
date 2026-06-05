@@ -1,9 +1,9 @@
 ---
-name: manage-memory-vault
+name: memory-vault
 description: Manage a user-provided folder itself as a memory vault with knowledge repository documents and AGENTS.md rules when the user asks for repository memory, persistent project notes, folder knowledge base, memory vault setup, or AGENTS.md memory rules. memory vault, repository memory, project memory, persistent notes, knowledge repository, folder knowledge base, AGENTS.md, 지식 저장소, 메모리 저장소, 폴더 지식, 프로젝트 메모리
 ---
 
-# Manage Memory Vault
+# Memory Vault
 
 ## Purpose
 

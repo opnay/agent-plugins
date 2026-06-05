@@ -4,14 +4,15 @@
   - 새 플러그인 이름을 무엇으로 할까요?
     - `memory-vault`[직접 입력]
 - 정정: 사용자는 직접 관리하는 폴더를 제공합니다. 해당 폴더 그 자체를 관리하는 스킬입니다.
+- skill 이름은 플러그인 이름과 같은 `memory-vault`를 사용합니다.
 
 ---
 
-# manage-memory-vault 스킬 스펙
+# memory-vault 스킬 스펙
 
 ## 목적
 
-`manage-memory-vault`는 사용자가 직접 제공한 폴더 자체를 vault root로 관리하고, 해당 폴더의 기본 문서와 `AGENTS.md` 지식 저장소 관리 규칙을 추가하거나 갱신합니다.
+`memory-vault`는 사용자가 직접 제공한 폴더 자체를 vault root로 관리하고, 해당 폴더의 기본 문서와 `AGENTS.md` 지식 저장소 관리 규칙을 추가하거나 갱신합니다.
 이 skill은 자연어 요청에서 passive로 선택될 수 있어야 하며, 사용자가 플러그인 이름이나 skill 이름을 직접 말하지 않아도 repository memory 성격의 요청이면 적용됩니다.
 
 ## 경계
@@ -42,8 +43,8 @@
 
 ## 엔트리포인트 / 대표 표면
 
-- 대표 표면: `skills/manage-memory-vault/SKILL.md`
-- 호출 방식: 자연어 passive trigger 또는 `$memory-vault:manage-memory-vault`
+- 대표 표면: `skills/memory-vault/SKILL.md`
+- 호출 방식: 자연어 passive trigger 또는 `$memory-vault:memory-vault`
 - helper script: `scripts/memv.py`
 
 ## 핵심 처리 계약
