@@ -1,7 +1,7 @@
 {
   "name": "memory-vault",
   "version": "0.1.0",
-  "description": "Folder-local memory vault plugin for managing a user-provided knowledge repository folder, category indexes, and AGENTS.md rules.",
+  "description": "Personal agent memory vault plugin for durable cross-task knowledge, preferences, workflows, and AGENTS.md memory rules.",
   "author": {
     "name": "opnay"
   },
@@ -11,13 +11,15 @@
     "knowledge",
     "agents",
     "documentation",
-    "repository-memory"
+    "personal-memory",
+    "agent-memory",
+    "user-preferences"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Memory Vault",
-    "shortDescription": "Create and maintain folder-local knowledge repositories with category indexes and AGENTS.md rules.",
-    "longDescription": "Provides a passive skill for initializing and maintaining a user-provided folder as a memory vault, including 1-2 level category INDEX.md files and bounded AGENTS.md rules for how agents should read and update that vault.",
+    "shortDescription": "Create and maintain a personal agent memory vault with durable notes and category indexes.",
+    "longDescription": "Provides a passive skill for initializing, reading, and maintaining a personal agent memory vault for cross-task user preferences, decisions, environment facts, workflows, terminology, unresolved questions, 1-2 level category INDEX.md files, and bounded AGENTS.md memory rules.",
     "developerName": "opnay",
     "category": "Productivity",
     "capabilities": [
@@ -25,10 +27,10 @@
       "Analyze"
     ],
     "defaultPrompt": [
-      "Create a memory vault in this folder and add AGENTS.md rules for maintaining it.",
-      "Use the memory vault rules when I mention project knowledge, repository memory, persistent notes, or AGENTS.md memory rules.",
-      "Given this folder path, initialize or update the folder itself as a memory vault.",
-      "Add Programming/React as a memory vault category and update the root AGENTS.md category map."
+      "Remember this preference for future agent work.",
+      "Initialize my personal memory vault at ~/Workspace/Memory-vault.",
+      "Use the memory vault when I mention long-term notes, user preferences, or durable agent memory.",
+      "Add Agents/Prompting as a memory vault category and update the root AGENTS.md category map."
     ],
     "brandColor": "#25615F"
   }

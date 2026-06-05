@@ -8,28 +8,43 @@ from pathlib import Path
 VAULT_FILES = {
     "README.md": """# Memory Vault
 
-이 폴더는 현재 프로젝트의 지속 지식을 보관합니다.
-작업 전 `INDEX.md`를 확인하고, 오래 유지해야 하는 결정과 용어와 질문만 갱신합니다.
+이 폴더는 에이전트 사용 전반에서 반복적으로 참고할 장기 기억을 보관합니다.
+작업 전 `INDEX.md`를 확인하고, 재사용 가능한 사용자 선호, 결정, 환경, workflow, 용어, 질문만 갱신합니다.
 """,
     "INDEX.md": """# Memory Vault Index
 
 ## 현재 요약
 
-- 아직 기록된 프로젝트 요약이 없습니다.
+- 아직 기록된 장기 기억 요약이 없습니다.
 
 ## 주요 문서
 
-- `decisions.md`: 오래 유지해야 하는 결정
-- `glossary.md`: 프로젝트 용어와 약어
-- `open-questions.md`: 아직 풀리지 않은 질문
+- `preferences.md`: 사용자 선호와 상호작용 기본값
+- `decisions.md`: 오래 유지해야 하는 결정과 정책
+- `environment.md`: 경로, 도구, 런타임, 로컬 환경
+- `workflows.md`: 반복 작업 절차와 검증 방식
+- `glossary.md`: 용어와 약어
+- `open-questions.md`: 아직 풀리지 않은 기억 후보
 
 ## 카테고리
 
 - 아직 등록된 카테고리가 없습니다.
 """,
+    "preferences.md": """# Preferences
+
+- 아직 기록된 사용자 선호가 없습니다.
+""",
     "decisions.md": """# Decisions
 
 - 아직 기록된 결정이 없습니다.
+""",
+    "environment.md": """# Environment
+
+- 아직 기록된 환경 정보가 없습니다.
+""",
+    "workflows.md": """# Workflows
+
+- 아직 기록된 workflow가 없습니다.
 """,
     "glossary.md": """# Glossary
 
@@ -54,13 +69,18 @@ CATEGORY_INDEX = """# {title} Index
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Initialize or update a user-provided memory vault folder.")
-    parser.add_argument("target", help="Target folder that should itself be managed as the memory vault.")
+    parser = argparse.ArgumentParser(description="Initialize or update a personal agent memory vault folder.")
+    parser.add_argument(
+        "target",
+        nargs="?",
+        default="~/Workspace/Memory-vault",
+        help="Target folder that should itself be managed as the memory vault. Defaults to ~/Workspace/Memory-vault.",
+    )
     parser.add_argument(
         "--category",
         action="append",
         default=[],
-        help="Category path to index, up to two levels, for example Programming or Programming/React.",
+        help="Category path to index, up to two levels, for example Agents or Agents/Prompting.",
     )
     parser.add_argument("--dry-run", action="store_true", help="Print planned changes without writing files.")
     return parser.parse_args()
@@ -91,10 +111,19 @@ def discover_categories(target: Path) -> set[Path]:
     for first in sorted(target.iterdir()):
         if not first.is_dir() or first.name.startswith("."):
             continue
-        if (first / "INDEX.md").exists():
+        try:
+            has_first_index = (first / "INDEX.md").exists()
+            children = sorted(first.iterdir())
+        except PermissionError:
+            continue
+        if has_first_index:
             categories.add(Path(first.name))
-        for second in sorted(first.iterdir()):
-            if second.is_dir() and not second.name.startswith(".") and (second / "INDEX.md").exists():
+        for second in children:
+            try:
+                has_second_index = second.is_dir() and not second.name.startswith(".") and (second / "INDEX.md").exists()
+            except PermissionError:
+                continue
+            if has_second_index:
                 categories.add(Path(first.name, second.name))
     return categories
 
@@ -129,12 +158,15 @@ def agents_section(categories: set[Path]) -> str:
     return f"""<!-- memory-vault:start -->
 ## Memory Vault
 
-- 작업 전 `INDEX.md`를 확인하고, 이 폴더의 지속 지식을 기준으로 삼습니다.
-- 오래 유지해야 하는 프로젝트 결정은 `decisions.md`에 기록합니다.
-- 프로젝트 용어와 약어는 `glossary.md`에 기록합니다.
-- 미해결 질문은 `open-questions.md`에 기록합니다.
+- 관련 작업 전 `INDEX.md`를 확인하고, 필요한 장기 기억 문서를 읽습니다.
+- 사용자 선호는 `preferences.md`에 기록합니다.
+- 오래 유지해야 하는 결정과 정책은 `decisions.md`에 기록합니다.
+- 경로, 도구, 런타임, 로컬 환경은 `environment.md`에 기록합니다.
+- 반복 작업 절차와 검증 방식은 `workflows.md`에 기록합니다.
+- 용어와 약어는 `glossary.md`에 기록합니다.
+- 아직 확정되지 않은 기억 후보는 `open-questions.md`에 기록합니다.
 - 1-2차 카테고리는 각 폴더의 `INDEX.md`에 관리합니다.
-- 임시 작업 로그나 추측은 지속 지식으로 확정되기 전까지 memory vault에 남기지 않습니다.
+- 일회성 진행 로그, 임시 오류, 추측, 취소된 방향, 민감 정보는 저장하지 않습니다.
 - 기존 vault 문서는 삭제하지 말고, 필요한 경우 작은 단위로 갱신합니다.
 
 ### Category Map

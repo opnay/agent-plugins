@@ -1,20 +1,24 @@
 # Memory Vault
 
-`memory-vault`는 사용자가 직접 제공한 지식 저장소 폴더 자체를 관리하고, 그 폴더의 `AGENTS.md`에 관리 규칙을 추가하는 플러그인입니다.
+`memory-vault`는 에이전트 사용 전반에서 반복적으로 참고할 장기 기억을 개인 vault root에 저장하고 관리하는 플러그인입니다.
 
 ## 사용 예시
 
 ```text
-이 폴더를 memory vault로 관리해 주세요: /path/to/vault
+이 내용은 앞으로 기억해 주세요: 답변은 한국어 존대체로 해 주세요.
 ```
 
 ```text
-현재 저장소의 지식 저장소 문서를 정리하고 AGENTS.md 규칙도 맞춰 주세요.
+내 에이전트 메모리 vault를 초기화해 주세요.
+```
+
+```text
+Agents/Prompting 카테고리를 만들고 관련 기억을 정리해 주세요.
 ```
 
 ## 제공 기능
 
-- `memory-vault`: 사용자가 제공한 폴더를 vault root로 삼아 기본 문서와 `AGENTS.md` 규칙 섹션을 관리합니다.
+- `memory-vault`: 개인/작업 장기 메모리 vault를 초기화하고, 사용자 선호, 결정, 환경, workflow, 용어, 미해결 질문을 분류해 관리합니다.
 
 ## 기본 산출물
 
@@ -23,14 +27,19 @@
 ├── AGENTS.md
 ├── README.md
 ├── INDEX.md
+├── preferences.md
 ├── decisions.md
+├── environment.md
+├── workflows.md
 ├── glossary.md
 ├── open-questions.md
-└── Programming/
+└── Agents/
     ├── INDEX.md
-    └── React/
+    └── Prompting/
         └── INDEX.md
 ```
+
+기본 vault root는 `~/Workspace/Memory-vault`입니다.
 
 ## 구조
 
