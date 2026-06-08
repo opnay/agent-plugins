@@ -12,13 +12,14 @@ Use this skill to apply design knowledge when creating, reviewing, or improving 
 UI is the interface surface where users read information, understand structure, and judge possible actions.
 
 - Information structure: important information, frequent actions, and risky actions need clear priority and grouping.
-- Layout: placement, alignment, density, scan path, and separation method should reveal the screen purpose and information relationships.
-- Visual hierarchy: size, spacing, color, typography, icons, images, lines, and surface treatment should clarify importance and action priority.
+- Layout: placement, alignment, density, scan path, separation method, and relationship expression should reveal the screen purpose and information relationships.
+- Visual hierarchy: font size, spacing, color, typography weight, icon size, images, lines, and surface strength should clarify importance and action priority.
 - State expression: default, selected, disabled, loading, error, success, and empty states need distinct meanings.
-- Component role: buttons, links, inputs, toggles, menus, icon buttons, and auxiliary labels should match their action or information role.
+- Component role: buttons, links, inputs, placeholders, toggles, menus, icon buttons, and auxiliary labels should have size, emphasis, and placement that match their action or information role.
 - Consistency: the same kind of action, state, or information should use the same component and visual rule.
 - Accessibility: contrast, readability, focus, target size, and keyboard navigation should remain usable.
-- Affordance: actionable elements should make action possibility and risk level predictable.
+- Affordance: icons, labels, placement, state, and feedback should make action possibility, action result, and risk level predictable.
+- Data expression: charts, tables, logs, metrics, and relationship diagrams should make axes, scales, labels, rows, columns, legends, nodes, links, direction, and groups readable before decoration.
 - Immediate feedback: clicks, input, and transitions should produce immediate visual response.
 - Processing state: delayed work should show that progress exists and why the user is waiting.
 - Result state: completion, failure, cancellation, and partial success should be distinct and point to the next action.
@@ -30,7 +31,7 @@ UX is the experience of understanding a goal and reaching it through a predictab
 - Goal fit: the screen, flow, primary actions, and secondary actions should match the user's real goal and priority.
 - Use context: user skill level, environment, task frequency, and risk should shape the flow.
 - User flow: entry, understanding, choice, action, feedback, completion, and return should connect naturally.
-- Findability: users should know where they are, what they can find, and where to go next.
+- Findability: users should know where they are, what they can find, where to go next, and where to enter details.
 - Decision support: priority, options, consequences, message units, and confidence should be clear enough to choose.
 - Cognitive load: users should not need to remember, guess, or compare more than the task requires.
 - Error prevention and recovery: reduce mistakes and make the cause and next step clear after failure.
@@ -66,10 +67,10 @@ Color is the visual system that gives semantic meaning, mood, and hierarchy to t
 - Hierarchy and emphasis: accent color should prioritize key actions and important information without competing with other highlights.
 - Contrast and accessibility: text, icons, focus, and state indicators should remain distinguishable from the background and should not rely on color alone.
 - Color mood: pastel, vivid, muted, neutral, warm, or cool palettes should fit the screen purpose, audience, target tone, and emotional context.
-- Color weight: if one color or dark palette weakens hierarchy, separate background, surface, action, and status roles.
+- Color weight: the area, brightness, and saturation of dominant or dark colors should preserve background, surface, action, status, and hierarchy roles.
 - Theme adaptability: meaning and hierarchy should survive light, dark, high-contrast, and user settings.
-- Data color: axes, grids, labels, series, thresholds, selections, legends, comparisons, and risk ranges should stay distinguishable and use labels, shapes, or position when color is not enough.
-- Color expression: solid colors, gradients, transparency, and patterns should clarify information meaning, surface role, and target tone.
+- Data color: axes, grids, labels, series, thresholds, selections, legends, comparisons, and risk ranges should use stable semantic colors and use labels, shapes, or position when color is not enough.
+- Color expression: solid colors, gradients, transparency, and patterns should clarify data value, information meaning, surface role, and target tone.
 - Emotional transition: success, warning, error, and empty states should feel like one product instead of unrelated moods.
 - Cultural and domain context: color meaning can vary by region, industry, and user group.
 - Scalability: the palette and token structure should tolerate new states, locales, and long-term use.
@@ -113,7 +114,8 @@ Surface & Form is the expression system for card, panel, button, and input surfa
 - Materiality: realistic material, glass, paper, plastic, soft, or solid expression should support the product context instead of decoration alone.
 - Tactility: clickable, draggable, selected, disabled, and editable surfaces should feel different enough to guide action.
 - Hierarchy consistency: cards, panels, modals, toolbars, tables, and lists at the same level should use the same depth and surface rules.
-- Separation method: spacing, alignment, typography, color, lines, and surface treatment should clarify information groups and hierarchy.
+- Surface necessity: cards, panels, bands, plain sections, list rows, and table rows should have a clear role such as comparison, grouping, independent action, emphasis, or background separation.
+- Separation method: spacing, alignment, typography, color, lines, and surface treatment should clarify groups and hierarchy without duplicating the same separation role.
 - Density fit: surface depth, decoration, spacing, and stroke strength should match information density and use frequency.
 - State change: hover, active, selected, pressed, disabled, and loading states should change surface or depth by a predictable rule.
 - Accessibility and performance: shadows, blur, transparency, and texture should not harm contrast, readability, focus visibility, or runtime performance.
@@ -136,7 +138,7 @@ Quality is the shared product standard that keeps UI, UX, Content, Color, Tone &
 - Perceived performance: delay, transition, and loading treatment should not make the product feel frozen.
 - Product trust: sensitive moments such as risk, error, payment, deletion, and permission should preserve stability.
 - Interaction consistency: input, save, submit, select, and cancel should respond by a predictable rule.
-- Recovery quality: prevention, undo, retry, and loss protection should be consistent across risky flows.
+- Recovery quality: risk prevention, undo, retry, and loss protection should be consistent across risky flows.
 
 ## Working Rule
 

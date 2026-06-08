@@ -30,13 +30,13 @@
 
 ## 1차 기준 축
 
-- UI는 정보 구조, 시각 위계, 상태 표현, affordance, feedback을 다룹니다.
-- UX는 user flow, 인지 부하, 오류 예방과 회복, 신뢰, 학습성을 다룹니다.
+- UI는 정보 구조, 레이아웃, 시각 위계, 컴포넌트 역할, affordance, 데이터 표현, feedback을 다룹니다.
+- UX는 user flow, 탐색성, 상세 진입, 의사결정 지원, 인지 부하, 오류 예방과 회복, 신뢰, 학습성을 다룹니다.
 - Content는 라벨, CTA, 안내, 오류 문구, 빈 상태, 용어 일관성을 다룹니다.
-- Color는 color system, color mood, theme adaptability를 다룹니다.
+- Color는 color system, data color, color expression, color mood, theme adaptability를 다룹니다.
 - Tone & Expression은 tone type, tone fit, tone construction, tone boundaries를 다룹니다.
 - Branding은 brand identity, brand assets, brand color role, brand consistency, functional conflict를 다룹니다.
-- Surface & Form은 surface model, depth, shape language, materiality, tactility를 다룹니다.
+- Surface & Form은 surface model, depth, shape language, materiality, surface necessity, tactility를 다룹니다.
 - Quality는 접근성, 일관성, 적응성, 맥락 적합성, 전체 표현 일관성을 다룹니다.
 
 ## 핵심 처리 계약
