@@ -1,11 +1,11 @@
 ---
 name: pro-designer
-description: Apply product design judgment to UI, UX, interface content, and product quality when creating, reviewing, or improving screens, flows, dashboards, forms, landing pages, settings, and app interfaces. Use when a task needs design reasoning about readability, hierarchy, user flow, interface copy, state clarity, accessibility, responsiveness, trust, or visual polish. design judgment, UI design, UX design, user flow, interface content, product design, visual hierarchy, design quality, dashboard design, landing page design
+description: Apply product design judgment to UI, UX, interface content, color, tone, surface, form, and product quality when creating, reviewing, or improving screens, flows, dashboards, forms, landing pages, settings, and app interfaces. Use when a task needs design reasoning about readability, hierarchy, user flow, interface copy, color palette, visual tone, card surface, depth, materiality, state clarity, accessibility, responsiveness, trust, or visual polish. design judgment, UI design, UX design, user flow, interface content, color palette, visual tone, card design, surface design, materiality, product design, visual hierarchy, design quality, dashboard design, landing page design
 ---
 
 # Pro Designer
 
-Use this skill to apply design knowledge when creating, reviewing, or improving product screens. Judge the work through four axes: `UI`, `UX`, `Content`, and `Quality`.
+Use this skill to apply design knowledge when creating, reviewing, or improving product screens. Judge core design through `UI`, `UX`, `Content`, and `Quality`; use separate axes for `Color` and `Surface & Form` when palette, mood, theme, tone, card surface, depth, shape, or materiality affects the result.
 
 ## UI
 
@@ -57,9 +57,41 @@ Content is interface language that communicates meaning, risk, result, and next 
 - Accessible language: prefer clear wording and avoid ambiguous or exclusionary expressions.
 - Tone and voice: copy should fit the user's situation, risk level, and emotional state before brand flourish.
 
+## Color
+
+Color is the visual expression system that gives meaning, mood, hierarchy, and brand character to the interface.
+
+- Color roles: primary, secondary, accent, neutral, background, surface, border, text, and destructive colors should have clear jobs.
+- Semantic colors: success, warning, error, info, selected, and disabled colors should keep the same meaning across the product.
+- Hierarchy and emphasis: accent color should prioritize key actions and important information without competing with other highlights.
+- Contrast and accessibility: text, icons, focus, and state indicators should remain distinguishable from the background and should not rely on color alone.
+- Color mood: pastel, vivid, muted, neutral, warm, or cool palettes should fit the screen purpose, audience, brand character, and emotional context.
+- Tone fit: saturation, brightness, temperature, and expressiveness should match screen type, user risk, task frequency, and brand before decoration.
+- Theme adaptability: meaning and hierarchy should survive light, dark, high-contrast, brand themes, and user settings.
+- Data color: charts, legends, comparisons, and risk ranges should stay distinguishable and use labels, shapes, or position when color is not enough.
+- Emotional transition: success, warning, error, and empty states should feel like one product instead of unrelated moods.
+- Cultural and domain context: color meaning can vary by region, industry, and user group.
+- Scalability: the palette and token structure should tolerate new states, brands, locales, and long-term use.
+
+## Surface & Form
+
+Surface & Form is the expression system for card, panel, button, and input surfaces, depth, shape, and materiality.
+
+- Surface model: flat, raised, inset, floating, glass, solid panel, or paper-like treatments should fit the screen purpose and hierarchy.
+- Depth: floating, pressed, same-plane, and layered surfaces should make layer relationships and interaction possibility predictable.
+- Shape language: radius, border, outline, shadow, bevel, padding, and aspect ratio should match component role and product character.
+- Materiality: realistic material, glass, paper, plastic, soft, or solid expression should support the product context instead of decoration alone.
+- Tactility: clickable, draggable, selected, disabled, and editable surfaces should feel different enough to guide action.
+- Hierarchy consistency: cards, panels, modals, and toolbars at the same level should use the same depth and surface rules.
+- Density fit: operational tools should prioritize reading and comparison over heavy depth; brand, game, or campaign screens can allow more expressive materiality.
+- State change: hover, active, selected, pressed, disabled, and loading states should change surface or depth by a predictable rule.
+- Accessibility and performance: shadows, blur, transparency, and texture should not harm contrast, readability, focus visibility, or runtime performance.
+- Design system fit: existing elevation, radius, border, and shadow tokens come first; new surface rules need a clear reason.
+- Scalability: surface rules should survive more cards, more data, viewport changes, dark mode, and long content.
+
 ## Quality
 
-Quality is the shared product standard that keeps UI, UX, and Content complete, trustworthy, and durable in context.
+Quality is the shared product standard that keeps UI, UX, Content, Color, and Surface & Form complete, trustworthy, and durable in context.
 
 - Completeness: normal, loading, empty, error, disabled, permission, and success states should share a design language.
 - Accessibility: contrast, focus, reading order, target size, and assistive technology friendliness should hold across the experience.

@@ -14,7 +14,7 @@
   - installable plugin boundary와 bundled skill coherence 설계
   - task-scoped commit finalization discipline
   - 문제 해결 중심의 engineering judgment, root cause analysis, implementation discipline
-  - UI, UX, interface content, product quality 중심의 product design judgment
+  - UI, UX, interface content, color/tone, surface/form, product quality 중심의 product design judgment
   - 응답과 작업 전 판단 문장의 토큰 낭비를 줄이되 정확성, 검증, 승인 경계를 보존하는 token optimization
 - 제외:
   - 일반 제품 구현 workflow
@@ -27,7 +27,7 @@
 - reusable instruction을 clean-context scenario로 테스트하고 evidence 중심으로 분석하는 작업
 - commit workflow처럼 Codex 사용 자체의 운영 품질을 안정화하는 작업
 - 코드 작성과 버그 수정에서 문제 정의, 원인 분석, 작은 완전 수정, 검증과 리스크 보고 기준을 명시하는 작업
-- 화면, user flow, interface content, product quality에서 디자인 판단 기준을 명시하는 작업
+- 화면, user flow, interface content, color/tone, surface/form, product quality에서 디자인 판단 기준을 명시하는 작업
 - 응답과 작업 전 판단 문장을 짧고 선명하게 다듬되 필수 보고 정보와 안전 경계를 유지하는 작업
 
 ## 대표 표면
@@ -48,7 +48,7 @@
   - spec: `advance-codex-dev/specs/skills/git-committer/spec.md`
 - `pro-engineering`: 코드 작성과 문제 해결에서 엔지니어링 판단, 원인 분석, 구현 규율, 검증 기준을 제공한다.
   - spec: `advance-codex-dev/specs/skills/pro-engineering/spec.md`
-- `pro-designer`: 화면과 제품 UI 작업에서 UI, UX, Content, Quality 4축의 디자인 판단 기준을 제공한다.
+- `pro-designer`: 화면과 제품 UI 작업에서 UI, UX, Content, Color, Surface & Form, Quality 축의 디자인 판단 기준을 제공한다.
   - spec: `advance-codex-dev/specs/skills/pro-designer/spec.md`
 - `optimize-token`: 에이전트 응답, 진행 보고, 상태 문구, 검증·승인 문구의 토큰 사용을 줄이되 정확성, 검증 상태, 승인 경계, 필수 출력 형식, 현재 상태 기준을 보존하는 기준을 제공한다.
   - spec: `advance-codex-dev/specs/skills/optimize-token/spec.md`
