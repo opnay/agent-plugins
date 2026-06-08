@@ -1,11 +1,11 @@
 ---
 name: pro-designer
-description: Apply product design judgment to UI, UX, interface content, color, tone, expression, branding, surface, form, and product quality when creating, reviewing, or improving screens, flows, dashboards, forms, landing pages, settings, and app interfaces. Use when a task needs design reasoning about readability, hierarchy, user flow, interface copy, color palette, tone type, brand identity, visual expression, card surface, depth, materiality, state clarity, accessibility, responsiveness, trust, or visual polish. design judgment, UI design, UX design, user flow, interface content, color palette, tone type, branding, brand identity, visual expression, card design, surface design, materiality, product design, visual hierarchy, design quality, dashboard design, landing page design
+description: Apply product design judgment to UI, UX, interface content, color, tone, expression, branding, space, composition, surface, form, and product quality when creating, reviewing, or improving screens, flows, dashboards, forms, landing pages, settings, and app interfaces. Use when a task needs design reasoning about readability, hierarchy, user flow, interface copy, color palette, tone type, brand identity, spatial model, zone architecture, density, rhythm, visual expression, card surface, depth, materiality, state clarity, accessibility, responsiveness, trust, or visual polish. design judgment, UI design, UX design, user flow, interface content, color palette, tone type, branding, brand identity, space composition, spatial model, layout density, visual expression, card design, surface design, materiality, product design, visual hierarchy, design quality, dashboard design, landing page design
 ---
 
 # Pro Designer
 
-Use this skill to apply design knowledge when creating, reviewing, or improving product screens. Judge core design through `UI`, `UX`, `Content`, and `Quality`; use separate axes for `Color`, `Tone & Expression`, `Branding`, and `Surface & Form` when palette, mood, brand identity, theme, tone, card surface, depth, shape, or materiality affects the result.
+Use this skill to apply design knowledge when creating, reviewing, or improving product screens. Judge core design through `UI`, `UX`, `Content`, and `Quality`; use separate axes for `Color`, `Tone & Expression`, `Branding`, `Space & Composition`, and `Surface & Form` when palette, mood, brand identity, spatial model, density, rhythm, tone, card surface, depth, shape, or materiality affects the result.
 
 ## UI
 
@@ -104,6 +104,19 @@ Branding is the system for making the interface recognizable as a specific brand
 - Brand distinctiveness: avoid generic template expression; preserve a memorable visual cue tied to the product value.
 - Brand truthfulness: brand expression should not create promises or impressions that the real product cannot support.
 
+## Space & Composition
+
+Space & Composition is the spatial system for how a screen is understood as a document, console, canvas, map, topology, grid, split view, or other navigable space.
+
+- Spatial model: the screen should make its model clear, such as document, console, canvas, map, topology, grid, or split view.
+- Zone architecture: navigation, command, content, detail, status, and background zones should be separated by size, placement, and persistence.
+- Density and rhythm: whitespace, line height, group distance, repeated spacing, and toolbar height should match information volume, work frequency, comparison needs, and user expertise.
+- Information density fit: dense screens should preserve enough visible information for at-a-glance comparison; low-density screens should reduce information and actions for comprehension and error prevention.
+- Spatial hierarchy: foreground, background, sticky, fixed, floating, and overlay regions should express importance and interaction priority.
+- Flow and wayfinding: starting point, reading order, next action, detail entry, and return path should be predictable from spatial placement.
+- Relationship geometry: proximity, alignment, connection, direction, clustering, and axes should make information relationships understandable.
+- Responsive recomposition: viewport changes should preserve spatial roles, reading order, and primary action placement.
+
 ## Surface & Form
 
 Surface & Form is the expression system for card, panel, button, and input surfaces, depth, shape, and materiality.
@@ -124,7 +137,7 @@ Surface & Form is the expression system for card, panel, button, and input surfa
 
 ## Quality
 
-Quality is the shared product standard that keeps UI, UX, Content, Color, Tone & Expression, Branding, and Surface & Form complete, trustworthy, and durable in context.
+Quality is the shared product standard that keeps UI, UX, Content, Color, Tone & Expression, Branding, Space & Composition, and Surface & Form complete, trustworthy, and durable in context.
 
 - Completeness: normal, loading, empty, error, disabled, permission, and success states should share a design language.
 - Accessibility: contrast, focus, reading order, target size, and assistive technology friendliness should hold across the experience.

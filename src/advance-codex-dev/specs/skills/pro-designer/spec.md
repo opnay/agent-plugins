@@ -3,7 +3,7 @@
 ## 목적
 
 `pro-designer`는 Codex가 화면, 제품 UI, 시각 산출물을 다룰 때 디자이너 관점의 지식 기준을 적용하게 하는 guidance skill입니다.
-핵심 초점은 `UI`, `UX`, `Content`, `Quality` core 기준과 별도 `Color`, `Tone & Expression`, `Branding`, `Surface & Form` 축으로 디자인 판단 기준을 제공하는 것입니다.
+핵심 초점은 `UI`, `UX`, `Content`, `Quality` core 기준과 별도 `Color`, `Tone & Expression`, `Branding`, `Space & Composition`, `Surface & Form` 축으로 디자인 판단 기준을 제공하는 것입니다.
 
 ## 경계
 
@@ -13,6 +13,7 @@
 - Color: 색상 시스템과 색감이 정보 의미, 상태 의미, 접근성을 돕는지 보는 별도 표현 기준
 - Tone & Expression: 목표 톤의 분류, 적합성, 구성 요소, 경계가 화면 목적과 사용자 맥락에 맞는지 보는 별도 표현 기준
 - Branding: 브랜드 식별성, 브랜드 자산, 브랜드 색상 역할, 브랜드 일관성이 제품 의미와 충돌하지 않는지 보는 별도 표현 기준
+- Space & Composition: 화면이 어떤 공간 모델로 이해되고 영역, 밀도, 흐름, 관계, 반응형 재구성이 맞는지 보는 별도 공간 기준
 - Surface & Form: 카드, 패널, 버튼, 입력 영역의 표면감, 깊이, 형태, 물성이 정보 위계와 행동 가능성을 돕는지 보는 별도 표현 기준
 - Quality: UI, UX, Content가 접근성, 일관성, 적응성, 맥락 적합성을 유지하는지 보는 기준
 
@@ -25,6 +26,7 @@
 - 색상 팔레트, 파스텔톤 같은 색감, 테마, 브랜드 표현, 상태색 기준을 정해야 하는 작업
 - 신뢰 우선, 친근함, 고급감, 활기, 기술적 정밀함, 차분함 같은 목표 톤을 정하고 표현 요소로 구현해야 하는 작업
 - 브랜드 색상, 로고, 시각 모티프, 제품 이름, 카피 태도, 브랜드 자산 사용 강도를 정해야 하는 작업
+- 화면 공간 모델, 영역 구조, 밀도와 리듬, 시선 흐름, 관계 기하, 반응형 재구성 기준을 정해야 하는 작업
 - 카드, 패널, 버튼, 입력 영역을 flat, raised, inset, glass, realistic material 같은 표면 방식으로 정해야 하는 작업
 - 디자인 방향, 품질 기준, 개선 판단의 근거가 필요한 작업
 
@@ -36,6 +38,7 @@
 - Color는 color system, data color, color expression, color mood, theme adaptability를 다룹니다.
 - Tone & Expression은 tone type, tone fit, tone construction, tone boundaries를 다룹니다.
 - Branding은 brand identity, brand assets, brand color role, brand consistency, functional conflict를 다룹니다.
+- Space & Composition은 spatial model, zone architecture, density and rhythm, information density fit, spatial hierarchy, flow and wayfinding, relationship geometry, responsive recomposition을 다룹니다.
 - Surface & Form은 surface model, depth, shape language, materiality, surface necessity, tactility를 다룹니다.
 - Quality는 접근성, 일관성, 적응성, 맥락 적합성, 전체 표현 일관성을 다룹니다.
 
@@ -49,6 +52,7 @@
 - Color는 색상 역할, 상태 의미, 색감이 사용자 이해와 제품 맥락을 돕는지 봅니다.
 - Tone & Expression은 목표 톤이 화면 목적과 사용자 맥락에 맞고, 여러 표현 요소로 일관되게 구성되는지 봅니다.
 - Branding은 표현이 특정 브랜드로 인식되면서도 CTA, 상태, 위험, 제품 이해를 침범하지 않는지 봅니다.
+- Space & Composition은 화면이 문서, 콘솔, 캔버스, 지도, 토폴로지, 그리드, split view 같은 공간으로 이해되고 영역, 밀도, 흐름, 관계가 사용 목적에 맞는지 봅니다.
 - Surface & Form은 표면감, 깊이, 형태, 물성이 정보 위계와 상호작용 예측을 돕는지 봅니다.
 - Quality는 접근성, 일관성, 적응성, 맥락 적합성, 톤이 유지되는지 봅니다.
 - 기존 디자인 시스템이나 제품 패턴이 있으면 먼저 따르고, 새 패턴은 명시적 이유가 있을 때만 도입합니다.
@@ -61,6 +65,7 @@
 - 사용자가 색상, 팔레트, 테마, 톤, 파스텔톤, 색감, 브랜드 무드, 상태색을 묻는 경우에도 적용합니다.
 - 사용자가 신뢰감, 친근함, 고급감, 활기, 기술적 느낌, 차분함, playful 같은 표현 톤을 묻는 경우에도 적용합니다.
 - 사용자가 브랜드 색상, 로고 사용, 브랜드 자산, 브랜드 일관성, 브랜드 무드, 제품 정체성을 묻는 경우에도 적용합니다.
+- 사용자가 화면 공간, 영역 구조, 여백, 밀도, 시선 흐름, 지도형 UI, 토폴로지, 캔버스, split view, 반응형 재배치를 묻는 경우에도 적용합니다.
 - 사용자가 카드 형태, 표면감, 그림자, radius, glass, material, 입체감, 볼록한 카드, 눌린 영역 같은 표현을 묻는 경우에도 적용합니다.
 - 단순 코드 스타일, 빌드 오류, 데이터 모델, API 계약처럼 디자인 판단이 핵심이 아닌 작업에는 적용하지 않습니다.
 - 디자인 시스템이 있으면 먼저 따르고, 새 패턴은 사용자 문제를 더 잘 해결한다는 이유가 있을 때만 도입합니다.

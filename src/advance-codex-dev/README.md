@@ -8,6 +8,6 @@
 반대로 일반적인 실행 workflow나 무관한 공용 유틸리티를 담는 용도로 넓히지 않습니다.
 
 `pro-engineering`은 코드 작성과 문제 해결 중 증상, 원인 후보, 구현 판단, 검증 기준을 엔지니어 관점에서 정리해야 할 때 사용합니다.
-`pro-designer`는 화면, user flow, interface content, color, tone/expression, branding, surface/form, product quality를 UI, UX, Content, Color, Tone & Expression, Branding, Surface & Form, Quality 축으로 판단해야 할 때 사용합니다.
+`pro-designer`는 화면, user flow, interface content, color, tone/expression, branding, space/composition, surface/form, product quality를 UI, UX, Content, Color, Tone & Expression, Branding, Space & Composition, Surface & Form, Quality 축으로 판단해야 할 때 사용합니다.
 `optimize-token`은 에이전트 응답, 진행 보고, 상태 문구, 검증·승인 문구의 토큰 사용을 줄이되 정확성, 검증 결과, 승인 경계, 필수 출력 형식, 현재 상태 기준은 유지해야 할 때 사용합니다.
 `git-committer`는 작업을 task-scoped commit으로 마무리할 때 커밋 준비, 실행 권한 확인, staged 검증, 메시지, commit 실행을 묶어 처리할 때 사용합니다.
