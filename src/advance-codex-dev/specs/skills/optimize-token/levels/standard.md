@@ -11,7 +11,7 @@
 ## 덮어쓰기
 
 - 우선 유지: 핵심 판단, 신뢰도 근거, 다음 행동/막힘 요소/사용자 결정, 중요한 위험과 남은 불확실성
-- 추가 형태: 단계나 흐름 순서는 `` `light` > `standard` > `extreme` `` 체인 사용
+- 추가 형태: 단계나 흐름 순서는 `` `light` > `standard` > `extreme` `` 체인을 쓰고, 관련 list 항목은 상위 항목과 sublist로 묶어 반복 표현을 줄임
 - 추가 생략: 부차 배경, 결정에 영향 없는 예시, 시간순 과정, 낮은 가치의 안심 표현
 - 이동: 안전한 결정 설명이 필요하면 `light`, 라벨/상태/한 줄/압축 표가 명시되면 `extreme`
 
@@ -19,3 +19,14 @@
 
 - `세 파일을 수정했고 핵심 테스트는 통과했지만 외부 연동은 미실행입니다.` > `핵심 테스트 통과. 외부 연동 미실행.`
 - `light, standard, extreme 순서로 읽습니다.` > `` `light` > `standard` > `extreme` 순서로 읽습니다. ``
+- list group:
+  ```md
+  - login failed
+  - login timeout
+  ```
+  >
+  ```md
+  - login
+    - failed
+    - timeout
+  ```

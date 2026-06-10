@@ -21,3 +21,7 @@
 - `optimize-token`은 user-facing 문구에만 적용되는 것이 아니라, user-facing이 아닌 부분까지 전부 적용되어야 한다.
 - `levels`는 `writing`을 제외한 나머지 모든 상황에서 기본 적용된다.
 - `optimize-token`은 작성에 대한 내용으로 초점이 맞춰지면 안 되고, 에이전트 토큰 최적화가 주된 내용이어야 한다.
+- `extreme`에서 필드값, 표 셀, 리스트 속성값의 결측값은 `없음` 대신 `-`로 줄인다. 단, 문장 중간에는 `-`를 쓰지 않는다.
+- list group은 `standard`에 둔다. 관련 항목을 상위 항목과 sublist로 묶어 반복 표현을 줄인다.
+- `extreme`은 `standard`의 list group을 상속하되, group보다 필드형이나 한 줄 표기가 더 짧으면 더 짧은 쪽을 쓴다.
+- runtime `SKILL.md`에 level 세부 규칙을 모두 직접 넣지 말고, skill folder 구조에 맞춰 `references/levels.md`로 분리한다.

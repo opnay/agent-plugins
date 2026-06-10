@@ -26,12 +26,13 @@
 - `writing`은 전역 `levels/`의 기본 적용 대상이 아니며, `writing.md` 기준으로 별도 관리합니다.
 - `levels/`는 각 단계의 진입, 보존, 덮어쓰기, 하향/상향 gate를 소유합니다.
 - `intent-scenarios/`는 같은 입력에서 단계별 출력 차이가 유지되는지 확인하는 예시를 소유합니다.
-- runtime은 설치 후 접근 가능한 `SKILL.md`와 `references/*.md`에 필요한 요약만 포함합니다.
+- runtime은 설치 후 접근 가능한 `SKILL.md`, `references/levels.md`, `references/writing.md`에 필요한 요약만 포함합니다.
 
 ## 확장 원칙
 
 - 저장되는 작성물 규칙은 `writing.md`에 추가합니다.
 - 단계별 gate 변경은 해당 `levels/<level>.md`에 추가합니다.
+- runtime 단계 요약은 `skills/optimize-token/references/levels.md`에 둡니다.
 - writing 예시는 `intent-scenarios/writing.md`에 추가합니다.
 - runtime에는 dev-only spec 경로를 실행 지시로 남기지 않습니다.
 - 참고 출처와 사용자 의도 기록은 `intent.md`가 소유합니다.
