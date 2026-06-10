@@ -23,7 +23,7 @@
 - active turn은 사용자의 explicit stop까지 유지합니다.
 - `turn-gate`는 `flow` 판단을 적용하고, flow boundary나 handoff 의미는 `flow` output에 의존합니다.
 - `flow skill: handoff` 뒤에는 `질문 도구: 다음 플로우 선택`으로 다음 flow 입력을 고릅니다.
-- `next-flow gate`에서 사용중인 skill을 다시 읽고, 질문 뒤 `000-plan.md`를 매번 업데이트합니다.
+- `next-flow gate`에서 사용중인 skill의 기존 context를 버린 뒤 source에서 다시 읽고, 질문 뒤 `000-plan.md`를 매번 업데이트합니다.
 - 질문 도구는 `flow: deep-interview`와 같은 인터뷰 흐름으로 입력을 구체화한 뒤 다시 `flow`로 들어갑니다.
 - 사용자-facing 진행 메시지는 source skill이 소유한 phase prefix로 현재 단계를 드러냅니다. `turn-gate`는 `flow` phase label을 재정의하지 않고 적용하며, `next-flow gate`에서는 `[next-flow]`를 소유합니다.
 - phase prefix는 artifact, record, command summary, question option label에 전파하지 않습니다.

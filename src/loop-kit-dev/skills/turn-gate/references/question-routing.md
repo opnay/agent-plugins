@@ -15,8 +15,9 @@ Do this before terminal-looking reporting, final responses, or flow-only closeou
 <gate:skill-reconfigure>
 
 - identify the full session active skill list
-- reread each active skill body
-- accept the refreshed list as the active skill set
+- discard prior loaded skill context for those active skills
+- reread each active skill body from its source
+- accept only the freshly read bodies as the active skill set
 - prepare the active skills value for `000-plan.md`
 
 </gate:skill-reconfigure>

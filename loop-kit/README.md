@@ -48,7 +48,7 @@ codex plugin marketplace upgrade
 `turn-gate`는 active turn에 `flow` 판단을 적용하고, 사용자의 explicit stop까지 턴을 유지합니다.
 
 `flow skill: handoff` 뒤에는 `질문 도구: 다음 플로우 선택`으로 다음 flow 입력을 고릅니다.
-`next-flow gate`에서 사용중인 skill을 다시 읽고, 질문 뒤 `000-plan.md`를 매번 업데이트합니다.
+`next-flow gate`에서 사용중인 skill의 기존 context를 버린 뒤 source에서 다시 읽고, 질문 뒤 `000-plan.md`를 매번 업데이트합니다.
 질문 도구는 `flow: deep-interview`와 같은 인터뷰 흐름으로 입력을 구체화한 뒤 다시 `flow`로 들어갑니다.
 Self-drive가 명시되면 그래프 노드가 아니라 준비된 sequence gate가 질문 도구를 대체합니다.
 Record, verification, interruption, date 처리는 메인 그래프 노드가 아니라 active turn을 복구하고 안전하게 라우팅하기 위한 지원 계약입니다.

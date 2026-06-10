@@ -33,7 +33,7 @@
 - Runtime `SKILL.md`는 `next-flow gate` 실행 계약을 `<gate:next-flow>...</gate:next-flow>` 태그로 감싸야 합니다. 이 태그는 예시 문구가 아니라 handoff 뒤 필수 gate 경계를 드러내는 실행 표식입니다.
 - `next-flow gate`는 매번 `skill reconfigure` 그룹을 거쳐 `다음 플로우 선택 -> 000-plan.md 업데이트`를 기본 경로로 처리합니다.
 - Runtime `SKILL.md`는 `skill reconfigure` 하위 gate를 `<gate:skill-reconfigure>...</gate:skill-reconfigure>` 태그로 감싸야 합니다.
-- `skill reconfigure` 그룹은 `flow skill: handoff`에서 시작해 세션에서 사용중인 전체 skill 목록을 식별하고, 각 skill 본문을 새로 읽고, 새 active skill set으로 수용하는 과정입니다.
+- `skill reconfigure` 그룹은 `flow skill: handoff`에서 시작해 세션에서 사용중인 전체 skill 목록을 식별하고, 기존에 읽은 skill context를 폐기하고, 각 skill 본문을 source에서 새로 읽고, freshly read bodies만 새 active skill set으로 수용하는 과정입니다.
 - 일반 모드는 질문 도구로 `다음 플로우 선택`에 진입합니다.
 - self-drive 모드는 질문 도구를 대체해 `다음 플로우 선택`에 진입하고, `000-self-drive.md 업데이트`를 거쳐 통합 `000-plan.md 업데이트`로 들어갑니다.
 - 질문 도구는 `flow: deep-interview`와 같은 인터뷰 흐름으로 다음 flow 입력을 충분히 구체화합니다.
@@ -54,7 +54,7 @@
 - `flow skill: handoff` 뒤에 flow-only terminal closure가 아니라 `next-flow gate`가 먼저 열리는가?
 - Runtime에 `<gate:next-flow>` 태그로 handoff 뒤 필수 gate 경계가 분명히 감싸져 있는가?
 - Runtime에 `<gate:skill-reconfigure>` 태그로 next-flow 내부 하위 gate 경계가 분명히 감싸져 있는가?
-- handoff 뒤 `skill reconfigure`로 세션에서 사용중인 전체 skill 목록을 새 active skill set으로 수용하고, 질문 도구 또는 self-drive로 다음 flow를 선택한 뒤 필요한 기록을 업데이트하고 interview로 돌아오는가?
+- handoff 뒤 `skill reconfigure`로 세션에서 사용중인 전체 skill 목록을 식별하고 기존 skill context를 폐기한 뒤 각 skill 본문을 source에서 새로 읽고 freshly read bodies만 새 active skill set으로 수용하며, 질문 도구 또는 self-drive로 다음 flow를 선택한 뒤 필요한 기록을 업데이트하고 interview로 돌아오는가?
 - 사용자-facing phase/progress 메시지에는 source skill이 소유한 phase prefix를 쓰고, artifact/record/command/question option에는 prefix를 전파하지 않는가?
 - self-drive가 명시된 gate 없이 자동 시작되지 않는가?
 - 종료 요청이 source-recorded explicit stop으로만 닫히는가?

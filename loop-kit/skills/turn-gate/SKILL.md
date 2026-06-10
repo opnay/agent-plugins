@@ -50,11 +50,12 @@ Trigger: the first required step inside `<gate:next-flow>`, before asking a next
 Required order:
 
 1. Identify the full session active skill list.
-2. Reread each active skill body.
-3. Accept the refreshed list as the active skill set.
-4. Prepare the active skills value for `000-plan.md`.
+2. Discard prior loaded skill context for those active skills.
+3. Reread each active skill body from its source.
+4. Accept only the freshly read bodies as the active skill set.
+5. Prepare the active skills value for `000-plan.md`.
 
-Exit: leave this gate only after the refreshed active skill set is known, or route to blocker recovery if any required skill body cannot be read.
+Exit: leave this gate only after the fresh active skill set is known, or route to blocker recovery if any required skill body cannot be read.
 
 </gate:skill-reconfigure>
 
