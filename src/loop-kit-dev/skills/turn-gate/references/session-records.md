@@ -65,7 +65,7 @@ If the user forbids all writes or record creation, do not write records and do n
 
 ## Questions
 
-After `flow skill: handoff`, enter `<gate:next-flow>`: identify the full session active skill list, reread each skill body, accept the refreshed active skill set, reopen handoff question routing unless explicit stop is recorded, and update `000-plan.md`.
+After `flow skill: handoff`, enter `<gate:next-flow>` and then `<gate:skill-reconfigure>`: identify the full session active skill list, reread each skill body, accept the refreshed active skill set, reopen handoff question routing unless explicit stop is recorded, and update `000-plan.md`.
 Do not record handoff, final-looking reporting, status-only output, or verification pass as closure authority.
 Use `answered_question` and `pending_question` for question recovery.
 Do not invent alternate question-state fields.

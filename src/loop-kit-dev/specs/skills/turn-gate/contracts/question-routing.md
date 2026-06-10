@@ -9,7 +9,7 @@
 `flow skill: handoff` 이후 explicit stop이 없으면 즉시 `next-flow gate`를 엽니다.
 이 상태는 terminal response가 아니라 `다음 플로우 선택`으로 다음 flow 입력을 고르는 열린 routing입니다.
 handoff result, final-looking summary, status answer, verification pass는 이 gate를 건너뛰는 closure authority가 아닙니다.
-Runtime에서는 이 경계를 `<gate:next-flow>...</gate:next-flow>` 태그로 감쌉니다.
+Runtime에서는 이 경계를 `<gate:next-flow>...</gate:next-flow>` 태그로 감싸고, 내부 `skill reconfigure` 경계를 `<gate:skill-reconfigure>...</gate:skill-reconfigure>` 태그로 감쌉니다.
 일반 진입은 질문 도구를 사용하고, prepared self-drive 진입은 질문 도구를 대체합니다.
 
 `next-flow gate` 순서:
@@ -22,6 +22,7 @@ Runtime에서는 이 경계를 `<gate:next-flow>...</gate:next-flow>` 태그로 
 - 구체화된 입력으로 `flow skill: interview` 재진입
 
 `skill reconfigure` 그룹은 `flow skill: handoff`에서 시작해 다음 flow 질문을 만들기 전에 세션에서 사용중인 전체 skill 목록을 식별하고, 각 skill 본문을 새로 읽고, 새 active skill set으로 수용하는 과정입니다.
+Runtime에서는 이 과정을 `<gate:skill-reconfigure>` 태그 안에 둡니다.
 `000-plan.md` 업데이트는 선택된 다음 flow 입력, 사용 skill, pending/answered question 상태, next action을 매번 반영합니다.
 `request_user_input`을 사용할 수 있고 선택지가 좁으면 질문 도구로 `다음 플로우 선택`을 표시합니다.
 도구가 없으면 active plain-text question fallback을 씁니다.

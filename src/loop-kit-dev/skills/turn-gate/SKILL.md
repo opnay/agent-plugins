@@ -34,7 +34,7 @@ Trigger: every `flow skill: handoff` while `turn-gate` is active, unless a curre
 
 Required order:
 
-1. Run `skill reconfigure`: identify the full session active skill list, reread each skill body, and accept the refreshed list as the active skill set.
+1. Run `<gate:skill-reconfigure>`.
 2. Select the next flow through the question tool or a prepared self-drive gate.
 3. If self-drive is active, update `000-self-drive.md`.
 4. Update `000-plan.md` with active skills, selected or pending question state, next action, and self-drive pointer when relevant.
@@ -42,6 +42,21 @@ Required order:
 6. Reenter `flow skill: interview` with the clarified input.
 
 Exit: leave this gate only after `000-plan.md` is updated and the next input is routed to `flow skill: interview`, or after blocker routing or source-recorded explicit stop is recorded.
+
+<gate:skill-reconfigure>
+
+Trigger: the first required step inside `<gate:next-flow>`, before asking a next-flow question or advancing self-drive.
+
+Required order:
+
+1. Identify the full session active skill list.
+2. Reread each active skill body.
+3. Accept the refreshed list as the active skill set.
+4. Prepare the active skills value for `000-plan.md`.
+
+Exit: leave this gate only after the refreshed active skill set is known, or route to blocker recovery if any required skill body cannot be read.
+
+</gate:skill-reconfigure>
 
 </gate:next-flow>
 
@@ -71,7 +86,7 @@ Do not treat readiness, verification, generated release surface, previous contex
 
 ## Questions
 
-After every `flow skill: handoff`, run `next-flow gate`: run `skill reconfigure`, reopen routing unless explicit stop is recorded, update `000-self-drive.md` when self-drive is active, then update `000-plan.md`.
+After every `flow skill: handoff`, run `next-flow gate`: enter `<gate:skill-reconfigure>`, reopen routing unless explicit stop is recorded, update `000-self-drive.md` when self-drive is active, then update `000-plan.md`.
 The next routing surface is not terminal closeout.
 If a normal `flow` path appears complete, treat that completion as the input to `next-flow gate`, not as permission to end the active turn.
 When in doubt, return to `<gate:next-flow>` and record the next required action instead of closing.

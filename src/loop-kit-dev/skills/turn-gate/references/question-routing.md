@@ -5,16 +5,22 @@ Use this reference for question routing and question recovery after `flow skill:
 ## Open Routing
 
 When `turn-gate` is active, `flow skill: handoff` is not terminal closure.
-After every handoff, immediately enter `<gate:next-flow>`: run `skill reconfigure`, keep routing open unless an explicit stop is source-recorded, then update `000-plan.md`.
+After every handoff, immediately enter `<gate:next-flow>`: enter `<gate:skill-reconfigure>`, keep routing open unless an explicit stop is source-recorded, then update `000-plan.md`.
 Do this before terminal-looking reporting, final responses, or flow-only closeout.
 
 <gate:next-flow>
 
 `next-flow gate` paths:
 
+<gate:skill-reconfigure>
+
 - identify the full session active skill list
 - reread each active skill body
 - accept the refreshed list as the active skill set
+- prepare the active skills value for `000-plan.md`
+
+</gate:skill-reconfigure>
+
 - `request_user_input` answer or user message
 - optional prepared self-drive gate
 - optional `000-self-drive.md` update when self-drive is active
