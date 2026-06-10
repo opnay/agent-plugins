@@ -48,7 +48,7 @@
 - 모든 사용자 메시지는 메시지 인터뷰로 들어갑니다.
 - 메시지 인터뷰는 초기 의도 스냅샷, alignment risk, high-leverage 질문, 답변 반영, 압력 테스트를 거쳐 locked execution brief를 만듭니다.
 - locked execution brief는 목적, 대상, 범위, 비목표, 완료 기준, 검증 기대, 승인 경계, 근거, 해소된 alignment risk, 남은 모호성을 현재 확정 상태로 남깁니다.
-- 플로우 설계는 locked execution brief에서 항목 분류, flow 분해, flow별 계약 작성, 진행 순서 정리를 수행합니다.
+- 플로우 설계는 locked execution brief에서 항목 분류, 단일/다중 flow 판단, parent flow 또는 단일 active flow 식별, sub-flow candidate 추출, 후보 pending 상태 표시, flow별 계약 작성, 선택된 active flow record 작성, 진행 순서 정리를 수행합니다.
 - 선택된 메인 플로우는 `intake -> framing -> preparation -> work -> verification -> reporting` 순서로 진행합니다.
 - `intake`, `framing`, `preparation`, `work`, `verification`, `reporting`은 active flow 내부 phase이며, active flow의 현재 위치와 다음 행동을 드러내는 고정 단위입니다.
 - 다음 flow가 있으면 `reporting`에서 다음 `intake`로 라우팅합니다.

@@ -38,13 +38,16 @@ If the brief is already settled enough, continue to flow design without asking t
 Convert the locked execution brief into the flow configuration:
 
 1. Classify items as `active flow`, `parent flow`, `sub-flow candidate`, `phase`, or `handoff`.
-2. Decompose flow when multiple main flows are needed.
-3. Write each flow contract.
-4. Order the next main flow and later candidates.
-5. Select the main flow to enter.
+2. Decide whether one main flow is enough or multiple flows are needed.
+3. Identify the parent flow or single active flow.
+4. Extract sub-flow candidates and keep them pending until selected.
+5. Write each flow contract and create the selected active flow record.
+6. Order the next main flow and later candidates.
+7. Select the main flow to enter.
 
 Candidates remain pending until selected as the next main flow; pending candidates do not authorize execution.
 Each flow contract includes scope, non-goals, completion criteria, verification expectation, approval boundary, and handoff condition.
+Create the active flow record from `templates/flow-record.md` when the selected active flow boundary is established.
 If a purpose chain affects the contract, absorb it into the purpose section of `000-plan.md`.
 
 ## Main Flow

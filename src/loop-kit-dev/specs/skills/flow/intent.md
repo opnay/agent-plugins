@@ -53,8 +53,11 @@ graph TD
 
   subgraph LIST_UP[list-up]
     direction TB
-    CLASSIFY[항목 분류] --> DECOMPOSE[flow 분해]
-    DECOMPOSE --> CONTRACT[flow별 계약 작성 - 목적 사슬 필요 시]
+    CLASSIFY[항목 분류] --> UNIT[단일/다중 flow 판단]
+    UNIT --> PARENT[parent flow 또는 단일 active flow 식별]
+    PARENT --> CANDIDATES[sub-flow candidate 추출]
+    CANDIDATES --> PENDING[후보 pending 상태 표시]
+    PENDING --> CONTRACT[flow별 계약 작성 - flow record 작성 - 목적 사슬 필요 시]
     CONTRACT --> ORDER[진행 순서 정리 - 000-plan.md 갱신]
     ORDER -->|검증 실패| CLASSIFY
   end
@@ -85,10 +88,11 @@ graph TD
 ## 플로우 설계 핵심
 
 - 항목 분류는 active flow, parent flow, sub-flow candidate, phase, handoff를 구분합니다.
-- flow 분해는 단일 메인 flow로 충분한지, 여러 메인 flow가 필요한지 정리합니다.
-- flow별 계약 작성은 scope, non-goals, completion criteria, verification expectation, approval boundary, handoff condition을 정리합니다.
+- flow 분해는 단일/다중 flow 판단, parent flow 또는 단일 active flow 식별, sub-flow candidate 추출, 후보 pending 상태 표시로 나눕니다.
+- 후보는 다음 메인 flow로 선택되기 전까지 실행 권한을 만들지 않습니다.
+- flow별 계약 작성은 scope, non-goals, completion criteria, verification expectation, approval boundary, handoff condition을 정리하고, 선택된 active flow의 flow record를 작성합니다.
 - 진행 순서 정리는 다음에 들어갈 메인 flow와 이후 후보를 구분하고 `000-plan.md` 갱신 시점입니다.
-- flow record는 메인 플로우 phase, evidence, verification, reporting 시점에서 갱신합니다.
+- flow record는 flow별 계약 작성 시점에 만들어지고, 이후 메인 플로우 phase, evidence, verification, reporting 시점에서 갱신합니다.
 - `000-review.md`는 메인 플로우 그룹 이후, `handoff condition` 직전에 항상 갱신하고, active routing이나 handoff authority로 쓰지 않습니다.
 - 회고 finding이 없으면 no-finding 결과로 짧게 기록합니다.
 - 목적 사슬은 contract에 영향을 줄 때 `000-plan.md`의 목적 섹션에 흡수합니다.
