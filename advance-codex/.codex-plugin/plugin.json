@@ -38,6 +38,7 @@
       "Write"
     ],
     "defaultPrompt": [
+      "When a skill is needed, forget previously loaded skill context and reread the current skill body before applying it.",
       "Use $advance-codex:plugin-creator to package a plugin and define the right bundled surfaces.",
       "Use $advance-codex:skill-creator to design a reusable Codex skill with the right references, guardrails, and description trigger metadata.",
       "Use $advance-codex:skill-scenario-testing to test reusable instructions with fresh subagents, fixed scenarios, and caller-side metrics before reporting evidence-backed findings.",
