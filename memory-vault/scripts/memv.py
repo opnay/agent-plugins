@@ -10,7 +10,7 @@ VAULT_FILES = {
     "README.md": """# Memory Vault
 
 이 폴더는 에이전트 사용 전반에서 반복적으로 참고할 장기 기억을 보관합니다.
-작업 전 `INDEX.md`를 확인하고, 재사용 가능한 사용자 선호, 결정, 환경, workflow, 용어, 질문만 갱신합니다.
+작업 전 `INDEX.md`를 확인하고, 작업 중 얻은 사용자 선호, 결정, 환경, workflow, 용어, 질문, 검증된 실수와 지식을 작은 단위로 갱신합니다.
 """,
     "preferences.md": """# Preferences
 
@@ -44,7 +44,7 @@ BASIC_DOCS = [
     ("preferences.md", "사용자 선호와 상호작용 기본값"),
     ("decisions.md", "오래 유지해야 하는 결정과 정책"),
     ("environment.md", "경로, 도구, 런타임, 로컬 환경"),
-    ("workflows.md", "반복 작업 절차와 검증 방식"),
+    ("workflows.md", "반복 작업 절차, 검증 방식, 권한이 필요한 명령"),
     ("glossary.md", "용어와 약어"),
     ("open-questions.md", "아직 풀리지 않은 기억 후보"),
 ]
@@ -240,15 +240,16 @@ def agents_section(categories: set[Path]) -> str:
 ## Memory Vault
 
 - 관련 작업 전 `INDEX.md`를 확인하고, 필요한 장기 기억 문서를 읽습니다.
+- 작업 중 실수, 명령 실패, 웹검색, 코드 확인, 사용자 지시에서 재사용 가능한 기억 후보를 식별합니다.
 - 사용자 선호는 `preferences.md`에 기록합니다.
 - 오래 유지해야 하는 결정과 정책은 `decisions.md`에 기록합니다.
 - 경로, 도구, 런타임, 로컬 환경은 `environment.md`에 기록합니다.
-- 반복 작업 절차와 검증 방식은 `workflows.md`에 기록합니다.
+- 반복 작업 절차, 검증 방식, 권한 상승이 필요한 명령은 `workflows.md`에 기록합니다.
 - 용어와 약어는 `glossary.md`에 기록합니다.
 - 아직 확정되지 않은 기억 후보는 `open-questions.md`에 기록합니다.
 - 1-2차 카테고리는 각 폴더의 `INDEX.md`에 관리합니다.
 - 지식 문서는 `<index>-<lowercase-hyphen-slug>.md` 형식으로 만들고, 같은 폴더의 `INDEX.md`에 링크합니다.
-- 일회성 진행 로그, 임시 오류, 추측, 취소된 방향, 민감 정보는 저장하지 않습니다.
+- 일회성 진행 로그, 원문 실패 로그, 추측, 취소된 방향, 민감 정보는 저장하지 않습니다.
 - 기존 vault 문서는 삭제하지 말고, 필요한 경우 작은 단위로 갱신합니다.
 
 ### Category Map
