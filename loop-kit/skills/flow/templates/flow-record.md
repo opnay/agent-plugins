@@ -31,6 +31,16 @@ Create a new file when the active flow boundary changes.
 - `{action}`: target `{target}`; effect `{effect}`; risk `{risk}`; recovery `{path}`; approval `{not-requested|required|granted|blocked}`.
 - `{readiness, verification, build, or generated surface update is not commit, release, publish, version bump, destructive, or external-action authority}`
 
+## Verification Todo
+
+### Requirement Verification
+
+- [ ] `{observable user requirement or completion criterion}`
+
+### Implementation Verification
+
+- [ ] `{type/test/build/lint/import/release-surface/codebase-convention check, or not-required reason}`
+
 ## Phase Checklist
 
 - [ ] intake

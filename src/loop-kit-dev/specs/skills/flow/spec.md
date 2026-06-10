@@ -51,6 +51,8 @@
 - 플로우 설계는 locked execution brief에서 항목 분류, 단일/다중 flow 판단, parent flow 또는 단일 active flow 식별, sub-flow candidate 추출, 후보 pending 상태 표시, flow별 계약 작성, 선택된 active flow record 작성, 진행 순서 정리를 수행합니다.
 - 선택된 메인 플로우는 `intake -> framing -> preparation -> work -> verification -> reporting` 순서로 진행합니다.
 - `intake`, `framing`, `preparation`, `work`, `verification`, `reporting`은 active flow 내부 phase이며, active flow의 현재 위치와 다음 행동을 드러내는 고정 단위입니다.
+- `framing`은 사용자 요구사항을 requirement verification todo로 분해하고, `preparation`은 requirement verification todo와 implementation verification todo를 확정합니다.
+- requirement verification은 사용자 요구사항 충족 여부를 primary axis로 검증하고, implementation verification은 구현 정합성을 supporting axis로 검증합니다.
 - 다음 flow가 있으면 `reporting`에서 다음 `intake`로 라우팅합니다.
 - 메인 플로우 그룹 이후에는 `000-review.md`를 갱신하고 handoff condition을 산출합니다.
 
@@ -61,6 +63,8 @@
 - 플로우 설계가 진행할 flow 구성을 만들었는가?
 - 선택된 메인 플로우가 단계 순서를 유지하는가?
 - phase가 active flow의 내부 진행 단위로 유지되고, 독립 flow 후보나 handoff로 흐려지지 않는가?
+- requirement verification todo가 행위 수행 여부가 아니라 결과물의 사용자 요구사항 충족 여부를 드러내는가?
+- implementation verification todo가 requirement verification을 대체하지 않는가?
 - reporting에서 다음 intake 또는 handoff condition이 드러나는가?
 - 메인 플로우 회고가 handoff condition 전에 수행되는가?
 - 기록 갱신 시점이 `intent.md` 그래프와 일치하는가?

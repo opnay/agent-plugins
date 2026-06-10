@@ -59,10 +59,10 @@ intake -> framing -> preparation -> work -> verification -> reporting
 ```
 
 - `intake`: confirm the locked execution brief and main-flow input.
-- `framing`: confirm the current step's frame and ownership boundary.
-- `preparation`: lock the contract before work entry.
+- `framing`: confirm the current step's frame and ownership boundary, then decompose user requirements into requirement verification todos.
+- `preparation`: lock the contract, requirement verification todos, and implementation verification todos before work entry.
 - `work`: produce the contracted output.
-- `verification`: check output against the contract.
+- `verification`: check the output against requirement verification todos and implementation verification todos.
 - `reporting`: record result, verification, residual risk, next intake, or handoff condition.
 
 These names are fixed phases inside the active flow. A phase shows the active flow's current position, next action, and record update point. User-facing messages from a phase must start with the `[<phase-name>]` label pattern. Phase labels are progress markers; do not mechanically copy them into artifact bodies, record bodies, command summaries, or question option labels.
@@ -71,6 +71,10 @@ If a phase starts to own a reviewable artifact, completion criteria, approval bo
 
 The contracted output may be an artifact change, answer, explanation, summary, status report, verification result, or other requested result.
 If another flow follows, route from `reporting` to the next `intake`.
+
+Requirement verification is the primary axis. It checks whether the output satisfies the user's requested fields, states, cases, wording, behavior, and excluded responsibilities. Do not replace it with action-level checks such as "module created" when the output has more specific requirements.
+Implementation verification is the supporting axis. It checks type, test, build, lint, import path, release surface, and codebase-convention evidence when relevant.
+Mark each verification item as `pass`, `fail`, `blocked`, `insufficient`, or `not-required`. Do not promote unverified items to success.
 
 ## Main-Flow Review
 

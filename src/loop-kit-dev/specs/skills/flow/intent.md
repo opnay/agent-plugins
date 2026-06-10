@@ -104,5 +104,9 @@ graph TD
 - phase는 active flow의 현재 위치, 다음 행동, 기록 갱신 시점을 드러냅니다.
 - phase는 독립 실행 단위가 아니며 flow 후보, handoff, 회고, next-flow 선택지를 대체하지 않습니다.
 - phase가 별도 검토 가능한 산출물, 완료 기준, 승인 경계, handoff 조건을 갖기 시작하면 flow 설계에서 새 flow나 sub-flow candidate로 다시 분류합니다.
+- `framing`은 사용자 요구사항을 requirement verification todo로 분해합니다.
+- `preparation`은 requirement verification todo와 implementation verification todo를 확정합니다.
+- requirement verification은 결과물이 사용자 요구사항을 충족하는지 확인하는 primary axis입니다.
+- implementation verification은 타입, 테스트, 빌드, lint, import path, release surface, 코드베이스 관례를 확인하는 supporting axis입니다.
 - 사용자에게 보이는 메시지가 특정 phase에서 나오면 `[<phase-name>]` 형식의 메시지 앞 라벨을 붙입니다.
 - phase 라벨은 진행 표시입니다. 산출물 본문, 기록 본문, 명령 요약, 질문 선택지 라벨에 기계적으로 전파하지 않습니다.
