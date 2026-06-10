@@ -35,7 +35,7 @@ graph TD
   subgraph DEEP_INTERVIEW[deep-interview]
     direction TB
     SNAPSHOT[초기 의도 스냅샷 - 원하는 결과/대상/범위/제약] --> RISK[alignment risk 식별 - 000-plan.md]
-    RISK --> ASK[high-leverage 질문 하나]
+    RISK --> ASK[high-leverage 질문]
     ASK --> ANSWER[답변 반영]
     ANSWER --> TEST[예시/반례/비목표/tradeoff 압력 테스트]
     TEST -->|검증 실패| RISK
@@ -74,7 +74,7 @@ graph TD
 - `handoff condition`은 메인 플로우 종료 뒤 산출되는 종료 조건입니다.
 - 여러 플로우가 필요하면 리스트업 결과가 여러 메인 플로우가 될 수 있습니다.
 - 메시지 인터뷰는 deep-interview 역할을 flow 내부 해석 단계로 흡수합니다.
-- flow 내부 deep-interview는 alignment risk를 식별하고, 한 번에 하나의 high-leverage 질문으로 답변을 압력 테스트합니다.
+- flow 내부 deep-interview는 alignment risk를 식별하고, 필요한 high-leverage 질문으로 답변을 압력 테스트합니다.
 - 답변이 여전히 모호하면 같은 alignment risk를 다시 좁힙니다.
 - 초기 의도 스냅샷은 원하는 결과, 대상, 범위, 제약을 드러냅니다.
 - alignment risk는 locked execution brief를 실행 입력으로 쓰기 어렵게 만드는 가장 큰 불확실성입니다.

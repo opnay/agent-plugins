@@ -20,7 +20,7 @@ Create a locked execution brief from the user message:
 
 1. Capture the initial intent snapshot.
 2. Identify the alignment risk.
-3. Ask one high-leverage question when needed.
+3. Ask high-leverage questions when needed.
 4. Apply the answer.
 5. Pressure-test with an example, counterexample, explicit non-goal, or tradeoff.
 6. If the pressure test fails, narrow the same alignment risk again.
@@ -28,7 +28,7 @@ Create a locked execution brief from the user message:
 
 The initial intent snapshot shows desired result, target, scope, and constraints.
 The alignment risk is the largest uncertainty that makes the locked execution brief hard to use as execution input.
-A high-leverage question narrows one alignment risk at a time.
+High-leverage questions narrow alignment risks.
 The locked execution brief records purpose, target or targets, scope, non-goals, completion criteria, verification expectation, approval boundary, evidence basis, resolved alignment risk, and residual ambiguity as the current settled state.
 
 If the brief is already settled enough, continue to flow design without asking the user.
