@@ -5,20 +5,28 @@ Use this reference for question routing and question recovery after `flow skill:
 ## Open Routing
 
 When `turn-gate` is active, `flow skill: handoff` is not terminal closure.
-After handoff, run `next-flow gate`: reread the currently needed skills, keep routing open unless an explicit stop is source-recorded, then update `000-plan.md`.
+After every handoff, immediately enter `<gate:next-flow>`: run `skill reconfigure`, keep routing open unless an explicit stop is source-recorded, then update `000-plan.md`.
+Do this before terminal-looking reporting, final responses, or flow-only closeout.
+
+<gate:next-flow>
 
 `next-flow gate` paths:
 
-- reread currently needed skills
+- identify the full session active skill list
+- reread each active skill body
+- accept the refreshed list as the active skill set
 - `request_user_input` answer or user message
+- optional prepared self-drive gate
+- optional `000-self-drive.md` update when self-drive is active
 - update `000-plan.md`
 - the same interview flow as `flow: deep-interview`
 - reenter `flow skill: interview` with clarified input
-- prepared self-drive gate
+
+</gate:next-flow>
 
 Blocker decisions, approval decisions, and explicit stop are handled by global routing and approval boundaries, not as separate main graph nodes.
 
-Do not treat final-looking wording, status-only answers, compression, or a successful `flow skill: handoff` as turn closure.
+Do not treat final-looking wording, status-only answers, compression, verification pass, flow reporting, or a successful `flow skill: handoff` as turn closure.
 Closure requires explicit stop.
 
 ## Asking

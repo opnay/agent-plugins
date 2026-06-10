@@ -29,6 +29,8 @@
 
 - 사용자 메시지는 `turn-gate` wrapper 안의 `flow skill` 그룹으로 진입합니다.
 - `turn-gate`는 `flow skill: handoff` 이후 `next-flow gate`를 엽니다.
+- `flow skill: handoff`는 terminal closure가 아니라 `next-flow gate`의 입력입니다. `turn-gate` 활성 중에는 flow-only 종료, final-looking 보고, status-only 답변이 `next-flow gate`를 건너뛰는 닫힘 권한이 될 수 없습니다.
+- Runtime `SKILL.md`는 `next-flow gate` 실행 계약을 `<gate:next-flow>...</gate:next-flow>` 태그로 감싸야 합니다. 이 태그는 예시 문구가 아니라 handoff 뒤 필수 gate 경계를 드러내는 실행 표식입니다.
 - `next-flow gate`는 매번 `skill reconfigure` 그룹을 거쳐 `다음 플로우 선택 -> 000-plan.md 업데이트`를 기본 경로로 처리합니다.
 - `skill reconfigure` 그룹은 `flow skill: handoff`에서 시작해 세션에서 사용중인 전체 skill 목록을 식별하고, 각 skill 본문을 새로 읽고, 새 active skill set으로 수용하는 과정입니다.
 - 일반 모드는 질문 도구로 `다음 플로우 선택`에 진입합니다.
@@ -48,6 +50,8 @@
 ## 검토 질문
 
 - `turn-gate`가 `flow` 의미를 재정의하지 않고 wrapper로 적용하는가?
+- `flow skill: handoff` 뒤에 flow-only terminal closure가 아니라 `next-flow gate`가 먼저 열리는가?
+- Runtime에 `<gate:next-flow>` 태그로 handoff 뒤 필수 gate 경계가 분명히 감싸져 있는가?
 - handoff 뒤 `skill reconfigure`로 세션에서 사용중인 전체 skill 목록을 새 active skill set으로 수용하고, 질문 도구 또는 self-drive로 다음 flow를 선택한 뒤 필요한 기록을 업데이트하고 interview로 돌아오는가?
 - 사용자-facing phase/progress 메시지에는 source skill이 소유한 phase prefix를 쓰고, artifact/record/command/question option에는 prefix를 전파하지 않는가?
 - self-drive가 명시된 gate 없이 자동 시작되지 않는가?

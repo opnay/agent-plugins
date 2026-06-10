@@ -6,8 +6,10 @@
 
 ## 계약
 
-`flow skill: handoff` 이후 explicit stop이 없으면 `next-flow gate`를 엽니다.
+`flow skill: handoff` 이후 explicit stop이 없으면 즉시 `next-flow gate`를 엽니다.
 이 상태는 terminal response가 아니라 `다음 플로우 선택`으로 다음 flow 입력을 고르는 열린 routing입니다.
+handoff result, final-looking summary, status answer, verification pass는 이 gate를 건너뛰는 closure authority가 아닙니다.
+Runtime에서는 이 경계를 `<gate:next-flow>...</gate:next-flow>` 태그로 감쌉니다.
 일반 진입은 질문 도구를 사용하고, prepared self-drive 진입은 질문 도구를 대체합니다.
 
 `next-flow gate` 순서:
