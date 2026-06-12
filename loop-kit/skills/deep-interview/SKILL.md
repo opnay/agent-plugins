@@ -159,13 +159,6 @@ Output:
 
 Hand the locked brief to the active execution workflow or recommend one if none has been chosen yet.
 
-Typical downstream consumers:
-
-- `autopilot`
-- `ralph-loop`
-- `parallel-work`
-- `review-loop`
-
 The downstream workflow should treat the locked brief as the current source of truth for implementation intent unless the user explicitly reopens alignment.
 
 Output:

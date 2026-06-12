@@ -25,7 +25,7 @@ Use this wrapper loop:
 1. Route the user message into the `flow skill` group inside the `turn-gate` wrapper.
 2. Treat the internal path from interview to handoff as `생략...`; do not model it inside `turn-gate`.
 3. Immediately after `flow skill: handoff`, enter `<gate:next-flow>` before any terminal-looking closeout.
-4. Use the same interview flow as `flow: deep-interview` to clarify the next flow input.
+4. Use `deep-interview` to clarify the next flow input.
 5. Reenter `flow skill: interview` with the clarified input; flow-owned skill reconfigure runs inside `flow`.
 
 <gate:next-flow>
@@ -38,7 +38,7 @@ Required order:
 2. Select the next flow through the question tool or a prepared self-drive gate.
 3. If self-drive is active, update `000-self-drive.md`.
 4. Update `000-plan.md` with selected or pending question state, next action, and self-drive pointer when relevant.
-5. Clarify the selected input with the same interview flow as `flow: deep-interview`.
+5. Clarify the selected input with `deep-interview`.
 6. Reenter `flow skill: interview` with the clarified input.
 
 Exit: leave this gate only after `000-plan.md` is updated and the next input is routed to `flow skill: interview`, or after blocker routing or source-recorded explicit stop is recorded.

@@ -76,7 +76,7 @@ graph TD
 - 예약 플로우 재검토는 이미 계획된 후보, pending question, self-drive 다음 항목이 현재 next-flow 선택지에 영향을 주는지 먼저 확인합니다.
 - `skill reconfigure`는 `turn-gate`가 아니라 `flow`가 소유하며, flow entry와 post-reporting continuation boundary에서 필요한 skill 본문을 source에서 다시 읽어 루프 중 잊힌 skill context를 복구합니다.
 - `다음 플로우 선택`은 질문 도구 또는 self-drive로 다음 flow 입력을 고르는 question-routing 표면입니다.
-- 질문 도구는 `flow: deep-interview`와 같은 인터뷰 흐름으로 다음 flow 입력을 충분히 구체화합니다.
+- 질문 도구는 `deep-interview`로 다음 flow 입력을 충분히 구체화합니다.
 - self-drive 진입은 질문 도구를 사용하지 않습니다.
 - self-drive 경로는 `다음 플로우 선택` 뒤 `000-self-drive.md 업데이트`를 거쳐 통합 `000-plan.md 업데이트`로 들어갑니다.
 - `flow skill: interview` 재진입 뒤에는 구체화된 입력을 기준으로 flow design에 필요한 질문을 우선합니다.

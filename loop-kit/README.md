@@ -2,8 +2,11 @@
 
 `loop-kit`는 Codex 작업 턴을 flow 단위로 유지하는 플러그인입니다.
 
-- `flow`: `entry skill reconfigure -> 메시지 인터뷰 -> 플로우 설계 -> 메인 플로우 -> 메인 플로우 회고 -> handoff condition`
+- `deep-interview`: intent, scope, tradeoff, approval boundary를 질문과 압력 테스트로 잠그는 인터뷰 스킬
+- `flow`: `entry skill reconfigure -> deep-interview -> 플로우 설계 -> 메인 플로우 -> 메인 플로우 회고 -> handoff condition`
 - `turn-gate`: active turn continuity, flow wrapper, handoff question routing, self-drive gate, explicit stop
+
+의존 방향은 `deep-interview -> flow -> turn-gate`입니다. 상위 skill은 하위 skill을 적용하지만, 하위 skill은 상위 skill 맥락을 전제로 하지 않습니다.
 
 > [!WARNING]
 > Codex의 개발 중인 기능인 `default_mode_request_user_input`를 활성화해야 합니다.
@@ -34,7 +37,7 @@ codex plugin marketplace upgrade
 모든 사용자 메시지는 같은 경로를 탑니다.
 
 1. skill reconfigure: flow entry와 post-reporting continuation boundary에서 필요한 skill 본문을 source에서 다시 읽어 루프 중 잊힌 skill context를 복구
-2. 메시지 인터뷰: intent snapshot, alignment risk, high-leverage question, answer pressure test, locked brief
+2. deep-interview: intent snapshot, alignment risk, high-leverage question, answer pressure test, locked brief
 3. 플로우 설계: active flow, parent flow, candidate, phase, handoff, artifact ownership, flow contract
 4. 메인 플로우: `intake -> framing -> preparation -> work -> verification -> reporting`
 5. 메인 플로우 회고: 항상 `000-review.md`를 갱신하고, finding이 없으면 no-finding 결과로 짧게 남깁니다.
@@ -50,7 +53,7 @@ codex plugin marketplace upgrade
 
 `flow skill: handoff` 뒤에는 `질문 도구: 다음 플로우 선택`으로 다음 flow 입력을 고릅니다.
 `next-flow gate`에서 예약 플로우를 재검토하고 다음 flow를 선택한 뒤 `000-plan.md`를 매번 업데이트합니다. 필요한 skill reread는 flow entry 또는 post-reporting continuation boundary의 skill reconfigure가 수행합니다.
-질문 도구는 `flow: deep-interview`와 같은 인터뷰 흐름으로 입력을 구체화한 뒤 다시 `flow`로 들어갑니다.
+질문 도구는 `deep-interview`로 입력을 구체화한 뒤 다시 `flow`로 들어갑니다.
 Self-drive가 명시되면 그래프 노드가 아니라 준비된 sequence gate가 질문 도구를 대체합니다.
 Record, verification, interruption, date 처리는 메인 그래프 노드가 아니라 active turn을 복구하고 안전하게 라우팅하기 위한 지원 계약입니다.
 사용자-facing 진행 메시지는 source skill이 소유한 phase prefix로 현재 단계를 드러냅니다. `turn-gate`는 `flow` phase label을 재정의하지 않고 적용하며, `next-flow gate`에서는 `[next-flow]`를 소유합니다. Artifact, 기록, command summary, 질문 option label에는 prefix를 전파하지 않습니다.
@@ -87,6 +90,7 @@ loop-kit/
   .codex-plugin/plugin.json
   README.md
   skills/
+    deep-interview/
     flow/
     turn-gate/
 ```

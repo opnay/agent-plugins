@@ -1,7 +1,7 @@
 {
   "name": "workflow-kit-dev",
   "version": "0.1.1",
-  "description": "[DEV] Workflow plugin for sequential analysis, definition, planning, execution workflows, review loops, and final readiness gates.",
+  "description": "[DEV] Workflow plugin for sequential analysis, planning, execution workflows, review loops, and final readiness gates.",
   "author": {
     "name": "opnay"
   },
@@ -10,8 +10,6 @@
     "workflow",
     "sequential-thinking",
     "planning",
-    "alignment",
-    "interview",
     "parallel",
     "autopilot",
     "delivery",
@@ -33,8 +31,6 @@
       "Think through this complex problem step by step, revise assumptions if needed, and verify the conclusion.",
       "Make a read-only execution plan before implementation starts.",
       "Run this feature request end-to-end with autopilot.",
-      "Interview me first so the implementation aligns tightly with what I actually mean.",
-      "Before doing this bug fix or edit, ask the one key question that locks scope and success criteria.",
       "Split these independent tasks into safe parallel work and integrate the result.",
       "Take this brief from implementation through verification.",
       "Handle this task autonomously and report the final status.",

@@ -36,7 +36,7 @@
 - `skill reconfigure`는 `flow`가 소유하며, flow entry와 post-reporting continuation boundary에서 필요한 active skill 본문을 source에서 다시 읽어 루프 중 잊힌 skill context를 복구하는 과정입니다.
 - 일반 모드는 질문 도구로 `다음 플로우 선택`에 진입합니다.
 - self-drive 모드는 질문 도구를 대체해 `다음 플로우 선택`에 진입하고, `000-self-drive.md 업데이트`를 거쳐 통합 `000-plan.md 업데이트`로 들어갑니다.
-- 질문 도구는 `flow: deep-interview`와 같은 인터뷰 흐름으로 다음 flow 입력을 충분히 구체화합니다.
+- 질문 도구는 `deep-interview`로 다음 flow 입력을 충분히 구체화합니다.
 - `000-plan.md 업데이트`는 선택된 다음 flow 입력, 사용 skill, pending/answered question 상태, next action을 매번 반영합니다.
 - `flow skill: interview` 재진입 뒤에는 구체화된 입력을 기준으로 flow design에 필요한 질문을 우선합니다.
 - 사용자-facing phase 시작 또는 의미 있는 진행 메시지는 현재 단계 prefix를 사용합니다. `turn-gate`는 `flow`가 산출한 phase prefix를 재정의하지 않고 적용하며, `next-flow gate`에서는 `[next-flow]`를 소유합니다.

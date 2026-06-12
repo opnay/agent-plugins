@@ -18,7 +18,7 @@ Runtime에서는 이 경계를 `<gate:next-flow>...</gate:next-flow>` 태그로 
 - `다음 플로우 선택`: 질문 도구 응답, 메시지 수신, 또는 prepared self-drive gate
 - self-drive일 경우 `000-self-drive.md` 업데이트
 - `000-plan.md` 업데이트
-- `flow: deep-interview`와 같은 인터뷰 흐름으로 다음 flow 입력 구체화
+- `deep-interview`로 다음 flow 입력 구체화
 - 구체화된 입력으로 `flow skill: interview` 재진입
 
 `skill reconfigure`는 `flow`가 소유하며, `turn-gate`는 선택된 다음 flow 입력을 `flow skill: interview`로 넘깁니다.

@@ -1,7 +1,7 @@
 {
   "name": "loop-kit-dev",
   "version": "0.1.1",
-  "description": "[DEV] Flow and turn-gate loop plugin for message interview, flow design, main-flow lifecycle, and active turn continuity.",
+  "description": "[DEV] Flow, deep-interview, and turn-gate loop plugin for message interview, flow design, main-flow lifecycle, and active turn continuity.",
   "author": {
     "name": "opnay"
   },
@@ -9,6 +9,8 @@
   "keywords": [
     "loop",
     "flow",
+    "interview",
+    "alignment",
     "turn-gate",
     "continuity",
     "review",
@@ -19,8 +21,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Loop Kit Dev",
-    "shortDescription": "[DEV] Flow design plus turn-gated continuity for multi-flow agent work.",
-    "longDescription": "[DEV] Provides flow for message interview, flow design, main-flow lifecycle, and handoff conditions, plus turn-gate for phase prefixes, verification, next turn-flow/message routing, and active turn continuity.",
+    "shortDescription": "[DEV] Deep interview, flow design, and turn-gated continuity for multi-flow agent work.",
+    "longDescription": "[DEV] Provides deep-interview for intent and scope locking, flow for message interview, flow design, main-flow lifecycle, and handoff conditions, plus turn-gate for phase prefixes, verification, next turn-flow/message routing, and active turn continuity.",
     "developerName": "opnay",
     "category": "Productivity",
     "capabilities": [
@@ -29,7 +31,8 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Use flow for every user message as message interview -> flow design -> main flow -> handoff condition, then use turn-gate to keep the turn open until I explicitly stop.",
+      "Use flow for every user message as deep-interview -> flow design -> main flow -> handoff condition, then use turn-gate to keep the turn open until I explicitly stop.",
+      "Use deep-interview to lock my intent, scope, tradeoffs, and approval boundary before flow design.",
       "Use phase prefixes for visible phase-start or meaningful progress messages, and after reporting open next turn-flow/message routing unless I explicitly stop.",
       "If a later user message arrives after an explicit or accidental stop, reactivate turn-gate and start fresh intake."
     ],

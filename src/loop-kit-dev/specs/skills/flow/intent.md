@@ -9,7 +9,7 @@ graph TD
   subgraph FLOW[flow]
     direction TB
     ENTRY_RECONFIG[entry skill reconfigure - 000-plan.md] --> INTERVIEW
-    INTERVIEW[메시지 인터뷰] --> DESIGN[플로우 설계]
+    INTERVIEW[deep-interview - 000-plan.md] --> DESIGN[플로우 설계]
     DESIGN --> MAIN
 
     subgraph MAIN[메인 플로우]
@@ -35,7 +35,7 @@ graph TD
   MESSAGE[메시지] --> ENTRY_RECONFIG[entry skill reconfigure]
   ENTRY_RECONFIG --> DEEP_INTERVIEW
 
-  subgraph DEEP_INTERVIEW[deep-interview]
+  subgraph DEEP_INTERVIEW[deep-interview skill]
     direction TB
     SNAPSHOT[초기 의도 스냅샷 - 원하는 결과/대상/범위/제약] --> RISK[alignment risk 식별 - 000-plan.md]
     RISK --> ASK[high-leverage 질문]
@@ -78,14 +78,14 @@ graph TD
 - 메인 플로우 그룹 이후 결과는 `메인 플로우 회고 -> handoff condition`입니다.
 - `handoff condition`은 메인 플로우 종료 뒤 산출되는 종료 조건입니다.
 - 여러 플로우가 필요하면 리스트업 결과가 여러 메인 플로우가 될 수 있습니다.
-- 메시지 인터뷰는 deep-interview 역할을 flow 내부 해석 단계로 흡수합니다.
-- flow 내부 deep-interview는 alignment risk를 식별하고, 필요한 high-leverage 질문으로 답변을 압력 테스트합니다.
+- 메시지 인터뷰는 별도 `deep-interview` skill을 필수로 적용합니다.
+- `deep-interview`는 alignment risk를 식별하고, 필요한 high-leverage 질문으로 답변을 압력 테스트합니다.
 - 답변이 여전히 모호하면 같은 alignment risk를 다시 좁힙니다.
 - 초기 의도 스냅샷은 원하는 결과, 대상, 범위, 제약을 드러냅니다.
 - alignment risk는 locked execution brief를 실행 입력으로 쓰기 어렵게 만드는 가장 큰 불확실성입니다.
 - high-leverage 질문은 하나의 alignment risk를 좁히기 위해 사용합니다.
 - locked execution brief는 목적, 대상, 범위, 비목표, 완료 기준, 검증 기대, 승인 경계, 근거, 해소된 alignment risk, 남은 모호성을 현재 확정 상태로 남깁니다.
-- 모든 사용자 메시지는 같은 entry skill reconfigure, 메시지 인터뷰, 플로우 설계 경로를 거쳐 메인 플로우로 처리합니다.
+- 모든 사용자 메시지는 같은 entry skill reconfigure, `deep-interview`, 플로우 설계 경로를 거쳐 메인 플로우로 처리합니다.
 - 메시지 인터뷰가 충분히 잠긴 brief를 만들면 사용자 질문 없이 플로우 설계로 진행합니다.
 - 플로우 설계는 진행할 flow 구성을 만들고 바로 메인 flow `intake`로 들어갑니다.
 - `000-plan.md`와 flow record는 각 그래프 노드의 업데이트 시점으로 표시합니다.

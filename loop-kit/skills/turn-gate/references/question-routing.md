@@ -18,7 +18,7 @@ Do this before terminal-looking reporting, final responses, or flow-only closeou
 
 - optional `000-self-drive.md` update when self-drive is active
 - update `000-plan.md`
-- the same interview flow as `flow: deep-interview`
+- `deep-interview`
 - reenter `flow skill: interview` with clarified input
 
 </gate:next-flow>

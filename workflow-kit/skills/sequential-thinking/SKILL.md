@@ -29,7 +29,7 @@ Use this skill for:
 
 Do not use this skill when:
 
-- the blocker is unclear user intent, scope, tradeoffs, or acceptance criteria; hand off to `deep-interview` and state the smallest question or handoff needed
+- the blocker is unclear user intent, scope, tradeoffs, or acceptance criteria; hand off to `loop-kit` deep-interview when available and state the smallest question or handoff needed
 - the requested deliverable is an execution-ready plan artifact with steps, expected outputs, and verification methods; hand off to `planner`
 - the task is a straightforward implementation request; hand off to the fitting execution workflow
 - the user asked only for a final readiness decision; hand off to `commit-readiness-gate`
@@ -126,7 +126,7 @@ Use `request_user_input` when the question can be expressed as bounded choices.
 
 Hand off instead of continuing in this skill when the bottleneck changes:
 
-- `deep-interview`: the next useful step is discovering user intent, scope, tradeoffs, acceptance criteria, or missing requirements
+- `loop-kit` deep-interview: the next useful step is discovering user intent, scope, tradeoffs, acceptance criteria, or missing requirements
 - `planner`: the next useful step is producing a read-only execution plan with steps, expected outputs, and verification methods
 - `commit-readiness-gate`: the next useful step is a final readiness decision for a commit or similar completion gate
 - execution workflow: the next useful step is implementing, editing files, running tests, or otherwise performing the chosen work
@@ -143,5 +143,5 @@ If only a small clarification is needed before continuing, ask that question rat
 - Do not treat one narrow evidence source as sufficient when the decision depends on broader constraints or missing negative cases.
 - Do not reduce a multi-cause analysis to the easiest technical cause when process, ownership, handoff, or external evidence is material.
 - Do not present a revised assumption as fact without saying it changed.
-- Do not use this skill as a replacement for `deep-interview`, `planner`, `commit-readiness-gate`, or execution workflows.
+- Do not use this skill as a replacement for `loop-kit` deep-interview, `planner`, `commit-readiness-gate`, or execution workflows.
 - Do not require Sequential Thinking MCP server installation or MCP tool calls.

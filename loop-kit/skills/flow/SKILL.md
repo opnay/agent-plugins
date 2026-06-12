@@ -8,10 +8,10 @@ description: Route every user message through flow-entry and post-reporting skil
 Use this path for every user message:
 
 ```text
-entry skill reconfigure -> message interview -> flow design -> main flow -> main-flow review -> handoff condition
+entry skill reconfigure -> deep-interview -> flow design -> main flow -> main-flow review -> handoff condition
 ```
 
-`flow` owns flow-entry and post-reporting continuation skill reconfigure, message interview, flow design, the selected main-flow lifecycle, main-flow review, handoff condition, and the meaning of `000-plan.md`, flow record, and `000-review.md` update points.
+`flow` owns flow-entry and post-reporting continuation skill reconfigure, mandatory `deep-interview` use for message interview, flow design, the selected main-flow lifecycle, main-flow review, handoff condition, and the meaning of `000-plan.md`, flow record, and `000-review.md` update points.
 `flow` does not own question-tool execution, active-turn continuity, next-flow question routing, self-drive control, or approval-sensitive execution such as commit, push, pull request, release, version bump, or destructive action.
 
 <flow:skill-reconfigure>
@@ -22,18 +22,22 @@ Use skill reconfigure to recover skill context that may have been forgotten or m
 
 1. Identify the active skill list needed for the current flow or next main flow from the user message, selected next-flow input, selected main-flow input, explicit skill calls, repository rules, plugin boundaries, approval boundaries, and current wrapper state.
 2. Include `flow` itself as a required active skill.
-3. Include any active wrapper skill, such as `turn-gate`, when the current turn is wrapped by it.
-4. Discard prior loaded skill context for the active skills.
-5. Reread each active skill body from its source.
-6. Accept only the freshly read bodies as the current active skill set.
-7. Update `000-plan.md` with active skills when that routing card is being used.
-8. If any required skill body cannot be read, route to blocker handling before work entry.
+3. Include `deep-interview` when entering flow before message interview.
+4. Include any active wrapper skill, such as `turn-gate`, when the current turn is wrapped by it.
+5. Discard prior loaded skill context for the active skills.
+6. Reread each active skill body from its source.
+7. Accept only the freshly read bodies as the current active skill set.
+8. Update `000-plan.md` with active skills when that routing card is being used.
+9. If any required skill body cannot be read, route to blocker handling before work entry.
 
 </flow:skill-reconfigure>
 
 ## Message Interview
 
-Create a locked execution brief from the user message:
+Apply `deep-interview` to create a locked execution brief from the user message.
+Do not replace it with a separate local interview routine.
+
+`deep-interview` must:
 
 1. Capture the initial intent snapshot.
 2. Identify the alignment risk.
@@ -43,12 +47,8 @@ Create a locked execution brief from the user message:
 6. If the pressure test fails, narrow the same alignment risk again.
 7. Produce the locked execution brief.
 
-The initial intent snapshot shows desired result, target, scope, and constraints.
-The alignment risk is the largest uncertainty that makes the locked execution brief hard to use as execution input.
-High-leverage questions narrow alignment risks.
 The locked execution brief records purpose, target or targets, scope, non-goals, completion criteria, verification expectation, approval boundary, evidence basis, resolved alignment risk, and residual ambiguity as the current settled state.
-
-If the brief is already settled enough, continue to flow design without asking the user.
+If `deep-interview` determines the brief is already settled enough, continue to flow design without asking the user.
 
 ## Flow Design
 
