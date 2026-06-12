@@ -51,7 +51,9 @@ skill reconfigure는 flow entry와 post-reporting continuation boundary에서 �
 - skill reconfigure는 현재 flow 또는 다음 main flow에 필요한 active skill 목록을 식별하고, 루프 중 잊혔거나 오래된 skill context를 source reread로 복구합니다.
 - 메시지 인터뷰는 `deep-interview` skill을 필수로 적용하고, `deep-interview`가 만든 locked execution brief를 플로우 설계 입력으로 받습니다.
 - locked execution brief는 목적, 대상, 범위, 비목표, 완료 기준, 검증 기대, 승인 경계, 근거, 해소된 alignment risk, 남은 모호성을 현재 확정 상태로 남깁니다.
-- 플로우 설계는 locked execution brief에서 항목 분류, 단일/다중 flow 판단, parent flow 또는 단일 active flow 식별, sub-flow candidate 추출, 후보 pending 상태 표시, flow별 계약 작성, 선택된 active flow record 작성, 진행 순서 정리를 수행합니다.
+- 플로우 설계는 locked execution brief에서 항목 분류, 단일/다중 flow 판단, parent flow 또는 단일 active flow 식별, sub-flow candidate 추출, 후보 pending 상태 표시, flow별 계약 작성, 선택된 active flow record 작성, flow 계약 검증을 수행합니다.
+- flow 계약 검증은 선택된 flow가 독립 계약 단위인지, 내부 todo나 phase 수준으로 과하게 분해되지 않았는지, 분해 축 조정이 필요한지, 다음 main flow와 이후 후보의 순서가 맞는지, 사용자 계약 의도가 scope, non-goals, completion criteria, verification expectation, approval boundary, handoff condition에 맞게 반영됐는지 확인합니다.
+- 내부 작업을 더 쪼갤 수 있다는 이유만으로 flow를 분리하지 않고, 별도 완료 기준, 검증 결과, 승인 경계, handoff 조건, 독립 산출물을 갖는 경우에만 별도 flow나 sub-flow candidate로 분리합니다.
 - 선택된 메인 플로우는 `intake -> framing -> preparation -> work -> verification -> reporting` 순서로 진행합니다.
 - `intake`, `framing`, `preparation`, `work`, `verification`, `reporting`은 active flow 내부 phase이며, active flow의 현재 위치와 다음 행동을 드러내는 고정 단위입니다.
 - `framing`은 사용자 요구사항을 requirement verification todo로 분해하고, `preparation`은 requirement verification todo와 implementation verification todo를 확정합니다.
@@ -64,7 +66,7 @@ skill reconfigure는 flow entry와 post-reporting continuation boundary에서 �
 - 메시지 인터뷰가 `deep-interview`를 사용해 locked execution brief를 만들었는가?
 - skill reconfigure가 flow entry와 post-reporting continuation boundary에 필요한 skill context를 복구했는가?
 - locked execution brief가 목적, 대상, 범위, 비목표, 완료 기준, 검증 기대, 승인 경계, 근거, 해소된 alignment risk, 남은 모호성을 드러내는가?
-- 플로우 설계가 진행할 flow 구성을 만들었는가?
+- 플로우 설계가 진행할 flow 구성을 만들고, 독립 계약 단위·과분해 여부·분해 축·순서·사용자 계약 의도 기준의 flow 계약 검증을 통과했는가?
 - 선택된 메인 플로우가 단계 순서를 유지하는가?
 - phase가 active flow의 내부 진행 단위로 유지되고, 독립 flow 후보나 handoff로 흐려지지 않는가?
 - requirement verification todo가 행위 수행 여부가 아니라 결과물의 사용자 요구사항 충족 여부를 드러내는가?

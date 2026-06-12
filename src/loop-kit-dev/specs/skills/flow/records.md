@@ -16,7 +16,7 @@
 
 - skill reconfigure: flow entry 또는 post-reporting continuation boundary의 active skill 목록, reread 상태, blocker 여부
 - 메시지 인터뷰: `deep-interview` 적용 상태, locked execution brief, `000-plan.md` 갱신 여부
-- 플로우 설계: 항목 분류, flow 분해, flow별 계약, 진행 순서
+- 플로우 설계: 항목 분류, flow 분해, flow별 계약, flow 계약 검증
 - flow별 계약 작성: 선택된 active flow record 작성
 - 메인 플로우: intake, framing, preparation, work, verification, reporting
 - post-reporting skill reconfigure: 다음 flow가 있을 때 reporting 직후 active skill 목록 갱신

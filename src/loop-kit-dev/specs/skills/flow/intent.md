@@ -1,5 +1,9 @@
 # flow 사용자 의도
 
+## 사용자 스펙 의도
+
+- flow 스킬의 [플로우 설계] 그래프에서 [진행순서 정리]를 [flow 계약 검증] 단계로 바꾸고, 이 단계가 플로우가 독립 계약 단위인지, 과하게 분해되지 않았는지, 분해 축 조정이 필요한지, 순서가 맞는지, 사용자 계약 의도와 맞는지 등을 검증하게 한다.
+
 ## 전체 구조
 
 ```mermaid
@@ -51,11 +55,12 @@ graph TD
     PARENT --> CANDIDATES[sub-flow candidate 추출]
     CANDIDATES --> PENDING[후보 pending 상태 표시]
     PENDING --> CONTRACT[flow별 계약 작성 - flow record 작성 - 목적 사슬 필요 시]
-    CONTRACT --> ORDER[진행 순서 정리 - 000-plan.md 갱신]
-    ORDER -->|검증 실패| CLASSIFY
+    CONTRACT --> CONTRACT_VERIFY[flow 계약 검증 - 000-plan.md 갱신]
+    CONTRACT_VERIFY --> SELECT[메인 플로우 선택]
+    CONTRACT_VERIFY -->|검증 실패| CLASSIFY
   end
 
-  LIST_UP --> MAIN[메인 플로우 선택]
+  SELECT --> MAIN[메인 플로우 intake]
 ```
 
 ## 핵심
@@ -81,7 +86,9 @@ graph TD
 - flow 분해는 단일/다중 flow 판단, parent flow 또는 단일 active flow 식별, sub-flow candidate 추출, 후보 pending 상태 표시로 나눕니다.
 - 후보는 다음 메인 flow로 선택되기 전까지 실행 권한을 만들지 않습니다.
 - flow별 계약 작성은 scope, non-goals, completion criteria, verification expectation, approval boundary, handoff condition을 정리하고, 선택된 active flow의 flow record를 작성합니다.
-- 진행 순서 정리는 다음에 들어갈 메인 flow와 이후 후보를 구분하고 `000-plan.md` 갱신 시점입니다.
+- flow 계약 검증은 flow가 독립 계약 단위인지, 과하게 분해되지 않았는지, 분해 축을 조정해야 하는지, 다음 메인 flow와 이후 후보의 순서가 맞는지, 사용자 계약 의도와 scope, non-goals, completion criteria, verification expectation, approval boundary, handoff condition이 맞는지 확인하고 `000-plan.md`를 갱신합니다.
+- 내부 작업을 더 쪼갤 수 있다는 이유만으로 flow를 분리하지 않고, 별도 완료 기준, 검증 결과, 승인 경계, handoff 조건, 독립 산출물을 갖는 경우에만 별도 flow나 sub-flow candidate로 분리합니다.
+- flow 계약 검증이 실패하면 항목 분류로 돌아가 flow 구성을 다시 잡습니다.
 - flow record는 flow별 계약 작성 시점에 만들어지고, 이후 메인 플로우 phase, evidence, verification, reporting 시점에서 갱신합니다.
 - `000-review.md`는 메인 플로우 그룹 이후, `handoff condition` 직전에 항상 갱신하고, active routing이나 handoff authority로 쓰지 않습니다.
 - 회고 finding이 없으면 no-finding 결과로 짧게 기록합니다.

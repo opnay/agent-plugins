@@ -1,6 +1,6 @@
 ---
 name: flow
-description: Route every user message through flow-entry and post-reporting skill reconfigure, message interview, flow design, main-flow lifecycle, main-flow review, and handoff condition; create locked execution briefs, flow configurations, records, and handoff conditions from the intent graph.
+description: Route every user message through flow-entry and post-reporting skill reconfigure, message interview, flow design with flow contract validation, main-flow lifecycle, main-flow review, and handoff condition; create locked execution briefs, validated flow configurations, records, and handoff conditions from the intent graph.
 ---
 
 # Flow
@@ -11,7 +11,7 @@ Use this path for every user message:
 entry skill reconfigure -> deep-interview -> flow design -> main flow -> main-flow review -> handoff condition
 ```
 
-`flow` owns flow-entry and post-reporting continuation skill reconfigure, mandatory `deep-interview` use for message interview, flow design, the selected main-flow lifecycle, main-flow review, handoff condition, and the meaning of `000-plan.md`, flow record, and `000-review.md` update points.
+`flow` owns flow-entry and post-reporting continuation skill reconfigure, mandatory `deep-interview` use for message interview, flow design with flow contract validation, the selected main-flow lifecycle, main-flow review, handoff condition, and the meaning of `000-plan.md`, flow record, and `000-review.md` update points.
 `flow` does not own question-tool execution, active-turn continuity, next-flow question routing, self-drive control, or approval-sensitive execution such as commit, push, pull request, release, version bump, or destructive action.
 
 <flow:skill-reconfigure>
@@ -42,20 +42,31 @@ If `deep-interview` determines the brief is already settled enough, continue to 
 
 ## Flow Design
 
-Convert the locked execution brief into the flow configuration:
+Convert the locked execution brief into a validated flow configuration:
 
 1. Classify items as `active flow`, `parent flow`, `sub-flow candidate`, `phase`, or `handoff`.
 2. Decide whether one main flow is enough or multiple flows are needed.
 3. Identify the parent flow or single active flow.
 4. Extract sub-flow candidates and keep them pending until selected.
 5. Write each flow contract and create the selected active flow record.
-6. Order the next main flow and later candidates.
+6. Validate the flow contract.
 7. Select the main flow to enter.
 
 Candidates remain pending until selected as the next main flow; pending candidates do not authorize execution.
 Each flow contract includes scope, non-goals, completion criteria, verification expectation, approval boundary, and handoff condition.
 Create the active flow record from `templates/flow-record.md` when the selected active flow boundary is established.
 If a purpose chain affects the contract, absorb it into the purpose section of `000-plan.md`.
+
+Flow contract validation checks:
+
+- the selected flow is an independent contract-bearing unit with its own completion criteria, verification result, approval boundary, handoff condition, or independent artifact
+- internal todos or phases have not been over-split into separate flows
+- the decomposition axis fits the user contract; adjust it when artifact, approval, verification, or user-purpose boundaries describe the work better
+- the next main flow and later candidates are ordered by dependency, approval boundary, and verification expectation
+- the user contract intent is reflected in scope, non-goals, completion criteria, verification expectation, approval boundary, and handoff condition
+
+If flow contract validation fails, return to item classification and redesign the flow before entering the main flow.
+Record the selected or pending question state, next action, and validated ordering in `000-plan.md` when that routing card is being used.
 
 ## Main Flow
 
@@ -106,7 +117,7 @@ Commit, push, pull request, release, version bump, and destructive action are no
 Use records to keep routing recoverable.
 Records are not execution authority.
 
-- `000-plan.md`: may be updated from skill reconfigure, message interview, and flow design.
+- `000-plan.md`: may be updated from skill reconfigure, message interview, flow design, and flow contract validation.
 - Flow record: may be updated during main-flow phases and handoff condition.
 - `000-review.md`: update after the main-flow group and before handoff condition.
 
