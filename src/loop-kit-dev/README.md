@@ -37,7 +37,7 @@ codex plugin marketplace upgrade
 모든 사용자 메시지는 같은 경로를 탑니다.
 
 1. skill reconfigure: flow entry와 post-reporting continuation boundary에서 필요한 skill 본문을 source에서 다시 읽어 루프 중 잊힌 skill context를 복구
-2. deep-interview: intent snapshot, alignment risk, high-leverage question, answer pressure test, locked brief
+2. deep-interview: locked execution brief
 3. 플로우 설계: active flow, parent flow, candidate, phase, handoff, artifact ownership, flow contract
 4. 메인 플로우: `intake -> framing -> preparation -> work -> verification -> reporting`
 5. 메인 플로우 회고: 항상 `000-review.md`를 갱신하고, finding이 없으면 no-finding 결과로 짧게 남깁니다.

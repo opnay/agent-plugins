@@ -49,7 +49,7 @@ skill reconfigure는 flow entry와 post-reporting continuation boundary에서 �
 
 - 모든 사용자 메시지는 entry skill reconfigure로 들어간 뒤 `deep-interview`를 적용한 메시지 인터뷰로 들어갑니다.
 - skill reconfigure는 현재 flow 또는 다음 main flow에 필요한 active skill 목록을 식별하고, 루프 중 잊혔거나 오래된 skill context를 source reread로 복구합니다.
-- 메시지 인터뷰는 `deep-interview` skill을 필수로 사용해 초기 의도 스냅샷, alignment risk, high-leverage 질문, 답변 반영, 압력 테스트를 거쳐 locked execution brief를 만듭니다.
+- 메시지 인터뷰는 `deep-interview` skill을 필수로 적용하고, `deep-interview`가 만든 locked execution brief를 플로우 설계 입력으로 받습니다.
 - locked execution brief는 목적, 대상, 범위, 비목표, 완료 기준, 검증 기대, 승인 경계, 근거, 해소된 alignment risk, 남은 모호성을 현재 확정 상태로 남깁니다.
 - 플로우 설계는 locked execution brief에서 항목 분류, 단일/다중 flow 판단, parent flow 또는 단일 active flow 식별, sub-flow candidate 추출, 후보 pending 상태 표시, flow별 계약 작성, 선택된 active flow record 작성, 진행 순서 정리를 수행합니다.
 - 선택된 메인 플로우는 `intake -> framing -> preparation -> work -> verification -> reporting` 순서로 진행합니다.

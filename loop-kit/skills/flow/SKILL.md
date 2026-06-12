@@ -37,16 +37,6 @@ Use skill reconfigure to recover skill context that may have been forgotten or m
 Apply `deep-interview` to create a locked execution brief from the user message.
 Do not replace it with a separate local interview routine.
 
-`deep-interview` must:
-
-1. Capture the initial intent snapshot.
-2. Identify the alignment risk.
-3. Ask high-leverage questions when needed.
-4. Apply the answer.
-5. Pressure-test with an example, counterexample, explicit non-goal, or tradeoff.
-6. If the pressure test fails, narrow the same alignment risk again.
-7. Produce the locked execution brief.
-
 The locked execution brief records purpose, target or targets, scope, non-goals, completion criteria, verification expectation, approval boundary, evidence basis, resolved alignment risk, and residual ambiguity as the current settled state.
 If `deep-interview` determines the brief is already settled enough, continue to flow design without asking the user.
 
