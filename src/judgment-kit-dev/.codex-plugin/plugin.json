@@ -1,0 +1,41 @@
+{
+  "name": "judgment-kit-dev",
+  "version": "0.1.0",
+  "description": "[DEV] Role-based planning, engineering, and design judgment for Codex.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "codex",
+    "judgment",
+    "planning",
+    "product",
+    "requirements",
+    "engineering",
+    "problem-solving",
+    "root-cause-analysis",
+    "design",
+    "ui",
+    "ux"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Judgment Kit Dev",
+    "shortDescription": "[DEV] Apply role-based product planning, engineering, and design judgment in Codex work.",
+    "longDescription": "[DEV] Provides role-based judgment skills for Codex: product planning judgment for user problems, scope, requirements, acceptance criteria, priorities, tradeoffs, and handoffs; engineering judgment for root cause analysis, implementation discipline, verification, and risk reporting; and design judgment across UI, UX, content, color, tone and expression, branding, space and composition, surface and form, and product quality.",
+    "developerName": "opnay",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Analyze",
+      "Plan",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use $judgment-kit-dev:pro-planner to apply product and service planning judgment to user problems, target users, product value, MVP scope, requirements, priorities, acceptance criteria, tradeoffs, release slices, and designer/engineer handoff contracts.",
+      "Use $judgment-kit-dev:pro-engineering to apply problem-solving-centered engineering judgment to code changes, root cause analysis, implementation discipline, verification, and risk reporting.",
+      "Use $judgment-kit-dev:pro-designer to apply product design judgment to screens, user flows, interface content, color, tone and expression, branding, space and composition, surface and form, and product quality through UI, UX, Content, Color, Tone & Expression, Branding, Space & Composition, Surface & Form, and Quality criteria."
+    ],
+    "brandColor": "#2F6B4F"
+  }
+}

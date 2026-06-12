@@ -30,10 +30,10 @@
 
 ## 대표 표면
 
-- 대표 runtime 표면: `advance-codex-dev/skills/pro-planner/SKILL.md`
-- 사용자 스펙 의도: `advance-codex-dev/specs/skills/pro-planner/intent.md`
-- skill spec index: `advance-codex-dev/specs/skills/pro-planner/spec.md`
-- sub-spec directory: `advance-codex-dev/specs/skills/pro-planner/core/`
+- 대표 runtime 표면: `judgment-kit-dev/skills/pro-planner/SKILL.md`
+- 사용자 스펙 의도: `judgment-kit-dev/specs/skills/pro-planner/intent.md`
+- skill spec index: `judgment-kit-dev/specs/skills/pro-planner/spec.md`
+- sub-spec directory: `judgment-kit-dev/specs/skills/pro-planner/core/`
 
 ## 상세 계약 구조
 
@@ -60,7 +60,7 @@
 
 `pro-planner`는 독립 실행 가능한 runtime skill이어야 합니다.
 본문은 sibling skill 이름이나 dev-only spec 경로를 읽으라고 지시하지 않습니다.
-다른 `advance-codex` skill과 함께 쓰일 수는 있지만, 제품과 기능 정의 판단 자체는 이 skill 본문만으로 수행 가능해야 합니다.
+다른 `judgment-kit` skill과 함께 쓰일 수는 있지만, 제품과 기능 정의 판단 자체는 이 skill 본문만으로 수행 가능해야 합니다.
 
 ## Description Trigger Metadata
 
@@ -73,9 +73,9 @@ frontmatter `description` 끝에는 `#` 없는 쉼표 구분 plain token 목록�
 ## 검증 기준
 
 - dev runtime skill이 `skills/pro-planner/SKILL.md`에 존재해야 한다.
-- release build 후 root `advance-codex/skills/pro-planner/SKILL.md`가 존재해야 한다.
+- release build 후 root `judgment-kit/skills/pro-planner/SKILL.md`가 존재해야 한다.
 - plugin spec, README, manifest prompt가 `pro-planner`의 역할과 사용 기준을 언급해야 한다.
-- runtime skill 본문은 dev-only `specs/` 경로나 `src/advance-codex-dev` 경로를 실행 지시로 포함하지 않아야 한다.
+- runtime skill 본문은 dev-only `specs/` 경로나 `src/judgment-kit-dev` 경로를 실행 지시로 포함하지 않아야 한다.
 - runtime skill은 product planning judgment 중심이며 UI 표현 기준이나 코드 구현 기준으로 좁아지지 않아야 한다.
 
 ## 확장 원칙
