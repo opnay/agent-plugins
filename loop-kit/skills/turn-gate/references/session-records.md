@@ -19,7 +19,7 @@ Use this reference when `turn-gate` is active and records are needed to recover 
 - explicit stop state
 - self-drive pointer
 - unapproved action state
-- active skill list for the next-flow question
+- selected next-flow input and pending question state
 
 `turn-gate` owns only one bundled template:
 
@@ -65,7 +65,7 @@ If the user forbids all writes or record creation, do not write records and do n
 
 ## Questions
 
-After `flow skill: handoff`, enter `<gate:next-flow>` and then `<gate:skill-reconfigure>`: identify the full session active skill list, discard prior loaded skill context for those skills, reread each skill body from its source, accept only the freshly read bodies as the active skill set, reopen handoff question routing unless explicit stop is recorded, and update `000-plan.md`.
+After `flow skill: handoff`, enter `<gate:next-flow>` unless explicit stop is recorded: review reserved flows, select the next flow, and update `000-plan.md`. Active skill reread is owned by `flow` at flow entry or post-reporting continuation boundaries, not by `turn-gate` session-record routing.
 Do not record handoff, final-looking reporting, status-only output, or verification pass as closure authority.
 Use `answered_question` and `pending_question` for question recovery.
 Do not invent alternate question-state fields.

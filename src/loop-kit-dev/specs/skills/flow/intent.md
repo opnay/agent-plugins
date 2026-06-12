@@ -4,10 +4,11 @@
 
 ```mermaid
 graph TD
-  MESSAGE[메시지] --> INTERVIEW
+  MESSAGE[메시지] --> ENTRY_RECONFIG
 
   subgraph FLOW[flow]
     direction TB
+    ENTRY_RECONFIG[entry skill reconfigure - 000-plan.md] --> INTERVIEW
     INTERVIEW[메시지 인터뷰] --> DESIGN[플로우 설계]
     DESIGN --> MAIN
 
@@ -18,7 +19,8 @@ graph TD
       PREP --> WORK[work - flow record]
       WORK --> VERIFY[verification - flow record]
       VERIFY --> REPORT[reporting - flow record]
-      REPORT -->|다음 플로우| INTAKE
+      REPORT -->|다음 플로우| POST_REPORT_RECONFIG[post-reporting skill reconfigure - 000-plan.md]
+      POST_REPORT_RECONFIG --> INTAKE
     end
 
     MAIN --> REVIEW[메인 플로우 회고 - 000-review.md]
@@ -30,7 +32,8 @@ graph TD
 
 ```mermaid
 graph TD
-  MESSAGE[메시지] --> DEEP_INTERVIEW
+  MESSAGE[메시지] --> ENTRY_RECONFIG[entry skill reconfigure]
+  ENTRY_RECONFIG --> DEEP_INTERVIEW
 
   subgraph DEEP_INTERVIEW[deep-interview]
     direction TB
@@ -67,9 +70,11 @@ graph TD
 
 ## 핵심
 
-- 메시지가 들어오면 `flow`는 메시지를 해석하고 실제 진행할 flow를 함께 설계합니다.
+- 메시지가 들어오면 `flow`는 먼저 entry `skill reconfigure`로 현재 flow에 필요한 skill 본문을 source에서 다시 읽고, 그다음 메시지를 해석하고 실제 진행할 flow를 함께 설계합니다.
+- 다음 main flow가 있으면 `flow`는 `reporting` 직후 post-reporting `skill reconfigure`로 다음 main flow에 필요한 skill context를 복구합니다.
+- `skill reconfigure`는 루프가 이어지는 동안 잊혔거나 오래된 skill context를 복구하기 위해 flow entry와 post-reporting continuation boundary에서 실행합니다.
 - 실제 진행할 플로우가 정해지면 각 메인 플로우는 `intake -> framing -> preparation -> work -> verification -> reporting`으로 진행합니다.
-- 다음 flow가 있으면 `reporting`에서 다음 `intake`로 라우팅합니다.
+- 다음 flow가 있으면 `reporting` 직후 skill reconfigure를 수행하고 다음 `intake`로 라우팅합니다.
 - 메인 플로우 그룹 이후 결과는 `메인 플로우 회고 -> handoff condition`입니다.
 - `handoff condition`은 메인 플로우 종료 뒤 산출되는 종료 조건입니다.
 - 여러 플로우가 필요하면 리스트업 결과가 여러 메인 플로우가 될 수 있습니다.
@@ -80,7 +85,7 @@ graph TD
 - alignment risk는 locked execution brief를 실행 입력으로 쓰기 어렵게 만드는 가장 큰 불확실성입니다.
 - high-leverage 질문은 하나의 alignment risk를 좁히기 위해 사용합니다.
 - locked execution brief는 목적, 대상, 범위, 비목표, 완료 기준, 검증 기대, 승인 경계, 근거, 해소된 alignment risk, 남은 모호성을 현재 확정 상태로 남깁니다.
-- 모든 사용자 메시지는 같은 메시지 인터뷰와 플로우 설계 경로를 거쳐 메인 플로우로 처리합니다.
+- 모든 사용자 메시지는 같은 entry skill reconfigure, 메시지 인터뷰, 플로우 설계 경로를 거쳐 메인 플로우로 처리합니다.
 - 메시지 인터뷰가 충분히 잠긴 brief를 만들면 사용자 질문 없이 플로우 설계로 진행합니다.
 - 플로우 설계는 진행할 flow 구성을 만들고 바로 메인 flow `intake`로 들어갑니다.
 - `000-plan.md`와 flow record는 각 그래프 노드의 업데이트 시점으로 표시합니다.

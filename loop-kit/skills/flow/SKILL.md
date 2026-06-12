@@ -1,6 +1,6 @@
 ---
 name: flow
-description: Route every user message through message interview, flow design, main-flow lifecycle, main-flow review, and handoff condition; create locked execution briefs, flow configurations, records, and handoff conditions from the intent graph.
+description: Route every user message through flow-entry and post-reporting skill reconfigure, message interview, flow design, main-flow lifecycle, main-flow review, and handoff condition; create locked execution briefs, flow configurations, records, and handoff conditions from the intent graph.
 ---
 
 # Flow
@@ -8,11 +8,28 @@ description: Route every user message through message interview, flow design, ma
 Use this path for every user message:
 
 ```text
-message interview -> flow design -> main flow -> main-flow review -> handoff condition
+entry skill reconfigure -> message interview -> flow design -> main flow -> main-flow review -> handoff condition
 ```
 
-`flow` owns message interview, flow design, the selected main-flow lifecycle, main-flow review, handoff condition, and the meaning of `000-plan.md`, flow record, and `000-review.md` update points.
+`flow` owns flow-entry and post-reporting continuation skill reconfigure, message interview, flow design, the selected main-flow lifecycle, main-flow review, handoff condition, and the meaning of `000-plan.md`, flow record, and `000-review.md` update points.
 `flow` does not own question-tool execution, active-turn continuity, next-flow question routing, self-drive control, or approval-sensitive execution such as commit, push, pull request, release, version bump, or destructive action.
+
+<flow:skill-reconfigure>
+
+Trigger: every entry into `flow` before message interview, and immediately after `reporting` when another main flow follows.
+
+Use skill reconfigure to recover skill context that may have been forgotten or made stale while looping:
+
+1. Identify the active skill list needed for the current flow or next main flow from the user message, selected next-flow input, selected main-flow input, explicit skill calls, repository rules, plugin boundaries, approval boundaries, and current wrapper state.
+2. Include `flow` itself as a required active skill.
+3. Include any active wrapper skill, such as `turn-gate`, when the current turn is wrapped by it.
+4. Discard prior loaded skill context for the active skills.
+5. Reread each active skill body from its source.
+6. Accept only the freshly read bodies as the current active skill set.
+7. Update `000-plan.md` with active skills when that routing card is being used.
+8. If any required skill body cannot be read, route to blocker handling before work entry.
+
+</flow:skill-reconfigure>
 
 ## Message Interview
 
@@ -58,6 +75,8 @@ Run the selected active flow in this order:
 intake -> framing -> preparation -> work -> verification -> reporting
 ```
 
+When `reporting` leads to another flow, run `<flow:skill-reconfigure>` immediately after `reporting`, then enter the next `intake`.
+
 - `intake`: confirm the locked execution brief and main-flow input.
 - `framing`: confirm the current step's frame and ownership boundary, then decompose user requirements into requirement verification todos.
 - `preparation`: lock the contract, requirement verification todos, and implementation verification todos before work entry.
@@ -70,7 +89,7 @@ These names are fixed phases inside the active flow. A phase shows the active fl
 If a phase starts to own a reviewable artifact, completion criteria, approval boundary, or handoff condition, route it through flow design as a new flow or sub-flow candidate instead of treating the phase label as the flow identity.
 
 The contracted output may be an artifact change, answer, explanation, summary, status report, verification result, or other requested result.
-If another flow follows, route from `reporting` to the next `intake`.
+If another flow follows, route from `reporting` to skill reconfigure, then to the next `intake`.
 
 Requirement verification is the primary axis. It checks whether the output satisfies the user's requested fields, states, cases, wording, behavior, and excluded responsibilities. Do not replace it with action-level checks such as "module created" when the output has more specific requirements.
 Implementation verification is the supporting axis. It checks type, test, build, lint, import path, release surface, and codebase-convention evidence when relevant.
@@ -97,7 +116,7 @@ Commit, push, pull request, release, version bump, and destructive action are no
 Use records to keep routing recoverable.
 Records are not execution authority.
 
-- `000-plan.md`: may be updated from message interview and flow design.
+- `000-plan.md`: may be updated from skill reconfigure, message interview, and flow design.
 - Flow record: may be updated during main-flow phases and handoff condition.
 - `000-review.md`: update after the main-flow group and before handoff condition.
 

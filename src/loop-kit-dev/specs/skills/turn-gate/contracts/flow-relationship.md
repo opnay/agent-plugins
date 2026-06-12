@@ -17,7 +17,7 @@
 ## 검토 기준
 
 - `turn-gate`가 `flow` 산출물을 적용만 하는가?
-- `next-flow gate`가 skill reconfigure, next flow selection, optional self-drive sidecar update, plan update를 거쳐 `flow skill: interview`로 되돌리는가?
+- `next-flow gate`가 reserved-flow review, next flow selection, optional self-drive sidecar update, plan update를 거쳐 `flow skill: interview`로 되돌리고, skill reconfigure는 flow entry와 post-reporting continuation boundary에 맡기는가?
 - `flow` handoff가 `turn-gate`의 다음 routing으로 소비되고, handoff 자체가 닫힘 권한으로 쓰이지 않는가?
 - self-drive 경로가 `flow` 재정의가 아니라 준비된 sequence gate로 처리되는가?
 - 종료 요청이 `flow` 자체 판단으로 임의 종료되지 않는가?

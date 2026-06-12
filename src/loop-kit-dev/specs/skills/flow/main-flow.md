@@ -6,11 +6,13 @@
 intake -> framing -> preparation -> work -> verification -> reporting
 ```
 
-다음 flow가 있으면 `reporting -> intake`로 라우팅합니다.
+다음 flow가 있으면 `reporting -> post-reporting skill reconfigure -> intake`로 라우팅합니다.
 
 ## 계약
 
 - 메인 플로우는 선택된 active flow를 단계 순서대로 진행합니다.
+- `reporting` 뒤 다음 flow가 있으면 `reporting` 직후 skill reconfigure가 필요한 skill context를 복구합니다.
+- post-reporting skill reconfigure가 끝난 뒤 다음 `intake`로 들어갑니다.
 - 각 단계는 flow record 갱신 시점입니다.
 - 각 단계는 현재 active flow의 phase이며, active flow의 현재 위치와 다음 행동을 드러냅니다.
 - `intake`는 locked execution brief와 메인 플로우 입력을 확인합니다.
@@ -30,7 +32,7 @@ intake -> framing -> preparation -> work -> verification -> reporting
 - 작업 산출물
 - 검증 결과
 - 보고 결과
-- 다음 intake 조건 또는 handoff 조건
+- 다음 skill reconfigure, intake 조건, 또는 handoff 조건
 
 ## Verification Todo
 

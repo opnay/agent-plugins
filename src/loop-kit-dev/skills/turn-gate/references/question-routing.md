@@ -5,31 +5,25 @@ Use this reference for question routing and question recovery after `flow skill:
 ## Open Routing
 
 When `turn-gate` is active, `flow skill: handoff` is not terminal closure.
-After every handoff, immediately enter `<gate:next-flow>`: enter `<gate:skill-reconfigure>`, keep routing open unless an explicit stop is source-recorded, then update `000-plan.md`.
+After every handoff, immediately enter `<gate:next-flow>`: review reserved flows, select the next flow, keep routing open unless an explicit stop is source-recorded, then update `000-plan.md`.
 Do this before terminal-looking reporting, final responses, or flow-only closeout.
 
 <gate:next-flow>
 
 `next-flow gate` paths:
 
-<gate:skill-reconfigure>
-
-- identify the full session active skill list
-- discard prior loaded skill context for those active skills
-- reread each active skill body from its source
-- accept only the freshly read bodies as the active skill set
-- prepare the active skills value for `000-plan.md`
-
-</gate:skill-reconfigure>
-
+- reserved-flow review: check planned candidates, pending questions, and self-drive next items that may affect the current next-flow choice
 - `request_user_input` answer or user message
 - optional prepared self-drive gate
+
 - optional `000-self-drive.md` update when self-drive is active
 - update `000-plan.md`
 - the same interview flow as `flow: deep-interview`
 - reenter `flow skill: interview` with clarified input
 
 </gate:next-flow>
+
+Active skill reread is owned by `flow` at flow entry or post-reporting continuation boundaries. `turn-gate` does not run a skill-reconfigure gate inside next-flow routing.
 
 Blocker decisions, approval decisions, and explicit stop are handled by global routing and approval boundaries, not as separate main graph nodes.
 

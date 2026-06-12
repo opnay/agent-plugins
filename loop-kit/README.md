@@ -2,7 +2,7 @@
 
 `loop-kit`는 Codex 작업 턴을 flow 단위로 유지하는 플러그인입니다.
 
-- `flow`: `메시지 인터뷰 -> 플로우 설계 -> 메인 플로우 -> 메인 플로우 회고 -> handoff condition`
+- `flow`: `entry skill reconfigure -> 메시지 인터뷰 -> 플로우 설계 -> 메인 플로우 -> 메인 플로우 회고 -> handoff condition`
 - `turn-gate`: active turn continuity, flow wrapper, handoff question routing, self-drive gate, explicit stop
 
 > [!WARNING]
@@ -33,22 +33,23 @@ codex plugin marketplace upgrade
 `flow`는 새 사용자 메시지를 실행 가능한 flow 구성으로 바꿉니다.
 모든 사용자 메시지는 같은 경로를 탑니다.
 
-1. 메시지 인터뷰: intent snapshot, alignment risk, high-leverage question, answer pressure test, locked brief
-2. 플로우 설계: active flow, parent flow, candidate, phase, handoff, artifact ownership, flow contract
-3. 메인 플로우: `intake -> framing -> preparation -> work -> verification -> reporting`
-4. 메인 플로우 회고: 항상 `000-review.md`를 갱신하고, finding이 없으면 no-finding 결과로 짧게 남깁니다.
-5. handoff condition: result, verification, residual risk, next intake condition, commit-readiness
+1. skill reconfigure: flow entry와 post-reporting continuation boundary에서 필요한 skill 본문을 source에서 다시 읽어 루프 중 잊힌 skill context를 복구
+2. 메시지 인터뷰: intent snapshot, alignment risk, high-leverage question, answer pressure test, locked brief
+3. 플로우 설계: active flow, parent flow, candidate, phase, handoff, artifact ownership, flow contract
+4. 메인 플로우: `intake -> framing -> preparation -> work -> verification -> reporting`
+5. 메인 플로우 회고: 항상 `000-review.md`를 갱신하고, finding이 없으면 no-finding 결과로 짧게 남깁니다.
+6. handoff condition: result, verification, residual risk, next intake condition, commit-readiness
 
 사용자-facing 진행 메시지는 현재 phase label을 사용할 수 있고, artifact, 기록, command summary, 질문 option label에는 label을 전파하지 않습니다.
 여러 flow가 필요하면 플로우 설계가 메인 플로우 후보를 만들고, 선택된 flow가 `intake`로 들어갑니다.
-`reporting`과 필요한 회고 뒤 다음 flow가 준비되면 다음 `intake`로 라우팅합니다.
+`reporting`과 필요한 회고 뒤 다음 flow가 준비되면 `reporting` 직후 skill reconfigure를 수행하고 다음 `intake`로 라우팅합니다.
 
 ## Turn Gate
 
 `turn-gate`는 active turn에 `flow` 판단을 적용하고, 사용자의 explicit stop까지 턴을 유지합니다.
 
 `flow skill: handoff` 뒤에는 `질문 도구: 다음 플로우 선택`으로 다음 flow 입력을 고릅니다.
-`next-flow gate`에서 사용중인 skill의 기존 context를 버린 뒤 source에서 다시 읽고, 질문 뒤 `000-plan.md`를 매번 업데이트합니다.
+`next-flow gate`에서 예약 플로우를 재검토하고 다음 flow를 선택한 뒤 `000-plan.md`를 매번 업데이트합니다. 필요한 skill reread는 flow entry 또는 post-reporting continuation boundary의 skill reconfigure가 수행합니다.
 질문 도구는 `flow: deep-interview`와 같은 인터뷰 흐름으로 입력을 구체화한 뒤 다시 `flow`로 들어갑니다.
 Self-drive가 명시되면 그래프 노드가 아니라 준비된 sequence gate가 질문 도구를 대체합니다.
 Record, verification, interruption, date 처리는 메인 그래프 노드가 아니라 active turn을 복구하고 안전하게 라우팅하기 위한 지원 계약입니다.

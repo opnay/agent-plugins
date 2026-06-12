@@ -11,8 +11,8 @@
 - exit: `flow skill: handoff` 이후 `next-flow gate`를 엽니다.
 - handoff priority: `flow skill: handoff`는 terminal closure가 아니라 `next-flow gate`의 입력입니다. `turn-gate` 활성 중에는 final-looking 보고, status-only 답변, verification pass, commit completion, flow reporting이 handoff 뒤 routing을 닫을 수 없습니다.
 - gate tag: Runtime `SKILL.md`는 handoff 뒤 필수 gate 경계를 `<gate:next-flow>...</gate:next-flow>` 태그로 감쌉니다.
-- nested gate tag: Runtime `SKILL.md`는 next-flow 내부의 `skill reconfigure` 경계를 `<gate:skill-reconfigure>...</gate:skill-reconfigure>` 태그로 감쌉니다.
-- loop: 일반 모드는 `next-flow gate`에서 `skill reconfigure` 그룹을 거쳐 질문 도구로 `다음 플로우 선택 -> 000-plan.md 업데이트`를 수행하고, `flow: deep-interview`와 같은 인터뷰 흐름으로 충분히 구체화한 뒤 `flow skill: interview`에 들어갑니다.
+- loop: 일반 모드는 `next-flow gate`에서 예약 플로우를 재검토한 뒤 질문 도구로 다음 flow를 선택하고, `000-plan.md 업데이트`를 수행하고, `flow: deep-interview`와 같은 인터뷰 흐름으로 충분히 구체화한 뒤 `flow skill: interview`에 들어갑니다.
+- flow-owned skill reconfigure: 필요한 skill reread는 `flow`가 flow entry와 post-reporting continuation boundary에서 수행합니다. `turn-gate` runtime은 next-flow 내부에서 skill context를 직접 재구성하지 않습니다.
 - self-drive: 명시적으로 준비된 sequence gate가 통과한 경우에만 질문 도구를 대체해 `다음 플로우 선택`에 진입하고, `000-self-drive.md 업데이트 -> 000-plan.md 업데이트`를 거칩니다.
 - stop: 종료 요청은 `turn-gate / 메인`의 모든 시점에서 감지하고 종료 페이즈로 이동합니다.
 - stop phase: `작업 중이던 플로우 정리 -> explicit-stop 기록 - active turn 종료` 순서로 처리합니다.

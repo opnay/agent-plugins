@@ -12,7 +12,7 @@ Completion, commits, passing checks, status answers, reports, interrupted questi
 Treat every new user message as open input inside the active turn by default. Questions, status checks, task changes, direction changes, corrections, and follow-up requests are not stop signals unless the user explicitly says to end the active turn.
 
 Apply `flow` as-is.
-Do not define or restate flow taxonomy, lifecycle, readiness, discovery, ambiguity, contract impact, flow-local strategy, template meaning, or handoff meaning.
+Do not define or restate flow taxonomy, lifecycle, readiness, discovery, ambiguity, contract impact, flow-local strategy, template meaning, skill reconfigure, or handoff meaning.
 
 `turn-gate` wraps `flow`; it does not run after `flow` as an optional follow-up.
 When `turn-gate` is active, every `flow skill: handoff` returns control to `next-flow gate`.
@@ -26,7 +26,7 @@ Use this wrapper loop:
 2. Treat the internal path from interview to handoff as `생략...`; do not model it inside `turn-gate`.
 3. Immediately after `flow skill: handoff`, enter `<gate:next-flow>` before any terminal-looking closeout.
 4. Use the same interview flow as `flow: deep-interview` to clarify the next flow input.
-5. Reenter `flow skill: interview` with the clarified input and prioritize flow-design questions.
+5. Reenter `flow skill: interview` with the clarified input; flow-owned skill reconfigure runs inside `flow`.
 
 <gate:next-flow>
 
@@ -34,36 +34,21 @@ Trigger: every `flow skill: handoff` while `turn-gate` is active, unless a curre
 
 Required order:
 
-1. Run `<gate:skill-reconfigure>`.
+1. Review reserved flows: planned candidates, pending questions, and self-drive next items that may affect the next-flow choice.
 2. Select the next flow through the question tool or a prepared self-drive gate.
 3. If self-drive is active, update `000-self-drive.md`.
-4. Update `000-plan.md` with active skills, selected or pending question state, next action, and self-drive pointer when relevant.
+4. Update `000-plan.md` with selected or pending question state, next action, and self-drive pointer when relevant.
 5. Clarify the selected input with the same interview flow as `flow: deep-interview`.
 6. Reenter `flow skill: interview` with the clarified input.
 
 Exit: leave this gate only after `000-plan.md` is updated and the next input is routed to `flow skill: interview`, or after blocker routing or source-recorded explicit stop is recorded.
 
-<gate:skill-reconfigure>
-
-Trigger: the first required step inside `<gate:next-flow>`, before asking a next-flow question or advancing self-drive.
-
-Required order:
-
-1. Identify the full session active skill list.
-2. Discard prior loaded skill context for those active skills.
-3. Reread each active skill body from its source.
-4. Accept only the freshly read bodies as the active skill set.
-5. Prepare the active skills value for `000-plan.md`.
-
-Exit: leave this gate only after the fresh active skill set is known, or route to blocker recovery if any required skill body cannot be read.
-
-</gate:skill-reconfigure>
-
 </gate:next-flow>
 
 If `request_user_input` is available and choices are narrow, use it for question-tool next-flow selection.
 If unavailable, keep the turn open with an active plain-text question.
-Update `000-plan.md` every time `next-flow gate` runs, including active skills, selected or pending question state, next action, and self-drive pointer when relevant.
+Update `000-plan.md` every time `next-flow gate` runs, including selected or pending question state, next action, and self-drive pointer when relevant.
+Active skills are refreshed by `flow` at flow entry or post-reporting continuation boundaries, not by `turn-gate`.
 
 Self-drive is not a graph node.
 Use it only when an explicit prepared sequence gate can replace the question tool.
@@ -87,7 +72,7 @@ Do not treat readiness, verification, generated release surface, previous contex
 
 ## Questions
 
-After every `flow skill: handoff`, run `next-flow gate`: enter `<gate:skill-reconfigure>`, reopen routing unless explicit stop is recorded, update `000-self-drive.md` when self-drive is active, then update `000-plan.md`.
+After every `flow skill: handoff`, run `next-flow gate`: review reserved flows, select the next flow, reopen routing unless explicit stop is recorded, update `000-self-drive.md` when self-drive is active, then update `000-plan.md`.
 The next routing surface is not terminal closeout.
 If a normal `flow` path appears complete, treat that completion as the input to `next-flow gate`, not as permission to end the active turn.
 When in doubt, return to `<gate:next-flow>` and record the next required action instead of closing.

@@ -23,7 +23,7 @@ shared record template 의미와 파일명 규칙은 `flow`가 소유합니다.
 - stale closure state는 reset하고 recovery를 기록합니다.
 - source-recorded explicit stop만 terminal closure authority입니다.
 - pending question은 `answered_question`과 `pending_question`으로 복구합니다.
-- `flow skill: handoff` 뒤 `next-flow gate`를 통과할 때마다 세션에서 사용중인 전체 skill 목록을 식별하고, 기존 skill context를 폐기하고, 각 skill 본문을 source에서 새로 읽고, freshly read bodies만 새 active skill set으로 기록한 뒤 `000-plan.md`를 업데이트합니다.
+- `flow skill: handoff` 뒤 `next-flow gate`를 통과할 때마다 예약 플로우를 재검토하고 다음 flow를 선택한 뒤 `000-plan.md`를 업데이트합니다. Active skill 목록은 flow entry 또는 post-reporting continuation boundary의 skill reconfigure가 기록합니다.
 - self-drive 경로에서는 통합 plan 업데이트 전에 `000-self-drive.md`를 업데이트합니다.
 
 ## 검토 기준

@@ -3,7 +3,7 @@
 ## 기준 그래프
 
 ```text
-메시지
+entry skill reconfigure
 -> 초기 의도 스냅샷
 -> alignment risk 식별
 -> high-leverage 질문
@@ -16,7 +16,7 @@
 
 ## 계약
 
-- 메시지 인터뷰는 사용자 메시지에서 초기 의도 스냅샷을 만듭니다.
+- 메시지 인터뷰는 flow entry skill reconfigure가 끝난 뒤 사용자 메시지에서 초기 의도 스냅샷을 만듭니다.
 - 초기 의도 스냅샷은 원하는 결과, 대상, 범위, 제약을 드러냅니다.
 - alignment risk는 locked execution brief를 실행 입력으로 쓰기 어렵게 만드는 가장 큰 불확실성입니다.
 - high-leverage 질문은 alignment risk를 좁히기 위해 사용합니다.
