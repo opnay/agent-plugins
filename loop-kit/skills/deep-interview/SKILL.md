@@ -63,7 +63,7 @@ This skill does not own:
 - Do not ask the user for repository facts that can be discovered directly.
 - Prefer the structured user-input tool when the question fits 1-3 short bounded choices.
 - Use normal conversational questioning only when the missing input cannot be captured cleanly in a short bounded choice.
-- Treat each answer as incomplete until it is pressure-tested by example, counterexample, tradeoff, or explicit exclusion.
+- Treat each answer as incomplete until it is pressure-tested by example, counterexample, assumption challenge, tradeoff, or explicit exclusion.
 - Stay on the same thread when the answer is still vague instead of rotating topics too early.
 - Prefer alignment over coverage; the goal is not to ask many questions, but to reduce implementation risk caused by misunderstanding.
 
@@ -127,6 +127,7 @@ Pressure patterns:
 
 - ask for an example
 - ask for a counterexample
+- ask what assumption must be true
 - ask what should explicitly not happen
 - ask what tradeoff they would reject
 - ask what they would want confirmed before proceeding
