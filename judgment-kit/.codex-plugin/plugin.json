@@ -12,6 +12,8 @@
     "planning",
     "product",
     "requirements",
+    "product-decomposition",
+    "design-system",
     "engineering",
     "problem-solving",
     "root-cause-analysis",
@@ -23,7 +25,7 @@
   "interface": {
     "displayName": "Judgment Kit",
     "shortDescription": "Apply role-based product planning, engineering, and design judgment in Codex work.",
-    "longDescription": "Provides role-based judgment skills for Codex: product planning judgment for user problems, scope, requirements, acceptance criteria, priorities, tradeoffs, and handoffs; engineering judgment for root cause analysis, implementation discipline, verification, and risk reporting; and design judgment across UI, UX, content, color, tone and expression, branding, space and composition, surface and form, and product quality.",
+    "longDescription": "Provides role-based judgment skills for Codex: product planning judgment for broad request decomposition, user problems, product modes, feature maps, supplemental planning surfaces, design system briefs, scope, requirements, acceptance criteria, priorities, tradeoffs, and handoffs; engineering judgment for root cause analysis, implementation discipline, verification, and risk reporting; and design judgment across UI, UX, content, color, tone and expression, branding, space and composition, surface and form, and product quality.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": [
@@ -32,7 +34,7 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Use $judgment-kit:pro-planner to apply product and service planning judgment to user problems, target users, product value, MVP scope, requirements, priorities, acceptance criteria, tradeoffs, release slices, and designer/engineer handoff contracts.",
+      "Use $judgment-kit:pro-planner to apply product and service planning judgment to broad request decomposition, user problems, product modes, feature maps, supplemental planning surfaces, design system briefs, target users, product value, MVP scope, requirements, priorities, acceptance criteria, tradeoffs, release slices, and designer/engineer handoff contracts.",
       "Use $judgment-kit:pro-engineering to apply problem-solving-centered engineering judgment to code changes, root cause analysis, implementation discipline, verification, and risk reporting.",
       "Use $judgment-kit:pro-designer to apply product design judgment to screens, user flows, interface content, color, tone and expression, branding, space and composition, surface and form, and product quality through UI, UX, Content, Color, Tone & Expression, Branding, Space & Composition, Surface & Form, and Quality criteria."
     ],

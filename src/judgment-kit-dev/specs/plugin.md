@@ -30,7 +30,7 @@
 
 ## 처리하려는 작업 형태
 
-- 제품, 서비스, 기능 요청에서 사용자 문제, 가치, 범위, 요구사항, 우선순위, acceptance criteria, handoff 계약을 명시하는 작업
+- 제품, 서비스, 기능 요청에서 넓은 요청을 사용자 문제, 제품 방식 후보, 기능 영역, 디자인 시스템 브리프 같은 부가 기획 표면, 가치, 범위, 요구사항, 우선순위, acceptance criteria, handoff 계약으로 분해하는 작업
 - 코드 작성과 버그 수정에서 문제 정의, 원인 분석, 작은 완전 수정, 검증과 리스크 보고 기준을 명시하는 작업
 - 화면, user flow, interface content, color, tone/expression, branding, space/composition, surface/form, product quality에서 디자인 판단 기준을 명시하는 작업
 
@@ -42,7 +42,7 @@
 
 ## 내장 skill 체계
 
-- `pro-planner`: 제품, 서비스, 기능 정의에서 사용자 문제, 가치, 범위, 요구사항, 우선순위, acceptance criteria, handoff 계약을 제공한다.
+- `pro-planner`: 제품, 서비스, 기능 정의에서 넓은 요청을 사용자 문제, 제품 방식 후보, 기능 영역, 디자인 시스템 브리프 같은 부가 기획 표면, 가치, 범위, 요구사항, 우선순위, acceptance criteria, handoff 계약으로 분해한다.
   - spec: `judgment-kit-dev/specs/skills/pro-planner/spec.md`
 - `pro-engineering`: 코드 작성과 문제 해결에서 엔지니어링 판단, 원인 분석, 구현 규율, 검증 기준을 제공한다.
   - spec: `judgment-kit-dev/specs/skills/pro-engineering/spec.md`
