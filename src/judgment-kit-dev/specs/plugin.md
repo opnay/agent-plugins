@@ -11,15 +11,17 @@
 
 ## 플러그인 목적
 
-`judgment-kit-dev`는 Codex가 제품 기획, 엔지니어링, 디자인 작업에서 역할 기반 판단 기준을 적용하게 하는 플러그인입니다.
-핵심 책임은 product planning judgment, engineering judgment, product design judgment를 독립 skill로 제공하는 것입니다.
+`judgment-kit-dev`는 Codex가 제품 기획, 엔지니어링, 디자인, 리서치, 품질 관리 작업에서 각 분야 전문가의 professional judgment flow를 적용하게 하는 플러그인입니다.
+핵심 책임은 research judgment, product planning judgment, engineering judgment, product design judgment, quality management judgment를 독립 skill로 제공하는 것입니다.
 
 ## 플러그인 경계와 비목표
 
 - 포함:
+  - 판단 전 불확실성을 줄이는 research judgment
   - 제품, 서비스, 기능을 정의하고 좁히는 product planning judgment
   - 문제 해결 중심의 engineering judgment, root cause analysis, implementation discipline
   - UI, UX, interface content, color, tone/expression, branding, space/composition, surface/form, product quality 중심의 product design judgment
+  - 산출물의 coverage, quality gate, release confidence, residual risk를 판단하는 quality management judgment
 - 제외:
   - skill/plugin 제작 guidance
   - scenario testing workflow
@@ -30,24 +32,30 @@
 
 ## 처리하려는 작업 형태
 
+- 판단에 앞서 사실, 가정, 불확실성, source quality, decision input을 분리하는 작업
 - 제품, 서비스, 기능 요청에서 넓은 요청을 사용자 문제, 제품 방식 후보, 기능 영역, 디자인 시스템 브리프 같은 부가 기획 표면, 가치, 범위, 요구사항, 우선순위, acceptance criteria, handoff 계약으로 분해하는 작업
 - 코드 작성과 버그 수정에서 문제 정의, 원인 분석, 작은 완전 수정, 검증과 리스크 보고 기준을 명시하는 작업
 - 화면, user flow, interface content, color, tone/expression, branding, space/composition, surface/form, product quality에서 디자인 판단 기준을 명시하는 작업
+- 제품, 디자인, 구현 산출물의 품질 목표, coverage gap, acceptance evidence, release readiness를 관리하는 작업
 
 ## 대표 표면
 
 - 대표 스펙: `judgment-kit-dev/specs/plugin.md`
 - skill 상세 스펙 위치: `judgment-kit-dev/specs/skills/<skill-name>/spec.md`
-- 핵심 선택 기준: 지금 필요한 판단 역할이 product planning, engineering, design 중 무엇인가
+- 핵심 선택 기준: 지금 필요한 professional judgment flow가 research, product planning, engineering, design, quality management 중 무엇인가
 
 ## 내장 skill 체계
 
+- `pro-researcher`: 판단 전에 research question, 근거, 사실/가정, source quality, 불확실성, decision input을 정리한다.
+  - spec: `judgment-kit-dev/specs/skills/pro-researcher/spec.md`
 - `pro-planner`: 제품, 서비스, 기능 정의에서 넓은 요청을 사용자 문제, 제품 방식 후보, 기능 영역, 디자인 시스템 브리프 같은 부가 기획 표면, 가치, 범위, 요구사항, 우선순위, acceptance criteria, handoff 계약으로 분해한다.
   - spec: `judgment-kit-dev/specs/skills/pro-planner/spec.md`
 - `pro-engineering`: 코드 작성과 문제 해결에서 엔지니어링 판단, 원인 분석, 구현 규율, 검증 기준을 제공한다.
   - spec: `judgment-kit-dev/specs/skills/pro-engineering/spec.md`
 - `pro-designer`: 화면과 제품 UI 작업에서 UI, UX, Content, Color, Tone & Expression, Branding, Space & Composition, Surface & Form, Quality 축의 디자인 판단 기준을 제공한다.
   - spec: `judgment-kit-dev/specs/skills/pro-designer/spec.md`
+- `pro-quality-manager`: 제품, 디자인, 구현 산출물에서 품질 목표, coverage, quality gate, release confidence, residual risk를 관리한다.
+  - spec: `judgment-kit-dev/specs/skills/pro-quality-manager/spec.md`
 
 ## SDD 운영 원칙
 

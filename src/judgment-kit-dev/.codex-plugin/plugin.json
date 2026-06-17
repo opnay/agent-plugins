@@ -1,7 +1,7 @@
 {
   "name": "judgment-kit-dev",
   "version": "0.1.0",
-  "description": "[DEV] Role-based planning, engineering, and design judgment for Codex.",
+  "description": "[DEV] Professional research, planning, engineering, design, and quality management judgment for Codex.",
   "author": {
     "name": "opnay"
   },
@@ -9,6 +9,8 @@
   "keywords": [
     "codex",
     "judgment",
+    "research",
+    "evidence",
     "planning",
     "product",
     "requirements",
@@ -19,13 +21,15 @@
     "root-cause-analysis",
     "design",
     "ui",
-    "ux"
+    "ux",
+    "quality",
+    "quality-management"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Judgment Kit Dev",
-    "shortDescription": "[DEV] Apply role-based product planning, engineering, and design judgment in Codex work.",
-    "longDescription": "[DEV] Provides role-based judgment skills for Codex: product planning judgment for broad request decomposition, user problems, product modes, feature maps, supplemental planning surfaces, design system briefs, scope, requirements, acceptance criteria, priorities, tradeoffs, and handoffs; engineering judgment for root cause analysis, implementation discipline, verification, and risk reporting; and design judgment across UI, UX, content, color, tone and expression, branding, space and composition, surface and form, and product quality.",
+    "shortDescription": "[DEV] Apply professional research, planning, engineering, design, and quality management judgment in Codex work.",
+    "longDescription": "[DEV] Provides professional judgment skills for Codex: research judgment for evidence gathering, source quality, uncertainty, and decision input; product planning judgment for broad request decomposition, user problems, product modes, feature maps, supplemental planning surfaces, design system briefs, scope, requirements, acceptance criteria, priorities, tradeoffs, and handoffs; engineering judgment for root cause analysis, implementation discipline, verification, and risk reporting; design judgment across UI, UX, content, color, tone and expression, branding, space and composition, surface and form, and product quality; and quality management judgment for quality targets, coverage gaps, acceptance evidence, release confidence, and residual risk.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": [
@@ -34,9 +38,11 @@
       "Write"
     ],
     "defaultPrompt": [
+      "Use $judgment-kit-dev:pro-researcher to apply research judgment before product, design, engineering, or quality management decisions by framing research questions, gathering evidence, separating facts from assumptions, weighing source quality, mapping uncertainty, and preparing decision-ready findings.",
       "Use $judgment-kit-dev:pro-planner to apply product and service planning judgment to broad request decomposition, user problems, product modes, feature maps, supplemental planning surfaces, design system briefs, target users, product value, MVP scope, requirements, priorities, acceptance criteria, tradeoffs, release slices, and designer/engineer handoff contracts.",
       "Use $judgment-kit-dev:pro-engineering to apply problem-solving-centered engineering judgment to code changes, root cause analysis, implementation discipline, verification, and risk reporting.",
-      "Use $judgment-kit-dev:pro-designer to apply product design judgment to screens, user flows, interface content, color, tone and expression, branding, space and composition, surface and form, and product quality through UI, UX, Content, Color, Tone & Expression, Branding, Space & Composition, Surface & Form, and Quality criteria."
+      "Use $judgment-kit-dev:pro-designer to apply product design judgment to screens, user flows, interface content, color, tone and expression, branding, space and composition, surface and form, and product quality through UI, UX, Content, Color, Tone & Expression, Branding, Space & Composition, Surface & Form, and Quality criteria.",
+      "Use $judgment-kit-dev:pro-quality-manager to apply quality management judgment to product, design, and engineering work by defining quality targets, coverage gaps, acceptance evidence, state coverage, risk severity, release confidence, and residual risk."
     ],
     "brandColor": "#2F6B4F"
   }
