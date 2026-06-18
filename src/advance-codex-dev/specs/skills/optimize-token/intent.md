@@ -25,3 +25,6 @@
 - list group은 `standard`에 둔다. 관련 항목을 상위 항목과 sublist로 묶어 반복 표현을 줄인다.
 - `extreme`은 `standard`의 list group을 상속하되, group보다 필드형이나 한 줄 표기가 더 짧으면 더 짧은 쪽을 쓴다.
 - runtime `SKILL.md`에 level 세부 규칙을 모두 직접 넣지 말고, skill folder 구조에 맞춰 `references/levels.md`로 분리한다.
+- `optimize-token`이 말을 너무 줄여서 맥락을 지우는 경우가 있으니 약 120개 scenario로 테스트하고 보완하고 싶다.
+- 보존 대상을 계속 열거하기보다 모두를 아우르는 축을 정하고 싶다.
+  - 축은 `의미 맥락 보존`으로 두고, 줄였을 때 사용자의 판단, 다음 행동, 승인 여부, 위험 이해, 검증 해석이 달라질 수 있는 정보를 보존한다.

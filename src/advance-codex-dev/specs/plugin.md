@@ -13,7 +13,7 @@
   - reusable instruction을 fresh executor와 고정 시나리오로 테스트하고 분석 보고하는 workflow
   - installable plugin boundary와 bundled skill coherence 설계
   - task-scoped commit finalization discipline
-  - 응답과 작업 전 판단 문장의 토큰 낭비를 줄이되 정확성, 검증, 승인 경계를 보존하는 token optimization
+  - 응답과 작업 전 판단 문장의 토큰 낭비를 줄이되 정확성, 의미 맥락, 검증, 승인 경계를 보존하는 token optimization
 - 제외:
   - 일반 제품 구현 workflow
   - 특정 도메인 기능 구현 가이드
@@ -42,7 +42,7 @@
   - spec: `advance-codex-dev/specs/skills/plugin-creator.md`
 - `git-committer`: task-scoped commit 준비, 실행 권한 확인, staged 검증, 메시지, commit 실행 규율을 제공한다.
   - spec: `advance-codex-dev/specs/skills/git-committer/spec.md`
-- `optimize-token`: 에이전트 응답, 진행 보고, 상태 문구, 검증·승인 문구의 토큰 사용을 줄이되 정확성, 검증 상태, 승인 경계, 필수 출력 형식, 현재 상태 기준을 보존하는 기준을 제공한다.
+- `optimize-token`: 에이전트 응답, 진행 보고, 상태 문구, 검증·승인 문구의 토큰 사용을 줄이되 정확성, 의미 맥락, 검증 상태, 승인 경계, 필수 출력 형식, 현재 상태 기준을 보존하는 기준을 제공한다.
   - spec: `advance-codex-dev/specs/skills/optimize-token/spec.md`
 
 ## SDD 운영 원칙
