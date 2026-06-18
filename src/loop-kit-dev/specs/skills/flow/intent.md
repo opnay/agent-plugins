@@ -71,7 +71,7 @@ graph TD
 - 실제 진행할 플로우가 정해지면 각 메인 플로우는 `intake -> framing -> preparation -> work -> verification -> reporting`으로 진행합니다.
 - 다음 flow가 있으면 `reporting` 직후 skill reconfigure를 수행하고 다음 `intake`로 라우팅합니다.
 - 메인 플로우 그룹 이후 결과는 `메인 플로우 회고 -> handoff condition`입니다.
-- `handoff condition`은 메인 플로우 종료 뒤 산출되는 종료 조건입니다.
+- `handoff condition`은 메인 플로우 회고 뒤 결과, 검증, 남은 위험, 다음 intake 조건을 드러내는 flow handoff 판단입니다.
 - 여러 플로우가 필요하면 리스트업 결과가 여러 메인 플로우가 될 수 있습니다.
 - 메시지 인터뷰는 별도 `deep-interview` skill을 필수로 적용합니다.
 - 메시지 인터뷰는 `deep-interview` 내부 절차를 재기술하지 않고, 그 산출인 locked execution brief를 플로우 설계 입력으로 사용합니다.
