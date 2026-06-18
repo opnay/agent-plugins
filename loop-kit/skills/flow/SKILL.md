@@ -99,8 +99,9 @@ Mark each verification item as `pass`, `fail`, `blocked`, `insufficient`, or `no
 ## Main-Flow Review
 
 After a main-flow group completes, run main-flow review before handoff condition.
-Update `000-review.md`.
+Always update `000-review.md`.
 Record findings, or record a short no-finding result when there are none.
+This mandatory update keeps review execution recoverable even when there are no findings.
 Do not use `000-review.md` as active routing or handoff authority.
 
 ## Handoff Condition
@@ -119,7 +120,7 @@ Records are not execution authority.
 
 - `000-plan.md`: may be updated from skill reconfigure, message interview, flow design, and flow contract validation.
 - Flow record: may be updated during main-flow phases and handoff condition.
-- `000-review.md`: update after the main-flow group and before handoff condition.
+- `000-review.md`: always update after the main-flow group and before handoff condition.
 
 When creating record files, use the bundled templates:
 

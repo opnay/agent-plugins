@@ -91,6 +91,7 @@ graph TD
 - flow 계약 검증이 실패하면 항목 분류로 돌아가 flow 구성을 다시 잡습니다.
 - flow record는 flow별 계약 작성 시점에 만들어지고, 이후 메인 플로우 phase, evidence, verification, reporting 시점에서 갱신합니다.
 - `000-review.md`는 메인 플로우 그룹 이후, `handoff condition` 직전에 항상 갱신하고, active routing이나 handoff authority로 쓰지 않습니다.
+- 이 강제 갱신은 회고 finding이 없는 경우에도 회고 수행 여부를 복구 가능하게 남기기 위한 기록입니다.
 - 회고 finding이 없으면 no-finding 결과로 짧게 기록합니다.
 - 목적 사슬은 contract에 영향을 줄 때 `000-plan.md`의 목적 섹션에 흡수합니다.
 

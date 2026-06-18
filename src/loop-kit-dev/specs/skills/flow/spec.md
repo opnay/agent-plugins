@@ -59,7 +59,7 @@ skill reconfigure는 flow entry와 post-reporting continuation boundary에서 �
 - `framing`은 사용자 요구사항을 requirement verification todo로 분해하고, `preparation`은 requirement verification todo와 implementation verification todo를 확정합니다.
 - requirement verification은 사용자 요구사항 충족 여부를 primary axis로 검증하고, implementation verification은 구현 정합성을 supporting axis로 검증합니다.
 - 다음 flow가 있으면 `reporting` 직후 skill reconfigure를 수행한 뒤 다음 `intake`로 라우팅합니다.
-- 메인 플로우 그룹 이후에는 `000-review.md`를 갱신하고 handoff condition을 산출합니다.
+- 메인 플로우 그룹 이후에는 `000-review.md`를 항상 갱신하고 handoff condition을 산출합니다.
 
 ## 검토 질문
 

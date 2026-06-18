@@ -8,7 +8,8 @@
 
 - `000-plan.md`는 skill reconfigure, 메시지 인터뷰, 플로우 설계에서 갱신될 수 있습니다.
 - flow record는 flow별 계약 작성 시점에 만들어지고, 메인 플로우 단계와 handoff condition에서 갱신될 수 있습니다.
-- `000-review.md`는 메인 플로우 그룹 이후 handoff condition 직전에 갱신합니다.
+- `000-review.md`는 메인 플로우 그룹 이후 handoff condition 직전에 항상 갱신합니다.
+- `000-review.md` 갱신은 finding이 없어도 회고 수행 여부를 복구 가능하게 남기기 위한 필수 기록입니다.
 - 기록은 실행 권한이 아닙니다.
 - 템플릿 파일은 `templates/*`를 유지합니다.
 
