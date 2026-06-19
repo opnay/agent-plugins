@@ -1,0 +1,34 @@
+{
+  "name": "adaptive-subagent-orchestrator-dev",
+  "version": "0.1.0",
+  "description": "[DEV] Automatic subagent orchestration plugin for complex engineering tasks with independent workstreams.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "subagent",
+    "delegation",
+    "parallel",
+    "orchestration",
+    "engineering"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Adaptive Subagent Orchestrator Dev",
+    "shortDescription": "[DEV] Delegates independent engineering work when parallelism is worthwhile.",
+    "longDescription": "[DEV] Provides an instruction-only skill that evaluates complex software-engineering requests for independent workstreams, spawns the minimum necessary bounded subagents when the delegation gate passes, and keeps final integration and verification with the main agent.",
+    "developerName": "opnay",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Analyze",
+      "Plan",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use adaptive-subagent-orchestrator when a software-engineering task has multiple independent investigation, review, testing, comparison, or implementation workstreams.",
+      "Evaluate whether delegation is worthwhile; if it is, spawn the minimum necessary bounded subagents, wait for their evidence, and integrate the final outcome."
+    ],
+    "brandColor": "#2563EB"
+  }
+}
