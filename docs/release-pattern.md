@@ -39,21 +39,21 @@ After that first post-main-merge modification, later changes to the same plugin 
 Developers who want the in-progress version register the `next` branch as their marketplace source and install the `<plugin-name>-dev` plugin.
 Public release happens later by merging `next` to `main` and generating the root release surface.
 
-For example, if `turn-gate` changes:
+For example, if `example-skill` changes:
 
-1. Compare `main`'s `loop-kit` version with `next`'s `loop-kit-dev` version.
-2. If this is the first `loop-kit-dev` modification on `next` since the last `main` merge, ask whether the `turn-gate` change should bump `loop-kit-dev` as patch, minor, major, or a specific version.
-3. Update `src/loop-kit-dev`.
-4. Update `src/workflow-kit-dev` only when the change affects the workflow skill contracts that `loop-kit` references.
+1. Compare `main`'s `example-kit` version with `next`'s `example-kit-dev` version.
+2. If this is the first `example-kit-dev` modification on `next` since the last `main` merge, ask whether the `example-skill` change should bump `example-kit-dev` as patch, minor, major, or a specific version.
+3. Update `src/example-kit-dev`.
+4. Update related plugin sources only when the change affects their contracts.
 5. Update `next`.
-6. Build `loop-kit/` after each change so the root release surface mirrors the current dev source.
+6. Build `example-kit/` after each change so the root release surface mirrors the current dev source.
 7. Developers using the dev version register/install from the `next` branch marketplace source.
 8. When the work is ready for public release, merge `next` to `main` with the already chosen dev version.
 
 ## Development Marketplace From `next`
 
 The `next` branch is allowed to be used as a development marketplace source.
-This is why dev plugins keep distinct names such as `loop-kit-dev`.
+This is why dev plugins keep distinct names such as `example-kit-dev`.
 Installing from `next` should expose the dev plugin directly without requiring the root release surface to be regenerated first.
 
 Expected development flow:
@@ -82,7 +82,7 @@ codex plugin marketplace upgrade opnay-plugins
 
 ```json
 {
-  "name": "rpg-kit",
+  "name": "example-kit",
   "version": "0.1.1"
 }
 ```
@@ -96,9 +96,7 @@ Codex cache는 marketplace, plugin, version을 반영해 `opnay-plugins/<plugin>
 
 예:
 
-- `src/rpg-kit-dev`
-- `src/loop-kit-dev`
-- `src/workflow-kit-dev`
+- `src/example-kit-dev`
 - `src/advance-codex-dev`
 
 dev 플러그인은 공개 플러그인과 동시에 설치해도 호출 표면이 충돌하지 않아야 합니다.
@@ -106,8 +104,8 @@ dev 플러그인은 공개 플러그인과 동시에 설치해도 호출 표면�
 
 예:
 
-- 공개: `$rpg-kit:subagent-role`
-- 개발: `$rpg-kit-dev:subagent-role`
+- 공개: `$example-kit:example-skill`
+- 개발: `$example-kit-dev:example-skill`
 
 ## Source / Release 구조
 
@@ -115,7 +113,7 @@ dev 플러그인은 공개 플러그인과 동시에 설치해도 호출 표면�
 
 ```text
 src/
-  rpg-kit-dev/
+  example-kit-dev/
     .codex-plugin/plugin.json
     README.md
     specs/
@@ -125,7 +123,7 @@ src/
 release surface는 사용자 설치용 산출물입니다.
 
 ```text
-rpg-kit/
+example-kit/
   .codex-plugin/plugin.json
   README.md
   skills/
@@ -199,12 +197,11 @@ specs는 source-of-truth인 `src/` 안에만 둡니다.
 
 `<plugin-name>-dev`에서 `<plugin-name>`을 계산합니다.
 
-- plugin directory: `src/rpg-kit-dev` -> `rpg-kit`
-- manifest `name`: `rpg-kit-dev` -> `rpg-kit`
-- display name: `RPG Kit Dev` -> `RPG Kit`
+- plugin directory: `src/example-kit-dev` -> `example-kit`
+- manifest `name`: `example-kit-dev` -> `example-kit`
+- display name: `Example Kit Dev` -> `Example Kit`
 - skill names that do not encode the plugin name are kept as-is:
-  - `subagent-role` -> `subagent-role`
-  - `turn-gate` -> `turn-gate`
+  - `example-skill` -> `example-skill`
 
 ### Text Rewrite
 
@@ -267,7 +264,7 @@ pnpm build:plugin <plugin-name>
 기존 release directory를 덮어쓸 때는 `--force`를 붙여야 합니다.
 
 ```sh
-pnpm build:plugin rpg-kit --force
+pnpm build:plugin example-kit --force
 ```
 
 스크립트는 현재 다음을 강제합니다.
@@ -289,7 +286,7 @@ pnpm release:plugin <plugin-name> --bump patch
 ```
 
 ```sh
-pnpm release:plugin rpg-kit --version 0.1.1 --force
+pnpm release:plugin example-kit --version 0.1.1 --force
 ```
 
 스크립트는 현재 다음을 강제합니다.

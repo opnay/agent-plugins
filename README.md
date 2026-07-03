@@ -4,14 +4,6 @@ OPNay가 직접 관리하는 Codex 플러그인 마켓플레이스 저장소입�
 공개 설치용 release surface는 저장소 루트 바로 아래에 배치되며, 개발 원본은 `src/` 아래에서 관리합니다.
 `.agents/plugins/marketplace.json`은 공개 설치 가능한 release 플러그인 목록의 단일 진실 공급원입니다.
 
-## 준비
-
-`loop-kit`처럼 사용자 선택지를 구조화된 질문 도구로 열어야 하는 플러그인을 제대로 쓰려면 Codex의 개발 중인 기능인 `default_mode_request_user_input`를 활성화해야 합니다.
-
-```sh
-codex features enable default_mode_request_user_input
-```
-
 ## 마켓플레이스 등록
 
 공개 설치용 마켓플레이스는 GitHub source를 사용합니다.
@@ -47,18 +39,11 @@ codex plugin marketplace upgrade
 - 개발 버전을 쓰는 사용자는 `next` 브랜치를 marketplace source로 등록하고 `<plugin-name>-dev`를 설치합니다.
 - 루트 `<plugin-name>/` release surface는 매 plugin 변경 뒤 build command로 갱신합니다.
 
-예를 들어 공개 플러그인은 `$rpg-kit:subagent-role`, 개발 플러그인은 `$rpg-kit-dev:subagent-role`로 분리됩니다.
+예를 들어 공개 플러그인은 `$judgment-kit:pro-code-keeper`, 개발 플러그인은 `$judgment-kit-dev:pro-code-keeper`로 분리됩니다.
 
 자세한 릴리즈/개발 분리 규칙은 `docs/release-pattern.md`를 봅니다.
 
 ## 플러그인
-
-### Workflow Kit
-
-`workflow-kit`은 planning, deep interview, review loop, commit readiness, turn gate 같은 일반 workflow taxonomy와 canonical workflow contract를 제공합니다.
-
-- 경로: `workflow-kit/`
-- 주요 실행 표면: `deep-interview`, `planner`, `autopilot`, `turn-gate`, `sequential-thinking`, `commit-readiness-gate`
 
 ### Advance Codex
 
@@ -68,34 +53,38 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 - 경로: `advance-codex/`
 - 주요 실행 표면: `plugin-creator`, `skill-creator`, `skill-scenario-testing`, `agents-sessions`, `git-committer`, `tool-use-guide`, `subagent-gate`, `subagent-creator`
 
-### Loop Kit
+### Judgment Kit
 
-`loop-kit`은 하나의 작업 턴을 사용자가 명시적으로 종료할 때까지 유지하는 turn-gated loop 플러그인입니다.
-`turn-gate`가 current-phase mode와 question-routing mode를 선택하고, 결과 보고 뒤 다음 플로우 선택지를 다시 엽니다.
+`judgment-kit`은 리서치, 기획, 엔지니어링, lean code, 디자인, 품질 관리 판단 기준을 제공하는 플러그인입니다.
 
-- 경로: `loop-kit/`
-- 주요 실행 표면: `turn-gate`
-- 필수 준비: `default_mode_request_user_input`
+- 경로: `judgment-kit/`
+- 주요 실행 표면: `pro-researcher`, `pro-planner`, `pro-engineering`, `pro-code-keeper`, `pro-designer`, `pro-quality-manager`
 
-### RPG Kit
+### Adaptive Subagent Orchestrator
 
-`rpg-kit`은 역할이 할당된 subagent를 설계하고, spawn boundary와 answer contract를 명시하며, subagent 동작을 학습하기 위한 role orchestration 플러그인입니다.
-역할은 단순 직함이 아니라 functional role, responsibility domain, background expertise, general expertise, decision style을 조합한 role specialty로 다룹니다.
+`adaptive-subagent-orchestrator`는 복잡한 소프트웨어 엔지니어링 작업에서 bounded parallel subagent 사용 기준을 제공합니다.
 
-- 경로: `rpg-kit/`
-- 주요 실행 표면: `subagent-role`
-- 평가 설계: `src/rpg-kit-dev/specs/subagent-role-packet-evaluation.md`
+- 경로: `adaptive-subagent-orchestrator/`
+- 주요 실행 표면: `adaptive-subagent-orchestrator`
+
+### Code Quality
+
+`code-quality`는 production code 변경과 리뷰에서 correctness, maintainability, testability, robustness 기준을 적용합니다.
+
+- 경로: `code-quality/`
+- 주요 실행 표면: `code-quality`
 
 ## 저장소 구조
 
 ```text
 .
 ├── .agents/plugins/marketplace.json
+├── adaptive-subagent-orchestrator/
 ├── advance-codex/
-├── loop-kit/
-├── rpg-kit/
+├── code-quality/
+├── judgment-kit/
 ├── src/
-└── workflow-kit/
+└── docs/
 ```
 
 개발 원본 플러그인은 `src/` 아래에서 최소한 다음 구조를 유지합니다.

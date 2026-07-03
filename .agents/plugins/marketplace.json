@@ -5,58 +5,10 @@
   },
   "plugins": [
     {
-      "name": "workflow-kit",
-      "source": {
-        "source": "local",
-        "path": "./workflow-kit"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Productivity"
-    },
-    {
       "name": "advance-codex",
       "source": {
         "source": "local",
         "path": "./advance-codex"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
-    },
-    {
-      "name": "loop-kit",
-      "source": {
-        "source": "local",
-        "path": "./loop-kit"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Productivity"
-    },
-    {
-      "name": "rpg-kit",
-      "source": {
-        "source": "local",
-        "path": "./rpg-kit"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
-    },
-    {
-      "name": "baton-relay",
-      "source": {
-        "source": "local",
-        "path": "./baton-relay"
       },
       "policy": {
         "installation": "AVAILABLE",
