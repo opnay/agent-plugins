@@ -1,7 +1,7 @@
 {
   "name": "judgment-kit",
   "version": "0.1.0",
-  "description": "Professional research, planning, engineering, lean code, design, and quality management judgment for Codex.",
+  "description": "Professional research, planning, engineering, lean code stewardship, design, and quality management judgment for Codex.",
   "author": {
     "name": "opnay"
   },
@@ -31,8 +31,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Judgment Kit",
-    "shortDescription": "Apply professional research, planning, engineering, lean code, design, and quality management judgment in Codex work.",
-    "longDescription": "Provides professional judgment skills for Codex: research judgment for evidence gathering, source quality, uncertainty, and decision input; product planning judgment for broad request decomposition, user problems, product modes, feature maps, supplemental planning surfaces, design system briefs, scope, requirements, acceptance criteria, priorities, tradeoffs, and handoffs; engineering judgment for root cause analysis, implementation discipline, verification, and risk reporting; lean code stewardship judgment for smallest safe changes, deletion, reuse, standard library or native features, overengineering review, dependency reduction, and lean debt tracking; design judgment across UI, UX, content, color, tone and expression, branding, space and composition, surface and form, and product quality; and quality management judgment for quality targets, coverage gaps, acceptance evidence, release confidence, and residual risk.",
+    "shortDescription": "Apply professional research, planning, engineering, lean code stewardship, design, and quality management judgment in Codex work.",
+    "longDescription": "Provides professional judgment skills for Codex: research judgment for evidence gathering, source quality, uncertainty, and decision input; product planning judgment for broad request decomposition, user problems, product modes, feature maps, supplemental planning surfaces, design system briefs, scope, requirements, acceptance criteria, priorities, tradeoffs, and handoffs; engineering judgment for root cause analysis, implementation discipline, verification, and risk reporting; reference-guided lean code stewardship judgment for smallest safe changes, root-cause fixes, deletion, reuse, standard library or native features, overengineering review, dependency reduction, refactor shrink, and lean debt tracking; design judgment across UI, UX, content, color, tone and expression, branding, space and composition, surface and form, and product quality; and quality management judgment for quality targets, coverage gaps, acceptance evidence, release confidence, and residual risk.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": [
@@ -44,7 +44,7 @@
       "Use $judgment-kit:pro-researcher to apply research judgment before product, design, engineering, or quality management decisions by framing research questions, gathering evidence, separating facts from assumptions, weighing source quality, mapping uncertainty, and preparing decision-ready findings.",
       "Use $judgment-kit:pro-planner to apply product and service planning judgment to broad request decomposition, user problems, product modes, feature maps, supplemental planning surfaces, design system briefs, target users, product value, MVP scope, requirements, priorities, acceptance criteria, tradeoffs, release slices, and designer/engineer handoff contracts.",
       "Use $judgment-kit:pro-engineering to apply problem-solving-centered engineering judgment to code changes, root cause analysis, implementation discipline, verification, and risk reporting.",
-      "Use $judgment-kit:pro-code-keeper to apply lean senior developer judgment to coding, debugging, refactoring, overengineering review, dependency reduction, smallest safe changes, deletion, reuse, standard library or native features, and lean debt tracking.",
+      "Use $judgment-kit:pro-code-keeper to apply reference-guided lean code stewardship to coding, debugging, root-cause fixes, refactoring, overengineering review, dependency reduction, smallest safe changes, deletion, reuse, standard library or native features, refactor shrink, and lean debt tracking.",
       "Use $judgment-kit:pro-designer to apply product design judgment to screens, user flows, interface content, color, tone and expression, branding, space and composition, surface and form, and product quality through UI, UX, Content, Color, Tone & Expression, Branding, Space & Composition, Surface & Form, and Quality criteria.",
       "Use $judgment-kit:pro-quality-manager to apply quality management judgment to product, design, and engineering work by defining quality targets, coverage gaps, acceptance evidence, state coverage, risk severity, release confidence, and residual risk."
     ],

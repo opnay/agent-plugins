@@ -9,6 +9,6 @@
 `pro-researcher`는 제품, 디자인, 엔지니어링, 품질 관리 판단 전에 research question, 근거, 사실/가정, source quality, 불확실성, decision input을 정리해야 할 때 사용합니다.
 `pro-planner`는 제품, 서비스, 기능 요청에서 넓은 요청을 사용자 문제, 제품 방식 후보, 기능 영역, 디자인 시스템 브리프 같은 부가 기획 표면, MVP 범위, 요구사항, 우선순위, acceptance criteria, tradeoff, designer/engineer handoff로 분해해야 할 때 사용합니다.
 `pro-engineering`은 코드 작성과 문제 해결 중 증상, 원인 후보, 구현 판단, 검증 기준을 엔지니어 관점에서 정리해야 할 때 사용합니다.
-`pro-code-keeper`는 코드 변경, 리팩터링, overengineering review에서 가장 작고 안전한 변경, 삭제, 재사용, standard library/native feature, dependency reduction, lean debt 기준을 판단해야 할 때 사용합니다.
+`pro-code-keeper`는 코드 변경, root-cause fix, 리팩터링, overengineering review에서 reference 기반으로 가장 작고 안전한 변경, 삭제, 재사용, standard library/native feature, dependency reduction, refactor shrink, lean debt 기준을 판단해야 할 때 사용합니다.
 `pro-designer`는 화면, user flow, interface content, color, tone/expression, branding, space/composition, surface/form, product quality를 UI, UX, Content, Color, Tone & Expression, Branding, Space & Composition, Surface & Form, Quality 축으로 판단해야 할 때 사용합니다.
 `pro-quality-manager`는 테스트 실행보다 넓은 품질 관리 관점에서 quality target, coverage gap, acceptance evidence, release confidence, residual risk를 관리해야 할 때 사용합니다.
