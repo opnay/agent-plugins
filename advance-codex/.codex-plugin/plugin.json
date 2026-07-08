@@ -1,7 +1,7 @@
 {
   "name": "advance-codex",
   "version": "0.1.1",
-  "description": "Capability plugin for strengthening Codex surfaces across skills, scenario testing, agent token optimization, commits, and plugins.",
+  "description": "Capability plugin for strengthening Codex surfaces across skills, scenario testing, agent memory, token optimization, commits, and plugins.",
   "author": {
     "name": "opnay"
   },
@@ -14,13 +14,15 @@
     "tools",
     "prompts",
     "evaluation",
+    "memory",
+    "notion",
     "analysis"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Advance Codex",
-    "shortDescription": "Strengthen skills, agent token optimization, scenario testing, commits, and plugins.",
-    "longDescription": "Provides skills for strengthening Codex surfaces: shaping reusable skills, packaging coherent plugins, testing reusable instructions with fixed scenarios and fresh executors, finalizing Codex-made changes into stable commits, and reducing agent wording tokens without losing correctness, meaning-bearing context, or verification evidence.",
+    "shortDescription": "Strengthen skills, agent memory, token optimization, scenario testing, commits, and plugins.",
+    "longDescription": "Provides skills for strengthening Codex surfaces: shaping reusable skills, packaging coherent plugins, testing reusable instructions with fixed scenarios and fresh executors, setting up Notion-backed agent work memory, finalizing Codex-made changes into stable commits, and reducing agent wording tokens without losing correctness, meaning-bearing context, or verification evidence.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": [
@@ -33,6 +35,7 @@
       "Use $advance-codex:plugin-creator to package a plugin and define the right bundled surfaces.",
       "Use $advance-codex:skill-creator to design a reusable Codex skill with the right references, guardrails, and description trigger metadata.",
       "Use $advance-codex:skill-scenario-testing to test reusable instructions with fresh subagents, fixed scenarios, and caller-side metrics before reporting evidence-backed findings.",
+      "Use $advance-codex:notion-memory to set up and use Notion-backed agent work memory for work history, decisions, follow-ups, verification, and reusable work knowledge; do not use it for general Notion workspace automation.",
       "Use $advance-codex:git-committer to prepare and execute a task-scoped commit with commit authority checks, staged verification, commit-message hygiene, and post-commit confirmation.",
       "Use $advance-codex:optimize-token to reduce agent wording tokens in responses, progress updates, status notes, verification notes, and approval boundaries while preserving correctness, meaning-bearing context, verification evidence, approval boundaries, required output format, and current-state accuracy."
     ],
