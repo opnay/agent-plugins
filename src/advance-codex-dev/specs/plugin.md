@@ -45,7 +45,7 @@
   - spec: `advance-codex-dev/specs/skills/plugin-creator.md`
 - `git-committer`: task-scoped commit 준비, 실행 권한 확인, staged 검증, 메시지, commit 실행 규율을 제공한다.
   - spec: `advance-codex-dev/specs/skills/git-committer/spec.md`
-- `notion-memory`: Notion-backed agent work memory의 setup, schema, workspace rule, 기록, 검증 계약을 제공한다.
+- `notion-memory`: Notion-backed agent work memory의 setup, schema, workspace rule, 기록, 검증 계약을 제공하고, Notion I/O는 `ntn` CLI를 1순위로 사용한다.
   - spec: `advance-codex-dev/specs/skills/notion-memory.md`
 - `optimize-token`: 에이전트 응답, 진행 보고, 상태 문구, 검증·승인 문구의 토큰 사용을 줄이되 정확성, 의미 맥락, 검증 상태, 승인 경계, 필수 출력 형식, 현재 상태 기준을 보존하는 기준을 제공한다.
   - spec: `advance-codex-dev/specs/skills/optimize-token/spec.md`

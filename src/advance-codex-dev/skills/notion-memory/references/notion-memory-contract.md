@@ -12,6 +12,15 @@ Use `general.language`, `general.locale`, and `general.register` for memory docu
 
 Do not store or copy credentials, tokens, cookies, connector auth state, or user-specific DB IDs into plugin files.
 
+## ntn First
+
+Use `ntn` as the first-choice Notion I/O path for setup, recording, and verification.
+Do not route normal memory work to a separate `ntn` or `notion-cli` skill.
+Do not use a Notion plugin connector as the default DB fetch or page write path.
+Read `references/ntn-cli.md` before Notion I/O.
+`ntn` use must preserve this memory contract: fixed properties, allow-list first, block-list review, selected body format, and read-back verification when possible.
+If `ntn` is unavailable or blocked, report the exact blocker and ask before using browser UI or manual fallback.
+
 ## Record Scope
 
 Allowed records:
@@ -138,12 +147,13 @@ Optional default structure:
 1. Map user, Notion, local, and excluded scope.
 2. Apply the allow-list first.
 3. Apply the block-list.
-4. Read config and fetch the DB if tools are available.
+4. Read config and prepare `ntn` auth and endpoint syntax checks.
 5. Normalize fixed properties.
 6. Choose the body format, then draft the body.
-7. Create or update the page.
-8. Fetch the page when property, relation, or body verification matters.
-9. Report status, evidence, skipped checks, and residual risk.
+7. Use `ntn` for Notion create/update.
+8. Create or update the page.
+9. Fetch the page with `ntn` when property, relation, or body verification matters.
+10. Report status, evidence, skipped checks, and residual risk.
 
 ## Status Words
 

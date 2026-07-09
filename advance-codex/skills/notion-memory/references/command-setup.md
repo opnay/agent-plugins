@@ -99,7 +99,7 @@ Required properties:
 | `후속 작업` | checkbox | whether follow-up remains |
 | `관련 링크` | url | external URLs |
 
-Recommended options:
+Required option values:
 
 | Property | Options |
 | --- | --- |
@@ -109,10 +109,13 @@ Recommended options:
 
 Rules:
 
-- Fetch the DB before making schema-sensitive claims.
+- Use `ntn` first for DB/data source fetches and schema-sensitive checks.
+- Fetch the DB or data source before making schema-sensitive claims.
 - Add missing properties only. Do not delete, rename, or narrow existing properties without explicit approval.
 - If an existing property has an incompatible type, report it before changing anything.
-- If connector schema updates fail, use browser UI when available or provide manual steps.
+- Read `references/ntn-cli.md` before running Notion I/O through `ntn`.
+- Do not route normal setup work to a separate `ntn`/`notion-cli` skill or Notion plugin connector.
+- If `ntn` schema checks or updates fail, report the command and blocker, then ask before using browser UI or manual steps.
 - If relation setup is not possible through tools, record the blocker and keep relation status incomplete.
 - Update `notion.schema_status` only after verification evidence exists.
 
@@ -154,7 +157,8 @@ Goal: prove the configured Notion memory setup is usable.
 Checks:
 
 - config file exists and contains `notion.db_url` or `notion.db_id`
-- DB can be fetched through connected Notion tools, or access blocker is explicit
+- DB can be fetched through `ntn`, or access blocker is explicit
+- `ntn` command syntax was confirmed with local help/docs/spec output
 - required schema exists or missing fields are listed
 - `general.timezone` is `Asia/Seoul` unless the user chose another value
 - `general.language`, `general.locale`, and `general.register` are present or defaulted

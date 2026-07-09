@@ -17,10 +17,14 @@ This skill owns:
 - config guidance for `~/.agents/configs/notion-memory.toml`
 - allow-list first review and block-list security review
 - Notion write verification and manual fallback reporting
+- Notion CLI guidance for using `ntn` as the first-choice Notion I/O path for memory work
 
 This skill does not own:
 
 - general Notion workspace automation
+- general `ntn` CLI or Notion API automation
+- delegation of normal memory work to a separate `ntn` or `notion-cli` skill
+- default use of a Notion plugin connector for memory I/O
 - credentials, tokens, cookies, or connector auth state storage
 - automatic logging of every conversation
 - unsupported claims as facts
@@ -30,8 +34,9 @@ This skill does not own:
 
 1. If the user asks for setup, preparation, configuration, schema work, workspace rules, or verification, read `references/command-setup.md`.
 2. If the user asks to record or update memory, read `references/notion-memory-contract.md`.
-3. If one request includes setup and recording, complete the required setup path first, then record only after config and schema are usable.
-4. If config is missing for a record request, route to `setup config` and ask for the DB URL or ID instead of guessing.
+3. Before Notion I/O for setup, recording, or verification, read `references/ntn-cli.md` and use `ntn` first.
+4. If one request includes setup and recording, complete the required setup path first, then record only after config and schema are usable.
+5. If config is missing for a record request, route to `setup config` and ask for the DB URL or ID instead of guessing.
 
 Semantic setup phrases include `setup`, `셋업하자`, `준비해줘`, `스킬을 사용하기 위해 준비해줘`, and `Notion 메모리 기록 쓸 수 있게 준비해줘`.
 
@@ -81,15 +86,19 @@ When writing the config requires filesystem approval, request it. If writing is 
 
 ## Notion Workflow
 
-Use connected Notion tools when available:
+Use `ntn` as the first-choice Notion I/O path:
 
-1. Fetch the configured DB before schema-sensitive work.
-2. Add only missing required properties unless the user explicitly approves another change.
-3. Create or update pages with fixed page properties and a body format chosen before writing.
-4. Fetch the page or DB when needed to verify properties, relations, and schema.
-5. Report failed tool calls, skipped checks, and residual risk.
+1. Confirm auth without printing secrets: `ntn whoami` or a non-secret token presence check.
+2. Inspect live syntax with `ntn --help`, `ntn api --help`, and endpoint help/spec before schema-sensitive work.
+3. Fetch the configured DB or data source through `ntn` before schema-sensitive claims.
+4. Add only missing required properties unless the user explicitly approves another change.
+5. Create or update pages with fixed page properties and a body format chosen before writing.
+6. Fetch the page or DB through `ntn` when needed to verify properties, relations, and schema.
+7. Report failed `ntn` calls, skipped checks, and residual risk.
 
-If connector writes fail or Notion tools are unavailable, use browser UI when available, or provide exact manual setup steps. Do not call a manual fallback a completed setup.
+Do not use a separate CLI skill or Notion plugin connector as the default path for this skill.
+If `ntn` is unavailable or blocked, report the blocker and ask before using browser UI or manual fallback.
+Do not call a manual fallback a completed setup.
 
 ## Completion
 
@@ -112,3 +121,4 @@ For recording:
 
 - Read `references/command-setup.md` for setup command handling.
 - Read `references/notion-memory-contract.md` for schema, property, title, body format, relation, and write rules.
+- Read `references/ntn-cli.md` before Notion I/O; it owns the `ntn` first path for this skill.

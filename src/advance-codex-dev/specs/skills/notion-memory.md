@@ -10,6 +10,8 @@
 - Notion memory의 문서 속성 값은 고정 계약으로 유지하되, 본문 형식은 기본 템플릿 강제가 아니라 작성 전 기록 목적에 맞게 직접 정할 수 있는 자유 형식으로 두고 싶다.
   - 본문 형식은 누가 언제 정하도록 고정할까요?
     - 에이전트 결정 [무응답으로 권장값 적용]: 기록 전에 에이전트가 기록 목적에 맞는 형식을 정하고, 애매할 때만 사용자에게 묻는다.
+- 초기 요청은 `notion-memory`가 `ntn` CLI 사용법을 reference appendix로 보유하고 별도 `ntn`/`notion-cli` skill이 있으면 fallback으로 우선하는 것이었으나, 최신 결정으로 대체한다.
+- Notion memory 작업에서는 별도 skill이나 Notion plugin connector를 우선하지 말고 `ntn` CLI를 1순위로 쓰길 원한다.
 
 ---
 
@@ -32,8 +34,12 @@
   - relation/link, KST `기록일`, title, 고정 property, body structure 선택 계약
   - memory record 문서 작성 규약
   - allow-list first, block-list security review
+  - Notion memory setup, 기록, 검증의 1순위 Notion I/O 경로인 `ntn` CLI guidance
 - 제외:
   - 일반 Notion workspace 정리
+  - 일반 `ntn` CLI skill 또는 Notion API 자동화 skill의 대체
+  - 별도 `ntn`/`notion-cli` skill로 Notion memory 작업을 위임하는 기본 흐름
+  - Notion plugin connector를 기본 I/O 경로로 쓰는 흐름
   - 사용자 승인 없는 schema 파괴 변경
   - credential, token, Notion auth state 저장
   - 모든 대화의 자동 저장
@@ -46,6 +52,7 @@
 - 사용자가 Notion 메모리 skill을 쓰기 위해 준비해 달라고 요청한 경우
 - 사용자가 작업 히스토리, 결정, 후속 작업, 검증 결과, 재사용 가능한 작업 지식을 Notion memory DB에 남기려는 경우
 - 사용자가 Notion memory DB schema, config, workspace rule, setup verification을 점검하려는 경우
+- Notion memory setup, 기록, 검증에 `ntn` CLI를 1순위로 써야 하는 경우
 
 ## 엔트리포인트 / 대표 표면
 
@@ -86,8 +93,11 @@
 - config에는 credential, token, cookie, connector auth state를 저장하지 않는다.
 - setup config 자동화가 필요하면 bundled `scripts/setup_config.py`를 사용한다.
 - `scripts/setup_config.py`는 config 생성, template 출력, 검증만 소유하고 Notion DB schema 변경이나 page write는 소유하지 않는다.
-- Notion connector가 있으면 connector로 fetch/update/create를 시도한다.
-- connector가 없거나 schema update가 실패하면 browser UI 또는 manual fallback을 보고한다.
+- Notion I/O는 `ntn` CLI를 1순위로 사용한다.
+- runtime `references/ntn-cli.md`를 읽고, 실제 문법은 `ntn --help`, `ntn api --help`, `ntn api <path> --help|--docs|--spec`으로 확인한다.
+- 별도 `ntn`/`notion-cli` skill이나 Notion plugin connector로 기본 라우팅하지 않는다.
+- `ntn` 사용이 막히면 실패 명령과 blocker를 보고하고, 사용자 확인 후 browser UI 또는 manual fallback을 안내한다.
+- `ntn` 사용은 `notion-memory`의 config, schema, 기록, 검증 계약을 보조할 뿐 일반 Notion API 자동화로 확장하지 않는다.
 - schema 변경은 additive missing-property setup을 기본으로 하고, destructive 변경은 사용자 승인 없이는 하지 않는다.
 - 기록 title은 `PREFIX: 짧은 의미 제목` 형식을 사용하고 날짜/시간은 넣지 않는다.
 - `기록일`은 KST datetime source of truth로 사용한다.
@@ -142,7 +152,10 @@
 - 본문 형식 자유를 property schema나 허용 값 변경으로 오해하지 않았는가?
 - schema 변경이 additive인지, destructive이면 사용자가 승인했는지 확인했는가?
 - Notion write 후 fetch 또는 동등한 증거로 검증했는가?
-- connector 실패 시 manual/browser fallback을 구체적으로 보고했는가?
+- Notion I/O에 `ntn` CLI를 1순위로 사용했는가?
+- 별도 `ntn`/`notion-cli` skill이나 Notion plugin connector로 기본 라우팅하지 않았는가?
+- `ntn` 실제 명령 문법을 local help/docs/spec 출력으로 확인했는가?
+- `ntn` 실패 시 manual/browser fallback을 구체적으로 보고했는가?
 - setup config에서 스크립트를 쓸 수 있으면 썼고, 스크립트 미사용 또는 실패 사유를 남겼는가?
 
 ## 독립성 원칙
@@ -154,4 +167,5 @@
 
 - DB property나 body structure 선택 계약이 바뀌면 `notion-memory` skill spec과 runtime reference를 함께 갱신한다.
 - plugin usage surface는 README, plugin spec, manifest prompt에서 갱신한다.
-- Notion connector-specific 실패 대응은 runtime reference에 두고 개인 DB 식별자는 넣지 않는다.
+- `ntn` CLI 사용 규칙은 runtime reference에 두고 개인 DB 식별자는 넣지 않는다.
+- `ntn` CLI guidance는 `notion-memory` 작업을 위한 1순위 부록으로 유지하고, 별도 skill이나 plugin connector로 기본 위임하지 않는다.
