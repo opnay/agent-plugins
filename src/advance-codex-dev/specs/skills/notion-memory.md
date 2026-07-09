@@ -7,6 +7,9 @@
 - 기록 대상은 작업 히스토리, 결정, 후속 작업, 검증, 재사용 가능한 작업 지식으로 제한하고 싶다.
 - 설정은 `general`과 `notion` 영역으로 나누고 `general.timezone`, `notion.db_url` 같은 이름으로 다루고 싶다.
 - 기록 문서는 한국어, 서울 기준, 일관된 존댓말, 간결하지만 다음 에이전트가 실행 가능한 형식으로 작성하고 싶다.
+- Notion memory의 문서 속성 값은 고정 계약으로 유지하되, 본문 형식은 기본 템플릿 강제가 아니라 작성 전 기록 목적에 맞게 직접 정할 수 있는 자유 형식으로 두고 싶다.
+  - 본문 형식은 누가 언제 정하도록 고정할까요?
+    - 에이전트 결정 [무응답으로 권장값 적용]: 기록 전에 에이전트가 기록 목적에 맞는 형식을 정하고, 애매할 때만 사용자에게 묻는다.
 
 ---
 
@@ -26,7 +29,7 @@
   - memory DB schema 확인, 추가, 수동 fallback 안내
   - workspace rule 안내 또는 사용자 승인 후 적용
   - 작업 히스토리, 결정, 후속 작업, 검증, 재사용 가능한 작업 지식 기록
-  - relation/link, KST `기록일`, title, body template 계약
+  - relation/link, KST `기록일`, title, 고정 property, body structure 선택 계약
   - memory record 문서 작성 규약
   - allow-list first, block-list security review
 - 제외:
@@ -88,7 +91,11 @@
 - schema 변경은 additive missing-property setup을 기본으로 하고, destructive 변경은 사용자 승인 없이는 하지 않는다.
 - 기록 title은 `PREFIX: 짧은 의미 제목` 형식을 사용하고 날짜/시간은 넣지 않는다.
 - `기록일`은 KST datetime source of truth로 사용한다.
-- body는 `요약`, `범위`, `사실`, `결정`, `후속 작업`, `검증`, `출처`를 기본 섹션으로 쓴다.
+- page property 이름, 타입, 허용 값, 의미는 고정 계약으로 유지한다.
+- 본문 형식은 기록을 작성하기 전에 기록 목적에 맞게 정한다.
+- 기본 본문 구조는 선택 가능한 시작점이며 필수 템플릿이 아니다.
+- 본문 heading과 순서는 바꿀 수 있지만 확인된 사실, 결정, 후속 작업, 검증, 출처는 구분 가능해야 한다.
+- 본문 형식 선택이 기록 해석, 사용자 의도, 계약 준수, handoff 가능성에 영향을 주면 작성 전에 사용자에게 확인한다.
 - 문서는 `general.language`, `general.locale`, `general.register`를 따르고 기본값은 한국어, `ko-KR`, 존댓말이다.
 - memory record는 간결하되 다음 에이전트가 실행 가능해야 한다.
 - 사실, 결정, 후속 작업, 검증을 섞지 않는다.
@@ -107,6 +114,8 @@
 ## 기록 계약
 
 - 기록은 사용자가 요청한 recordable scope 안에서만 만든다.
+- Notion page property는 고정 계약대로 채우고, 본문 형식 자유를 property schema 변경으로 해석하지 않는다.
+- 기록 작성 전 본문 구조를 먼저 정한다.
 - confirmed fact, decision, follow-up, verification, source를 구분한다.
 - 확인되지 않은 항목은 `확인 필요` 또는 `미검증`으로 표시한다.
 - 같은 분 내 여러 record가 필요하면 Notion 표시 정렬을 위해 `기록일` 분 값을 분리한다.
@@ -119,6 +128,7 @@
 - 한 문서 안에서 존댓말, 해요체, 반말을 섞지 않는다.
 - 기록은 짧게 쓰되 다음 에이전트가 같은 작업을 이어갈 수 있을 만큼 실행 가능해야 한다.
 - 확인된 사실, 결정, 후속 작업, 검증 상태를 분리한다.
+- 기본 템플릿을 쓰지 않더라도 다음 에이전트가 사실, 결정, 후속 작업, 검증, 출처를 식별할 수 있어야 한다.
 - 장식적 코멘트, 추측, 근거 없는 해석은 쓰지 않는다.
 - 직접 완료 기록만 필요한 상황에서는 불필요한 진행 해설을 넣지 않는다.
 
@@ -128,6 +138,8 @@
 - config에 credential이나 개인 auth state를 저장하지 않았는가?
 - plugin 파일에 개인 Notion URL/ID를 복사하지 않았는가?
 - 기록 내용이 allow-list에 해당하고 block-list를 통과했는가?
+- 본문 형식을 작성 전에 정했고, 기본 템플릿을 필수 형식으로 강제하지 않았는가?
+- 본문 형식 자유를 property schema나 허용 값 변경으로 오해하지 않았는가?
 - schema 변경이 additive인지, destructive이면 사용자가 승인했는지 확인했는가?
 - Notion write 후 fetch 또는 동등한 증거로 검증했는가?
 - connector 실패 시 manual/browser fallback을 구체적으로 보고했는가?
@@ -140,6 +152,6 @@
 
 ## 확장 원칙
 
-- DB property나 body template이 바뀌면 `notion-memory` skill spec과 runtime reference를 함께 갱신한다.
+- DB property나 body structure 선택 계약이 바뀌면 `notion-memory` skill spec과 runtime reference를 함께 갱신한다.
 - plugin usage surface는 README, plugin spec, manifest prompt에서 갱신한다.
 - Notion connector-specific 실패 대응은 runtime reference에 두고 개인 DB 식별자는 넣지 않는다.

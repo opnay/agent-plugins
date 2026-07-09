@@ -85,7 +85,7 @@ Use connected Notion tools when available:
 
 1. Fetch the configured DB before schema-sensitive work.
 2. Add only missing required properties unless the user explicitly approves another change.
-3. Create or update pages with the property and body contract.
+3. Create or update pages with fixed page properties and a body format chosen before writing.
 4. Fetch the page or DB when needed to verify properties, relations, and schema.
 5. Report failed tool calls, skipped checks, and residual risk.
 
@@ -103,11 +103,12 @@ For setup:
 For recording:
 
 - content passes allow-list and block-list checks
-- page properties and body follow the contract
+- page properties follow the fixed contract
+- body format was chosen before writing and preserves required distinctions
 - write/update is verified by tool output plus fetch when needed
 - skipped verification and remaining risk are visible
 
 ## References
 
 - Read `references/command-setup.md` for setup command handling.
-- Read `references/notion-memory-contract.md` for schema, property, title, body, relation, and write rules.
+- Read `references/notion-memory-contract.md` for schema, property, title, body format, relation, and write rules.

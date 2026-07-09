@@ -73,9 +73,29 @@ If multiple records would share the same displayed minute, separate them by at l
 - Put external URLs in `관련 링크`.
 - Do not put external URLs in relation fields.
 
-## Body Template
+## Body Format
 
-Use this body unless the user requests a narrower record:
+Page properties are fixed. Body structure is not fixed.
+Choose the body format before drafting the page.
+
+Use a format that fits the record purpose, such as:
+
+- compact decision note
+- verification log
+- follow-up list
+- reusable work rule
+- the optional default structure below
+
+Ask the user before writing only when the format choice changes intent, interpretation, compliance, or handoff quality.
+
+Required body meaning:
+
+- Keep facts, decisions, follow-ups, verification, and sources distinguishable.
+- Mark unverified content as `확인 필요` or `미검증`.
+- Keep enough evidence for a future agent to continue the work.
+- Do not treat body format freedom as permission to change page property names, types, meanings, or allowed values.
+
+Optional default structure:
 
 ```md
 ## 요약
@@ -108,6 +128,8 @@ Use this body unless the user requests a narrower record:
 - Default to Korean, Seoul context, and consistent polite register.
 - Keep Notion entries concise but executable for a future agent.
 - Separate facts from decisions, follow-ups, and verification.
+- Decide the body format before writing the body.
+- Use the optional default structure only when it fits the record.
 - Do not add decorative commentary or unsupported interpretation.
 - Do not send optional progress commentary when a direct final record is enough.
 
@@ -117,10 +139,11 @@ Use this body unless the user requests a narrower record:
 2. Apply the allow-list first.
 3. Apply the block-list.
 4. Read config and fetch the DB if tools are available.
-5. Normalize properties and body.
-6. Create or update the page.
-7. Fetch the page when property, relation, or body verification matters.
-8. Report status, evidence, skipped checks, and residual risk.
+5. Normalize fixed properties.
+6. Choose the body format, then draft the body.
+7. Create or update the page.
+8. Fetch the page when property, relation, or body verification matters.
+9. Report status, evidence, skipped checks, and residual risk.
 
 ## Status Words
 
