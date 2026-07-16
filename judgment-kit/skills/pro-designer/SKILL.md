@@ -5,156 +5,162 @@ description: Apply product design judgment to UI, UX, interface content, color, 
 
 # Pro Designer
 
-Use this skill to apply design knowledge when creating, reviewing, or improving product screens. Judge core design through `UI`, `UX`, `Content`, and `Quality`; use separate axes for `Color`, `Tone & Expression`, `Branding`, `Space & Composition`, and `Surface & Form` when palette, mood, brand identity, spatial model, density, rhythm, tone, card surface, depth, shape, or materiality affects the result.
+Apply design judgment to product screens and visual interfaces. Start with the user, task, screen type, and information priority. Use `UI`, `UX`, `Content`, and `Quality` as core criteria; add `Color`, `Tone & Expression`, `Branding`, `Space & Composition`, and `Surface & Form` only when those axes affect the task.
+
+Follow an existing design system before introducing a new pattern. Prefer user understanding and action clarity over personal taste.
 
 ## UI
 
-UI is the interface surface where users read information, understand structure, and judge possible actions.
+Judge whether users can read information, understand structure, and predict available actions.
 
-- Information structure: important information, frequent actions, and risky actions need clear priority and grouping.
-- Layout: placement, alignment, density, scan path, separation method, and relationship expression should reveal the screen purpose and information relationships.
-- Visual hierarchy: font size, spacing, color, typography weight, icon size, images, lines, and surface strength should clarify importance and action priority.
-- State expression: default, selected, disabled, loading, error, success, and empty states need distinct meanings.
-- Component role: buttons, links, inputs, placeholders, toggles, menus, icon buttons, and auxiliary labels should have size, emphasis, and placement that match their action or information role.
-- Consistency: the same kind of action, state, or information should use the same component and visual rule.
-- Accessibility: contrast, readability, focus, target size, and keyboard navigation should remain usable.
-- Affordance: icons, labels, placement, state, and feedback should make action possibility, action result, and risk level predictable.
-- Data expression: charts, tables, logs, metrics, and relationship diagrams should make axes, scales, labels, rows, columns, legends, nodes, links, direction, and groups readable before decoration.
-- Immediate feedback: clicks, input, and transitions should produce immediate visual response.
-- Processing state: delayed work should show that progress exists and why the user is waiting.
-- Result state: completion, failure, cancellation, and partial success should be distinct and point to the next action.
+- Information structure: give important information, frequent actions, risky actions, and detail paths clear priority and grouping.
+- Layout: use placement, alignment, density, scan path, separation, and relationship cues to reveal the screen purpose.
+- Hierarchy grouping: group elements by information meaning, role, and state before styling them.
+- Visual hierarchy: use typography, spacing, color, icon scale, imagery, lines, and surface strength to express importance and action priority.
+- State expression: distinguish default, selected, disabled, loading, error, success, and empty states.
+- Component role: size and place buttons, links, inputs, placeholders, toggles, menus, icon buttons, and auxiliary labels according to their information or action role.
+- Consistency: give elements at the same hierarchy, role, and state the same component, typography, spacing, color, icon, and surface rules. Vary them only for a real semantic, interaction, or context difference that follows a repeatable rule.
+- Content adaptation: handle long copy, localization, and viewport changes through content, layout, or shared responsive rules before applying one-off size or emphasis changes to individual elements.
+- Accessibility: preserve contrast, readability, focus visibility, target size, and keyboard navigation.
+- Affordance: make action possibility, result, and risk predictable through icons, labels, placement, state, and feedback.
+- Data expression: make axes, scales, labels, rows, columns, legends, nodes, links, directions, and groups readable before decoration.
+- Immediate feedback: respond visibly to clicks, input, and transitions.
+- Processing state: show that delayed work is progressing and why the user is waiting.
+- Result state: distinguish completion, failure, cancellation, and partial success and expose the next action.
 
 ## UX
 
-UX is the experience of understanding a goal and reaching it through a predictable flow.
+Judge whether users can understand their goal and reach it through a predictable flow.
 
-- Goal fit: the screen, flow, primary actions, and secondary actions should match the user's real goal and priority.
-- Use context: user skill level, environment, task frequency, and risk should shape the flow.
-- User flow: entry, understanding, choice, action, feedback, completion, and return should connect naturally.
-- Findability: users should know where they are, what they can find, where to go next, and where to enter details.
-- Decision support: priority, options, consequences, message units, and confidence should be clear enough to choose.
-- Cognitive load: users should not need to remember, guess, or compare more than the task requires.
-- Error prevention and recovery: reduce mistakes and make the cause and next step clear after failure.
-- State transition: loading, interruption, partial failure, permission loss, and saving should not break the flow.
-- Efficiency and learnability: new users can start; repeat users can move faster with fewer unnecessary steps.
-- Trust: cost, permission, saved state, impact, and next action should not be hidden when they affect confidence.
+- Goal fit: align the screen, flow, primary actions, and secondary actions with the user's real goal.
+- Use context: account for skill level, environment, task frequency, and risk.
+- User flow: connect entry, understanding, choice, action, feedback, completion, and return.
+- Findability: make location, available content, next path, and detail entry clear.
+- Decision support: make priorities, options, consequences, message units, and confidence clear enough to choose.
+- Cognitive load: avoid requiring more memory, guessing, comparison, or interpretation than the task needs.
+- Error prevention and recovery: reduce mistakes and expose the cause and recovery path after failure.
+- State transition: keep loading, interruption, partial failure, permission loss, and saving from breaking the flow.
+- Efficiency and learnability: let new users start and repeat users move faster.
+- Trust: expose cost, permission, saved state, impact, and next action when they affect confidence.
 
 ## Content
 
-Content is interface language that communicates meaning, risk, result, and next action in the user's context.
+Judge whether interface language communicates meaning, risk, result, and next action in context.
 
-- Information priority: wording structure should separate what must be read now from what can wait.
-- Structural copy: page titles, section titles, and group names should support scanning and context.
-- Labels: users should understand what an item means and how it differs from nearby items.
-- Terminology: jargon, abbreviations, and internal names should close the gap with user language.
-- CTAs: action copy should make intent and result clear.
-- Guidance: explanation should appear only when useful, in context, without repeating what users already know.
+- Information priority: separate what must be read now from what can wait.
+- Structural copy: use page titles, section titles, and group names to support scanning and context.
+- Labels: make each item's meaning and difference from nearby items clear.
+- Terminology: translate jargon, abbreviations, and internal names into user language.
+- CTAs: state the action intent and expected result.
+- Guidance: explain only what is useful, where it is useful, without repeating known information.
 - Error copy: explain the problem cause and recovery path.
-- Status copy: success, warning, loading, and saved states should help users choose the next action.
-- Factuality: copy should reflect real system state, result, and limits without overclaiming.
-- Risk copy: destructive, payment, permission, and other high-impact actions should state consequences and reversibility.
+- Status copy: make success, warning, loading, and saved states support the next decision.
+- Factuality: reflect real system state, results, and limits without overclaiming.
+- Risk copy: state consequences and reversibility for destructive, payment, permission, and other high-impact actions.
 - Empty states: explain why nothing is shown and what can happen next.
 - Term consistency: use one name for one concept.
-- Accessible language: prefer clear wording and avoid ambiguous or exclusionary expressions.
-- Tone and voice: copy should fit the user's situation, risk level, and emotional state before brand flourish.
+- Accessible language: prefer clear, inclusive, unambiguous wording.
+- Tone and voice: fit the user's situation, risk, and emotional state before adding brand flourish.
 
 ## Color
 
-Color is the visual system that gives semantic meaning, mood, and hierarchy to the interface.
+Judge whether the color system supports meaning, hierarchy, mood, and accessibility.
 
-- Color roles: primary, secondary, accent, neutral, background, surface, border, text, and destructive colors should have clear jobs.
-- Semantic colors: success, warning, error, info, selected, and disabled colors should keep the same meaning across the product.
-- Hierarchy and emphasis: accent color should prioritize key actions and important information without competing with other highlights.
-- Contrast and accessibility: text, icons, focus, and state indicators should remain distinguishable from the background and should not rely on color alone.
-- Color mood: pastel, vivid, muted, neutral, warm, or cool palettes should fit the screen purpose, audience, target tone, and emotional context.
-- Color weight: the area, brightness, and saturation of dominant or dark colors should preserve background, surface, action, status, and hierarchy roles.
-- Theme adaptability: meaning and hierarchy should survive light, dark, high-contrast, and user settings.
-- Data color: axes, grids, labels, series, thresholds, selections, legends, comparisons, and risk ranges should use stable semantic colors and use labels, shapes, or position when color is not enough.
-- Color expression: solid colors, gradients, transparency, and patterns should clarify data value, information meaning, surface role, and target tone.
-- Emotional transition: success, warning, error, and empty states should feel like one product instead of unrelated moods.
-- Cultural and domain context: color meaning can vary by region, industry, and user group.
-- Scalability: the palette and token structure should tolerate new states, locales, and long-term use.
+- Color roles: assign clear jobs to primary, secondary, accent, neutral, background, surface, border, text, and destructive colors.
+- Semantic colors: keep success, warning, error, info, selected, and disabled meanings stable.
+- Hierarchy and emphasis: reserve accent color for key actions and important information without competing highlights.
+- Contrast and accessibility: keep text, icons, focus, and state indicators distinguishable without relying on color alone.
+- Color mood: fit pastel, vivid, muted, neutral, warm, or cool palettes to the purpose, audience, tone, and emotional context.
+- Color weight: balance area, brightness, and saturation so background, surface, action, status, and hierarchy roles remain clear.
+- Theme adaptability: preserve meaning and hierarchy across light, dark, high-contrast, and user themes.
+- Data color: keep series, thresholds, selections, legends, comparisons, and risk ranges stable and pair color with labels, shape, or position.
+- Color expression: use solids, gradients, transparency, and patterns only when they clarify data, information, surface role, or tone.
+- Emotional transition: keep success, warning, error, and empty states within one product mood.
+- Cultural and domain context: account for regional, industry, and audience differences in color meaning.
+- Scalability: keep palette and token roles stable as states, locales, and product scope grow.
 
 ## Tone & Expression
 
-Tone & Expression is the system for selecting the target impression, checking fit, and constructing it through color, brightness, saturation, contrast, spacing, surface, typography, icons, and copy attitude.
+Choose a target impression and construct it through multiple expression elements.
 
-- Tone type: choose the target tone first, such as trust-first, friendly, premium, energetic, technical, calm, or playful.
-- Tone fit: the target tone should match screen purpose, user risk, task frequency, and information complexity.
-- Tone construction: tone should come from multiple expression elements, not from color alone.
-- Trust-first tone: when trust is the target, use brightness, stable contrast, spacing, readable surfaces, and predictable CTAs instead of dark color alone.
-- Energetic tone: when energy is the target, high saturation, motion, or strong contrast should not weaken hierarchy or accessibility.
-- Premium tone: when premium feel is the target, use restrained saturation, space, refined surfaces, and controlled decoration without sacrificing information density.
-- Technical tone: when precision is the target, axes, tables, values, states, and units should read before decorative expression.
-- Tone boundaries: functional clarity wins when target tone weakens state meaning, accessibility, risk communication, product trust, or action predictability.
-- Tone consistency: hero, CTA, cards, tables, charts, empty, error, and success states should feel like one product.
+- Tone type: choose a target such as trust-first, friendly, premium, energetic, technical, calm, or playful.
+- Tone fit: match the tone to screen purpose, user risk, task frequency, and information complexity.
+- Tone construction: combine color, brightness, saturation, contrast, spacing, surface, typography, icons, and copy attitude.
+- Trust-first tone: use stable contrast, whitespace, readable surfaces, and predictable CTAs instead of relying on dark color.
+- Energetic tone: keep saturation, motion, and strong contrast from weakening hierarchy or accessibility.
+- Premium tone: use restrained saturation, space, refined surfaces, and controlled decoration without losing useful density.
+- Technical tone: make axes, tables, values, states, and units readable before decoration.
+- Tone boundaries: prefer functional clarity when expression weakens state meaning, accessibility, risk communication, trust, or action predictability.
+- Tone consistency: keep hero, CTA, cards, tables, charts, empty, error, and success states within one product language.
 
 ## Branding
 
-Branding is the system for making the interface recognizable as a specific brand without weakening product meaning, state meaning, risk meaning, or user action clarity.
+Judge whether the interface is recognizable as a specific brand without weakening product meaning.
 
-- Brand identity: color, logo, product name, visual motifs, and copy attitude should make the screen recognizable as the brand.
-- Asset intensity: logos, symbols, graphics, patterns, and illustrations should match screen purpose and information density.
-- Brand color role: brand colors should separate brand, action, status, risk, and background roles instead of taking over CTA or state meaning.
-- Brand consistency: hero, navigation, CTA, cards, forms, charts, empty, error, and success states should share one brand language.
-- Brand and tone: target tone should fit brand character, but tone and brand identity should be judged separately.
-- Brand and function: brand expression should not interfere with clickability, state, risk, permission, cost, or result recognition.
-- Brand restraint: repeated or oversized brand assets can weaken information structure and should appear only where they add recognition.
-- Brand scalability: brand expression should survive dark mode, high contrast, localization, long content, product expansion, and new states.
-- Brand distinctiveness: avoid generic template expression; preserve a memorable visual cue tied to the product value.
-- Brand truthfulness: brand expression should not create promises or impressions that the real product cannot support.
+- Brand identity: use color, logo, product name, visual motifs, and copy attitude to create recognition.
+- Asset intensity: fit logos, symbols, graphics, patterns, and illustrations to screen purpose and information density.
+- Brand color role: keep brand, action, status, risk, and background roles distinct.
+- Brand consistency: carry one brand language across navigation, CTA, cards, forms, charts, empty, error, and success states.
+- Brand and tone: keep brand identity and target tone related but separately judged.
+- Brand and function: never let branding obscure clickability, state, risk, permission, cost, or result.
+- Brand restraint: use repeated or oversized assets only when they add recognition without weakening structure.
+- Brand scalability: preserve the brand through dark mode, high contrast, localization, long content, expansion, and new states.
+- Brand distinctiveness: avoid generic template expression and preserve a memorable cue tied to product value.
+- Brand truthfulness: avoid visual promises the product cannot support.
 
 ## Space & Composition
 
-Space & Composition is the spatial system for how a screen is understood as a document, console, canvas, map, topology, grid, split view, or other navigable space.
+Judge how the screen works as a document, console, canvas, map, topology, grid, split view, or other navigable space.
 
-- Spatial model: the screen should make its model clear, such as document, console, canvas, map, topology, grid, or split view.
-- Zone architecture: navigation, command, content, detail, status, and background zones should be separated by size, placement, and persistence.
-- Density and rhythm: whitespace, line height, group distance, repeated spacing, and toolbar height should match information volume, work frequency, comparison needs, and user expertise.
-- Information density fit: dense screens should preserve enough visible information for at-a-glance comparison; low-density screens should reduce information and actions for comprehension and error prevention.
-- Spatial hierarchy: foreground, background, sticky, fixed, floating, and overlay regions should express importance and interaction priority.
-- Flow and wayfinding: starting point, reading order, next action, detail entry, and return path should be predictable from spatial placement.
-- Relationship geometry: proximity, alignment, connection, direction, clustering, and axes should make information relationships understandable.
-- Responsive recomposition: viewport changes should preserve spatial roles, reading order, and primary action placement.
+- Spatial model: make the screen's spatial model clear.
+- Zone architecture: separate navigation, command, content, detail, status, and background zones by size, placement, and persistence.
+- Density and rhythm: fit whitespace, line height, group distance, repeated spacing, and toolbar height to information volume and use frequency.
+- Information density fit: preserve comparison value on dense screens and reduce information or actions when comprehension and error prevention need lower density.
+- Spatial hierarchy: use foreground, background, sticky, fixed, floating, and overlay regions to express importance and interaction priority.
+- Flow and wayfinding: make the start, reading order, next action, detail entry, and return path predictable.
+- Relationship geometry: use proximity, alignment, connection, direction, clustering, and axes to reveal relationships.
+- Responsive recomposition: preserve spatial roles, reading order, and primary action placement across viewport changes.
 
 ## Surface & Form
 
-Surface & Form is the expression system for card, panel, button, and input surfaces, depth, shape, and materiality.
+Judge whether card, panel, button, and input surfaces use depth, shape, and materiality to clarify hierarchy and interaction.
 
-- Surface model: flat, raised, inset, floating, glass, solid panel, paper-like, or band treatments should fit the screen purpose and hierarchy.
-- Depth: floating, pressed, same-plane, and layered surfaces should make layer relationships and interaction possibility predictable.
-- Shape language: radius, border, divider, outline, shadow, bevel, padding, and aspect ratio should match component role and product character.
-- Materiality: realistic material, glass, paper, plastic, soft, or solid expression should support the product context instead of decoration alone.
-- Tactility: clickable, draggable, selected, disabled, and editable surfaces should feel different enough to guide action.
-- Hierarchy consistency: cards, panels, modals, toolbars, tables, and lists at the same level should use the same depth and surface rules.
-- Surface necessity: cards, panels, bands, plain sections, list rows, and table rows should have a clear role such as comparison, grouping, independent action, emphasis, or background separation.
-- Separation method: spacing, alignment, typography, color, lines, and surface treatment should clarify groups and hierarchy without duplicating the same separation role.
-- Density fit: surface depth, decoration, spacing, and stroke strength should match information density and use frequency.
-- State change: hover, active, selected, pressed, disabled, and loading states should change surface or depth by a predictable rule.
-- Accessibility and performance: shadows, blur, transparency, and texture should not harm contrast, readability, focus visibility, or runtime performance.
-- Design system fit: existing elevation, radius, border, and shadow tokens come first; new surface rules need a clear reason.
-- Scalability: surface rules should survive more cards, more data, viewport changes, dark mode, and long content.
+- Surface model: fit flat, raised, inset, floating, glass, solid panel, paper-like, or band treatments to the purpose and hierarchy.
+- Depth: make floating, pressed, same-plane, and layered relationships predictable.
+- Shape language: make radius, border, divider, outline, shadow, bevel, padding, and aspect ratio fit the component role and product character and read as one intentional form.
+- Materiality: use glass, paper, plastic, soft, solid, or realistic material only when it supports the product context.
+- Tactility: distinguish clickable, draggable, selected, disabled, and editable surfaces.
+- Hierarchy consistency: give surfaces at the same hierarchy and role the same depth and surface rules.
+- Surface necessity: use a card, panel, band, section, list row, or table row only for a clear comparison, grouping, independent action, emphasis, or background-separation role.
+- Nested surfaces: use an inner surface only when it owns independent information, action, state, or layer role. For a simple subgroup, prefer spacing, alignment, typography, dividers, rows, or bands; do not repeat the same grouping job with parent and child borders, radii, or shadows.
+- Separation method: let spacing, alignment, typography, color, lines, and surface treatment clarify groups without duplicating the same signal.
+- Boundary and emphasis: use outlines for element boundaries and partial lines for a distinct selection, state, direction, affiliation, or relationship indicator. For ordinary emphasis, prefer background, typography, icons, labels, or a complete outline. Use a one-sided line only when that edge position carries meaning and remains coherent through radius and directional or RTL changes.
+- Density fit: match surface depth, decoration, spacing, and stroke strength to information density and use frequency.
+- State change: vary hover, active, selected, pressed, disabled, and loading surface and depth by a predictable rule.
+- Accessibility and performance: keep shadows, blur, transparency, and texture from harming contrast, focus, readability, or runtime performance.
+- Design system fit: avoid conflicts with existing elevation, radius, border, and shadow tokens; introduce a new surface rule only for an explicit reason.
+- Scalability: keep surface rules stable as cards, data, viewport, themes, and content length change.
 
 ## Quality
 
-Quality is the shared product standard that keeps UI, UX, Content, Color, Tone & Expression, Branding, Space & Composition, and Surface & Form complete, trustworthy, and durable in context.
+Keep all applied axes complete, trustworthy, and durable in context.
 
-- Completeness: normal, loading, empty, error, disabled, permission, and success states should share a design language.
-- Accessibility: contrast, focus, reading order, target size, and assistive technology friendliness should hold across the experience.
-- Consistency: equivalent information, actions, and states should follow the same rules.
+- Completeness: cover normal, loading, empty, error, disabled, permission, and success states in one design language.
+- Accessibility: preserve contrast, focus, reading order, target size, and assistive technology support.
+- Consistency: apply the same rules to equivalent information, actions, and states.
 - Design system fit: use existing patterns, components, tokens, and interaction rules before inventing new ones.
-- Adaptability: information priority and action availability should survive changes in viewport, input method, and content length.
-- Context fit: density, expression, decoration level, card usage, and stroke strength should match the screen type and user situation.
-- Expression fit: quotes, emphasis, guidance, promotion, data, and repeated-work contexts should tune typography, spacing, attribution, surface treatment, and decoration strength.
-- Decoration restraint: colors, gradients, lines, cards, shadows, and graphics should support information structure, data reading, and interaction predictability.
-- Scalability: structure should tolerate longer copy, more data, localization, and regional variation.
-- Perceived performance: delay, transition, and loading treatment should not make the product feel frozen.
-- Product trust: sensitive moments such as risk, error, payment, deletion, and permission should preserve stability.
-- Interaction consistency: input, save, submit, select, and cancel should respond by a predictable rule.
-- Recovery quality: risk prevention, undo, retry, and loss protection should be consistent across risky flows.
+- Adaptability: preserve information priority and action availability across viewport, input method, and content changes.
+- Context fit: match density, expression, decoration, card usage, and stroke strength to the screen and user situation.
+- Expression fit: tune typography, spacing, attribution, surface, and decoration to quotation, emphasis, guidance, promotion, data, or repeated-work contexts.
+- Decoration restraint: use color, gradients, lines, cards, shadows, and graphics only when they support structure, reading, or interaction prediction.
+- Scalability: tolerate longer copy, more data, localization, and regional variation.
+- Perceived performance: keep delay, transition, and loading treatment from making the product feel frozen.
+- Product trust: preserve stability in risk, error, payment, deletion, and permission moments.
+- Interaction consistency: make input, save, submit, select, and cancel respond predictably.
+- Recovery quality: apply consistent prevention, undo, retry, and loss-protection rules.
 
 ## Working Rule
 
-Start with the user's goal, screen type, audience, and context. Then apply only the axes that matter to the task. Do not turn every design request into a full checklist; use the criteria as design knowledge for judgment, critique, and revision.
+Apply only the axes relevant to the task. Do not turn every design request into a full checklist.
 
-Report design work by naming the axis used, the design basis, and the remaining risk when important.
+When reporting design work, name the applied axis, the design basis, and any important residual risk.
