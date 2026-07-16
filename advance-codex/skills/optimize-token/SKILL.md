@@ -1,36 +1,55 @@
 ---
 name: optimize-token
-description: Use when agent output, progress wording, status wording, verification notes, approval wording, or other agent text should use fewer tokens without losing correctness, meaning-bearing context, safety boundaries, verification status, required format, language, tone, current-state accuracy, or durable contract meaning. agent token optimization, concise response, progress wording, token optimization, no fluff, shorter, concise, 짧게, 간결하게, 토큰 절약, 답변 압축
+description: Use when agent responses, progress or status wording, verification or approval notes, judgments, or durable artifacts should use the fewest safe tokens without losing correctness, meaning-bearing context, verification state, approval boundaries, required format, current-state accuracy, language, tone, or executable contract meaning. agent token optimization, concise response, progress wording, token optimization, no fluff, shortest safe wording, concise, 짧게, 간결하게, 토큰 절약, 답변 압축
 ---
 
 # Optimize Token
 
 ## Owner
 
-This skill reduces token use in agent-generated wording across responses, progress updates, status notes, verification notes, approval boundaries, and other operational text.
-It preserves correctness, meaning-bearing context, requested format, safety boundaries, verification status, exact technical details, active language, and register.
+Reduce agent-generated wording to the shortest safe, grammatical form across responses, operational text, and durable artifacts.
+Preserve correctness, meaning-bearing context, safety, verification state, approval boundaries, exact required details, current state, active language, and register.
 
-It does not own context/session compression, prompt rewriting, code minification, or shortening errors, APIs, identifiers, commands, paths, and safety notices.
+Do not perform context or session compression, prompt rewriting, code minification, or arbitrary shortening of errors, APIs, identifiers, commands, paths, and safety notices.
 
-## Workflow
+## Contract
 
-1. Choose the active level: `light`, `standard`, or `extreme`.
-2. Apply the level by default to every situation except `writing`.
-3. Read `references/levels.md` when level choice, level behavior, or level comparison affects the output.
-4. Read `references/writing.md` only when writing content that will be saved in files, docs, specs, records, or other durable artifacts.
-   Manage writing separately through that reference.
-5. Preserve meaning-bearing context before trimming: any cause, evidence, boundary, sequence, dependency, source, verification state, uncertainty, approval state, risk, or next-action condition that would change the reader's judgment if removed.
-6. Preserve required literals and structure: requested sections, paths, commands, identifiers, dates, versions, numbers, active language, and register.
-7. Step down for the affected detail when meaning, safety, verification, approval, or clarity needs more words.
-8. Put result or action first, then evidence, then next action or risk.
-9. Keep the shorter wording grammatical, natural, and no more ambiguous.
+1. Apply maximum safe compression immediately without asking the user to configure intensity.
+2. Remove greetings, request restatement, repetition, weak guesses, and process detail that cannot affect a decision.
+3. Put the result or action first, then necessary evidence, then the next action or risk.
+4. Compare viable forms and emit the one with the fewest tokens when each preserves meaning, grammar, language, and register.
+5. Before retaining prose, test whether grammatical contraction, fields, or a one-line form is shorter.
+6. Expand only the phrase that would otherwise hide a required distinction; add no meta-commentary about that expansion.
 
-## Guardrails
+## Allowed Compression
 
-- Preserve active language, register, honorifics, and requested format.
-- Tighten required report items instead of deleting them.
-- Keep failed, skipped, blocked, or insufficient verification visible.
-- Keep cause separate from evidence, sequence separate from outcome, and delegated evidence separate from main judgment when that distinction changes meaning.
-- Do not infer `extreme` from generic shorter-response requests.
-- Do not remove grammar words only to save tokens.
-- Avoid external source names, external plugin names, unavailable dev paths, and character-framed style labels.
+- Prefer `label: value` fields or one line when the meaning fits; use a compact table for repeated rows and a grouped list for repeated labels.
+- Do not force labels when a natural sentence is shorter or clearer.
+- Merge repeated wording only when the items keep the same meaning category.
+- Use `-` for a missing field value, table cell, or list attribute; never substitute it inside a natural-language sentence.
+
+Examples:
+
+- `The cause is unknown, but the trace shows a timeout.` -> `cause: unknown. evidence: timeout trace.`
+- `Change the schema, regenerate the client, then test.` -> `sequence: schema > client > test.`
+- `X changes; Y is outside this task.` -> `changed: X. excluded: Y.`
+
+## Preserve Meaning
+
+Meaning-bearing context is any detail whose removal or merger could change the reader's judgment, next action, approval, risk understanding, or verification interpretation.
+
+- Keep cause separate from evidence, sequence from dependency, and scope from non-goals when the distinction matters.
+- Distinguish a source of truth from generated output and delegated or external evidence from the main agent's judgment.
+- Keep confirmed and unconfirmed scope, failures, skipped or unrun checks, insufficient verification, uncertainty, blockers, approval state and boundaries, residual risk, and next actions visible.
+- Preserve requested sections and format; exact paths, commands, identifiers, dates, versions, numbers, and public API names; active language and register.
+- Preserve conditions and exceptions needed for security, privacy, legal, medical, or financial safety.
+
+## Durable Artifacts
+
+- Keep current state and durable contracts; remove authoring history, abandoned options, irrelevant background, and duplicate contract text.
+- Preserve enough applicability, order, dependency, exclusion, rollback, source, evidence, verification-limit, approval, and risk context for a future reader to execute and judge the artifact without the conversation.
+- Keep required literals and artifact format exact.
+
+## Failure Conditions
+
+Compression fails if it creates ambiguity or broken grammar, collapses a meaning-bearing relationship, hides verification or approval limits, removes risk or next action, changes an exact identifier or required format, or leaves a durable artifact stale or non-executable.

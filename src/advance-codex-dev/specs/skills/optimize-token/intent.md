@@ -1,30 +1,9 @@
 ## 사용자 스펙 의도
 
-- 이전 외부 플러그인 설명과 관련 명칭은 제거하고, `advance-codex` 플러그인에 `optimize-token` 스킬로 만들며, 상세 응답 기준은 `references/response.md`에 두고 싶다.
-- 참고 출처는 spec에 남기고 싶다: https://github.com/JuliusBrussee/caveman/blob/main/plugins/caveman/skills/caveman/SKILL.md
-- `optimize-token`은 한국어 존대체만 특수하게 고정하기보다, 활성 언어와 말투를 보존하고 이 저장소처럼 한국어 존대체가 요구되는 환경에서는 그 기준을 따르게 하고 싶다.
-- `optimize-token`은 단순히 "압축"이라고만 하지 않고, 압축 강도와 문법 보존 기준을 둬서 어색한 문장이 나오지 않게 하고 싶다.
-- 답변이나 작업을 하기 전에 생각하는 단계에서도 간결하게 판단해야 한다.
-  - 예: `사용자가 설명을 원하는 것 같습니다. 자세한 답변을 제공한 후 구현해 볼 의향이 있는지 물어볼 수 있습니다.`를 `사용자가 설명을 원하며, 이후 구현해 볼 의향이 있는지 물어볼 수 있습니다.`처럼 줄인다.
-- 예시 문장으로 테스트하기 위해 `optimize-token` 스펙을 folder-based로 두고 `intent-scenarios/thinking.md`에 thinking 예시를 둔다.
-- `optimize-token` 스펙의 `intent-scenarios`에 압축 단계별 예시를 작성하고, 단계 명칭은 `light`, `standard`, `extreme`으로 둔다.
-  - 세 번째 압축 단계명을 어떻게 확정할까요? 이 답에 따라 spec/runtime 표기가 달라집니다. 명시적으로 종료하셔도 됩니다.
-    - `extreme (Recommended)` 선택.
-- `optimize-token`은 스킬 호출을 기반으로 `light`, `standard`, `extreme` 중 하나를 선택해 사용하는 방식이다. 이 모드는 `response`와 `thinking` 모두에 적용되며, 응답과 생각 과정에서 나오는 이야기들의 토큰을 줄이는 방식을 설명하는 스킬이다.
-- 각 압축 단계는 단순한 스타일 이름이 아니라, 적용 전 통과해야 하는 gate를 가진다. 특히 `extreme`은 명시 호출이 있어도 안전, 승인, 검증, clarity gate를 통과하지 못하면 필요한 부분을 더 약한 단계로 강등해야 한다.
-- 단계나 흐름을 설명할 때는 `standard` 단계에서 `>`를 사용해 읽는 순서를 보여주고 싶다. 예: `` `light` > `standard` > `extreme` 순으로 읽어야합니다. ``
-- `light`, `standard`, `extreme` 관련 규칙은 증분되고 덮어씌워지도록 해서 스펙 문서를 간결하게 만들고 싶다.
-- `optimize-token` 스킬 스펙에서 현재 `response`와 `thinking`으로 구분된 축을 더 늘리고 싶다.
-  - `optimize-token`에서 어떤 축을 추가하는 방향으로 스펙을 수정할까요?
-    - `용도별 축 (추천)` 선택.
-- `optimize-token`의 축을 뒤엎고, response/thinking 및 용도별 surface 축은 전부 제거한다. `levels/light`, `levels/standard`, `levels/extreme` 세 단계는 전반적으로 모두 적용하되, 저장해야 되는 작성물은 `writing` 축으로만 별도 적용 관리한다.
-- `optimize-token`은 user-facing 문구에만 적용되는 것이 아니라, user-facing이 아닌 부분까지 전부 적용되어야 한다.
-- `levels`는 `writing`을 제외한 나머지 모든 상황에서 기본 적용된다.
-- `optimize-token`은 작성에 대한 내용으로 초점이 맞춰지면 안 되고, 에이전트 토큰 최적화가 주된 내용이어야 한다.
-- `extreme`에서 필드값, 표 셀, 리스트 속성값의 결측값은 `없음` 대신 `-`로 줄인다. 단, 문장 중간에는 `-`를 쓰지 않는다.
-- list group은 `standard`에 둔다. 관련 항목을 상위 항목과 sublist로 묶어 반복 표현을 줄인다.
-- `extreme`은 `standard`의 list group을 상속하되, group보다 필드형이나 한 줄 표기가 더 짧으면 더 짧은 쪽을 쓴다.
-- runtime `SKILL.md`에 level 세부 규칙을 모두 직접 넣지 말고, skill folder 구조에 맞춰 `references/levels.md`로 분리한다.
-- `optimize-token`이 말을 너무 줄여서 맥락을 지우는 경우가 있으니 약 120개 scenario로 테스트하고 보완하고 싶다.
-- 보존 대상을 계속 열거하기보다 모두를 아우르는 축을 정하고 싶다.
-  - 축은 `의미 맥락 보존`으로 두고, 줄였을 때 사용자의 판단, 다음 행동, 승인 여부, 위험 이해, 검증 해석이 달라질 수 있는 정보를 보존한다.
+- `$advance-codex:optimize-token` 호출만으로 의미와 문법을 보존하는 가장 짧고 안전한 압축을 항상 적용하고 싶다.
+  - 압축 강도는 어떻게 운영할까요?
+    - `단일 최대 압축 (Recommended)` 선택.
+  - 저장되는 작성물은 어떻게 다룰까요?
+    - `동일한 핵심 계약에 통합 (Recommended)` 선택.
+  - 기존 사용자 스펙 의도 이력은 얼마나 유지할까요?
+    - `이번 요청과 세 선택 결과만 유지 (Recommended)` 선택.

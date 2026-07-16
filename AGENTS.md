@@ -57,7 +57,7 @@
 - 플러그인 표면이 바뀌면 `README.md`, `specs/plugin.md`, 관련 skill spec, `plugin.json`을 함께 점검합니다.
 - change spec을 정식 규칙으로 승격하라는 요청은 repo-level 규칙, `docs/SDD.md`, 또는 소유 spec에 반영합니다.
 - folder-based skill spec의 사용자 스펙 의도는 `intent.md`가 소유합니다. `spec.md`와 child spec에는 반복하지 않습니다.
-- 스펙 문서는 `advance-codex:optimize-token extreme` 규격으로 작성합니다.
+- 스펙 문서는 `$advance-codex:optimize-token` 규격으로 작성합니다.
 - skill spec이 바뀌면 기존 runtime skill 본문을 부분 패치하지 않고, 현재 spec 기준으로 `SKILL.md`를 처음부터 재작성합니다.
 - clean-context subagent는 runtime skill 작성 대행자가 아닙니다. spec/runtime 정합성의 독립 read-only 검증에 사용합니다.
 
