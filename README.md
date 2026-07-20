@@ -62,10 +62,10 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 
 ### Adaptive Subagent Orchestrator
 
-`adaptive-subagent-orchestrator`는 복잡한 소프트웨어 엔지니어링 작업에서 bounded parallel subagent 사용 기준을 제공합니다.
+`adaptive-subagent-orchestrator`는 소프트웨어 엔지니어링 작업을 경량 라우팅하고, 가치가 확인된 bounded subagent 작업을 생성·통합합니다.
 
 - 경로: `adaptive-subagent-orchestrator/`
-- 주요 실행 표면: `adaptive-subagent-orchestrator`
+- 주요 실행 표면: `orchestrate-subagents`, `dispatch-subagents`, `integrate-subagent-results`
 
 ### Code Quality
 

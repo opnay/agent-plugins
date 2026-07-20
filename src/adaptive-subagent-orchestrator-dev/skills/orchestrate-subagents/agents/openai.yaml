@@ -1,0 +1,7 @@
+interface:
+  display_name: "Orchestrate Subagents"
+  short_description: "Route eligible work to subagent orchestration"
+  default_prompt: "Use $adaptive-subagent-orchestrator-dev:orchestrate-subagents to route this request to direct work or bounded subagent dispatch."
+
+policy:
+  allow_implicit_invocation: true

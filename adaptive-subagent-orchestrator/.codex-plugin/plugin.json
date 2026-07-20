@@ -1,7 +1,7 @@
 {
   "name": "adaptive-subagent-orchestrator",
   "version": "0.1.0",
-  "description": "Automatic subagent orchestration plugin for complex engineering tasks with independent workstreams.",
+  "description": "Three-stage subagent orchestration for precise routing, bounded dispatch, and evidence-backed integration.",
   "author": {
     "name": "opnay"
   },
@@ -16,8 +16,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Adaptive Subagent Orchestrator",
-    "shortDescription": "Delegates independent engineering work when parallelism is worthwhile.",
-    "longDescription": "Provides an instruction-only skill that evaluates complex software-engineering requests for independent workstreams, spawns the minimum necessary bounded subagents when the delegation gate passes, and keeps final integration and verification with the main agent.",
+    "shortDescription": "Routes and coordinates bounded subagent work.",
+    "longDescription": "Provides three instruction-only skills: a lightweight precision-first orchestration entry, a bounded dispatcher that applies the full delegation gate and spawns the minimum necessary subagents, and an integrator that validates required evidence and whole-result verification.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": [
@@ -26,8 +26,8 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Use adaptive-subagent-orchestrator when a software-engineering task has multiple independent investigation, review, testing, comparison, or implementation workstreams.",
-      "Evaluate whether delegation is worthwhile; if it is, spawn the minimum necessary bounded subagents, wait for their evidence, and integrate the final outcome."
+      "Use $adaptive-subagent-orchestrator:orchestrate-subagents for explicit subagent requests or when at least two clearly independent software-engineering workstreams are visible.",
+      "If it returns DISPATCH, use $adaptive-subagent-orchestrator:dispatch-subagents; after a complete DispatchManifest, use $adaptive-subagent-orchestrator:integrate-subagent-results."
     ],
     "brandColor": "#2563EB"
   }
