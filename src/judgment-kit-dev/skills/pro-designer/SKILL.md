@@ -15,13 +15,13 @@ Judge whether users can read information, understand structure, and predict avai
 
 - Information structure: give important information, frequent actions, risky actions, and detail paths clear priority and grouping.
 - Layout: use placement, alignment, density, scan path, separation, and relationship cues to reveal the screen purpose.
-- Hierarchy grouping: group elements by information meaning, role, and state before styling them.
-- Visual hierarchy: use typography, spacing, color, icon scale, imagery, lines, and surface strength to express importance and action priority.
-- State expression: distinguish default, selected, disabled, loading, error, success, and empty states.
-- Component role: size and place buttons, links, inputs, placeholders, toggles, menus, icon buttons, and auxiliary labels according to their information or action role.
+- Hierarchy scope: define screen, region, group, and element hierarchy from meaning and role before styling. Each group sets the highest persistent screen-level importance and action priority its children may imply. This is not a numeric cap on pixels, type size, or component variants. When a child needs stronger persistent emphasis, reconsider its ownership or the group hierarchy instead of making a one-off size exception.
+- Visual hierarchy: use typography, spacing, color, icon scale, imagery, lines, and surface strength to express importance and action priority within the assigned group hierarchy.
+- State expression: distinguish default, selected, disabled, loading, error, success, and empty states. Treat the visibility of error, focus, selection, progress, and other states as a functional clarity constraint, not as a persistent promotion of the group's semantic hierarchy.
+- Component role: size and place buttons, links, inputs, placeholders, toggles, menus, icon buttons, and auxiliary labels according to their information or action role within the group hierarchy.
 - Consistency: give elements at the same hierarchy, role, and state the same component, typography, spacing, color, icon, and surface rules. Vary them only for a real semantic, interaction, or context difference that follows a repeatable rule.
 - Content adaptation: handle long copy, localization, and viewport changes through content, layout, or shared responsive rules before applying one-off size or emphasis changes to individual elements.
-- Accessibility: preserve contrast, readability, focus visibility, target size, and keyboard navigation.
+- Accessibility: judge visual footprint separately from accessible interaction target size. Do not weaken contrast, readability, focus visibility, target size, or keyboard navigation because a group has lower hierarchy.
 - Affordance: make action possibility, result, and risk predictable through icons, labels, placement, state, and feedback.
 - Data expression: make axes, scales, labels, rows, columns, legends, nodes, links, directions, and groups readable before decoration.
 - Immediate feedback: respond visibly to clicks, input, and transitions.
