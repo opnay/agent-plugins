@@ -60,12 +60,12 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 - 경로: `judgment-kit/`
 - 주요 실행 표면: `pro-researcher`, `pro-planner`, `pro-engineering`, `pro-code-keeper`, `pro-designer`, `pro-quality-manager`
 
-### Adaptive Subagent Orchestrator
+### Workstream Orchestrator
 
-`adaptive-subagent-orchestrator`는 소프트웨어 엔지니어링 작업을 경량 라우팅하고, 가치가 확인된 bounded subagent 작업을 생성·통합합니다.
+`workstream-orchestrator`는 software-engineering·조사·실행 작업을 독립 workstream으로 나누고, bounded subagent 위임부터 검증·통합까지 조율합니다.
 
-- 경로: `adaptive-subagent-orchestrator/`
-- 주요 실행 표면: `orchestrate-subagents`, `dispatch-subagents`, `integrate-subagent-results`
+- 경로: `workstream-orchestrator/`
+- 주요 실행 표면: `orchestrate-workstreams`
 
 ### Code Quality
 
@@ -79,10 +79,10 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 ```text
 .
 ├── .agents/plugins/marketplace.json
-├── adaptive-subagent-orchestrator/
 ├── advance-codex/
 ├── code-quality/
 ├── judgment-kit/
+├── workstream-orchestrator/
 ├── src/
 └── docs/
 ```

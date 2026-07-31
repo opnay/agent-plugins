@@ -1,7 +1,0 @@
-interface:
-  display_name: "Integrate Subagent Results"
-  short_description: "Verify and integrate required subagent results"
-  default_prompt: "Use $adaptive-subagent-orchestrator:integrate-subagent-results to wait for required subagents, validate their evidence, and integrate the result."
-
-policy:
-  allow_implicit_invocation: false

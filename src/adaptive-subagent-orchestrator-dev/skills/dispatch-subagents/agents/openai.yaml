@@ -1,7 +1,0 @@
-interface:
-  display_name: "Dispatch Subagents"
-  short_description: "Plan and dispatch bounded independent subagents"
-  default_prompt: "Use $adaptive-subagent-orchestrator-dev:dispatch-subagents to validate delegation, define bounded task packets, and spawn the minimum necessary subagents."
-
-policy:
-  allow_implicit_invocation: false

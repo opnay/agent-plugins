@@ -1,20 +1,20 @@
 ---
 name: orchestrate-workstreams
 description: >
-  Orchestrate bounded subagents across cross-domain or mixed
-  investigation-and-action work. Use for explicit subagent requests or goals
-  with at least two meaningful, independently startable workstreams such as
-  research plus implementation, transformation, review, or verification.
-  Dispatch only with distinct contracts, parallel benefit, controlled shared
-  state, and main-agent verification. Do not auto-trigger for simple lookups,
-  single-source summaries, pure evidence-report research, ordinary
-  software-engineering-only requests, sequential root causes, or complexity
-  alone.
+  Orchestrate bounded subagents across software-engineering, cross-domain, or
+  mixed investigation-and-action work. Use for explicit subagent requests or
+  goals with at least two meaningful, independently startable workstreams such
+  as separate modules, execution paths, review lenses, research,
+  implementation, transformation, or verification. Dispatch only with distinct
+  contracts, parallel benefit, controlled shared state, and main-agent
+  verification. Do not auto-trigger for simple lookups, single-source
+  summaries, pure evidence-report research, sequential root causes, or
+  complexity and file count alone.
 ---
 
 # Orchestrate Workstreams
 
-조사와 실행이 섞인 독립 workstream의 위임·검증·통합을 하나의 lifecycle로 수행하세요. 메인 에이전트가 공유 계약, dispatch state, 통합, 충돌 해결, 전체 검증, 최종 응답을 소유하세요.
+독립적인 software-engineering·조사·실행 workstream의 위임, 검증, 통합을 하나의 lifecycle로 수행하세요. 메인 에이전트가 공유 계약, dispatch state, 통합, 충돌 해결, 전체 검증, 최종 응답을 소유하세요.
 
 명시 호출 식별자는 `$workstream-orchestrator:orchestrate-workstreams`입니다.
 
@@ -34,9 +34,9 @@ description: >
 - file, data, runtime, external-state conflict를 통제할 수 있습니다.
 - 메인 에이전트가 결과를 독립적으로 검증·통합할 수 있습니다.
 
-하나라도 실패하면 `DIRECT`로 실행하세요. Explicit subagent 요청은 gate에 진입하지만 우회하지 않습니다. Complexity, 많은 파일, 긴 작업, “깊게 작업” 요청만으로 dispatch하지 마세요.
+하나라도 실패하면 `DIRECT`로 실행하세요. Explicit subagent 요청은 gate에 진입하지만 우회하지 않습니다. Software-engineering 요청도 독립 lane이 명백하면 implicit dispatch 후보지만, implementation, review, testing, debugging 표현이나 complexity와 file count만으로 dispatch하지 마세요.
 
-Trigger 또는 인접 plugin 경계가 불명확하면 [boundary-examples.md](references/boundary-examples.md)를 읽으세요.
+Pure evidence-report research는 자동 소유하지 않습니다. Trigger 경계가 불명확하면 [boundary-examples.md](references/boundary-examples.md)를 읽으세요.
 
 ## 2. Graph와 Shared State 설계
 
@@ -52,7 +52,7 @@ Spawn 전에 [task-result-contracts.md](references/task-result-contracts.md)와 
 
 - 최소 agent만 사용하고 Terra xhigh 작업은 큰 coherent batch로 묶으세요.
 - 모든 packet에 role·model/effort, objective, included·excluded scope, access mode, ownership, source of truth, no sub-subagents, no scope expansion, deliverable, result schema, evidence·validation, completion·stop conditions를 넣으세요.
-- Read-only ownership은 `none`으로 기록하세요. 한 파일·artifact에는 writer 한 명만 두세요.
+- Read-only ownership은 `none`으로 기록하세요. 한 file·artifact에는 writer 한 명만 두세요.
 - 반환된 agent ID와 exact packet을 dispatch state에 기록하세요. Tool evidence 없이 spawn 성공을 추정하지 마세요.
 - 명시 모델을 사용할 수 없으면 role contract를 보존할 수 있는 모델로 대체하거나 `DIRECT`로 실행하고 제한을 공개하세요.
 

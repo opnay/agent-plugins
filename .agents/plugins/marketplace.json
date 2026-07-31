@@ -29,10 +29,10 @@
       "category": "Developer Tools"
     },
     {
-      "name": "adaptive-subagent-orchestrator",
+      "name": "workstream-orchestrator",
       "source": {
         "source": "local",
-        "path": "./adaptive-subagent-orchestrator"
+        "path": "./workstream-orchestrator"
       },
       "policy": {
         "installation": "AVAILABLE",

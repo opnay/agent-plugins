@@ -6,6 +6,7 @@
 - Terra xhigh worker를 `EXPLORE_READ`, `IMPLEMENT_OWNED`, `REVIEW_LENS`, `PROCESS_STRUCTURED` task packet으로 구분합니다.
 - Sol xhigh는 제한된 `FRONTIER_JUDGMENT`에서만 사용하고 Luna route를 두지 않습니다.
 - subagent 결과를 evidence로 취급하고, lifecycle당 narrow follow-up을 한 번만 허용합니다.
+- software-engineering-only와 cross-domain workstream을 같은 gate와 lifecycle로 처리합니다.
 
 ---
 
@@ -13,7 +14,7 @@
 
 ## 목적
 
-`orchestrate-workstreams`는 cross-domain 또는 mixed investigation-and-action 요청을 검증 가능한 workstream으로 분해하고, 필요한 경우에만 bounded subagent를 생성해 메인 에이전트가 결과를 안전하게 검증·통합하도록 안내합니다.
+`orchestrate-workstreams`는 software-engineering 또는 cross-domain investigation-and-action 요청을 검증 가능한 workstream으로 분해하고, 필요한 경우에만 bounded subagent를 생성해 메인 에이전트가 결과를 안전하게 검증·통합하도록 안내합니다.
 
 ## 경계
 
@@ -25,13 +26,14 @@
 - 제외:
   - complexity, file count, 장시간 작업만을 근거로 한 dispatch
   - 순수 조사 보고서의 출처 정책·인용 감사·evidence ledger 설계
-  - ordinary software-engineering-only 요청의 implicit routing
   - nested subagent, 범위 확장, 읽기 권한의 암묵적 write 승격
   - 메인 에이전트 책임의 subagent 이전
 
 ## 처리하려는 작업 형태
 
 - 조사와 prototype, 문서, 코드, 데이터 transformation 같은 action lane이 함께 있는 작업
+- 독립 모듈·서비스·실행 경로·테스트 묶음의 software-engineering 조사와 구현
+- 보안·정확성·성능·품질 같은 독립 review lens
 - independent source retrieval, schema-bound processing, disjoint implementation, review lens를 결합하는 작업
 - 각 lane의 산출물과 근거를 공통 성공 기준으로 검증·통합하는 작업
 - explicit subagent 요청 중 dispatch gate를 모두 충족하는 작업
@@ -41,7 +43,8 @@
 - 대표 표면: `skills/orchestrate-workstreams/SKILL.md`
 - 호출 방식: `$workstream-orchestrator-dev:orchestrate-workstreams` 또는 narrow implicit trigger
 - implicit policy: `allow_implicit_invocation: true`
-- 자동 제외: simple lookup, single-source summary, pure evidence-report research, ordinary software-engineering-only request, sequential root cause
+- 자동 포함: software-engineering 또는 cross-domain 요청에서 의미 있고 독립적인 workstream 두 개 이상이 명백한 경우
+- 자동 제외: simple lookup, single-source summary, pure evidence-report research, sequential root cause, complexity·file count·일반 engineering 표현만 있는 요청
 
 ## 핵심 처리 계약
 
@@ -160,13 +163,13 @@ Sol worker도 dispatch gate의 예외가 아닙니다. 이미 gate를 통과한 
 - Sol route가 허용 조건을 충족하고 Luna route가 없는가?
 - 모든 terminal result와 ownership을 메인 에이전트가 확인했는가?
 - conflict와 whole-result verification이 해결되거나 risk로 공개됐는가?
-- 인접 plugin의 자동 trigger 경계를 침범하지 않는가?
+- pure evidence-report research의 자동 trigger 경계를 침범하지 않는가?
 
 ## 독립성 원칙
 
 - 이 skill은 sibling plugin과 dev-only spec 없이 독립 실행 가능해야 합니다.
 - 설치된 delegation 도구와 범용 조사·구현 도구만 사용하며 별도 MCP, app, hook, script를 요구하지 않습니다.
-- pure research 또는 software-only 전문 계약이 필요해도 sibling plugin을 숨은 prerequisite로 취급하지 않습니다. 설치되어 있지 않으면 현재 도구와 사용자 지침 안에서 `DIRECT` 또는 제한된 명시 dispatch를 수행하고 한계를 공개합니다.
+- pure research 전문 계약이 필요해도 sibling plugin을 숨은 prerequisite로 취급하지 않습니다. 설치되어 있지 않으면 현재 도구와 사용자 지침 안에서 `DIRECT` 또는 제한된 명시 dispatch를 수행하고 한계를 공개합니다.
 
 ## 확장 원칙
 

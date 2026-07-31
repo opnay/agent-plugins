@@ -1,7 +1,7 @@
 interface:
   display_name: "Orchestrate Workstreams"
-  short_description: "독립 조사·실행 작업 흐름을 안전하게 위임하고 검증합니다."
-  default_prompt: "Use $workstream-orchestrator:orchestrate-workstreams to coordinate independent investigation and action workstreams safely."
+  short_description: "독립 engineering·조사·실행 흐름을 위임하고 검증합니다."
+  default_prompt: "Use $workstream-orchestrator:orchestrate-workstreams to coordinate independent engineering, investigation, and action workstreams safely."
 
 policy:
   allow_implicit_invocation: true
