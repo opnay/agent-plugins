@@ -22,10 +22,10 @@ codex plugin marketplace upgrade
 
 현재 마켓플레이스 표시명은 `OPNay Plugins`이고, 내부 id는 `opnay-plugins`입니다.
 
-## 로컬 개발 마켓플레이스
+## 로컬 개발 원본
 
-공개 설치용 플러그인과 로컬 개발용 플러그인을 동시에 쓰려면 plugin name 충돌을 피해야 합니다.
-로컬 개발용 플러그인은 `src/` 아래에서 관리하고, plugin name에 `-dev` suffix를 붙입니다.
+로컬 개발 원본은 `src/` 아래에서 관리하고 plugin name에 `-dev` suffix를 붙입니다.
+이 원본은 직접 설치하거나 marketplace에 노출할 필요가 없습니다.
 일반 개발 변경은 `src/<plugin-name>-dev`에 먼저 적용하고, 루트의 공개 release surface는 build command 산출물로 갱신합니다.
 
 ## 브랜치 모델
@@ -36,10 +36,10 @@ codex plugin marketplace upgrade
 - `main`에는 `next`의 개발 내용을 release로 승격할 때만 반영합니다.
 - 마지막 `main` merge 이후 `next`에서 플러그인을 처음 수정할 때, patch/minor/major 또는 target version을 사용자 확인으로 결정합니다.
 - 같은 플러그인의 이후 변경은 추가 version bump 없이 build만 수행합니다.
-- 개발 버전을 쓰는 사용자는 `next` 브랜치를 marketplace source로 등록하고 `<plugin-name>-dev`를 설치합니다.
+- `src/<plugin-name>-dev`의 직접 설치 가능성은 개발 완료 조건이 아닙니다.
 - 루트 `<plugin-name>/` release surface는 매 plugin 변경 뒤 build command로 갱신합니다.
 
-예를 들어 공개 플러그인은 `$judgment-kit:pro-code-keeper`, 개발 플러그인은 `$judgment-kit-dev:pro-code-keeper`로 분리됩니다.
+`-dev` suffix는 설치 호출 표면이 아니라 개발 원본과 release 산출물을 구분하는 식별자입니다.
 
 자세한 릴리즈/개발 분리 규칙은 `docs/release-pattern.md`를 봅니다.
 

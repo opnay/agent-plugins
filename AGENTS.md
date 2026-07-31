@@ -27,7 +27,8 @@
 - `next`: 개발 브랜치
 - 일반 플러그인 수정은 `next`의 `src/<plugin-name>-dev`에 적용합니다.
 - `main`에는 검증된 내용을 release로 승격할 때만 반영합니다.
-- `next`에서도 dev 플러그인을 설치/사용할 수 있어야 하므로 `<plugin-name>-dev` 이름과 `src/<plugin-name>-dev` 구조를 유지합니다.
+- `src/<plugin-name>-dev`는 편집·검증·build를 위한 개발 원본이며, 직접 설치나 marketplace 노출을 요구하지 않습니다.
+- `<plugin-name>-dev` 이름과 `src/<plugin-name>-dev` 구조는 source/release 변환 규약으로 유지합니다.
 - 플러그인 변경마다 build command로 루트 release surface를 갱신합니다.
 
 ## 버전 승격
@@ -66,6 +67,7 @@
 - 단일 진실 공급원: `./.agents/plugins/marketplace.json`
 - 공개 release 플러그인은 모두 marketplace 항목을 가져야 합니다.
 - `source.path`는 저장소 루트의 release 플러그인 폴더를 가리켜야 합니다.
+- dev 원본은 marketplace 항목을 요구하지 않습니다.
 - 등록 순서는 `plugins` 배열을 기준으로 유지합니다.
 - 이 저장소 로컬 플러그인을 `./plugins/<plugin-name>`로 등록하지 않습니다.
 - 공개 release 항목 추가나 갱신은 release 승격이 요청된 경우에만 수행합니다.
