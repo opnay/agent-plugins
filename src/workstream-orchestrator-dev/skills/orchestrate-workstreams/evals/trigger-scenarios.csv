@@ -1,0 +1,8 @@
+scenario,prompt,automatic_selection,route_or_role,expected_reason
+mixed_research_action,"시장 조사와 독립 prototype 구현을 병렬로 진행하고 결과를 통합해 주세요.",yes,DISPATCH_IF_INDEPENDENT,"각 lane이 현재 입력으로 시작하고 distinct contract를 가지면 dispatch"
+structured_volume,"서로 독립된 네 데이터 묶음을 같은 schema로 추출·분류해 주세요.",yes,PROCESS_STRUCTURED_TERRA_XHIGH,"독립 partition을 coherent batch로 처리"
+disjoint_implementation,"고정된 인터페이스를 기준으로 서로 다른 두 package를 구현해 주세요.",yes,IMPLEMENT_OWNED_TERRA_XHIGH,"shared contract 고정과 disjoint ownership 필요"
+frontier_conflict,"두 독립 조사에서 나온 고품질 근거가 충돌하고 결정적 검증 수단이 없습니다. 판단을 감사해 주세요.",context-dependent,DIRECT_OR_DEPENDENT_FRONTIER_JUDGMENT_SOL_XHIGH,"단독 audit는 direct; 기존 gate-passed lifecycle에서만 dependent Sol 선택 가능"
+sequential_root_cause,"하나의 장애 원인을 찾고 그 결과에 따라 순서대로 수정해 주세요.",no,DIRECT,"downstream work가 공통 원인에 의존"
+pure_research_report,"여러 출처를 대조하고 인용 가능한 시장 조사 보고서를 작성해 주세요.",no,OUTSIDE_AUTOMATIC_TRIGGER,"순수 evidence-report research 경계"
+ordinary_software_only,"이 서비스의 버그를 고치고 테스트해 주세요.",no,OUTSIDE_AUTOMATIC_TRIGGER,"명시 orchestration 없는 ordinary software-only 경계"

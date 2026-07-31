@@ -1,0 +1,35 @@
+{
+  "name": "workstream-orchestrator-dev",
+  "version": "0.1.0",
+  "description": "[DEV] 독립적인 조사·실행 작업 흐름을 안전하게 위임하고 검증·통합하는 instruction-only 플러그인입니다.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "codex",
+    "subagent",
+    "workstream",
+    "orchestration",
+    "delegation",
+    "parallel"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Workstream Orchestrator Dev",
+    "shortDescription": "[DEV] 독립적인 조사·실행 흐름을 안전하게 위임합니다.",
+    "longDescription": "[DEV] 조사, 탐색, 구현, 변환, 검토, 검증이 섞인 작업을 독립 workstream으로 나누고 shared-state 안전, 역할별 모델 라우팅, 근거 검증, 충돌 해결, 전체 결과 통합까지 조율합니다.",
+    "developerName": "opnay",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Analyze",
+      "Plan",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "$workstream-orchestrator-dev:orchestrate-workstreams로 독립적인 조사·실행 흐름의 위임 가치와 안전성을 평가하세요.",
+      "혼합 시장 조사와 프로토타입 구현을 독립 lane으로 나누고 결과를 검증·통합하세요.",
+      "단순 조회, 순수 조사 보고서, 일반 software-only 작업, 순차 원인 분석에는 자동 적용하지 마세요."
+    ]
+  }
+}
