@@ -74,6 +74,13 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 - 경로: `code-quality/`
 - 주요 실행 표면: `code-quality`
 
+### Deep Research
+
+`deep-research`는 여러 출처를 대조해 주장별 근거·반대 근거·불확실성·인용을 추적하는 조사 보고서를 작성합니다.
+
+- 경로: `deep-research/`
+- 주요 실행 표면: `deep-research`
+
 ## 저장소 구조
 
 ```text
@@ -81,6 +88,7 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 ├── .agents/plugins/marketplace.json
 ├── advance-codex/
 ├── code-quality/
+├── deep-research/
 ├── judgment-kit/
 ├── workstream-orchestrator/
 ├── src/

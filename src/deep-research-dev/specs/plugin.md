@@ -1,6 +1,7 @@
 ## 사용자 스펙 의도
 
 - 여러 출처를 체계적으로 조사·대조하여 주장별 근거, 반대 근거, 불확실성, 출처를 추적할 수 있는 의사결정용 조사 보고서를 소유합니다.
+- 공개 release를 marketplace에 등록해 사용자가 설치할 수 있어야 합니다.
 
 ---
 
@@ -34,7 +35,9 @@
 - 사용자 안내: `README.md`
 - 플러그인 스펙: `specs/plugin.md`
 - skill 상세 스펙: `specs/skills/deep-research.md`
-- 호출 식별자: `$deep-research-dev:deep-research`
+- 공개 marketplace: `.agents/plugins/marketplace.json`의 `./deep-research`
+- 개발 호출 식별자: `$deep-research-dev:deep-research`
+- 공개 호출 식별자: `$deep-research:deep-research`
 
 명시 호출은 중요한 조사 범위나 보고서 형식을 직접 지정해야 할 때 적합합니다. 여러 출처의 대조와 인용 감사가 필요한 조사 요청은 암시 호출 대상입니다.
 

@@ -167,7 +167,7 @@ function shouldSkipRuntimeEntry(sourcePath, entry) {
 }
 
 function isTextFile(filePath) {
-  return /\.(md|json|ya?ml|txt)$/.test(filePath) || path.basename(filePath) === "SKILL.md";
+  return /\.(csv|md|json|ya?ml|txt)$/.test(filePath) || path.basename(filePath) === "SKILL.md";
 }
 
 function rewritePathSegment(segment, devName, releaseName) {
