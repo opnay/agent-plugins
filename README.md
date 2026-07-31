@@ -60,12 +60,12 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 - 경로: `judgment-kit/`
 - 주요 실행 표면: `pro-researcher`, `pro-planner`, `pro-engineering`, `pro-code-keeper`, `pro-designer`, `pro-quality-manager`
 
-### Workstream Orchestrator
+### Advance Subagent
 
-`workstream-orchestrator`는 software-engineering·조사·실행 작업을 독립 workstream으로 나누고, bounded subagent 위임부터 검증·통합까지 조율합니다.
+`advance-subagent`는 서브에이전트를 활용한 근거 중심 조사와 독립 workstream 위임·검증·통합의 심화 실행 방법을 제공합니다.
 
-- 경로: `workstream-orchestrator/`
-- 주요 실행 표면: `orchestrate-workstreams`
+- 경로: `advance-subagent/`
+- 주요 실행 표면: `deep-research`, `orchestrate-workstreams`
 
 ### Code Quality
 
@@ -74,23 +74,15 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 - 경로: `code-quality/`
 - 주요 실행 표면: `code-quality`
 
-### Deep Research
-
-`deep-research`는 여러 출처를 대조해 주장별 근거·반대 근거·불확실성·인용을 추적하는 조사 보고서를 작성합니다.
-
-- 경로: `deep-research/`
-- 주요 실행 표면: `deep-research`
-
 ## 저장소 구조
 
 ```text
 .
 ├── .agents/plugins/marketplace.json
 ├── advance-codex/
+├── advance-subagent/
 ├── code-quality/
-├── deep-research/
 ├── judgment-kit/
-├── workstream-orchestrator/
 ├── src/
 └── docs/
 ```

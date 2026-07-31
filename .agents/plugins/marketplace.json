@@ -29,10 +29,10 @@
       "category": "Developer Tools"
     },
     {
-      "name": "workstream-orchestrator",
+      "name": "advance-subagent",
       "source": {
         "source": "local",
-        "path": "./workstream-orchestrator"
+        "path": "./advance-subagent"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -45,18 +45,6 @@
       "source": {
         "source": "local",
         "path": "./code-quality"
-      },
-      "policy": {
-        "installation": "AVAILABLE",
-        "authentication": "ON_INSTALL"
-      },
-      "category": "Developer Tools"
-    },
-    {
-      "name": "deep-research",
-      "source": {
-        "source": "local",
-        "path": "./deep-research"
       },
       "policy": {
         "installation": "AVAILABLE",
