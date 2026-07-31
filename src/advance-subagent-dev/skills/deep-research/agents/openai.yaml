@@ -1,6 +1,6 @@
 interface:
   display_name: "Deep Research"
-  short_description: "여러 출처를 대조해 감사 가능한 조사 보고서를 작성합니다."
+  short_description: "Create auditable reports from multiple sources."
   default_prompt: "Use $advance-subagent-dev:deep-research to investigate a consequential question across primary and independent sources and produce an evidence-traceable report."
 
 policy:

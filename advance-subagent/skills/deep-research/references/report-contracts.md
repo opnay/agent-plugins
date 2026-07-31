@@ -1,137 +1,135 @@
-# 보고서 계약
+# Report Contracts
 
-이 문서는 조사 결과를 질문에 직접 답하면서도 근거와 한계를 감사할 수 있는 형태로 전달하기 위한 기준입니다.
+Use these contracts to answer the question directly while keeping evidence and limitations auditable.
 
-## 기본 구조
+## Default Structure
 
-요청 형식이 따로 없으면 다음 순서를 사용하세요.
+Unless the user specifies another format, use:
 
-1. 제목
-2. 직접 답변
-3. 범위와 기준 시점
-4. 핵심 판단
-5. 세부 근거와 반대 근거
-6. 상충·한계·남은 불확실성
-7. 의사결정 의미 또는 권고
-8. 방법 및 출처 메모
+1. title;
+2. direct answer;
+3. scope and as-of date;
+4. key judgments;
+5. detailed evidence and counterevidence;
+6. conflicts, limitations, and remaining uncertainty;
+7. decision implications or recommendations;
+8. methods and source notes.
 
-첫 문단은 조사 과정을 설명하지 말고 질문에 답해야 합니다. 핵심 판단은 이후 근거가 뒷받침하는 수준으로만 단정하세요.
+Answer the question in the opening paragraph. State each judgment only as strongly as the evidence supports.
 
-## 범위와 기준 시점
+## Scope and Time
 
-짧게 다음을 고정하세요.
+Record only what is needed to interpret the conclusion:
 
-- 의사결정 목적
-- 포함·제외 범위
-- 핵심 정의와 비교축
-- 지역과 대상
-- 정보 기준일과 실제 접근일
-- 사용한 중요한 가정
+- decision purpose;
+- included and excluded scope;
+- key definitions and comparison axes;
+- region and population;
+- information as-of date and actual access date;
+- material assumptions.
 
-사용자가 이미 지정한 내용을 반복해서 길게 설명하지 마세요. 결론 해석에 필요한 항목만 남기세요.
+Do not repeat user-provided context unless it affects interpretation.
 
-## 핵심 판단 형식
+## Key Judgment Pattern
 
-각 핵심 판단은 다음 구조를 권장합니다.
+### Judgment
 
-### 판단
+Give a one-sentence answer and confidence level.
 
-질문에 대한 한 문장 답과 신뢰도입니다.
+### Evidence
 
-### 근거
+Explain the most direct evidence and place exact citations near the claims.
 
-가장 직접적이고 중요한 근거를 설명하고, 각 주장 가까이에 정확한 출처를 둡니다.
+### Counterevidence or limitation
 
-### 반대 근거 또는 제한
+Explain conflicting material, scope limits, methodological weaknesses, and failed corroboration.
 
-결론과 충돌하는 자료, 적용 범위, 방법론 한계, 교차 검증 실패를 설명합니다.
+### Implication
 
-### 의미
+State what the judgment changes for the user's decision. Label anything not directly supported by evidence as inference or recommendation.
 
-이 판단이 사용자의 결정에 무엇을 바꾸는지 씁니다. 근거에서 바로 나오지 않는 부분은 추론 또는 권고라고 표시합니다.
+## Claim-Evidence Table
 
-## 주장-근거 표
+Every report must expose a compact ledger for its material judgments:
 
-모든 deep-research 보고서에는 핵심 판단을 감사할 수 있는 압축 원장을 포함하세요. 기본적으로 다음 표를 사용합니다.
-
-| 주장 | 유형 | 핵심 근거 | 반대 근거·제한 | 적용 범위 | 교차 검증 | 신뢰도 | 출처 |
+| Claim | Type | Key evidence | Counterevidence or limit | Scope | Corroboration | Confidence | Source |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| 검증 가능한 한 문장 | 사실/해석/추론/권고 | 근거가 직접 보여 주는 내용 | 상충·공백 | 지역·기간·표본·정의 | 완료/불가/불충분과 영향 | 높음/중간/낮음과 이유 | 정확한 URL, 발행일/기준일, 접근일, 인용 위치 |
+| One falsifiable statement | Fact / interpretation / inference / recommendation | What the evidence directly shows | Conflict or gap | Region, period, sample, definition | Complete / unavailable / insufficient, plus impact | High / medium / low, with reason | Exact URL, publication or as-of date, access date, location |
 
-아주 좁은 보고서에서는 같은 필드를 판단별 본문에 배치해도 됩니다. 모든 작업 메모를 노출할 필요는 없지만, 결론을 지탱하거나 뒤집을 수 있는 핵심 주장과 필수 출처 메타데이터는 생략하지 마세요.
+For a narrow report, place the same fields in each judgment section instead of a table. Omit routine notes, but never omit evidence that supports or could reverse the conclusion.
 
-## 사실·해석·추론·권고 구분
+## Evidence Categories
 
-- 사실: 출처가 직접 관측·공개·측정한 내용
-- 해석: 출처가 사실에 부여한 의미
-- 추론: 여러 근거를 결합해 조사자가 도출한 의미
-- 권고: 사용자의 목적과 제약을 반영한 행동 제안
+- **Fact:** what a source directly observed, published, or measured.
+- **Interpretation:** meaning assigned by a source.
+- **Inference:** meaning derived by combining evidence.
+- **Recommendation:** action proposed for the user's purpose and constraints.
 
-문장마다 꼬리표를 붙일 필요는 없지만, 서로 섞이면 결론이 출처보다 강해지는 지점에서는 명시적으로 구분하세요.
+Label the categories whenever mixing them could make a conclusion appear stronger than its sources.
 
-## 신뢰도 표현
+## Confidence Language
 
-- 높음: “근거가 일관되게 보여 줍니다.”
-- 중간: “현재 근거는 …를 시사하지만, … 때문에 조건부입니다.”
-- 낮음: “확인 가능한 자료만으로는 결론내리기 어렵습니다.”
+- **High:** “The evidence consistently shows...”
+- **Medium:** “The available evidence suggests..., but this remains conditional because...”
+- **Low:** “The available evidence is insufficient to determine...”
 
-수치가 정밀해 보여도 방법론이나 최신성이 약하면 높은 신뢰도를 주지 마세요. “증명한다”, “항상”, “확실하다” 같은 표현은 그 수준의 근거가 있을 때만 사용하세요.
+Do not assign high confidence to precise-looking numbers with weak methods, freshness, or scope. Reserve words such as “proves,” “always,” and “certain” for evidence that supports that strength.
 
-## 작업 유형별 변형
+## Variants
 
-### 팩트체크
+### Fact-check
 
-- 검증할 주장을 원자적인 하위 주장으로 분리합니다.
-- 각 하위 주장에 `사실 / 대체로 사실 / 맥락 필요 / 근거 부족 / 사실 아님` 같은 판정을 부여할 수 있습니다.
-- 판정 기준과 반례를 함께 제시합니다.
+- Split the proposition into atomic claims.
+- Use verdicts such as `true`, `mostly true`, `needs context`, `insufficient evidence`, or `false` when useful.
+- State the verdict criteria and counterexamples.
 
-### 비교 조사
+### Comparative research
 
-- 비교 대상마다 같은 정의, 기간, 단위와 평가축을 적용합니다.
-- 서로 다른 지표를 하나의 순위로 억지로 합치지 않습니다.
-- 비교표 뒤에 가장 큰 비대칭과 데이터 공백을 설명합니다.
+- Apply the same definitions, periods, units, and evaluation axes.
+- Do not collapse unlike metrics into one ranking.
+- Explain the largest asymmetries and data gaps.
 
-### 시장·경쟁 조사
+### Market or competitive research
 
-- 시장 정의, 지역, 기간, 통화, 명목·실질 기준을 먼저 고정합니다.
-- 보고된 규모, 계산된 추정치, 전망을 구분합니다.
-- 기업 자기주장과 독립적인 시장 근거를 분리합니다.
+- Fix market definition, region, period, currency, and nominal or real basis.
+- Separate reported size, calculated estimate, and forecast.
+- Separate company self-report from independent market evidence.
 
-### 문헌·기술 조사
+### Literature or technical research
 
-- 연구 질문, 연구 설계, 표본, 평가 지표와 외적 타당성을 비교합니다.
-- 논문 수보다 연구 품질과 결과의 일관성을 봅니다.
-- 프리프린트, 동료평가 논문, 리뷰, 재현 연구를 구분합니다.
+- Compare research questions, designs, samples, metrics, and external validity.
+- Weight study quality and consistency more than paper count.
+- Distinguish preprints, peer-reviewed papers, reviews, and replications.
 
-### 실사
+### Due diligence
 
-- 확인된 사실, 미확인 주장, 위험 신호, 반증 자료를 분리합니다.
-- 공개 정보의 부재를 문제가 없다는 증거로 해석하지 않습니다.
-- 추가 확인에 필요한 비공개 자료나 인터뷰를 명시합니다.
+- Separate confirmed facts, unverified claims, risk signals, and counterevidence.
+- Do not treat absence of public evidence as evidence of no problem.
+- Identify private documents or interviews needed for further verification.
 
-## 인용과 출처 목록
+## Citations
 
-- 독자가 어떤 문장이 어떤 출처로 뒷받침되는지 바로 알 수 있게 가까운 위치에 인용하세요.
-- 문서 끝의 출처 목록만으로 핵심 주장과 근거의 연결을 대신하지 마세요.
-- 사용자나 실행 환경이 요구하는 인용 형식이 있으면 그 형식을 따르세요.
-- 출처 목록에는 실제로 보고서에 사용한 자료만 넣으세요.
+- Place citations where readers can see which source supports which sentence.
+- Do not replace claim-level citations with only an end-of-report source list.
+- Follow the citation format required by the user or environment.
+- List only sources actually used in the report.
 
-## 결론을 바꿀 조건
+## What Could Change the Conclusion
 
-최종 보고서에는 다음 중 중요한 항목을 포함하세요.
+Include material items such as:
 
-- 아직 확보하지 못한 데이터
-- 결과가 민감한 가정
-- 앞으로 예정된 법령, 제품, 연구 또는 데이터 업데이트
-- 해결되지 않은 상충
-- 추가 조사 중 정보 가치가 가장 높은 다음 단계
+- unavailable data;
+- sensitive assumptions;
+- scheduled legal, product, research, or dataset updates;
+- unresolved conflicts;
+- the next research step with the highest information value.
 
-이 항목은 면책 문구가 아니라 사용자가 결론의 수명을 판단하는 데 필요한 정보입니다.
+This is decision-lifetime information, not boilerplate.
 
-## 길이 조절
+## Length
 
-- 좁은 팩트체크: 직접 판정, 2~4개 핵심 근거, 제한
-- 비교 질문: 핵심 비교표, 차이를 설명하는 근거, 결론
-- 중요한 의사결정용 조사: 기본 구조 전체와 압축 주장-근거 표
+- Narrow fact-check: direct verdict, two to four material sources, and limitations.
+- Comparison: key comparison table, evidence explaining differences, and conclusion.
+- Consequential decision research: full default structure and compact claim-evidence table.
 
-자료를 많이 찾았다는 이유로 모두 나열하지 마세요. 결론을 지탱하거나 뒤집는 정보 밀도를 우선하세요.
+Prefer decision-changing information over a catalog of every source found.

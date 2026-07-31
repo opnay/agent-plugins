@@ -61,7 +61,7 @@
 - 조사 자체가 산출물이고 출처·증거·인용 계약이 필요하면 `deep-research`를 선택합니다.
 - software-engineering 또는 cross-domain 요청에서 독립 workstream이 둘 이상 명백하면 `orchestrate-workstreams`의 dispatch gate를 적용합니다.
 - 명시 호출은 각 skill의 gate와 제외 조건을 우회하지 않습니다.
-- 두 skill의 기존 trigger, routing, 산출물 계약은 서로 합치지 않습니다.
+- 두 skill은 각자의 trigger, routing, 산출물 계약을 소유합니다.
 - 각 skill은 sibling skill 없이 독립 실행 가능해야 합니다.
 - plugin manifest, README, plugin spec이 skill 선택 기준과 namespace를 소유합니다.
 
@@ -70,6 +70,7 @@
 - plugin spec은 bundle 목적, 비목표, 사용 기준, skill composition을 소유합니다.
 - 개별 조사·위임·검증 계약은 각 skill spec이 소유합니다.
 - skill spec이 바뀌면 해당 runtime skill folder를 현재 spec 기준으로 처음부터 재작성합니다.
+- runtime `SKILL.md`, reference Markdown, agent interface 문구는 영어로 작성합니다. Trigger fixture는 실제 선택 입력 언어를 유지할 수 있습니다.
 - release surface는 build command로만 만들며 `specs/`와 `changes/`를 포함하지 않습니다.
 
 ## 확장 원칙

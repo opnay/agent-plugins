@@ -43,6 +43,7 @@
 - 대표 표면: `skills/orchestrate-workstreams/SKILL.md`
 - 호출 방식: `$advance-subagent-dev:orchestrate-workstreams` 또는 narrow implicit trigger
 - implicit policy: `allow_implicit_invocation: true`
+- runtime 언어: `SKILL.md`, reference Markdown, agent interface 문구는 영어
 - 자동 포함: software-engineering 또는 cross-domain 요청에서 의미 있고 독립적인 workstream 두 개 이상이 명백한 경우
 - 자동 제외: simple lookup, single-source summary, pure evidence-report research, sequential root cause, complexity·file count·일반 engineering 표현만 있는 요청
 

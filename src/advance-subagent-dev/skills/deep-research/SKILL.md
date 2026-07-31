@@ -1,152 +1,135 @@
 ---
 name: deep-research
-description: Conduct evidence-traceable, multi-source research for consequential questions. Use for market, literature, technical, policy, competitive, and due-diligence research or fact-checking that needs primary-source retrieval, independent corroboration, counterevidence, freshness checks, explicit uncertainty, and a cited report. Do not use for simple lookups, single-source summaries, unsupported brainstorming, implementation, external writes, or ongoing monitoring.
+description: Conduct evidence-traceable, multi-source research for consequential questions. Use for market, literature, technical, policy, competitive, due-diligence, or fact-checking work that requires primary-source retrieval, independent corroboration, counterevidence, freshness checks, explicit uncertainty, and a cited report. Do not use for simple lookups, single-source summaries, unsupported brainstorming, implementation, external writes, or ongoing monitoring.
 ---
 
 # Deep Research
 
-중요한 질문을 여러 출처로 조사하고, 핵심 주장과 근거·반대 근거·불확실성을 추적할 수 있는 보고서로 완성하세요. 결론의 자신감보다 근거의 재현성과 표현의 정직성을 우선하세요.
+Investigate consequential questions across multiple sources and produce a report that traces each important claim to evidence, counterevidence, and uncertainty. Prioritize reproducibility and calibrated language over confidence.
 
-이 스킬은 OpenAI 제품의 `Deep Research` 모드를 재현한다고 주장하지 않습니다. 설치된 도구와 접근 가능한 출처를 이용하는 일반 목적 조사 워크플로입니다.
+This skill is a general research workflow. Do not claim that it reproduces OpenAI's proprietary `Deep Research` product mode.
 
-## 언제 사용해야 하는가
+Maintain this data flow:
 
-다음 중 하나 이상에 해당하면 사용하세요.
+`question and context → scope and success criteria → research map → source plan → discovery → primary-source review → claim-evidence ledger → conflict and freshness checks → synthesis → citation and uncertainty audit → report`
 
-- 시장·경쟁·문헌·기술·정책·규제·기업 실사처럼 여러 출처를 대조해야 합니다.
-- 핵심 주장을 원문이나 1차 자료에서 확인하고 독립 출처로 교차 검증해야 합니다.
-- 기준 시점, 지역, 정의, 표본에 따라 답이 달라질 수 있습니다.
-- 반대 근거, 상충하는 수치, 최신성 위험, 남은 불확실성을 함께 보고해야 합니다.
-- 결과가 의사결정에 쓰이므로 나중에 출처와 추론을 감사할 수 있어야 합니다.
+Use each stage's output as the next stage's input. Do not jump from search results directly to prose.
 
-다음 요청에는 자동으로 사용하지 마세요.
+## 1. Lock the Question
 
-- 날씨, 현재가, 단순 정의처럼 한 번의 조회로 충분한 요청
-- 사용자가 제공한 한 문서만 요약하는 요청
-- 근거 없는 아이디어 발산이나 문장 편집
-- 코드 구현, 외부 시스템 변경, 메시지 전송, 지속 모니터링
+Establish:
 
-단일 사실처럼 보여도 의료·법률·재무·안전 등 고위험 판단이 걸리고 근거 대조가 필요하면 조사 워크플로를 적용하세요. 조사와 구현이 섞인 요청에서는 조사 산출물을 먼저 명확히 끝낸 뒤, 구현은 별도 권한과 해당 작업 지침에 따라 처리하세요.
+- the decision or use case the research supports;
+- included and excluded scope and key definitions;
+- the as-of date and required freshness;
+- region, population, comparators, and evaluation axes;
+- audience, depth, and output format.
 
-## 조사 계약
+Ask only when missing information could materially change the conclusion. Otherwise state a reasonable assumption and proceed. Define success as both the knowledge required to answer and the evidence required to trust that answer.
 
-다음 데이터 흐름을 유지하세요.
+Do not use this workflow for a single lookup, a summary of one user-provided document, unsupported ideation, implementation, external changes, or monitoring. For high-stakes medical, legal, financial, or safety questions, apply the workflow when independent evidence review is required.
 
-`질문·맥락 → 범위·성공 기준 → 조사 지도 → 출처 계획 → 탐색 → 원문 정독 → 주장-근거 원장 → 상충·최신성 검사 → 종합 → 인용·불확실성 감사 → 보고서`
+If a request mixes research with implementation, finish the research deliverable first. Treat implementation as separate work governed by its own permissions and instructions.
 
-각 단계의 산출물이 다음 단계의 입력이 되어야 합니다. 검색 결과를 모아 곧바로 문장을 쓰지 마세요.
+## 2. Build the Research Map
 
-## 1. 질문과 성공 기준을 잠그기
+Split the question into non-overlapping subquestions. Record:
 
-먼저 다음 항목을 확인하세요.
+- required facts, definitions, comparisons, causal claims, or forecasts;
+- assumptions that could reverse the conclusion;
+- plausible counter-explanations and expected evidence gaps;
+- the best source types for each subquestion.
 
-- 이 조사가 지원할 결정 또는 사용 목적
-- 포함·제외 범위와 핵심 용어의 정의
-- 기준 시점과 필요한 최신성
-- 지역, 대상 집단, 비교 대상과 비교축
-- 독자, 깊이, 원하는 산출물 형태
+Do not target an arbitrary source count. Gather enough direct, independent, and current evidence to support the material claims.
 
-빠진 정보가 결론을 실질적으로 바꿀 때만 질문하세요. 그 외에는 합리적인 가정을 짧게 공개하고 진행하세요. 조사 성공 기준은 “무엇을 알면 답할 수 있는가”와 “어떤 근거가 있어야 그 답을 믿을 수 있는가”로 작성하세요.
+Read and apply [Source and Evidence Policy](references/source-policy.md) before collecting evidence.
 
-## 2. 조사 지도와 출처 계획 만들기
+## 3. Retrieve and Inspect Primary Sources
 
-질문을 겹치지 않는 하위 질문으로 나누고 다음을 표시하세요.
+- Use search results and snippets only to discover candidates.
+- Open the exact webpage, document, paper, dataset, or PDF before citing it.
+- Verify material claims in primary sources such as official documents, original papers, original data, standards, filings, or regulations when possible.
+- Distinguish a primary source's self-report from independent corroboration.
+- Record publication or as-of date, access date, authoring body, scope, and a recoverable citation location.
+- Never imply access to a source that could not be opened or inspected.
 
-- 필요한 사실, 정의, 비교, 인과 또는 전망
-- 결론을 뒤집을 수 있는 핵심 가정
-- 예상되는 반대 설명과 증거 공백
-- 각 하위 질문에 가장 적합한 출처 유형
+Use current browsing or retrieval tools when freshness matters. If tools or sources are unavailable, disclose the access limit and its effect instead of filling the gap from memory.
 
-출처 수를 임의로 채우지 마세요. 핵심 주장에 필요한 직접성, 독립성, 최신성을 확보할 만큼 조사하세요.
+## 4. Maintain a Claim-Evidence Ledger
 
-출처를 찾기 전에 [출처 및 증거 정책](references/source-policy.md)을 읽고 적용하세요.
+Track at least:
 
-## 3. 탐색하고 원문을 확보하기
-
-- 검색 결과와 요약 스니펫은 후보 발견에만 사용하세요.
-- 인용하려는 정확한 웹페이지, 문서, 논문, 데이터셋 또는 PDF를 직접 여세요.
-- 핵심 주장은 가능한 한 공식 문서, 원 논문, 원 데이터, 규제 문서 같은 1차 자료에서 확인하세요.
-- 1차 자료의 자기주장을 독립적인 고품질 출처와 구분하세요.
-- 발행일 또는 기준일, 접근일, 작성 주체, 적용 범위와 정확한 위치를 기록하세요.
-- 페이지에 접근하지 못했거나 내용을 확인하지 못했다면 그 출처를 본 것처럼 쓰지 마세요.
-
-최신 정보가 필요한 요청에는 현재 이용 가능한 검색·브라우징 도구를 사용하세요. 필요한 도구나 출처에 접근할 수 없으면 기억으로 빈칸을 채우지 말고 접근 한계와 그 영향을 밝히세요.
-
-## 4. 주장-근거 원장을 유지하기
-
-조사 중에는 최소한 다음 필드를 갖는 원장을 유지하세요.
-
-| 필드 | 기록 내용 |
+| Field | Required content |
 | --- | --- |
-| 주장 | 검증 가능한 한 문장 |
-| 유형 | 사실 / 해석 / 추론 / 권고 |
-| 지지 근거 | 출처가 직접 뒷받침하는 내용 |
-| 반대 근거 | 반례, 불일치, 대안 설명 |
-| 출처 | 정확한 URL과 문서 내 위치 |
-| 날짜 | 발행일·기준일과 접근일 |
-| 적용 범위 | 지역, 기간, 표본, 정의 |
-| 독립성 | 다른 근거와 실질적으로 독립적인지 |
-| 교차 검증 | 완료 / 불가 / 불충분과 결론에 미치는 영향 |
-| 신뢰도 | 높음 / 중간 / 낮음과 이유 |
-| 남은 불확실성 | 아직 검증하지 못한 부분 |
+| Claim | One falsifiable statement |
+| Type | Fact / interpretation / inference / recommendation |
+| Supporting evidence | What the source directly supports |
+| Counterevidence | Contradiction, exception, or alternative explanation |
+| Source | Exact URL and recoverable location |
+| Dates | Publication or as-of date and access date |
+| Scope | Region, period, population, sample, and definition |
+| Independence | Whether it is materially independent of other evidence |
+| Corroboration | Complete / unavailable / insufficient, plus impact |
+| Confidence | High / medium / low, with reason |
+| Remaining uncertainty | What remains unverified |
 
-하나의 출처가 여러 곳에서 반복 인용되더라도 독립적인 교차 검증으로 세지 마세요. 기사 여러 개가 같은 보도자료나 데이터셋을 재전재했다면 하나의 근거 계열로 취급하세요.
+Repeated reporting of the same press release or dataset is one evidence family, not independent corroboration.
 
-## 5. 반증하고 상충을 설명하기
+## 5. Challenge the Evidence
 
-핵심 결론마다 다음을 수행하세요.
+For every material conclusion:
 
-- 결론과 반대되는 근거 또는 더 단순한 설명을 의도적으로 찾습니다.
-- 중요한 주장은 독립 출처로 교차 검증합니다.
-- 교차 검증할 수 없으면 이유와 결론에 미치는 영향을 기록합니다.
-- 수치가 충돌하면 정의, 표본, 기간, 지역, 방법론, 이해관계, 업데이트 시점을 비교합니다.
-- 사실, 출처의 해석, 자신의 추론, 사용자를 위한 권고를 분리합니다.
+- seek counterevidence or a simpler explanation;
+- corroborate important claims with an independent source;
+- record why corroboration is unavailable and how that affects the conclusion;
+- explain conflicting numbers through definitions, samples, periods, regions, methods, incentives, or revision dates;
+- separate source facts, source interpretations, your inferences, and recommendations.
 
-출처 간 다수결을 하지 마세요. 더 직접적이고 적합하며 최신인 근거에 더 큰 가중치를 두고 그 이유를 설명하세요.
+Do not decide by source majority. Give more weight to evidence that is more direct, applicable, methodologically sound, independent, and current, and explain the weighting.
 
-## 6. 필요한 경우에만 위임하기
+## 6. Delegate Only When Valuable
 
-서로 겹치지 않는 독립적인 읽기 전용 조사 스트림이 3개 이상이고, 각 스트림의 질문·범위·출력 스키마가 분명할 때만 하위 작업을 위임하세요. 단순 조회나 짧은 조사에는 위임하지 마세요.
+Delegate only when there are at least three non-overlapping, independently startable, read-only research streams with fixed questions, scopes, and output schemas. Do not delegate simple lookups or short investigations.
 
-위임할 때는 [모델 및 작업 라우팅](references/model-routing.md)을 읽으세요. 모델 이름이 아니라 역할과 검증 책임으로 배치하고, 최종 책임자는 중요한 주장과 인용을 원문에서 다시 확인하세요.
+Before delegating, read [Model and Task Routing](references/model-routing.md). Route by responsibility and verification needs, not model name alone. The lead researcher must reopen the important sources and verify material claims and citations.
 
-위임 도구가 없거나 스트림이 충분히 독립적이지 않으면 같은 계약을 순차적으로 수행하세요.
+If delegation tools are unavailable or the streams are not independent, execute the same contract sequentially.
 
-## 7. 종합하고 보고하기
+## 7. Synthesize and Report
 
-최종 작성 전에 [보고서 계약](references/report-contracts.md)을 읽으세요.
+Read [Report Contracts](references/report-contracts.md) before drafting.
 
-- 첫 문단에서 질문에 직접 답하세요.
-- 핵심 판단마다 가까운 위치에 근거와 정확한 출처를 붙이세요.
-- 반대 근거와 상충을 결론 뒤에 숨기지 마세요.
-- 표현 강도를 근거 수준에 맞추세요.
-- 무엇을 아직 모르며, 어떤 정보가 결론을 바꿀 수 있는지 밝히세요.
-- 사용자의 요청 깊이에 비례해 보고서 길이를 조절하세요.
+- Answer the question in the opening paragraph.
+- Place evidence and exact citations close to each material claim.
+- Present counterevidence and conflicts with the conclusion, not as an afterthought.
+- Match claim strength to evidence strength.
+- State what remains unknown and what evidence could change the conclusion.
+- Scale report length to the requested depth.
 
-전체 작업 원장은 내부 작업물로 유지해도 됩니다. 다만 최종 보고서에는 핵심 주장마다 유형, 근거, 반대 근거·제한, 적용 범위, 교차 검증 상태, 신뢰도, 정확한 URL, 발행일 또는 기준일, 접근일, 인용 위치, 남은 불확실성을 압축 원장이나 동등한 본문 구조로 반드시 제공하세요. 사용자가 요청하면 전체 원장을 부록으로 제공하세요.
+The full working ledger may remain internal. The report must still expose, for every material claim, its type, evidence, counterevidence or limitation, scope, corroboration status, confidence, exact URL, publication or as-of date, access date, citation location, and remaining uncertainty. Provide the full ledger as an appendix when requested.
 
-## 종료 조건
+## Stop Conditions
 
-다음을 모두 만족하면 조사를 종료할 수 있습니다.
+Stop when all of the following hold:
 
-- 핵심 하위 질문에 답했거나 답할 수 없는 이유가 분명합니다.
-- 중요한 주장이 원문 근거 또는 명시된 한계를 가집니다.
-- 새 출처가 결론을 바꾸는 정보보다 반복 정보만 추가합니다.
-- 반대 근거, 상충, 최신성 위험을 점검했습니다.
-- 인용이 실제 주장을 뒷받침하고 표현 강도가 증거 수준에 맞습니다.
+- each material subquestion is answered or has an explicit reason it cannot be answered;
+- every important claim has primary evidence or a disclosed limitation;
+- new sources add repetition rather than decision-changing information;
+- counterevidence, conflicts, and freshness risks have been checked;
+- citations support the claims and language strength matches the evidence.
 
-조건을 충족하지 못했는데 시간·접근·도구 한계로 멈춰야 하면, 확인한 범위와 미확인 영역, 가장 가치 있는 다음 조사 단계를 보고하세요.
+If time, access, or tooling forces an earlier stop, report the inspected scope, unresolved areas, and the highest-value next research step.
 
-## 최종 감사
+## Final Audit
 
-응답 전 다음을 확인하세요.
+Before responding, confirm:
 
-- 인용한 모든 출처를 실제로 열고 관련 내용을 확인했는가?
-- 핵심 주장마다 출처, 날짜, 적용 범위가 있는가?
-- 검색 스니펫, 기억, 간접 전재를 직접 근거처럼 쓰지 않았는가?
-- 반대 근거와 상충 수치를 누락하지 않았는가?
-- 사실, 해석, 추론, 권고가 구분되는가?
-- 불확실성과 결론을 바꿀 조건이 보이는가?
-- 보고서가 질문과 의사결정 목적에 직접 답하는가?
+- every cited source was opened and inspected;
+- each material claim has a source, date, and scope;
+- no search snippet, memory, or secondary repetition is presented as direct evidence;
+- counterevidence and conflicting values are visible;
+- facts, interpretations, inferences, and recommendations remain distinguishable;
+- uncertainty and conclusion-changing conditions are explicit;
+- the report directly serves the question and decision purpose.
 
-하나라도 실패하면 해당 주장이나 결론을 수정하고 다시 감사하세요.
+Revise any claim or conclusion that fails this audit.

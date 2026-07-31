@@ -2,51 +2,51 @@
 
 ## Dispatch Gate
 
-다음 질문에 모두 `yes`일 때만 spawn하세요.
+Spawn only when every answer is `yes`:
 
-1. 독립적으로 시작 가능한 의미 있는 workstream이 두 개 이상입니까?
-2. 각 workstream에 distinct scope, deliverable, evidence, completion criteria가 있습니까?
-3. 병렬 이점이 coordination·merge·re-check 비용보다 큽니까?
-4. file, artifact, data, runtime, external-state conflict를 통제할 수 있습니까?
-5. 메인 에이전트가 각 결과를 독립적으로 검증하고 하나의 결과로 통합할 수 있습니까?
+1. Are there at least two meaningful workstreams that can start independently?
+2. Does each workstream have distinct scope, deliverable, evidence, and completion criteria?
+3. Does the parallel benefit exceed coordination, merge, and recheck cost?
+4. Can file, artifact, data, runtime, and external-state conflicts be controlled?
+5. Can the main agent independently verify each result and integrate one outcome?
 
-Explicit subagent 요청도 같은 질문을 통과해야 합니다. 하나라도 `no` 또는 `unknown`이면 `DIRECT`입니다.
+Explicit subagent requests use the same gate. Any `no` or `unknown` means `DIRECT`.
 
 ## Workstream Graph
 
-각 node를 다음 필드로 기록하세요.
+Record each node as:
 
 ```yaml
 id: <stable id>
-objective: <독립 질문 또는 산출물>
-prerequisites: <완료돼야 하는 node 또는 none>
+objective: <independent question or deliverable>
+prerequisites: <required completed nodes or none>
 output: <bounded deliverable>
-consumer: <main 또는 downstream node>
-evidence_path: <검증 방법>
+consumer: <main agent or downstream node>
+evidence_path: <verification method>
 access_mode: read-only | write-enabled
-ownership: none | <exact files/artifacts>
+ownership: none | <exact files or artifacts>
 ```
 
-`prerequisites`가 완료되지 않은 node를 spawn하지 마세요. Shared contract, schema, interface, acceptance criteria는 메인 에이전트가 고정하세요.
+Do not spawn a node before its prerequisites complete. The main agent must fix shared contracts, schemas, interfaces, and acceptance criteria.
 
 ## Shared-State Allowlist
 
-- 기본: `read-only`
-- `write-enabled`: shared contract가 고정되고 writable surface가 완전히 분리된 경우
-- writer: file·artifact당 한 명
-- main-owned: shared contract, integration file, final decision, whole-result verification
+- Default: `read-only`
+- `write-enabled`: only when the shared contract is fixed and writable surfaces are fully disjoint
+- Writer count: one per file or artifact
+- Main-owned: shared contracts, integration files, final decisions, and whole-result verification
 
-다음 shared mutable surface는 동시에 변경하거나 사용하는 task로 나누지 마세요.
+Do not split work into concurrent tasks that mutate or consume the same:
 
-- schema, interface, config, lockfile, generated output
-- mutable fixture, database, port, emulator, external account
-- build output, shared temp directory, live document 또는 공용 data
+- schema, interface, config, lockfile, or generated output;
+- mutable fixture, database, port, emulator, or external account;
+- build output, shared temporary directory, live document, or shared data.
 
-분리할 수 없으면 read-only 조사로 낮추거나 `DIRECT`로 처리하세요.
+If separation is impossible, downgrade to read-only investigation or use `DIRECT`.
 
-## Agent Count와 Cost
+## Worker Count and Cost
 
-- 독립 lane 수와 session capacity를 넘지 마세요.
-- 보통 2개 agent로 시작하고, 별도 계약을 가진 추가 lane이 있을 때만 늘리세요.
-- Terra xhigh의 기계적 volume은 agent를 늘리는 대신 큰 coherent batch, strict schema, deterministic check로 처리하세요.
-- Retry는 packet의 bounded stop condition 안에서만 허용하세요.
+- Do not exceed the number of independent lanes or available session capacity.
+- Start with two workers; add another only for a lane with a distinct contract.
+- Handle mechanical Terra xhigh volume through large coherent batches, strict schemas, and deterministic checks instead of more workers.
+- Retry only within the packet's bounded stop condition.

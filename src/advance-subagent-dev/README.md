@@ -9,7 +9,8 @@
 - `deep-research`: 여러 출처를 수집·대조하고 근거·반대 근거·불확실성·인용을 추적하는 조사 보고서
 - `orchestrate-workstreams`: 독립적인 software-engineering·조사·실행 흐름의 bounded 위임, 검증, 통합
 
-현재 두 skill의 역할, trigger, routing, 산출물 계약은 각각 유지됩니다. 두 skill은 서로의 숨은 맥락이나 실행을 요구하지 않습니다.
+두 skill은 각자의 역할, trigger, routing, 산출물 계약을 소유하며 서로의 숨은 맥락이나 실행을 요구하지 않습니다.
+Runtime instruction, reference, agent interface 문구는 영어로 제공하고 trigger fixture는 실제 선택 입력 언어를 유지합니다.
 
 ## Skill 선택
 

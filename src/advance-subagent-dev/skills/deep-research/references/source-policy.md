@@ -1,102 +1,100 @@
-# 출처 및 증거 정책
+# Source and Evidence Policy
 
-이 문서는 조사에 사용할 출처를 선택하고, 출처가 실제로 뒷받침하는 범위만 주장하기 위한 실행 기준입니다.
+Use the most direct sources that fit the question, and claim only what those sources support.
 
-## 출처 선택 순서
+## Source Priority
 
-질문에 맞는 가장 직접적인 출처를 우선하세요.
+Prefer:
 
-1. 법령·규정·표준·공식 통계·공시·원 논문·원 데이터·제품 공식 문서 같은 1차 자료
-2. 방법론과 편집 책임이 분명한 독립 연구기관, 학술 리뷰, 전문 보도 같은 고품질 2차 자료
-3. 배경과 용어를 설명하는 보조 자료
+1. primary sources such as laws, regulations, standards, official statistics, filings, original papers, original datasets, and official product documentation;
+2. high-quality secondary sources with explicit methods and editorial accountability, such as independent research institutions, scholarly reviews, and specialist reporting;
+3. explanatory sources for background and terminology.
 
-순위는 절대적이지 않습니다. 회사의 공식 발표는 회사가 무엇을 발표했는지 확인하는 1차 자료이지만, 그 발표가 사실인지 독립적으로 검증하는 근거는 아닙니다. 법률·의료·재무·안전처럼 최신성과 정확성이 중요한 영역에서는 현재의 공식 자료를 우선하고 적용 범위와 전문적 한계를 밝히세요.
+This order is not absolute. A company announcement is primary evidence of what the company announced, not independent proof that its claim is true. For legal, medical, financial, or safety work, prioritize current official sources and disclose scope and professional limits.
 
-## 출처 평가 축
+## Evaluation Axes
 
-각 핵심 출처를 다음 기준으로 평가하세요.
+Assess every material source for:
 
-- 직접성: 출처가 해당 주장을 직접 다루는가?
-- 권위: 작성 주체가 그 사실을 알거나 측정할 위치에 있는가?
-- 방법 적합성: 표본, 측정, 정의, 비교 방식이 질문에 맞는가?
-- 최신성: 주장에 필요한 기준 시점을 충족하는가?
-- 독립성: 다른 근거와 동일한 보도자료, 데이터, 작성 주체에 의존하지 않는가?
-- 이해관계: 출처가 결과에 경제적·정치적·조직적 이해관계를 갖는가?
-- 재현성: 원문, 데이터, 방법, 인용 위치를 다시 찾을 수 있는가?
+- **Directness:** Does it address the claim directly?
+- **Authority:** Is the author positioned to know or measure it?
+- **Method fit:** Do sample, measurement, definitions, and comparisons fit the question?
+- **Freshness:** Does it satisfy the required as-of date?
+- **Independence:** Does it rely on the same release, dataset, or author as other evidence?
+- **Interest:** Does the source have economic, political, or organizational incentives?
+- **Reproducibility:** Can the source, method, data, and cited location be recovered?
 
-출처의 유명세나 검색 순위를 증거 품질로 대체하지 마세요.
+Do not substitute popularity or search rank for evidence quality.
 
-## 탐색과 증거를 분리하기
+## Separate Discovery from Evidence
 
-- 검색 결과 제목, 검색 스니펫, AI 요약, 지식 패널은 후보를 찾기 위한 탐색 자료입니다.
-- 최종 근거는 직접 연 정확한 페이지, 문서, 논문, 데이터셋에서 가져오세요.
-- 다른 문서를 인용하는 2차 자료를 발견하면 가능한 한 원출처로 이동하세요.
-- 원출처에 접근하지 못하면 2차 자료라는 사실과 검증 한계를 표시하세요.
-- 삭제, 로그인, 지역 제한, 유료 장벽 때문에 확인할 수 없는 문서는 확인한 것처럼 인용하지 마세요.
+- Treat search titles, snippets, AI summaries, and knowledge panels as discovery aids.
+- Cite only exact pages, documents, papers, or datasets that were opened and inspected.
+- Follow secondary citations to the original source when possible.
+- If the original source is unavailable, identify the evidence as secondary and disclose the verification limit.
+- Never imply inspection of content blocked by deletion, login, region, or paywall.
 
-## 날짜와 버전
+## Dates and Versions
 
-다음 날짜를 구분하세요.
+Distinguish:
 
-- 발행일: 문서가 처음 공개된 날짜
-- 업데이트일: 내용이 바뀐 날짜
-- 기준일: 데이터나 규정이 설명하는 시점
-- 접근일: 실제로 내용을 확인한 날짜
+- publication date;
+- update date;
+- as-of date represented by the content;
+- access date.
 
-“현재”, “최근”, “최신” 같은 표현은 보고서 기준일을 명시할 때만 사용하세요. 소프트웨어 문서, 정책, 가격, 조직 정보처럼 변동 가능한 사실은 버전과 기준일을 함께 기록하세요.
+Use words such as “current,” “recent,” or “latest” only with an explicit report as-of date. Record version and as-of date for mutable facts such as software documentation, policy, prices, and organizational data.
 
-## 독립적인 교차 검증
+## Independent Corroboration
 
-핵심 주장은 가능한 한 서로 독립적인 근거 계열로 확인하세요.
+Corroborate material claims through independent evidence families when possible.
 
-- 같은 보도자료를 전재한 기사 여러 개는 하나의 근거 계열입니다.
-- 같은 데이터셋을 다른 차트로 보여 준 자료 여러 개도 독립 측정이 아닙니다.
-- 서로 다른 기관이 같은 현상을 다른 방법으로 측정했다면 독립성이 높습니다.
-- 1차 자료와 독립적인 비판·재분석을 함께 보면 자기주장과 외부 검증을 구분할 수 있습니다.
+- Multiple stories repeating one press release are one family.
+- Multiple charts derived from one dataset are not independent measurements.
+- Separate institutions measuring the same phenomenon with different methods have stronger independence.
+- Pairing a primary source with independent criticism or reanalysis distinguishes self-report from external validation.
 
-독립적인 근거를 구할 수 없으면 출처 수를 부풀리지 말고 교차 검증 불가로 표시하세요.
+If independent evidence is unavailable, mark corroboration as unavailable instead of inflating the source count.
 
-## 상충하는 근거
+## Conflicting Evidence
 
-출처가 충돌하면 먼저 다음 차이를 비교하세요.
+Compare:
 
-- 용어와 지표 정의
-- 모집단, 표본과 제외 기준
-- 지역과 조사 기간
-- 명목값·실질값, 총액·순액 등 계산 방식
-- 관측값·추정값·전망값 구분
-- 데이터 수집과 분석 방법
-- 이해관계와 공개 목적
-- 업데이트 또는 개정 시점
+- terms and metric definitions;
+- population, sample, and exclusion criteria;
+- region and observation period;
+- nominal versus real, gross versus net, and other calculation choices;
+- observed, estimated, and forecast values;
+- collection and analysis methods;
+- interests and publication purpose;
+- update or revision dates.
 
-충돌을 해소할 수 없으면 범위를 나눠 각각의 조건에서 성립하는 결론을 쓰고, 어느 쪽을 채택했는지와 이유를 밝히세요.
+If the conflict remains unresolved, separate the scopes in which each result holds and explain which interpretation you use and why.
 
-## 주장과 인용의 결합
+## Claims and Citations
 
-- 인용은 가능한 한 해당 주장의 바로 뒤에 두세요.
-- 링크는 검색 결과가 아니라 실제 근거 페이지로 연결하세요.
-- 긴 문서를 인용할 때는 절, 표, 페이지, 문단처럼 재확인 가능한 위치를 기록하세요.
-- 출처가 말한 범위보다 넓게 일반화하지 마세요.
-- 직접 인용은 꼭 필요한 짧은 구절에만 사용하고, 대부분은 의미를 보존해 요약하세요.
-- 하나의 인용으로 여러 독립 주장을 한꺼번에 정당화하지 마세요.
+- Place citations immediately after the supported claim when practical.
+- Link to the evidence page, not a search result.
+- For long documents, record a section, table, page, or paragraph.
+- Do not generalize beyond the source's scope.
+- Use direct quotations only for short, necessary passages; otherwise summarize faithfully.
+- Do not use one citation to support several independent claims.
 
-## 신뢰도 등급
+## Confidence
 
-주장별 신뢰도는 다음처럼 판단하세요.
+- **High:** direct and applicable primary evidence, independent corroboration, and freshness checks.
+- **Medium:** relevant evidence with a material limit in independence, freshness, method, or scope.
+- **Low:** indirect material, a single self-report, a small sample, an unverified original source, or unresolved conflict.
 
-- 높음: 직접적이고 적합한 1차 근거가 있으며 독립적인 교차 검증과 최신성 확인을 통과했습니다.
-- 중간: 근거는 관련성이 높지만 독립성, 최신성, 방법론 또는 적용 범위에 중요한 제한이 있습니다.
-- 낮음: 간접 자료, 단일 자기주장, 작은 표본, 미확인 원출처 또는 해소되지 않은 상충에 의존합니다.
+Base confidence on the most important weakness and conclusion sensitivity, not source count.
 
-등급은 출처 개수가 아니라 가장 중요한 약점과 결론의 민감도로 정하세요.
+## Prohibited Evidence Handling
 
-## 금지되는 증거 처리
+- Do not invent URLs, documents, authors, dates, numbers, or quotations.
+- Do not claim to have read unopened material.
+- Do not present snippets or model memory as sources.
+- Do not turn correlation into causation.
+- Do not merge forecasts, targets, claims, and observations into one fact category.
+- Do not average uncertain values into a false precise estimate.
 
-- 존재하지 않는 URL, 문서, 저자, 날짜, 수치 또는 인용문을 만들지 마세요.
-- 열지 않은 문서를 읽었다고 표현하지 마세요.
-- 검색 스니펫이나 모델 기억을 출처로 제시하지 마세요.
-- 상관관계를 인과관계로 바꾸지 마세요.
-- 전망, 목표, 주장, 관측 결과를 같은 사실 범주로 섞지 마세요.
-- 불확실한 수치를 임의로 평균 내거나 정확한 단일값처럼 제시하지 마세요.
-
-근거가 부족하면 더 강한 문장을 만드는 대신 주장 범위를 좁히거나 “확인할 수 없음”으로 결론내리세요.
+When evidence is insufficient, narrow the claim or conclude that it cannot be determined.

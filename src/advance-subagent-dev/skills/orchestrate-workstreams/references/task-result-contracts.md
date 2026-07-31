@@ -1,24 +1,24 @@
-# Task And Result Contracts
+# Task and Result Contracts
 
 ## Dispatch State
 
-현재 context에 다음 상태를 유지하세요.
+Maintain:
 
 ```yaml
 route: DISPATCH
-graph: <workstream/dependency nodes>
+graph: <workstream and dependency nodes>
 assignments:
   - agent_id: <spawn tool result>
     task_packet: <complete packet>
 ownership:
-  agent_owned: <per-agent files/artifacts or none>
+  agent_owned: <per-agent files or artifacts, or none>
   main_owned: <shared contracts and integration surfaces>
 required_results: [<agent ids>]
 follow_up_used: false
 whole_result_verification: [<checks>]
 ```
 
-Agent ID를 추정하지 말고 incomplete state로 integration을 시작하지 마세요.
+Never infer an agent ID or begin integration with incomplete dispatch state.
 
 ## Task Packet
 
@@ -39,9 +39,9 @@ constraints:
   - Do not expand scope.
   - Do not write outside ownership.
   - Preserve explicit user permissions and shared-state limits.
-deliverable: <bounded integrable output>
+deliverable: <bounded, integrable output>
 result_schema: <required Result Envelope fields>
-evidence: <paths, URLs, symbols, commands, key outputs>
+evidence: <paths, URLs, symbols, commands, and key outputs>
 validation: <deterministic or review checks>
 completion_conditions: <observable success>
 stop_conditions: <blocked, inconclusive, retry, time, or evidence limit>
@@ -56,8 +56,8 @@ summary_and_claims:
     basis: confirmed | inference
 evidence:
   - <source, path, symbol, command, or summarized output>
-inspected_surfaces: [<files, artifacts, sources, systems>]
-changed_surfaces: [<files/artifacts and reasons, or none>]
+inspected_surfaces: [<files, artifacts, sources, or systems>]
+changed_surfaces: [<files or artifacts and reasons, or none>]
 validation:
   performed: [<check and result>]
   skipped: [<check and reason>]
@@ -66,10 +66,10 @@ risks_and_uncertainty: [<unknowns or none>]
 recommended_integration_action: <main-agent action>
 ```
 
-## 상태 판정
+## Status Rules
 
-- `completed`: completion criteria와 evidence·validation 계약을 충족합니다.
-- `blocked`: 외부 의존성, 입력, 도구, 권한이 완료를 막습니다.
-- `inconclusive`: 허용 범위를 조사했지만 결론을 지지할 근거가 부족합니다.
+- `completed`: Meets completion criteria and the evidence and validation contract.
+- `blocked`: An external dependency, input, tool, or permission prevents completion.
+- `inconclusive`: The allowed scope was inspected but evidence remains insufficient.
 
-Missing validation은 자동 성공이 아닙니다. Ownership 밖의 변경은 accepted result가 아니라 위반입니다.
+Missing validation is not success. A change outside ownership is a violation, not an accepted result.

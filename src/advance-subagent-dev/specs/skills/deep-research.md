@@ -35,6 +35,7 @@
 - 호출 방식: 명시 `$advance-subagent-dev:deep-research` 또는 여러 출처 대조와 조사 보고서가 필요한 요청의 암시 호출
 - 입력: 질문과 맥락, 의사결정 목적, 범위, 기준 시점, 지역, 비교축, 원하는 보고서 형식
 - 출력: 주장별 증거를 추적할 수 있는 조사 보고서
+- runtime 언어: `SKILL.md`, reference Markdown, agent interface 문구는 영어
 
 ## 핵심 계약
 
