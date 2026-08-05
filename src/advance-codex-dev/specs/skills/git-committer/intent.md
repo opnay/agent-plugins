@@ -7,6 +7,8 @@
 - `git-committer`는 readiness, 검증 통과, handoff만으로 commit 실행 승인을 추정하지 않아야 한다.
 - `git-committer` 스펙은 folder-based 구조로 두고, intent에는 readiness에서 commit 실행까지의 흐름도가 보여야 한다.
 - `git-committer`의 흐름도는 커밋 준비, 커밋 실행 권한, 커밋 실행 흐름을 분리해서 보여야 한다.
+- commit message는 Bash heredoc/EOF나 표준입력으로 직접 주입하지 않고, 별도 파일 생성 > `git commit -F <file>` > 파일 정리 순서로 전달해야 한다.
+- 메시지 파일 생성, 내용 확인, commit 실행, 파일 정리는 실패와 중단 경로까지 통제하는 gate여야 한다.
 
 ## 전체 흐름도
 
@@ -60,11 +62,19 @@ flowchart TD
   A[커밋 실행 권한]
 
   subgraph B[커밋 실행]
-    C[staged 검증] --> D[커밋 메시지 준비] --> E[커밋 생성]
+    C[staged 검증] --> D[커밋 메시지 준비]
+    D --> E[메시지 파일 생성]
+    E -->|성공| F[파일 내용 확인]
+    E -->|실패| I[메시지 파일 정리]
+    F -->|통과| G[final status와 staged diff 확인]
+    G --> H[git commit -F 파일]
+    F -->|실패 또는 중단| I[메시지 파일 정리]
+    G -->|불일치 또는 중단| I
+    H --> I
   end
 
-  F[결과 확인]
+  J[결과 확인]
 
   A --> C
-  E --> F
+  I --> J
 ```

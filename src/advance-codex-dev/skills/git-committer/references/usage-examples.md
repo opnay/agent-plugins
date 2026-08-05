@@ -1,48 +1,46 @@
 # Usage Examples
 
-## Purpose
-Provide concrete examples for commit types, messages, granularity, and verification checks.
+## Commit Types
 
-## Commit types
 Use the most specific type that fits the change.
 
-- feat: new user-facing feature
-- fix: bug fix
-- refactor: code change that neither fixes a bug nor adds a feature
-- docs: documentation-only changes
-- test: adding or updating tests
-- perf: performance improvement
-- style: formatting or style-only changes (no behavior change)
-- build: build system or dependencies
-- ci: CI configuration or scripts
-- chore: maintenance tasks not in the above
+- `feat`: new user-facing feature
+- `fix`: bug fix
+- `refactor`: behavior-preserving code restructuring
+- `docs`: documentation-only change
+- `test`: test addition or update
+- `perf`: performance improvement
+- `style`: formatting or style-only change
+- `build`: build system or dependency change
+- `ci`: CI configuration or script change
+- `chore`: maintenance outside the above types
 
-## Message example
+## Message Example
 
+```text
+docs: clarify deployment prerequisites
+
+- document required runtime and environment configuration
+- verify the staged Markdown diff and whitespace
 ```
-feat: login page for google oauth 2.0
 
-- add `pages/login`
-- add login api for backend `/api/auth/google`
-- connect pages and api for google login
-```
-
-## Commit granularity examples
+## Commit Granularity
 
 - Package updates:
-  - `honojs` upgrade commit
-  - fix commit for `honojs` upgrade errors (if any)
-  - `pg` upgrade commit
+  - dependency upgrade
+  - upgrade-related fixes, if needed
 - Login feature in a monorepo:
-  - REST API design doc commit
-  - DB design doc commit
-  - DB schema apply commit
-  - table name typo fix commit
-  - missing index fix commit
+  - API design
+  - database design
+  - schema application
+  - later typo or missing-index fixes
 
-## Staged verification example (scenario-based)
+## Verification Scope
 
-- Always confirm staged scope with `git status` and `git diff --staged` before commit.
-- Example only: if staged verification does not cover risk for modified Vite components, run a supporting check such as lint, typecheck, or build.
-- Choose supporting checks based on the actual project and staged scope.
-- If staged verification or a supporting check is skipped or unavailable, report the skip reason and residual risk; do not call it pass.
+- Always confirm staged scope with `git status` and `git diff --staged` immediately before commit.
+- Run the narrowest deterministic supporting check for the actual staged risk.
+- For docs-only changes, read back the staged diff and check formatting or whitespace.
+- For code changes, choose among lint, typecheck, test, or build based on the changed behavior.
+- Block when staged verification is unavailable.
+- When a supporting check is unavailable, report the reason and residual risk; continue only when task risk permits.
+- Skip only with user approval or when the check is disproportionate to task risk; report the basis and residual risk.

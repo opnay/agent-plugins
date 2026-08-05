@@ -26,3 +26,11 @@
 - bullet list로 실제 변경과 검증 근거를 요약합니다.
 - skipped verification이나 residual risk가 있으면 body 또는 final report에 숨기지 않습니다.
 - body는 literal `\n` escape, 불필요한 blank line, unrelated scope 설명을 피합니다.
+
+## File Input
+
+- commit message 전체를 신뢰된 temporary-file allocator가 만든 전용 파일 하나에 기록합니다.
+- 파일에는 subject, 한 줄의 separator, bullet body만 두고 shell 명령, heredoc/EOF delimiter, quoting wrapper를 넣지 않습니다.
+- 파일을 commit 전에 다시 읽어 화면에 보이는 내용이 의도한 메시지와 정확히 같은지 확인합니다.
+- commit에는 `git commit -F <file>`만 사용합니다.
+- `git commit -F -`, heredoc, here-string, command substitution, 여러 `-m` 인자는 대안으로 허용하지 않습니다.

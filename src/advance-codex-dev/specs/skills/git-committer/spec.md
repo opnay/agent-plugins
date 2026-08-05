@@ -3,7 +3,7 @@
 ## 목적
 
 `git-committer`는 readiness 판단이 끝난 변경을 실제 task-scoped commit으로 마무리하는 finalization skill입니다.
-핵심은 커밋 준비, 명시적 commit 실행 권한, staged 검증, commit message 품질, post-commit 확인을 하나의 좁은 실행 계약으로 묶는 것입니다.
+핵심은 커밋 준비, 명시적 commit 실행 권한, staged 검증, 파일 기반 commit message 전달, post-commit 확인을 하나의 좁은 실행 계약으로 묶는 것입니다.
 
 ## 경계
 
@@ -12,6 +12,7 @@
   - commit 범위 분리와 staged diff 검토
   - staged 검증과 필요한 보조 확인의 skip/failure 보고
   - colon-separated commit message와 body 작성 규율
+  - 메시지 파일 생성 > `git commit -F <file>` > 파일 정리 lifecycle
   - 최종 commit 생성과 metadata 확인
 - 제외:
   - readiness 판단 자체
@@ -36,9 +37,9 @@
 ## 상세 계약 구조
 
 - `intent.md`: 사용자 스펙 의도와 commit flow graph
-- `workflow.md`: commit preparation, commit execution authority, commit execution
-- `message.md`: commit type, subject, body 작성 규칙
-- `verification.md`: staged 검증, 필요한 보조 확인, skip/failure, post-commit 확인
+- `workflow.md`: commit preparation, commit execution authority, message file gate, commit execution
+- `message.md`: commit type, subject, body, file input 작성 규칙
+- `verification.md`: staged 검증, 필요한 보조 확인, message file cleanup, skip/failure, post-commit 확인
 
 ## 핵심 처리 계약
 
@@ -50,6 +51,11 @@
 - 커밋 실행은 staged 검증, 메시지 준비, 커밋 생성을 포함합니다.
 - staged 검증이나 필요한 보조 확인은 실행 불가/스킵 이유와 residual risk를 기록할 수 있어야 합니다.
 - 커밋 메시지는 `type: detailed subject` 형식과 bullet body를 사용합니다.
+- commit message는 신뢰된 temporary-file allocator가 만든 전용 파일에 기록하고, 파일 내용을 확인한 뒤 `git commit -F <file>`로만 전달합니다.
+- Bash heredoc/EOF, here-string, command substitution, stdin의 `git commit -F -`, 여러 `-m` 인자로 commit message를 구성하지 않습니다.
+- 메시지 파일을 만든 뒤에는 commit 성공, 실패, 취소와 관계없이 정확한 파일을 정리하고 삭제 여부를 확인합니다.
+- 강제 interruption으로 cleanup을 실행하지 못하면 다음 재개 시 allocator가 만든 것으로 검증된 정확한 파일만 먼저 정리하고 새 commit 시도를 시작합니다.
+- 파일 생성, 내용 확인, commit, 정리 중 하나라도 계약대로 처리할 수 없으면 다음 단계로 조용히 넘어가지 않습니다.
 - 커밋 후에는 최신 commit metadata와 working tree 상태를 확인해 결과를 보고합니다.
 
 ## 독립성 원칙
@@ -65,6 +71,7 @@
 - plugin spec, README, manifest prompt가 `git-committer`의 역할과 사용 기준을 언급해야 한다.
 - runtime skill 본문은 dev-only `specs/` 또는 `src/advance-codex-dev` 경로를 실행 지시로 포함하지 않아야 한다.
 - runtime skill은 commit execution approval boundary와 skip/failure verification reporting을 명시해야 한다.
+- runtime skill과 command reference는 메시지 파일 생성 > readback > `git commit -F <file>` > 정리 순서를 명시하고 heredoc/EOF 또는 stdin 대안을 허용하지 않아야 한다.
 
 ## 확장 원칙
 
