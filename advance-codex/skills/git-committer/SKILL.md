@@ -1,15 +1,15 @@
 ---
 name: git-committer
-description: Prepare and execute a task-scoped git commit through explicit commit authority, staged verification, a mandatory message-file gate, commit creation, cleanup, and post-commit confirmation. Use when the user asks to finalize work toward commit; do not execute the commit without explicit commit approval, and do not use for push, PR, release, publish, or version bump.
+description: Finalize a task-scoped git commit with staged verification, a mandatory message-file gate, cleanup, and post-commit confirmation. Use when commit is part of the requested work, including a broader PR workflow; this skill does not perform push, PR, release, publish, or version bump.
 ---
 
 # Git Committer
 
 ## Boundary
 
-- Own task-scoped commit finalization after readiness is established.
-- Execute a commit only with explicit user approval for the selected staged scope.
-- Treat commit, push, PR, release, publish, and version bump as separate approval-sensitive actions.
+- Own task-scoped commit finalization when commit is part of the requested work, directly or within a broader workflow.
+- Do not add a separate commit-specific approval or confirmation gate.
+- Own only the commit step; do not perform push, PR, release, publish, or version bump.
 - Do not own implementation, general cleanup, readiness judgment, or unrelated change removal.
 
 ## Commit Preparation
@@ -18,12 +18,6 @@ description: Prepare and execute a task-scoped git commit through explicit commi
 2. Select the intended commit scope.
 3. Review `git status`, `git diff --staged`, and relevant unstaged or untracked state.
 4. Split, restage, or stop if the staged diff contains unrelated or unexpected changes.
-
-## Commit Execution Authority
-
-1. Confirm the user explicitly approved actual commit execution.
-2. Confirm the approval applies to the selected staged scope.
-3. Stop if approval is absent, unclear, or scoped differently.
 
 ## Commit Execution
 
@@ -46,7 +40,7 @@ description: Prepare and execute a task-scoped git commit through explicit commi
 3. Preserve the exact successful allocator path in task state.
 4. Write only the commit message with a filesystem write or edit tool. Do not construct the content with shell multiline input or redirection. On write failure, run the Cleanup Gate and block the commit.
 5. Read the file back and verify the subject, blank line, bullet body, verification evidence, and absence of unintended shell text or escapes. On readback failure or mismatch, run the Cleanup Gate and block the commit.
-6. Recheck final `git status` and `git diff --staged`. If either check is unavailable or the staged scope differs from the approved scope, run the Cleanup Gate and block the commit.
+6. Recheck final `git status` and `git diff --staged`. If either check is unavailable or the staged scope differs from the selected scope, run the Cleanup Gate and block the commit.
 7. Run `git commit -F <exact-allocated-file-path>` as a separate command.
 8. Run the Cleanup Gate immediately after the commit attempt, or before any controllable stop after allocation.
 9. If forced interruption prevents cleanup, preserve the exact allocator-returned path in task state. On resume, perform step 1 before any new commit attempt.
@@ -74,7 +68,7 @@ Never use Bash heredoc/EOF, here-string, command substitution, `git commit -F -`
 - Distinguish passed, failed, skipped, and unavailable verification.
 - Report the commit hash, subject, and message shape only after confirming them.
 - Report message-file cleanup and remaining working tree changes.
-- Do not imply push, PR, release, publish, or version-bump approval.
+- Do not report push, PR, release, publish, or version bump as completed by this skill.
 
 ## References
 

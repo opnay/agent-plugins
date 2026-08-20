@@ -3,12 +3,12 @@
 ## 목적
 
 `git-committer`는 readiness 판단이 끝난 변경을 실제 task-scoped commit으로 마무리하는 finalization skill입니다.
-핵심은 커밋 준비, 명시적 commit 실행 권한, staged 검증, 파일 기반 commit message 전달, post-commit 확인을 하나의 좁은 실행 계약으로 묶는 것입니다.
+핵심은 커밋 준비, staged 검증, 파일 기반 commit message 전달, post-commit 확인을 하나의 좁은 실행 계약으로 묶는 것입니다.
 
 ## 경계
 
 - 포함:
-  - 실제 commit 실행 승인 확인
+  - commit이 포함된 사용자 요청이나 상위 작업 workflow의 commit 단계 실행
   - commit 범위 분리와 staged diff 검토
   - staged 검증과 필요한 보조 확인의 skip/failure 보고
   - colon-separated commit message와 body 작성 규율
@@ -16,14 +16,16 @@
   - 최종 commit 생성과 metadata 확인
 - 제외:
   - readiness 판단 자체
+  - commit이 사용자 요청 범위에 포함되는지 결정하는 상위 작업 해석
   - unrelated change cleanup
   - interactive git tutoring 전반
   - implementation 자체의 설계
-  - push, PR, release, publish, version bump 승인
+  - push, PR, release, publish, version bump 실행
 
 ## 처리하려는 작업 형태
 
 - 사용자가 작업을 commit으로 마무리하거나 실제 commit 실행을 요청한 경우
+- `PR 올려놔`처럼 완료에 commit이 필요한 상위 작업을 요청한 경우
 - mixed change를 task-scoped commit 단위로 나눠야 하는 경우
 - commit message quality와 staged 검증이 중요한 경우
 
@@ -37,17 +39,16 @@
 ## 상세 계약 구조
 
 - `intent.md`: 사용자 스펙 의도와 commit flow graph
-- `workflow.md`: commit preparation, commit execution authority, message file gate, commit execution
+- `workflow.md`: request-scope entry, commit preparation, message file gate, commit execution
 - `message.md`: commit type, subject, body, file input 작성 규칙
 - `verification.md`: staged 검증, 필요한 보조 확인, message file cleanup, skip/failure, post-commit 확인
 
 ## 핵심 처리 계약
 
-- `git-committer`는 사용자 요청 작업을 커밋 준비, 커밋 실행 권한, 커밋 실행으로 나눠 처리합니다.
-- commit, push, PR, release, publish, version bump는 서로 다른 approval-sensitive boundary입니다.
-- readiness 통과, 검증 통과, handoff, session record만으로 commit 실행 승인을 만들지 않습니다.
+- `git-committer`는 commit이 사용자 요청 범위에 포함된 뒤의 커밋 준비와 실행을 처리합니다.
+- commit을 포함하는 상위 작업 요청에는 별도 commit-specific 승인이나 재확인 단계를 추가하지 않습니다.
+- push, PR, release, publish, version bump는 이 skill의 실행 범위가 아니지만, 해당 상위 workflow의 commit 단계에는 이 skill을 사용할 수 있습니다.
 - 커밋 준비는 프로젝트의 커밋 준비 단계와 커밋할 범위 선택을 포함합니다.
-- 커밋 실행 권한은 사용자의 실제 commit 실행 승인을 확인하는 별도 단계입니다.
 - 커밋 실행은 staged 검증, 메시지 준비, 커밋 생성을 포함합니다.
 - staged 검증이나 필요한 보조 확인은 실행 불가/스킵 이유와 residual risk를 기록할 수 있어야 합니다.
 - 커밋 메시지는 `type: detailed subject` 형식과 bullet body를 사용합니다.
@@ -70,7 +71,7 @@
 - release build 후 root `advance-codex/skills/git-committer/SKILL.md`가 dev source와 맞아야 한다.
 - plugin spec, README, manifest prompt가 `git-committer`의 역할과 사용 기준을 언급해야 한다.
 - runtime skill 본문은 dev-only `specs/` 또는 `src/advance-codex-dev` 경로를 실행 지시로 포함하지 않아야 한다.
-- runtime skill은 commit execution approval boundary와 skip/failure verification reporting을 명시해야 한다.
+- runtime skill은 별도 commit-specific 승인 gate 없이 요청 범위의 commit을 실행하고, skip/failure verification reporting을 명시해야 한다.
 - runtime skill과 command reference는 메시지 파일 생성 > readback > `git commit -F <file>` > 정리 순서를 명시하고 heredoc/EOF 또는 stdin 대안을 허용하지 않아야 한다.
 
 ## 확장 원칙

@@ -47,7 +47,7 @@ Run each step separately. Use only the exact path returned by the fixed allocato
    git diff --staged
    ```
 
-   If either check is unavailable or the staged scope differs from the approved scope, run the Cleanup Gate and block the commit.
+   If either check is unavailable or the staged scope differs from the selected scope, run the Cleanup Gate and block the commit.
 
 7. Commit from the exact allocated file:
 

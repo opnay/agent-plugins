@@ -9,6 +9,7 @@
 - `git-committer`의 흐름도는 커밋 준비, 커밋 실행 권한, 커밋 실행 흐름을 분리해서 보여야 한다.
 - commit message는 Bash heredoc/EOF나 표준입력으로 직접 주입하지 않고, 별도 파일 생성 > `git commit -F <file>` > 파일 정리 순서로 전달해야 한다.
 - 메시지 파일 생성, 내용 확인, commit 실행, 파일 정리는 실패와 중단 경로까지 통제하는 gate여야 한다.
+- `PR 올려놔`처럼 commit을 포함하는 상위 작업 요청은 commit 실행도 허용한 것으로 처리하고 별도 commit 승인을 다시 요구하지 않아야 한다. 변경만 요청한 상태에서의 자의적 commit 방지는 상위 요청 범위가 맡으며, `git-committer` 내부의 별도 승인 절차는 두지 않는다.
 
 ## 전체 흐름도
 
@@ -17,7 +18,7 @@ flowchart LR
   A[사용자 요청 작업]
 
   subgraph G[git-committer]
-    B[커밋 준비] --> C[커밋 실행 권한] --> D[커밋 실행]
+    B[커밋 준비] --> D[커밋 실행]
   end
 
   A --> B
@@ -33,33 +34,17 @@ flowchart TD
     C[프로젝트의 커밋 준비 단계] --> D[커밋할 범위 선택]
   end
 
-  E[커밋 실행 권한]
+  E[커밋 실행]
 
   A --> C
   D --> E
-```
-
-## 커밋 실행 권한 흐름도
-
-```mermaid
-flowchart TD
-  A[커밋 준비]
-
-  subgraph B[커밋 실행 권한]
-    C[사용자 커밋 실행 승인 확인]
-  end
-
-  D[커밋 실행]
-
-  A --> C
-  C --> D
 ```
 
 ## 커밋 실행 흐름도
 
 ```mermaid
 flowchart TD
-  A[커밋 실행 권한]
+  A[커밋 준비]
 
   subgraph B[커밋 실행]
     C[staged 검증] --> D[커밋 메시지 준비]

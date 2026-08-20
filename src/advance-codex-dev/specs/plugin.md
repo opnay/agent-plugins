@@ -40,7 +40,7 @@
   - spec: `advance-codex-dev/specs/skills/skill-scenario-testing.md`
 - `plugin-creator`: top-down plugin boundary와 manifest-aligned packaging 규칙을 강화한다.
   - spec: `advance-codex-dev/specs/skills/plugin-creator.md`
-- `git-committer`: task-scoped commit 준비, 실행 권한 확인, staged 검증, 메시지, commit 실행 규율을 제공한다.
+- `git-committer`: 사용자 요청이나 상위 workflow에 포함된 task-scoped commit의 준비, staged 검증, 메시지, 실행 규율을 제공한다.
   - spec: `advance-codex-dev/specs/skills/git-committer/spec.md`
 - `optimize-token`: 에이전트 응답, 진행 보고, 상태 문구, 검증·승인 문구의 토큰 사용을 줄이되 정확성, 의미 맥락, 검증 상태, 승인 경계, 필수 출력 형식, 현재 상태 기준을 보존하는 기준을 제공한다.
   - spec: `advance-codex-dev/specs/skills/optimize-token/spec.md`

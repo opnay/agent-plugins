@@ -2,21 +2,15 @@
 
 ## Entry Gate
 
-- 사용자가 실제 commit 실행을 요청했거나, readiness gate가 통과된 뒤 실제 commit 실행이 다음 단계로 명시되어야 합니다.
-- commit 실행 승인은 readiness, verification, handoff, session record, prior context에서 추정하지 않습니다.
-- commit 승인 범위는 commit에만 적용하며 push, PR, release, publish, version bump로 확장하지 않습니다.
+- commit이 현재 사용자 요청 범위에 포함돼야 합니다. 직접 commit 요청뿐 아니라 `PR 올려놔`처럼 완료에 commit이 필요한 상위 작업 요청도 포함합니다.
+- 이 skill 안에서 별도 commit-specific 승인이나 재확인 단계를 두지 않습니다.
+- push, PR, release, publish, version bump 실행은 이 skill의 범위가 아니며, 해당 workflow의 commit 단계만 처리합니다.
 
 ## Commit Preparation
 
 1. 프로젝트의 커밋 준비 단계가 끝났는지 확인합니다.
 2. staged diff와 unstaged/untracked 상태를 읽어 커밋할 범위를 선택합니다.
 3. 범위가 섞이면 split 또는 restage를 먼저 처리하고, 커밋 범위를 다시 확인합니다.
-
-## Commit Execution Authority
-
-1. 사용자에게 실제 commit 실행 승인이 있는지 확인합니다.
-2. 승인 범위가 현재 선택된 staged 범위와 같은지 확인합니다.
-3. 승인 범위가 다르거나 불명확하면 commit 실행으로 넘어가지 않습니다.
 
 ## Commit Execution
 
@@ -48,4 +42,4 @@
 - staged 상태를 확인하지 않고 commit하지 않습니다.
 - skipped verification을 green으로 보고하지 않습니다.
 - 메시지 파일을 만들기 전에 경로를 추측하거나, 만든 뒤 cleanup 없이 남기지 않습니다.
-- commit 완료를 push/PR/release/publish 승인이나 turn closure로 취급하지 않습니다.
+- commit 완료를 push/PR/release/publish 완료로 보고하지 않습니다.
