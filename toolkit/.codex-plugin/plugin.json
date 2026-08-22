@@ -1,0 +1,35 @@
+{
+  "name": "toolkit",
+  "version": "0.1.0",
+  "description": "Tool-specific CLI guidance for operating local developer tools and bundled extensions with explicit compatibility and safety boundaries.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "cli",
+    "developer-tools",
+    "container",
+    "apple-container",
+    "oci",
+    "macos",
+    "kubernetes"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Toolkit",
+    "shortDescription": "Operate local developer CLIs with bounded tool-specific guidance.",
+    "longDescription": "Provides bounded skills for inspecting, operating, maintaining, and troubleshooting local developer CLIs without treating incidental command usage as a plugin concern.",
+    "developerName": "opnay",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Analyze",
+      "Plan",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use $toolkit:apple-container for Apple container CLI tasks on Apple silicon macOS, including common commands, lifecycle checks, compatibility limits, installation, uninstallation, containerization concepts, and the bundled experimental k8s plugin without assuming third-party Kubernetes CLI execution."
+    ],
+    "brandColor": "#24292F"
+  }
+}
