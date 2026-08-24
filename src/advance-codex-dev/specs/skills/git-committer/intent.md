@@ -10,6 +10,7 @@
 - commit message는 Bash heredoc/EOF나 표준입력으로 직접 주입하지 않고, 별도 파일 생성 > `git commit -F <file>` > 파일 정리 순서로 전달해야 한다.
 - 메시지 파일 생성, 내용 확인, commit 실행, 파일 정리는 실패와 중단 경로까지 통제하는 gate여야 한다.
 - `PR 올려놔`처럼 commit을 포함하는 상위 작업 요청은 commit 실행도 허용한 것으로 처리하고 별도 commit 승인을 다시 요구하지 않아야 한다. 변경만 요청한 상태에서의 자의적 commit 방지는 상위 요청 범위가 맡으며, `git-committer` 내부의 별도 승인 절차는 두지 않는다.
+- 메시지 파일 lifecycle에서는 생성 직후와 cleanup 직전에 같은 file type 검사를 반복하지 않고, 신뢰된 allocator의 exact path와 cleanup 후 부재 확인으로 안전성을 통제하고 싶다.
 
 ## 전체 흐름도
 

@@ -15,17 +15,9 @@ Run each step separately. Use only the exact path returned by the fixed allocato
    mktemp /tmp/git-committer-message.XXXXXX
    ```
 
-   Treat allocation as successful only when the command exits zero, returns exactly one path matching `/tmp/git-committer-message.` plus the allocator suffix, and these separate checks pass:
+   Allocation succeeds only when the command exits zero and returns exactly one path matching `/tmp/git-committer-message.` plus the allocator suffix. Do not add file-type checks after this trusted allocator.
 
-   ```sh
-   test -f '/tmp/git-committer-message.EXACT'
-   ```
-
-   ```sh
-   test ! -L '/tmp/git-committer-message.EXACT'
-   ```
-
-   On nonzero exit without a path, block the commit and run no cleanup. On nonzero exit with a path, never use it for commit; run the Cleanup Gate only after provenance, template, and file type are verified. Otherwise report the path and residual risk without deleting it.
+   On nonzero exit without a path, block the commit and run no cleanup. On nonzero exit with exactly one matching path from the current allocator invocation, never use it for commit; run the Cleanup Gate. Otherwise report the output and residual risk without deleting anything.
 
 3. Preserve the exact successful allocator path in task state.
 4. Use a filesystem write or edit tool to place only the commit message in that exact file. Do not use shell redirection, heredoc/EOF, here-string, command substitution, or stdin. On write failure, run the Cleanup Gate and block the commit.
@@ -61,8 +53,14 @@ If forced interruption prevents cleanup, preserve the exact allocator-returned p
 
 ## Cleanup Gate
 
-1. Accept only an exact allocator-returned path with verified task-state provenance and fixed template.
-2. Check whether the path is already absent:
+1. Accept only the fixed-template exact path returned by the current allocator invocation or preserved in task state after forced interruption.
+2. Without a preceding file-type check, run:
+
+   ```sh
+   unlink '/tmp/git-committer-message.EXACT'
+   ```
+
+3. Regardless of the `unlink` result, check both forms of absence:
 
    ```sh
    test ! -e '/tmp/git-committer-message.EXACT'
@@ -72,27 +70,7 @@ If forced interruption prevents cleanup, preserve the exact allocator-returned p
    test ! -L '/tmp/git-committer-message.EXACT'
    ```
 
-   If both pass, cleanup is complete.
-
-3. Otherwise, immediately before deletion, verify the expected regular non-symlink file:
-
-   ```sh
-   test -f '/tmp/git-committer-message.EXACT'
-   ```
-
-   ```sh
-   test ! -L '/tmp/git-committer-message.EXACT'
-   ```
-
-   If either fails, do not delete the path; report the exact path and residual risk.
-
-4. Delete only the verified exact path:
-
-   ```sh
-   unlink '/tmp/git-committer-message.EXACT'
-   ```
-
-5. Repeat both absence checks from step 2. Both must pass. On any cleanup failure, report the remaining exact path and residual risk; do not undo a successful commit.
+4. If both checks pass, cleanup is complete. Otherwise report the remaining exact path and residual risk; do not undo a successful commit.
 
 ## Cases
 
@@ -104,7 +82,7 @@ If forced interruption prevents cleanup, preserve the exact allocator-returned p
 
 ### Message Input
 
-- Best: Allocate, verify, write, read back, submit with `git commit -F <file>`, then run the Cleanup Gate.
+- Best: Allocate, write, read back, submit with `git commit -F <file>`, unlink the exact path, then confirm file and symlink absence.
 - Worst: Use a user-provided path, `git commit -F -`, heredoc/EOF, here-string, command substitution, multiple `-m` arguments, or one combined shell script.
 - Smell: The body lacks verification evidence or contains shell text, delimiter markers, literal `\n`, or unexpected blank lines.
 

@@ -21,15 +21,16 @@
 
 ## Message File Verification
 
-- commit 전에 메시지 파일의 정확한 경로가 이번 gate의 allocator에서 왔고 예상 template과 file type에 맞는지 확인합니다.
+- commit 전에 메시지 파일의 정확한 경로가 이번 gate의 allocator에서 왔고 예상 template에 맞는지 확인합니다.
 - 사용자 제공 경로, 임의 저장 경로, allocator provenance를 확인할 수 없는 경로는 message input과 cleanup에 사용하지 않습니다.
-- allocation은 exit 0, 단일 반환 경로, 예상 template, regular non-symlink file을 모두 확인해야 통과합니다. nonzero exit에 경로가 없으면 cleanup 대상이 없음을 기록하고 commit을 막습니다. 경로가 반환됐다면 검증된 정확한 파일만 cleanup합니다.
+- Cleanup Gate는 현재 allocator invocation이 직접 반환했거나 강제 interruption 후 task state가 보존한 예상-template exact path만 받습니다.
+- allocation은 exit 0, 단일 반환 경로, 예상 template 일치를 확인해야 통과하며 생성 직후 별도 file type 검사는 실행하지 않습니다. nonzero exit에 경로가 없으면 cleanup 대상이 없음을 기록하고 commit을 막습니다. 예상 template과 일치하는 단일 경로가 반환됐다면 그 exact path만 cleanup합니다.
 - readback으로 subject, blank line, bullet body, literal `\n`, heredoc/EOF marker, 의도하지 않은 shell text를 확인합니다.
 - 파일 생성 또는 readback이 실패하면 commit을 실행하지 않고, 생성된 파일이 있으면 정리합니다.
-- commit 시도 후에는 성공과 실패 모두 cleanup 직전에 allocator provenance, 예상 template, regular non-symlink file을 재검증합니다. 일치할 때만 정확한 메시지 파일을 삭제하고 `! -e`와 `! -L`을 각각 확인해 file 또는 symlink directory entry가 남지 않았음을 검증합니다.
-- cleanup 직전 재검증이 실패하면 파일을 삭제하지 않고 남은 정확한 경로와 residual risk를 보고합니다.
+- commit 시도 후에는 성공과 실패 모두 allocator provenance와 예상 template이 확인된 exact path를 file type 재검사 없이 `unlink`하고, `unlink` 결과와 관계없이 `! -e`와 `! -L`을 각각 확인해 file 또는 symlink directory entry가 남지 않았음을 검증합니다.
+- 두 부재 확인이 모두 통과하면 cleanup 완료입니다. 하나라도 실패하면 남은 exact path와 residual risk를 보고합니다.
 - commit 전 중단도 cleanup 대상입니다. cleanup 실패는 남은 정확한 경로와 residual risk를 별도 실패로 보고합니다.
-- 강제 interruption으로 cleanup을 실행하지 못한 경우 재개 시 allocator provenance, 예상 template, file type이 검증된 정확한 경로의 cleanup과 부재 확인을 새 commit 시도보다 먼저 수행합니다.
+- 강제 interruption으로 cleanup을 실행하지 못한 경우 재개 시 task state가 보존한 allocator provenance와 예상 template을 확인하고, exact path의 cleanup과 부재 확인을 새 commit 시도보다 먼저 수행합니다.
 
 ## Post-Commit Confirmation
 

@@ -54,8 +54,10 @@
 - 커밋 메시지는 `type: detailed subject` 형식과 bullet body를 사용합니다.
 - commit message는 신뢰된 temporary-file allocator가 만든 전용 파일에 기록하고, 파일 내용을 확인한 뒤 `git commit -F <file>`로만 전달합니다.
 - Bash heredoc/EOF, here-string, command substitution, stdin의 `git commit -F -`, 여러 `-m` 인자로 commit message를 구성하지 않습니다.
-- 메시지 파일을 만든 뒤에는 commit 성공, 실패, 취소와 관계없이 정확한 파일을 정리하고 삭제 여부를 확인합니다.
-- 강제 interruption으로 cleanup을 실행하지 못하면 다음 재개 시 allocator가 만든 것으로 검증된 정확한 파일만 먼저 정리하고 새 commit 시도를 시작합니다.
+- allocator 성공은 exit 0, 단일 반환 경로, fixed template 일치로 판단하며 생성 직후 별도 file type 검사를 반복하지 않습니다.
+- 메시지 파일을 만든 뒤에는 commit 성공, 실패, 취소와 관계없이 exact allocator path를 정리하고 file과 symlink directory entry의 부재를 확인합니다.
+- cleanup은 현재 allocator invocation이 직접 반환했거나 강제 interruption 후 task state가 보존한 fixed-template exact path만 받습니다.
+- cleanup 직전 file type 재검사는 하지 않으며, 강제 interruption 후에는 task state가 보존한 exact allocator path를 먼저 정리하고 새 commit 시도를 시작합니다.
 - 파일 생성, 내용 확인, commit, 정리 중 하나라도 계약대로 처리할 수 없으면 다음 단계로 조용히 넘어가지 않습니다.
 - 커밋 후에는 최신 commit metadata와 working tree 상태를 확인해 결과를 보고합니다.
 
@@ -73,6 +75,7 @@
 - runtime skill 본문은 dev-only `specs/` 또는 `src/advance-codex-dev` 경로를 실행 지시로 포함하지 않아야 한다.
 - runtime skill은 별도 commit-specific 승인 gate 없이 요청 범위의 commit을 실행하고, skip/failure verification reporting을 명시해야 한다.
 - runtime skill과 command reference는 메시지 파일 생성 > readback > `git commit -F <file>` > 정리 순서를 명시하고 heredoc/EOF 또는 stdin 대안을 허용하지 않아야 한다.
+- runtime skill과 command reference는 allocator 직후나 cleanup 직전에 file type 검사를 요구하지 않고, exact path cleanup 후 file과 symlink 부재만 확인해야 한다.
 
 ## 확장 원칙
 

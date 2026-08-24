@@ -34,9 +34,9 @@ description: Finalize a task-scoped git commit with staged verification, a manda
 
 1. On resume, run the Cleanup Gate for a leftover path only when task state proves it came from this gate's allocator and matches the fixed template.
 2. Run one trusted temporary-file allocator with a fixed safe template.
-   - Proceed only when it exits zero, returns exactly one path, that path matches the template, and it names a regular non-symlink file.
+   - Proceed only when it exits zero and returns exactly one path matching the template. Do not add file-type checks after allocation.
    - On nonzero exit without a path, block the commit; no cleanup target exists.
-   - On nonzero exit with a path, never use it for commit. Run the Cleanup Gate only if provenance, template, and file type can be verified; otherwise report the path and residual risk without deleting it.
+   - On nonzero exit with exactly one matching path from the current allocator invocation, never use it for commit; run the Cleanup Gate. Otherwise report the output and residual risk without deleting anything.
 3. Preserve the exact successful allocator path in task state.
 4. Write only the commit message with a filesystem write or edit tool. Do not construct the content with shell multiline input or redirection. On write failure, run the Cleanup Gate and block the commit.
 5. Read the file back and verify the subject, blank line, bullet body, verification evidence, and absence of unintended shell text or escapes. On readback failure or mismatch, run the Cleanup Gate and block the commit.
@@ -50,11 +50,10 @@ Never use Bash heredoc/EOF, here-string, command substitution, `git commit -F -`
 
 ## Cleanup Gate
 
-1. Accept only the exact allocator-returned path whose provenance and fixed template are verified. Never accept an arbitrary or user-provided path.
-2. If separate file and symlink absence checks both pass, cleanup is complete.
-3. Otherwise, immediately before deletion, verify the path still names the expected regular non-symlink file. If either check fails, do not delete it; report the exact path and residual risk.
-4. Delete only that exact path.
-5. Re-run separate file and symlink absence checks. Both must pass.
+1. Accept only the fixed-template exact path returned by the current allocator invocation or preserved in task state after forced interruption. Never accept an arbitrary or user-provided path.
+2. Run `unlink` once on that exact path without a preceding file-type check.
+3. Regardless of the `unlink` result, run separate file and symlink absence checks.
+4. Cleanup is complete only when both absence checks pass. Otherwise report the exact path and residual risk.
 
 ## Message Rules
 
