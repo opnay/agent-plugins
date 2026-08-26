@@ -11,4 +11,4 @@
 `plugin-creator`는 설치 가능한 plugin bundle의 경계, manifest, README, plugin spec, bundled skill 관계를 정리해야 할 때 사용합니다.
 `skill-scenario-testing`은 reusable instruction을 fresh subagent와 고정 시나리오로 검증하고 evidence 중심으로 분석해야 할 때 사용합니다.
 `git-committer`는 직접 commit 요청이나 PR 같은 상위 workflow에 포함된 task-scoped commit을 준비하고 staged 검증, 메시지, 실행까지 묶어 처리할 때 사용합니다.
-`optimize-token`은 에이전트 응답, 진행 보고, 상태 문구, 검증·승인 문구의 토큰 사용을 줄이되 정확성, 의미 맥락, 검증 결과, 승인 경계, 필수 출력 형식, 현재 상태 기준은 유지해야 할 때 사용합니다.
+`optimize-token`은 에이전트 응답, 진행·상태 문구, reasoning·decision wording, 저장 문서에 token-efficient style을 적용하되 정확성, 의미, 검증, 승인, 필수 형식, exact literal, 언어, 안전 계약을 보존할 때 사용합니다.

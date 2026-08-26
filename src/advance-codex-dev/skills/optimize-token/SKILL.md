@@ -1,55 +1,91 @@
 ---
 name: optimize-token
-description: Use when agent responses, progress or status wording, verification or approval notes, judgments, or durable artifacts should use the fewest safe tokens without losing correctness, meaning-bearing context, verification state, approval boundaries, required format, current-state accuracy, language, tone, or executable contract meaning. agent token optimization, concise response, progress wording, token optimization, no fluff, shortest safe wording, concise, 짧게, 간결하게, 토큰 절약, 답변 압축
+description: Apply a token-efficient language style across agent-authored responses, progress and status notes, reasoning and decision wording, and durable documents while preserving correctness, meaning, verification, authority, required structure, exact literals, language, and safety. token-efficient style, concise writing, concise reasoning, concise response, 문체 최적화, 간결한 문체, 토큰 절약
 ---
 
-# Optimize Token
+# Token-Efficient Style
 
-## Owner
+## Boundary
 
-Reduce agent-generated wording to the shortest safe, grammatical form across responses, operational text, and durable artifacts.
-Preserve correctness, meaning-bearing context, safety, verification state, approval boundaries, exact required details, current state, active language, and register.
+- Apply this style to responses, commentary, progress and status notes, verification and approval wording, reasoning and decision wording, and durable documents.
+- Change expression, structure, and repetition; do not change reasoning logic, judgment depth, task scope, item count, workflow steps, tool choice, verification coverage, or execution authority.
+- Do not request or expose hidden chain-of-thought.
+- Do not perform context or session compression, token-budget or reasoning-effort control, prompt rewriting, or code minification.
+- Do not arbitrarily shorten errors, APIs, identifiers, paths, commands, exact literals, or safety notices.
 
-Do not perform context or session compression, prompt rewriting, code minification, or arbitrary shortening of errors, APIs, identifiers, commands, paths, and safety notices.
+## Core Style
 
-## Contract
+1. Write in a token-efficient style from the first draft; do not default to writing long and summarizing later.
+2. Remove greetings, request restatement, repeated meaning, empty transitions, unnecessary hedges, and self-narrating process text.
+3. Lead with the result, decision, or action, then keep only decision-relevant evidence, limits, risks, or next actions.
+4. When meaning and reading cost are equal, choose the shorter natural and grammatical form.
+5. Prefer active voice and concrete nouns and verbs. Keep hedges only when they express real uncertainty.
+6. Use natural prose when it is shortest and clearest. Use fields, grouped lists, or compact tables only when they reduce repetition without hiding relationships.
+7. Use `-` for a missing field, table cell, or list property only; never substitute it inside prose.
+8. Expand only the phrase needed to preserve a distinction, without explaining the compression itself.
 
-1. Apply maximum safe compression immediately without asking the user to configure intensity.
-2. Remove greetings, request restatement, repetition, weak guesses, and process detail that cannot affect a decision.
-3. Put the result or action first, then necessary evidence, then the next action or risk.
-4. Compare viable forms and emit the one with the fewest tokens when each preserves meaning, grammar, language, and register.
-5. Before retaining prose, test whether grammatical contraction, fields, or a one-line form is shorter.
-6. Expand only the phrase that would otherwise hide a required distinction; add no meta-commentary about that expansion.
+## Symbol Grammar
 
-## Allowed Compression
+- `label: value` connects a field to its value or status: `검증: 통과.`
+- `A > B` expresses a directed ordered relation:
+  - hierarchy: `페이지 > 섹션 > 필드`
+  - procedure: `spec > runtime > build`
+  - state: `draft > review > merged`
+  - priority: `P0 > P1 > P2`
+  - comparison: `3 > 2`
+- `A·B status` groups parallel items sharing one predicate: `Build·Lint 통과.`
+- Make the `>` relation clear from its label or context and keep spaces between elements as `A > B`.
+- Never rewrite code, commands, paths, APIs, or exact literals with symbol grammar.
+- Prefer prose when a symbol would be slower or ambiguous.
 
-- Prefer `label: value` fields or one line when the meaning fits; use a compact table for repeated rows and a grouped list for repeated labels.
-- Do not force labels when a natural sentence is shorter or clearer.
-- Merge repeated wording only when the items keep the same meaning category.
-- Use `-` for a missing field value, table cell, or list attribute; never substitute it inside a natural-language sentence.
+## Surface Rules
 
-Examples:
+### Responses
 
-- `The cause is unknown, but the trace shows a timeout.` -> `cause: unknown. evidence: timeout trace.`
-- `Change the schema, regenerate the client, then test.` -> `sequence: schema > client > test.`
-- `X changes; Y is outside this task.` -> `changed: X. excluded: Y.`
+- Answer directly without restating the request.
+- Keep only evidence and limits needed for the user's judgment.
+- Omit optional offers that do not affect a decision.
+
+### Progress And Status
+
+- Report meaningful state changes, new evidence, scope changes, failures, and blockers.
+- Do not narrate routine commands or repeat an already shared plan.
+
+### Reasoning And Decision Wording
+
+- Express decisions through conclusion, evidence, constraints, and uncertainty.
+- Prefer compact fields such as `의도: 설명. 구현: 미요청.` when two or more independent decision categories become shorter.
+- Reduce self-talk, repeated request analysis, and discarded-option narration.
+- Shorten reasoning wording without reducing reasoning logic, judgment depth, or verification coverage.
+- Do not require hidden chain-of-thought generation or disclosure.
+
+### Durable Documents
+
+- Keep current state and durable contracts; omit authoring history and abandoned options unless an owning change log needs them.
+- Preserve applicability, order, dependencies, exclusions, rollback, source, evidence, and verification limits so the document remains executable without the conversation.
 
 ## Preserve Meaning
 
-Meaning-bearing context is any detail whose removal or merger could change the reader's judgment, next action, approval, risk understanding, or verification interpretation.
-
 - Keep cause separate from evidence, sequence from dependency, and scope from non-goals when the distinction matters.
-- Distinguish a source of truth from generated output and delegated or external evidence from the main agent's judgment.
-- Keep confirmed and unconfirmed scope, failures, skipped or unrun checks, insufficient verification, uncertainty, blockers, approval state and boundaries, residual risk, and next actions visible.
-- Preserve requested sections and format; exact paths, commands, identifiers, dates, versions, numbers, and public API names; active language and register.
-- Preserve conditions and exceptions needed for security, privacy, legal, medical, or financial safety.
+- Distinguish source of truth from generated output, and external or delegated evidence from agent judgment.
+- Distinguish passed, failed, pending, unrun, and insufficient verification.
+- Keep approval state separate from execution state; preserve risks, uncertainty, and blockers.
+- Preserve requested item counts, sections, formats, paths, commands, identifiers, dates, versions, numbers, public API names, active language, and required register.
+- Preserve conditions and exceptions required for security, privacy, legal, medical, or financial safety.
 
-## Durable Artifacts
+## Precedence
 
-- Keep current state and durable contracts; remove authoring history, abandoned options, irrelevant background, and duplicate contract text.
-- Preserve enough applicability, order, dependency, exclusion, rollback, source, evidence, verification-limit, approval, and risk context for a future reader to execute and judge the artifact without the conversation.
-- Keep required literals and artifact format exact.
+Use this order: `correctness·safety > user·repository contract > meaning·executability > natural grammar > token reduction`.
 
 ## Failure Conditions
 
-Compression fails if it creates ambiguity or broken grammar, collapses a meaning-bearing relationship, hides verification or approval limits, removes risk or next action, changes an exact identifier or required format, or leaves a durable artifact stale or non-executable.
+The style fails when it:
+
+- creates ambiguity, broken grammar, or higher reading cost;
+- makes fields, tables, or symbols harder to read than prose;
+- changes cause and evidence, order and dependency, scope and non-goals, or source and output relationships;
+- removes workflow or verification steps, requested items, or durable contracts;
+- changes reasoning results or depth while shortening their wording;
+- hides failures, unrun checks, verification limits, approval boundaries, risks, or blockers;
+- changes an exact literal or required format; or
+- leaves a durable document stale or non-executable.

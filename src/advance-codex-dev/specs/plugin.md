@@ -13,7 +13,7 @@
   - reusable instruction을 fresh executor와 고정 시나리오로 테스트하고 분석 보고하는 workflow
   - installable plugin boundary와 bundled skill coherence 설계
   - task-scoped commit finalization discipline
-  - 응답과 작업 전 판단 문장의 토큰 낭비를 줄이되 정확성, 의미 맥락, 검증, 승인 경계를 보존하는 token optimization
+  - 응답, 진행·상태 문구, reasoning·decision wording, 저장 문서에 정확성, 의미, 검증, 승인, 안전을 보존하는 token-efficient style 적용
 - 제외:
   - 일반 제품 구현 workflow
   - 특정 도메인 기능 구현 가이드
@@ -24,7 +24,7 @@
 - 새 skill이나 plugin을 만들거나 기존 것을 재설계하는 작업
 - reusable instruction을 clean-context scenario로 테스트하고 evidence 중심으로 분석하는 작업
 - commit workflow처럼 Codex 사용 자체의 운영 품질을 안정화하는 작업
-- 응답과 작업 전 판단 문장을 짧고 선명하게 다듬되 필수 보고 정보와 안전 경계를 유지하는 작업
+- agent-authored language 전반에 token-efficient style을 적용하되 판단 논리, workflow, 검증 범위는 바꾸지 않는 작업
 
 ## 대표 표면
 
@@ -42,7 +42,7 @@
   - spec: `advance-codex-dev/specs/skills/plugin-creator.md`
 - `git-committer`: 사용자 요청이나 상위 workflow에 포함된 task-scoped commit의 준비, staged 검증, 메시지, 실행 규율을 제공한다.
   - spec: `advance-codex-dev/specs/skills/git-committer/spec.md`
-- `optimize-token`: 에이전트 응답, 진행 보고, 상태 문구, 검증·승인 문구의 토큰 사용을 줄이되 정확성, 의미 맥락, 검증 상태, 승인 경계, 필수 출력 형식, 현재 상태 기준을 보존하는 기준을 제공한다.
+- `optimize-token`: 응답, 진행·상태 문구, reasoning·decision wording, 저장 문서에 token-efficient style과 제한된 symbol grammar를 적용하되 판단 논리, workflow, 검증, 승인, exact literal, 안전 계약을 보존한다.
   - spec: `advance-codex-dev/specs/skills/optimize-token/spec.md`
 
 ## SDD 운영 원칙
