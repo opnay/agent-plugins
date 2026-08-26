@@ -24,13 +24,13 @@
 
 ## Message File Gate
 
-1. 신뢰된 temporary-file allocator로 전용 메시지 파일을 하나 생성하고 정확한 경로를 보존합니다. exit 0, 단일 반환 경로, 예상 template 일치를 충족해야 allocation 성공이며, 생성 직후 별도 file type 검사는 실행하지 않습니다. 사용자 제공 경로나 임의 저장 경로를 사용하지 않습니다. nonzero exit에 경로가 없으면 cleanup 없이 commit을 막고, 현재 allocator invocation이 예상 template과 일치하는 단일 경로를 반환했다면 그 exact path만 cleanup합니다.
+1. 신뢰된 temporary-file allocator로 전용 메시지 파일을 하나 생성하고 정확한 경로를 보존합니다. exit 0, 단일 반환 경로, 예상 template 일치를 충족해야 allocation 성공입니다. 사용자 제공 경로나 임의 저장 경로를 사용하지 않습니다. nonzero exit에 경로가 없으면 cleanup 없이 commit을 막고, 현재 allocator invocation이 예상 template과 일치하는 단일 경로를 반환했다면 그 exact path만 cleanup합니다.
 2. shell multiline input이나 redirection이 아닌 파일 쓰기 도구로 commit message만 기록합니다.
 3. 파일을 다시 읽어 subject, blank line, bullet body, 의도하지 않은 shell 문법이나 escape가 없는지 확인합니다.
 4. final `git status`와 staged diff를 다시 확인합니다.
 5. allocator가 반환한 정확한 파일 경로를 사용해 `git commit -F <file>`만 실행합니다.
-6. commit 시도 성공, 실패, 실행 전 제어 가능한 중단과 관계없이 현재 allocator invocation 또는 task state provenance와 예상 template이 확인된 exact path를 `unlink`합니다. cleanup 직전 file type 재검사는 실행하지 않으며, `unlink` 결과와 관계없이 regular file과 symlink directory entry의 부재를 각각 확인합니다. 두 부재 확인이 모두 통과하면 cleanup 완료이며, 하나라도 실패하면 남은 경로와 residual risk를 보고합니다.
-7. 강제 interruption으로 cleanup을 실행하지 못했다면, 재개 시 task state가 보존한 allocator provenance와 예상 template을 확인합니다. exact path를 정리하고 부재를 확인한 뒤 새 commit 시도를 시작합니다.
+6. commit 시도 성공, 실패, 실행 전 제어 가능한 중단과 관계없이 현재 allocator invocation 또는 task state provenance와 예상 template이 확인된 exact path를 `unlink`합니다. 명령이 성공하면 cleanup 완료이며, 실패하면 남은 경로와 residual risk를 보고합니다.
+7. 강제 interruption으로 cleanup을 실행하지 못했다면, 재개 시 task state가 보존한 allocator provenance와 예상 template을 확인합니다. exact path의 cleanup 결과를 확인한 뒤 새 commit 시도를 시작합니다.
 8. commit 결과와 cleanup 결과를 분리해 보고합니다. 어느 단계에서든 cleanup이 실패하면 남은 정확한 경로와 residual risk를 명시하며, cleanup 실패는 성공한 commit을 되돌리지 않습니다.
 
 파일 생성, 쓰기, readback, final staged diff, `git commit -F`, cleanup 순서를 합친 단일 shell script로 실행하지 않습니다.
