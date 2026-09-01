@@ -1,7 +1,7 @@
 {
   "name": "advance-codex",
   "version": "0.1.1",
-  "description": "Capability plugin for strengthening Codex surfaces across skills, scenario testing, token optimization, commits, and plugins.",
+  "description": "Capability plugin for strengthening Codex surfaces across skills, scenario testing, token optimization, and plugins.",
   "author": {
     "name": "opnay"
   },
@@ -9,7 +9,6 @@
   "keywords": [
     "codex",
     "skills",
-    "commits",
     "plugins",
     "tools",
     "prompts",
@@ -19,8 +18,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Advance Codex",
-    "shortDescription": "Strengthen skills, token optimization, scenario testing, commits, and plugins.",
-    "longDescription": "Provides skills for strengthening Codex surfaces: shaping reusable skills, packaging coherent plugins, testing reusable instructions with fixed scenarios and fresh executors, finalizing Codex-made changes into stable commits, and applying a token-efficient style across agent-authored language without losing correctness, meaning, verification, authority, or safety.",
+    "shortDescription": "Strengthen skills, token optimization, scenario testing, and plugins.",
+    "longDescription": "Provides skills for strengthening Codex surfaces: shaping reusable skills, packaging coherent plugins, testing reusable instructions with fixed scenarios and fresh executors, and applying a token-efficient style across agent-authored language without losing correctness, meaning, verification, authority, or safety.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": [
@@ -33,7 +32,6 @@
       "Use $advance-codex:plugin-creator to package a plugin and define the right bundled surfaces.",
       "Use $advance-codex:skill-creator to design a reusable Codex skill with the right references, guardrails, and description trigger metadata.",
       "Use $advance-codex:skill-scenario-testing to test reusable instructions with fresh subagents, fixed scenarios, and caller-side metrics before reporting evidence-backed findings.",
-      "Use $advance-codex:git-committer to prepare and execute a task-scoped commit when commit is part of the requested work, including a broader PR workflow, with staged verification, commit-message hygiene, and post-commit confirmation.",
       "Use $advance-codex:optimize-token to apply a token-efficient style across responses, progress and status notes, reasoning and decision wording, and durable documents while preserving correctness, meaning, verification, authority, required structure, exact literals, language, and safety."
     ],
     "brandColor": "#1F4B99"
