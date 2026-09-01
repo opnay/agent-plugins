@@ -1,7 +1,7 @@
 {
   "name": "toolkit-dev",
   "version": "0.1.0",
-  "description": "[DEV] Tool-specific CLI guidance for operating local developer tools and bundled extensions with explicit compatibility and safety boundaries.",
+  "description": "[DEV] Tool-specific CLI guidance for Apple container and Git workflows with explicit compatibility, scope, and recovery boundaries.",
   "author": {
     "name": "opnay"
   },
@@ -13,13 +13,17 @@
     "apple-container",
     "oci",
     "macos",
-    "kubernetes"
+    "kubernetes",
+    "git",
+    "commit",
+    "branch",
+    "push"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Toolkit Dev",
-    "shortDescription": "[DEV] Operate local developer CLIs with bounded tool-specific guidance.",
-    "longDescription": "[DEV] Provides bounded skills for inspecting, operating, maintaining, and troubleshooting local developer CLIs without treating incidental command usage as a plugin concern.",
+    "shortDescription": "[DEV] Operate Apple container and Git with bounded CLI guidance.",
+    "longDescription": "[DEV] Provides bounded skills for Apple container lifecycle and task-scoped Git commit, branch, push, and recovery workflows without treating incidental command usage as a plugin concern.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": [
@@ -28,7 +32,8 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Use $toolkit-dev:apple-container for Apple container CLI tasks on Apple silicon macOS, including common commands, lifecycle checks, compatibility limits, installation, uninstallation, containerization concepts, and the bundled experimental k8s plugin without assuming third-party Kubernetes CLI execution."
+      "Use $toolkit-dev:apple-container for Apple container CLI tasks on Apple silicon macOS, including common commands, lifecycle checks, compatibility limits, installation, uninstallation, containerization concepts, and the bundled experimental k8s plugin without assuming third-party Kubernetes CLI execution.",
+      "Use $toolkit-dev:git when the requested outcome includes a task-scoped Git commit with risk-proportional checks, message hygiene, one-related-change-unit granularity, a typed subject under 120 characters, and post-commit full-message verification; branch creation; explicit git switch -C force-create; branch switching; upstream configuration; current-branch push; explicit refspec push; branch-prefix policy resolution; or recovery from a partial Git workflow."
     ],
     "brandColor": "#24292F"
   }

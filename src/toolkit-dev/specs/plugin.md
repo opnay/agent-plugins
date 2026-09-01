@@ -45,6 +45,8 @@
 
 - `apple-container`: Apple Silicon macOS에서 Apple `container` CLI와 bundled `k8s` plugin을 확인하고 사용하며 설치·제거·개념·Kubernetes plugin reference로 라우팅합니다.
   - spec: `src/toolkit-dev/specs/skills/apple-container.md`
+- `git`: supporting check·message 위생·granularity·typed subject·post-commit full-message 검증을 포함한 task-scoped commit, branch 생성·전환·명시적 force-create, push를 하나의 workflow로 조합하고 고빈도 명령과 조건부 branch convention·recovery reference를 제공합니다.
+  - spec: `src/toolkit-dev/specs/skills/git.md`
 
 ## Plugin Usage 계약
 
@@ -63,6 +65,6 @@
 ## 현재 구조 메모
 
 - 초기 version은 `0.1.0`입니다.
-- 첫 runtime surface는 `apple-container` 하나이며 미래 CLI skill을 미리 약속하지 않습니다.
+- 현재 runtime surface는 `apple-container`와 `git`이며 미래 CLI skill을 미리 약속하지 않습니다.
 - marketplace는 기존 순서를 유지한 채 `./toolkit` release surface를 가리키는 `toolkit` 항목을 마지막에 등록합니다.
 - local development 확인은 repository marketplace 등록 후 `toolkit@opnay-plugins` 설치와 새 thread pickup으로 검증합니다.
