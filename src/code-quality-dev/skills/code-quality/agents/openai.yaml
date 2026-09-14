@@ -1,0 +1,7 @@
+interface:
+  display_name: "Code Quality"
+  short_description: "Write safer, clearer production code"
+  default_prompt: "Use $code-quality to implement, refactor, test, or review production code with risk-focused quality judgment."
+
+policy:
+  allow_implicit_invocation: true

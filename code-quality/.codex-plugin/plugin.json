@@ -1,0 +1,37 @@
+{
+  "name": "code-quality",
+  "version": "0.1.0",
+  "description": "Production code quality plugin for implementation, refactoring, testing, dependency decisions, and risk-focused code review.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "codex",
+    "code-quality",
+    "implementation",
+    "refactoring",
+    "testing",
+    "review",
+    "dependencies"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Code Quality",
+    "shortDescription": "Write, refactor, test, and review production code with risk-focused quality judgment.",
+    "longDescription": "Provides a code-quality skill for production implementation, bug fixes, refactoring, testing, dependency and reuse decisions, architecture tradeoffs, and risk-focused code review. It emphasizes correctness, repository context, appropriate reuse, simple coherent design, validation, and avoiding speculative abstractions or unnecessary dependencies.",
+    "developerName": "opnay",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Analyze",
+      "Plan",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use $code-quality:code-quality for production implementation, bug fixes, refactoring, testing, dependency decisions, architecture tradeoffs, and risk-focused code review.",
+      "Before adding implementations or dependencies, inspect repository modules, framework and system APIs, standard libraries, installed dependencies, and existing utilities; reuse only when meaning, contract, ownership, lifecycle, and long-term cost fit.",
+      "Do not apply this plugin to prose-only writing, translation, generated or vendor code edits, formatting-only, style-only, or naming-only changes unless the user explicitly invokes code-quality or asks for correctness, security, compatibility, behavior-change, data-integrity, or operational-risk review."
+    ],
+    "brandColor": "#256B5E"
+  }
+}

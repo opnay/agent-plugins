@@ -1,0 +1,7 @@
+interface:
+  display_name: "Deep Research"
+  short_description: "Create auditable reports from multiple sources."
+  default_prompt: "Use $advance-subagent:deep-research to investigate a consequential question across primary and independent sources and produce an evidence-traceable report."
+
+policy:
+  allow_implicit_invocation: true

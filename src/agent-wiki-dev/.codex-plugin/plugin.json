@@ -1,0 +1,28 @@
+{
+  "name": "agent-wiki-dev",
+  "version": "0.1.0",
+  "description": "[DEV] 작업 기록·판단 근거·자료 요약을 연결해 과거 해결 과정과 지식을 재사용합니다.",
+  "skills": "./skills/",
+  "author": {
+    "name": "opnay"
+  },
+  "interface": {
+    "displayName": "Agent Wiki Dev",
+    "shortDescription": "[DEV] 위키 탐색·조사·기록과 경로 설정을 제공합니다.",
+    "longDescription": "[DEV] reader는 기존 지식과 과거 판단을 복원하고, researcher는 질문별 근거를 확보하며, writer는 작업 사건·판단 근거·자료 요약을 연결해 기록합니다. URL 조사는 선택적으로 위임하고 저장 문서를 재사용합니다. Rust CLI는 위키 위치 설정·조회와 설치를 담당합니다.",
+    "developerName": "opnay",
+    "category": "Productivity",
+    "capabilities": [
+      "Analyze",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "기존 지식이나 과거 작업의 문제·선택 이유·시행착오·검증을 복원하려면 $agent-wiki-dev:reader로 작업 기록과 연결된 근거를 읽으세요. 기록 공백은 추측하지 마세요.",
+      "현재 질문의 지식 공백·상충·최신성을 확인해야 하면 $agent-wiki-dev:researcher를 사용하세요. 충분한 기존 근거는 재사용하세요.",
+      "기록이 허용되면 원인 확인·대안 선택·실패·방향 전환·검증 결과마다 $agent-wiki-dev:writer로 작업 기록 > 판단별 근거 목록 > 자료 출처·요약을 연결하세요. 근거 목록은 작업 문서 안에 둘 수 있습니다. 읽기 전용·기록 금지 지시는 따르세요.",
+      "세 스킬의 필수 호출 순서나 서브에이전트 실행은 없습니다. 경로 설정·CLI 설치는 README.md의 scripts/agent-wiki 안내를 따르세요.",
+      "웹 조사 후 위키 반영 필요성을 항상 평가하세요. 기록·갱신·생략은 $agent-wiki-dev:writer의 기준을 따르며, 다른 도구의 조사 결과도 재사용하세요.",
+      "URL 조사를 위임할 때 질문·목적·URL·필요 정보·기존 위키 경로·허용 쓰기 범위·스킬 경로를 전달하세요. researcher로 조사하고 승인된 writer 역할로 저장한 뒤 문서 경로·핵심 발견·공백·저장 상태를 반환받으세요. 같은 문서 쓰기는 직렬화하고 실제 채택 이유는 작업 담당자가 기록하세요."
+    ]
+  }
+}

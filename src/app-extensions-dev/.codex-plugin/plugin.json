@@ -1,0 +1,34 @@
+{
+  "name": "app-extensions-dev",
+  "version": "0.1.0",
+  "description": "[DEV] Companion workflow guidance that extends externally provided app plugins without copying or replacing upstream capabilities.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "apps",
+    "extensions",
+    "companion-plugin",
+    "figma",
+    "design-handoff",
+    "layout"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "App Extensions Dev",
+    "shortDescription": "[DEV] Add bounded workflow guidance to external app capabilities.",
+    "longDescription": "[DEV] Provides delta-only companion skills that add local workflow and handoff rules to externally provided app plugins without duplicating their tools, authentication, or prerequisites.",
+    "developerName": "opnay",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Analyze",
+      "Plan",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use $app-extensions-dev:figma-ext alongside available Figma capabilities when Figma work needs target-element identification, hierarchy, absolute and relative coordinates, viewport and responsive context, or flow-first layout translation without replacing upstream tool guidance."
+    ],
+    "brandColor": "#4F46E5"
+  }
+}

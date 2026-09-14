@@ -1,0 +1,37 @@
+{
+  "name": "advance-subagent",
+  "version": "0.1.0",
+  "description": "서브에이전트 기반 조사와 workstream 위임의 심화 실행 방법을 제공합니다.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "codex",
+    "subagent",
+    "research",
+    "evidence",
+    "workstream",
+    "orchestration",
+    "delegation",
+    "parallel"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Advance Subagent",
+    "shortDescription": "서브에이전트 조사·위임·검증 방법을 제공합니다.",
+    "longDescription": "여러 출처의 근거를 추적하는 deep research와 독립 workstream의 bounded 위임·검증·통합을 각각의 실행 계약으로 제공합니다.",
+    "developerName": "opnay",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Analyze",
+      "Plan",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "근거 추적 조사 보고서에는 $advance-subagent:deep-research를 사용하세요.",
+      "독립적인 engineering·조사·실행 흐름의 위임에는 $advance-subagent:orchestrate-workstreams를 사용하세요.",
+      "각 skill의 기존 trigger·routing·검증 계약을 유지하고 단순 조회나 독립 workstream이 없는 요청에는 자동 적용하지 마세요."
+    ]
+  }
+}
