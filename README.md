@@ -59,6 +59,7 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 - 개발 원본: `src/design-kit-dev/`
 - build 산출물: `design-kit/`
 - 주요 실행 표면: `design-base`, `web-designer`, `product-designer`, `visual-content-designer`, `art-director`, `creative-director`, `project-design-rules`
+- marketplace: `.agents/plugins/marketplace.json`의 `design-kit` 항목이 `./design-kit`을 가리킵니다.
 
 ### Advance Subagent
 
