@@ -48,7 +48,7 @@
 
 ## 검증 기준
 
-- <검증해야 할 command, artifact, release-surface 조건>
+- <검증해야 할 command, artifact, plugin surface 조건>
 
 ## 정식 규칙 승격 여부
 

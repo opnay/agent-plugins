@@ -1,8 +1,8 @@
-# Advance Codex Dev 플러그인 스펙
+# Advance Codex 플러그인 스펙
 
 ## 플러그인 목적
 
-`advance-codex-dev`는 Codex 활용 방식을 더 명시적이고 재사용 가능하게 설계하는 플러그인입니다.
+`advance-codex`는 Codex 활용 방식을 더 명시적이고 재사용 가능하게 설계하는 플러그인입니다.
 핵심 책임은 skill, plugin bundle, skill scenario testing, agent token optimization 같은 Codex 활용 산출물을 각각의 좁은 skill 표면으로 제공하는 것입니다.
 `.agents/sessions/{YYYYMMDD}` session folder convention은 호출 가능한 skill이 아니라 문서 수준의 참고 규칙으로만 유지합니다.
 
@@ -16,7 +16,7 @@
 - 제외:
   - 일반 제품 구현 workflow
   - 특정 도메인 기능 구현 가이드
-  - `advance-codex-dev` 목적과 무관한 generic utility accumulation
+  - `advance-codex` 목적과 무관한 generic utility accumulation
 
 ## 처리하려는 작업 형태
 
@@ -26,20 +26,20 @@
 
 ## 대표 표면
 
-- 대표 스펙: `advance-codex-dev/specs/plugin.md`
-- skill 상세 스펙 위치: `advance-codex-dev/specs/skills/*.md` 또는 `advance-codex-dev/specs/skills/<skill-name>/spec.md`
+- 대표 스펙: `src/advance-codex-dev/specs/plugin.md`
+- skill 상세 스펙 위치: `src/advance-codex-dev/specs/skills/*.md` 또는 `src/advance-codex-dev/specs/skills/<skill-name>/spec.md`
 - 핵심 선택 기준: 지금 개선하려는 주된 reusable artifact가 무엇인가
 
 ## 내장 skill 체계
 
 - `skill-creator`: canonical `skill-creator` 위에 bounded skill 설계, plugin-owned skill 규칙, passive skill description trigger metadata 규칙을 덧붙인다.
-  - spec: `advance-codex-dev/specs/skills/skill-creator.md`
+  - spec: `src/advance-codex-dev/specs/skills/skill-creator.md`
 - `skill-scenario-testing`: reusable instruction을 fresh subagent와 고정 시나리오로 테스트하고 evidence 중심으로 분석 보고한다.
-  - spec: `advance-codex-dev/specs/skills/skill-scenario-testing.md`
+  - spec: `src/advance-codex-dev/specs/skills/skill-scenario-testing.md`
 - `plugin-creator`: top-down plugin boundary와 manifest-aligned packaging 규칙을 강화한다.
-  - spec: `advance-codex-dev/specs/skills/plugin-creator.md`
+  - spec: `src/advance-codex-dev/specs/skills/plugin-creator.md`
 - `optimize-token`: 응답, 진행·상태 문구, reasoning·decision wording, 저장 문서에 token-efficient style과 제한된 symbol grammar를 적용하되 판단 논리, workflow, 검증, 승인, exact literal, 안전 계약을 보존한다.
-  - spec: `advance-codex-dev/specs/skills/optimize-token/spec.md`
+  - spec: `src/advance-codex-dev/specs/skills/optimize-token/spec.md`
 
 ## SDD 운영 원칙
 

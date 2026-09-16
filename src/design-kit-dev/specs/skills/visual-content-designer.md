@@ -9,7 +9,7 @@
 
 - 시각 콘텐츠의 메시지 계층, 이미지·텍스트 구성, 순서·리듬, 매체별 변형을 소유한다.
 - UI 라벨·폼 오류·제품 상태 문구는 주 책임이 아니다. 캠페인 전략 전체와 외부 게시는 소유하지 않는다.
-- 대표 표면: `skills/visual-content-designer/SKILL.md`.
+- 대표 표면: `design-kit/skills/visual-content-designer/SKILL.md`.
 
 ## 핵심 처리 계약
 

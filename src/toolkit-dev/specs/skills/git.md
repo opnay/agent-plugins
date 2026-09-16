@@ -49,7 +49,7 @@
 
 ## 엔트리포인트 / 대표 표면
 
-- 대표 표면: `skills/git/SKILL.md`
+- 대표 표면: `toolkit/skills/git/SKILL.md`
 - 호출 방식: `$toolkit:git`
 - passive trigger: Git commit, branch creation, branch switch, upstream push, refspec push, branch prefix, push recovery
 

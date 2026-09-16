@@ -23,7 +23,7 @@
 
 ## 대표 표면
 
-- runtime: `advance-codex-dev/skills/optimize-token/SKILL.md`
+- runtime: `advance-codex/skills/optimize-token/SKILL.md`
 - 사용자 의도: `intent.md`
 - 고정 예시 검증: `intent-scenarios/style.md`
 

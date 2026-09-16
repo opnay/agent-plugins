@@ -1,10 +1,10 @@
-# Advance Subagent Dev
+# Advance Subagent
 
 서브에이전트를 활용한 근거 중심 조사와 독립 workstream 위임의 심화 실행 방법을 제공하는 instruction-only 플러그인입니다.
 
 ## 목적
 
-`advance-subagent-dev`는 다음 두 skill을 하나의 설치 단위로 제공합니다.
+`advance-subagent`는 다음 두 skill을 하나의 설치 단위로 제공합니다.
 
 - `deep-research`: 여러 출처를 수집·대조하고 근거·반대 근거·불확실성·인용을 추적하는 조사 보고서
 - `orchestrate-workstreams`: 독립적인 software-engineering·조사·실행 흐름의 bounded 위임, 검증, 통합
@@ -23,7 +23,7 @@ Runtime instruction, reference, agent interface 문구는 영어로 제공하고
 - 반대 근거, 상충 수치, 최신성 위험, 불확실성을 포함한 인용 가능한 보고서
 
 ```text
-$advance-subagent-dev:deep-research 한국의 2025년 생성형 AI 규제 변화를 조사해 기업 도입 판단 보고서로 정리해 주세요.
+$advance-subagent:deep-research 한국의 2025년 생성형 AI 규제 변화를 조사해 기업 도입 판단 보고서로 정리해 주세요.
 ```
 
 날씨·현재가 같은 단순 조회, 한 문서 요약, 근거 없는 아이디어 발산, 코드 구현, 외부 변경, 지속 모니터링에는 사용하지 않습니다.
@@ -38,7 +38,7 @@ $advance-subagent-dev:deep-research 한국의 2025년 생성형 AI 규제 변화
 - 분리된 ownership과 공통 성공 기준을 가진 병렬 작업
 
 ```text
-$advance-subagent-dev:orchestrate-workstreams 시장 조사를 수행하고 독립적인 프로토타입 두 개를 구현한 뒤 결과를 검증·통합해 주세요.
+$advance-subagent:orchestrate-workstreams 시장 조사를 수행하고 독립적인 프로토타입 두 개를 구현한 뒤 결과를 검증·통합해 주세요.
 ```
 
 명시 호출도 dispatch gate를 우회하지 않습니다. 독립 workstream, 별도 계약, 병렬 이점, shared-state 안전, 메인 에이전트의 검증·통합 가능성 중 하나라도 부족하면 `DIRECT`로 수행합니다.
@@ -52,7 +52,7 @@ $advance-subagent-dev:orchestrate-workstreams 시장 조사를 수행하고 독�
 
 ## 공개 호출
 
-release build에서는 다음 식별자를 사용합니다.
+개발과 설치 모두 다음 식별자를 사용합니다.
 
 - `$advance-subagent:deep-research`
 - `$advance-subagent:orchestrate-workstreams`

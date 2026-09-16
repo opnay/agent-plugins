@@ -1,7 +1,6 @@
 # OPNay Agent Plugins
 
 OPNay가 직접 관리하는 Codex 플러그인 마켓플레이스 저장소입니다.
-설치용 빌드 산출물은 저장소 루트 바로 아래에 배치되며, 개발 원본은 `src/` 아래에서 관리합니다.
 `.agents/plugins/marketplace.json`은 플러그인 목록의 단일 진실 공급원입니다.
 
 ## 마켓플레이스 등록
@@ -22,18 +21,11 @@ codex plugin marketplace upgrade
 
 현재 마켓플레이스 표시명은 `OPNay Plugins`이고, 내부 id는 `opnay-plugins`입니다.
 
-## 로컬 개발 원본
+## 로컬 개발
 
-로컬 개발 원본은 `src/` 아래에서 관리하고 plugin name에 `-dev` suffix를 붙입니다.
-일반 개발 변경은 `src/<plugin-name>-dev`에 먼저 적용하고, 루트의 설치용 산출물은 build command로 갱신합니다.
-
-## 브랜치와 릴리즈
-
-- `next`: 개발 브랜치입니다.
-- 플러그인 수정은 기본적으로 `next`의 `src/<plugin-name>-dev`에서 진행합니다.
-- 릴리즈는 `main`에 푸시합니다.
-
-브랜치·릴리즈 안내: [release-pattern.md](docs/release-pattern.md).
+- 레이아웃·운영 규칙: [AGENTS.md](AGENTS.md)
+- 스펙 작성·검증: [SDD.md](docs/SDD.md)
+- 브랜치·릴리즈: [release-pattern.md](docs/release-pattern.md)
 
 ## 플러그인
 
@@ -56,8 +48,8 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 
 `design-kit`은 디자인 기반, 웹·프로덕트·시각 콘텐츠 설계, 아트·크리에이티브 디렉션, 프로젝트별 디자인 규칙을 제공합니다.
 
-- 개발 원본: `src/design-kit-dev/`
-- build 산출물: `design-kit/`
+- 플러그인: `design-kit/`
+- 개발 문서: `src/design-kit-dev/`
 - 주요 실행 표면: `design-base`, `web-designer`, `product-designer`, `visual-content-designer`, `art-director`, `creative-director`, `project-design-rules`
 - marketplace: `.agents/plugins/marketplace.json`의 `design-kit` 항목이 `./design-kit`을 가리킵니다.
 
@@ -82,31 +74,33 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 ├── .agents/plugins/marketplace.json
 ├── advance-codex/
 ├── advance-subagent/
+├── agent-wiki/
+├── app-extensions/
 ├── code-quality/
 ├── design-kit/
 ├── judgment-kit/
-├── src/
+├── toolkit/
+├── src/<plugin-name>-dev/  # 스펙·변경 기록·개발 README
 └── docs/
 ```
 
-개발 원본 플러그인은 `src/` 아래에서 최소한 다음 구조를 유지합니다.
+실행 플러그인과 개발 문서는 다음 위치에서 관리합니다.
 
 ```text
-src/<plugin-name>-dev/
+<plugin-name>/
   .codex-plugin/plugin.json
+  README.md
+  skills/
+
+src/<plugin-name>-dev/
   README.md
   specs/plugin.md
   specs/skills/
-  skills/
+  changes/
 ```
 
 ## 개발 원칙
 
-- 플러그인은 루트 바로 아래에 둡니다. `./plugins/<plugin-name>` 경로는 사용하지 않습니다.
-- 개발 원본은 `src/<plugin-name>-dev`에 둡니다.
-- specs는 `src/` 안에서만 관리합니다.
-- 일반 개발 변경은 `src/<plugin-name>-dev`에 먼저 적용합니다.
-- 루트 release surface는 build command 산출물로만 갱신합니다.
 - 플러그인 변경은 spec-driven으로 다룹니다.
 - plugin surface가 바뀌면 `src/<plugin-name>-dev/README.md`, `src/<plugin-name>-dev/specs/plugin.md`, 관련 skill spec, `plugin.json`, marketplace entry를 함께 점검합니다.
 - 플러그인별 release version은 각 `.codex-plugin/plugin.json`의 `version`이 소유합니다.

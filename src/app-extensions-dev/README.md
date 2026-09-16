@@ -1,13 +1,13 @@
-# App Extensions Dev
+# App Extensions
 
-`app-extensions-dev`는 외부 app plugin의 capability에 사용자·팀의 추가 workflow guidance를 적용하는 companion plugin입니다.
+`app-extensions`는 외부 app plugin의 capability에 사용자·팀의 추가 workflow guidance를 적용하는 companion plugin입니다.
 upstream plugin을 상속하거나 수정하지 않으며, tool schema, 인증, 연결, prerequisite를 복제하지 않고 지속적인 extension delta만 소유합니다.
 
 ## Skill 선택
 
 ### Figma Ext
 
-`$app-extensions-dev:figma-ext`는 Figma 작업에서 target design element, parent hierarchy, absolute·relative coordinates, frame·viewport·responsive context, flow-first layout translation을 함께 판단할 때 사용합니다.
+`$app-extensions:figma-ext`는 Figma 작업에서 target design element, parent hierarchy, absolute·relative coordinates, frame·viewport·responsive context, flow-first layout translation을 함께 판단할 때 사용합니다.
 
 대표 요청:
 

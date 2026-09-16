@@ -4,11 +4,11 @@
 
 ---
 
-# Advance Subagent Dev 플러그인 스펙
+# Advance Subagent 플러그인 스펙
 
 ## 플러그인 목적
 
-`advance-subagent-dev`는 서브에이전트를 활용한 근거 중심 조사와 독립 workstream 위임·검증·통합의 심화 실행 방법을 제공하는 instruction-only 플러그인입니다.
+`advance-subagent`는 서브에이전트를 활용한 근거 중심 조사와 독립 workstream 위임·검증·통합의 심화 실행 방법을 제공하는 instruction-only 플러그인입니다.
 
 ## 플러그인 경계와 비목표
 
@@ -33,17 +33,14 @@
 
 ## 대표 표면
 
-- 매니페스트: `.codex-plugin/plugin.json`
-- 사용자 안내: `README.md`
+- 매니페스트: `advance-subagent/.codex-plugin/plugin.json`
+- 사용자 안내: `advance-subagent/README.md`, 개발 README
 - 플러그인 스펙: `specs/plugin.md`
 - skill 상세 스펙:
   - `specs/skills/deep-research.md`
   - `specs/skills/orchestrate-workstreams.md`
 - 공개 marketplace: `.agents/plugins/marketplace.json`의 `./advance-subagent`
-- 개발 호출 식별자:
-  - `$advance-subagent-dev:deep-research`
-  - `$advance-subagent-dev:orchestrate-workstreams`
-- 공개 호출 식별자:
+- 호출 식별자:
   - `$advance-subagent:deep-research`
   - `$advance-subagent:orchestrate-workstreams`
 
@@ -71,7 +68,6 @@
 - 개별 조사·위임·검증 계약은 각 skill spec이 소유합니다.
 - skill spec이 바뀌면 해당 runtime skill folder를 현재 spec 기준으로 처음부터 재작성합니다.
 - runtime `SKILL.md`, reference Markdown, agent interface 문구는 영어로 작성합니다. Trigger fixture는 실제 선택 입력 언어를 유지할 수 있습니다.
-- release surface는 build command로만 만들며 `specs/`와 `changes/`를 포함하지 않습니다.
 
 ## 확장 원칙
 

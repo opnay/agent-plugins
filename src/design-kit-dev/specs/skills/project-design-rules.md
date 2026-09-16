@@ -10,7 +10,7 @@
 - 프로젝트의 디자인 방향, 베이스, 전용 패턴을 탐색·기록·채택·재사용·갱신한다.
 - 전문 역할의 결정을 지속 가능한 규칙으로 정리한다. 일반 이론과 프로젝트 결정값을 구분한다.
 - 실제 프로젝트 규칙은 대상 프로젝트에 둔다. 플러그인·타 프로젝트·위키를 임의로 갱신하지 않는다.
-- 대표 표면: `skills/project-design-rules/SKILL.md`, `references/project-context.md`, `templates/project-design.md`.
+- 대표 표면: `design-kit/skills/project-design-rules/SKILL.md`, `references/project-context.md`, `templates/project-design.md`.
 
 ## 맥락 탐색 계약
 
@@ -47,6 +47,6 @@
 
 ## 독립성·확장
 
-- 이 skill은 기록 관리에 독립 실행 가능하다. 디자인 판단 결과는 입력으로 받고 필요한 경우 `$design-kit-dev:design-base/references/repetition.md`를 읽는다.
-- shared context reference와 template는 이 skill이 소유하며 다른 역할은 `$design-kit-dev:project-design-rules/<resource-path>`로 참조한다.
+- 이 skill은 기록 관리에 독립 실행 가능하다. 디자인 판단 결과는 입력으로 받고 필요한 경우 `$design-kit:design-base/references/repetition.md`를 읽는다.
+- shared context reference와 template는 이 skill이 소유하며 다른 역할은 `$design-kit:project-design-rules/<resource-path>`로 참조한다.
 - 새 상태·저장소·자동화는 실제 관리 요구가 확인될 때 추가한다.

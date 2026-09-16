@@ -43,7 +43,7 @@ upstream Figma plugin이 소유하는 tool-use contract를 유지하면서, 디�
 
 ## 엔트리포인트 / 대표 표면
 
-- 대표 표면: `skills/figma-ext/SKILL.md`
+- 대표 표면: `app-extensions/skills/figma-ext/SKILL.md`
 - 호출 방식: `$app-extensions:figma-ext`
 - passive trigger: Figma layout, Figma import, Figma coordinates, Figma responsive, Figma design to code, Figma code to design
 

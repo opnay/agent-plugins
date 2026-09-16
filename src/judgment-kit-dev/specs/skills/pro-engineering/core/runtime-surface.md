@@ -2,7 +2,7 @@
 
 ## 책임
 
-이 문서는 `pro-engineering` runtime의 독립 실행 가능성, trigger metadata, dev/release 검증 기준을 소유합니다.
+이 문서는 `pro-engineering` runtime의 독립 실행 가능성, trigger metadata, 실제 plugin surface 검증 기준을 소유합니다.
 
 ## 독립성 원칙
 
@@ -22,8 +22,7 @@ frontmatter는 `name`, `description`만 사용합니다.
 
 ## 검증 기준
 
-- dev runtime skill이 `skills/pro-engineering/SKILL.md`에 존재해야 합니다.
-- release build 후 root `judgment-kit/skills/pro-engineering/SKILL.md`가 존재해야 합니다.
+- runtime skill이 루트 `judgment-kit/skills/pro-engineering/SKILL.md`에 존재해야 합니다.
 - plugin spec, README, manifest prompt가 `pro-engineering`의 역할과 사용 기준을 언급해야 합니다.
 - runtime skill 본문은 dev-only `specs/` 경로나 `src/judgment-kit-dev` 경로를 실행 지시로 포함하지 않아야 합니다.
 - runtime skill은 문제 해결 중심이며 특정 언어/프레임워크 레시피로 좁아지지 않아야 합니다.

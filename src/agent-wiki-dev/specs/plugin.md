@@ -17,7 +17,7 @@
 
 ---
 
-# Agent Wiki Dev 플러그인 스펙
+# Agent Wiki 플러그인 스펙
 
 ## 목적과 현재 범위
 
@@ -65,11 +65,13 @@ CLI는 저장 위치와 설치를, reader·researcher·writer는 탐색·조사�
 
 ## 대표 표면
 
-- `scripts/src/main.rs`: 설치·저장 위치 설정·조회 CLI 원본입니다.
-- `scripts/build.sh`: Cargo.lock 기준으로 네이티브 바이너리 `scripts/agent-wiki`를 빌드합니다.
-- `README.md`: 설치 방법, 명령, 설정 형식을 설명합니다.
-- `skills/<reader|researcher|writer>/SKILL.md`: 각 역할의 실행 지침입니다.
-- `.codex-plugin/plugin.json`: CLI와 세 스킬의 선택 기준을 설명합니다.
+아래 파일 경로는 저장소 루트 기준이며 CLI 명령은 `agent-wiki/`에서 실행합니다.
+
+- `agent-wiki/scripts/src/main.rs`: 설치·저장 위치 설정·조회 CLI 원본입니다.
+- `agent-wiki/scripts/build.sh`: Cargo.lock 기준으로 네이티브 바이너리 `agent-wiki/scripts/agent-wiki`를 빌드합니다.
+- `agent-wiki/README.md`: 설치 방법, 명령, 설정 형식을 설명합니다.
+- `agent-wiki/skills/<reader|researcher|writer>/SKILL.md`: 각 역할의 실행 지침입니다.
+- `agent-wiki/.codex-plugin/plugin.json`: CLI와 세 스킬의 선택 기준을 설명합니다.
 
 ## CLI 계약
 
@@ -85,9 +87,9 @@ CLI는 저장 위치와 설치를, reader·researcher·writer는 탐색·조사�
 
 ## 구조와 검증
 
-- 개발 원본은 `src/agent-wiki-dev`, 빌드 결과는 `agent-wiki`입니다. 초기 버전은 `0.1.0`입니다.
-- `scripts/tests/`는 개발용 CLI 검증이며 배포본에 포함하지 않습니다.
+- 초기 버전은 `0.1.0`입니다.
+- `agent-wiki/scripts/tests/`는 CLI 검증을 소유합니다.
 - 설치·재설치, 설정·조회, 경로 특수문자, 잘못된 입력과 기존 파일 보존을 임시 홈에서 검증합니다.
-- 개발 원본에서 `cargo test --locked --manifest-path scripts/Cargo.toml`을 실행합니다.
-- 배포 빌드는 `sh scripts/build.sh` 후 저장소의 `pnpm build:plugin agent-wiki --force`로 수행합니다. 생성 바이너리와 Cargo target은 Git에 포함하지 않으며 target은 배포본에서도 제외합니다. 배포 복사는 실행 권한을 보존합니다.
+- `agent-wiki/`에서 `cargo test --locked --manifest-path scripts/Cargo.toml`을 실행합니다.
+- CLI 바이너리는 `agent-wiki/`에서 `sh scripts/build.sh`로 빌드합니다. 생성 바이너리와 Cargo target은 Git에 포함하지 않으며 실행 파일의 권한은 유지합니다.
 - 실제 홈 설치·위키 위치 선택·marketplace 등록은 이번 생성 작업에서 수행하지 않습니다.

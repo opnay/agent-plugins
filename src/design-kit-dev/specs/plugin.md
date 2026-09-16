@@ -6,7 +6,7 @@
 - 패턴에는 반복을 포함한다. 동일 문구는 맥락에 따라 생략하거나 추가해 강조할 수 있다.
 - 같은 맥락에서 동일한 용어, 색상, 패턴의 반복도 필요하다.
 
-# Design Kit Dev 플러그인 스펙
+# Design Kit 플러그인 스펙
 
 ## 플러그인 목적
 
@@ -28,9 +28,9 @@
 
 ## 대표 표면
 
-- 사용 안내: `README.md`, `.codex-plugin/plugin.json`.
+- 사용 안내: `design-kit/README.md`, `design-kit/.codex-plugin/plugin.json`과 개발 README.
 - 처리 계약: `specs/skills/<skill-name>.md`.
-- 실행 표면: `skills/<skill-name>/SKILL.md`, 설치되는 `references/`, `templates/`.
+- 실행 표면: `design-kit/skills/<skill-name>/SKILL.md`, 설치되는 `references/`, `templates/`.
 
 ## 내장 skill 체계
 
@@ -58,11 +58,11 @@
 - flat skill spec이 처리 계약과 의도를 소유한다. 공통 이론은 design-base, 프로젝트 맥락 읽기·기록은 project-design-rules가 소유한다.
 - runtime은 영문이며 설치되는 리소스만 참조한다. 다른 skill의 리소스는 `$<plugin>:<skill>/<resource-path>`, 자기 skill의 리소스는 내부 상대 경로를 사용한다. dev-only spec은 실행 입력이 아니다.
 - 사용 기준 변경은 README·manifest·해당 skill spec을 함께 갱신한다.
-- 생성물은 build command로 만든다. 저장소 marketplace의 `design-kit` 항목은 release 폴더 `./design-kit`을 가리킨다.
+- marketplace 항목은 `./design-kit`을 가리킨다.
 
 ## 검증 기준
 
-- dev/release에 7개 skill과 참조·template가 존재하고 JSON·skill·plugin 검증을 통과한다.
+- 루트 `design-kit/`에 7개 skill과 참조·template가 존재하고 JSON·skill·plugin 검증을 통과한다.
 - skill 식별자 기반 참조와 내부 상대 링크의 대상이 설치되는 plugin 안에 존재하며 release에 specs·changes가 없다.
 - 기반·전문 역할·디렉션·규칙 관리의 책임이 겹칠 때 시작 기준과 산출물이 구분된다.
 - 반복은 생략·재제공·강조와 의미·역할의 일관성, 시각적 연결·리듬을 모두 다룬다.

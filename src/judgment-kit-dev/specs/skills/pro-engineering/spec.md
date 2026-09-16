@@ -27,10 +27,10 @@
 
 ## 대표 표면
 
-- 대표 runtime 표면: `judgment-kit-dev/skills/pro-engineering/SKILL.md`
-- 사용자 스펙 의도: `judgment-kit-dev/specs/skills/pro-engineering/intent.md`
-- skill spec index: `judgment-kit-dev/specs/skills/pro-engineering/spec.md`
-- sub-spec directory: `judgment-kit-dev/specs/skills/pro-engineering/`
+- 대표 runtime 표면: `judgment-kit/skills/pro-engineering/SKILL.md`
+- 사용자 스펙 의도: `src/judgment-kit-dev/specs/skills/pro-engineering/intent.md`
+- skill spec index: `src/judgment-kit-dev/specs/skills/pro-engineering/spec.md`
+- sub-spec directory: `src/judgment-kit-dev/specs/skills/pro-engineering/`
 
 ## 상세 계약 구조
 
@@ -40,7 +40,7 @@
 - `core/engineering-judgment.md`: 기술 판단, 소유권, 도메인·조정·기반 책임, 모듈 경계, 재사용 조건, 허용 조건 우선 계약, 추상화, 실패 모드, 리스크 배수 기준
 - `core/code-discipline.md`: 코드 작성 방식, 완결 산출물의 일관된 상태, 소유자 가까이의 단순 구현 후 개선, 변경 범위, 제어 흐름 명확성, 사용자 변경 보존
 - `core/verification-reporting.md`: 검증 범위 선택, residual risk, 보고 형식
-- `core/runtime-surface.md`: runtime 독립성, description trigger metadata, dev/release surface 검증
+- `core/runtime-surface.md`: runtime 독립성, description trigger metadata, 실제 plugin surface 검증
 
 ## 확장 원칙
 

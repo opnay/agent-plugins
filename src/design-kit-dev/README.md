@@ -1,4 +1,4 @@
-# Design Kit Dev
+# Design Kit
 
 공통 디자인 지식을 바탕으로 프로젝트에 맞는 경험과 시각 표현을 설계하고, 디자인 방향과 재사용 가능한 규칙을 유지하는 플러그인입니다.
 
@@ -20,17 +20,17 @@
 
 ## 호출 예시
 
-- `$design-kit-dev:design-base 이 팔레트의 보색 관계와 실제 텍스트 대비를 구분해서 검토해줘.`
-- `$design-kit-dev:web-designer 이 소개 페이지의 읽기 순서와 모바일 구성을 설계해줘.`
-- `$design-kit-dev:product-designer 저장 실패와 재시도를 포함해 편집 흐름을 검토해줘.`
-- `$design-kit-dev:visual-content-designer 카드뉴스의 시리즈 반복과 단독 공유 구성을 잡아줘.`
-- `$design-kit-dev:art-director 현재 브랜드를 바탕으로 이미지와 타이포의 시각 언어를 정해줘.`
-- `$design-kit-dev:creative-director 출시 메시지와 사이트·소셜 콘텐츠의 연결 아이디어를 정해줘.`
-- `$design-kit-dev:project-design-rules 이번에 확정한 색상·목록·상세 패턴을 이 프로젝트의 기존 디자인 문서에 기록해줘.`
+- `$design-kit:design-base 이 팔레트의 보색 관계와 실제 텍스트 대비를 구분해서 검토해줘.`
+- `$design-kit:web-designer 이 소개 페이지의 읽기 순서와 모바일 구성을 설계해줘.`
+- `$design-kit:product-designer 저장 실패와 재시도를 포함해 편집 흐름을 검토해줘.`
+- `$design-kit:visual-content-designer 카드뉴스의 시리즈 반복과 단독 공유 구성을 잡아줘.`
+- `$design-kit:art-director 현재 브랜드를 바탕으로 이미지와 타이포의 시각 언어를 정해줘.`
+- `$design-kit:creative-director 출시 메시지와 사이트·소셜 콘텐츠의 연결 아이디어를 정해줘.`
+- `$design-kit:project-design-rules 이번에 확정한 색상·목록·상세 패턴을 이 프로젝트의 기존 디자인 문서에 기록해줘.`
 
 ## 공통 지식과 프로젝트 규칙
 
-공통 이론은 `$design-kit-dev:design-base/references/`에서 관리합니다. 각 역할은 필요한 reference를 직접 읽으며 다른 skill의 선행 실행을 요구하지 않습니다. 프로젝트 탐색·기록 계약은 `$design-kit-dev:project-design-rules/references/project-context.md`가 소유합니다.
+공통 이론은 `$design-kit:design-base/references/`에서 관리합니다. 각 역할은 필요한 reference를 직접 읽으며 다른 skill의 선행 실행을 요구하지 않습니다. 프로젝트 탐색·기록 계약은 `$design-kit:project-design-rules/references/project-context.md`가 소유합니다.
 
 반복은 같은 맥락에서 용어·색·형태·배치·상호작용의 의미를 유지하고, 시각적 연결·리듬과 강조·기억을 만드는 기준입니다. 반복 노출은 맥락에 따라 생략·재제공·강조·변주할 수 있습니다.
 

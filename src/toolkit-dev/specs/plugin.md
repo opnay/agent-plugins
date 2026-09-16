@@ -9,11 +9,11 @@
 
 ---
 
-# Toolkit Dev 플러그인 스펙
+# Toolkit 플러그인 스펙
 
 ## 플러그인 목적
 
-`toolkit-dev`는 Codex가 로컬 개발 CLI를 직접 다룰 때 필요한 도구별 실행 계약을 제공합니다.
+`toolkit`는 Codex가 로컬 개발 CLI를 직접 다룰 때 필요한 도구별 실행 계약을 제공합니다.
 설치 여부와 실행 환경을 확인하고, 현재 도구의 명령과 호환성 경계를 적용하며, 실패 시 원인을 좁히고 안전한 다음 행동을 선택하게 합니다.
 
 ## 플러그인 경계와 비목표
@@ -59,12 +59,11 @@
 
 - skill 계약을 먼저 spec에 고정하고 runtime skill folder 전체를 현재 spec 기준으로 작성합니다.
 - runtime `SKILL.md`는 고빈도 행동과 routing을 소유하고 조건부 세부 절차는 `references/`가 소유합니다.
-- source-only spec과 change 기록은 release surface에 포함하지 않습니다.
 - skill을 추가하면 README, plugin spec, manifest description·prompt를 함께 점검합니다.
 
 ## 현재 구조 메모
 
 - 초기 version은 `0.1.0`입니다.
 - 현재 runtime surface는 `apple-container`와 `git`이며 미래 CLI skill을 미리 약속하지 않습니다.
-- marketplace는 기존 순서를 유지한 채 `./toolkit` release surface를 가리키는 `toolkit` 항목을 마지막에 등록합니다.
+- marketplace의 `toolkit` 항목은 `./toolkit`을 가리키며 기존 등록 순서를 유지합니다.
 - local development 확인은 repository marketplace 등록 후 `toolkit@opnay-plugins` 설치와 새 thread pickup으로 검증합니다.

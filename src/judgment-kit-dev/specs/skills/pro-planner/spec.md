@@ -35,10 +35,10 @@
 
 ## 대표 표면
 
-- 대표 runtime 표면: `judgment-kit-dev/skills/pro-planner/SKILL.md`
-- 사용자 스펙 의도: `judgment-kit-dev/specs/skills/pro-planner/intent.md`
-- skill spec index: `judgment-kit-dev/specs/skills/pro-planner/spec.md`
-- sub-spec directory: `judgment-kit-dev/specs/skills/pro-planner/core/`
+- 대표 runtime 표면: `judgment-kit/skills/pro-planner/SKILL.md`
+- 사용자 스펙 의도: `src/judgment-kit-dev/specs/skills/pro-planner/intent.md`
+- skill spec index: `src/judgment-kit-dev/specs/skills/pro-planner/spec.md`
+- sub-spec directory: `src/judgment-kit-dev/specs/skills/pro-planner/core/`
 
 ## 상세 계약 구조
 
@@ -83,8 +83,7 @@ frontmatter `description` 끝에는 `#` 없는 쉼표 구분 plain token 목록�
 
 ## 검증 기준
 
-- dev runtime skill이 `skills/pro-planner/SKILL.md`에 존재해야 한다.
-- release build 후 root `judgment-kit/skills/pro-planner/SKILL.md`가 존재해야 한다.
+- runtime skill이 루트 `judgment-kit/skills/pro-planner/SKILL.md`에 존재해야 한다.
 - plugin spec, README, manifest prompt가 `pro-planner`의 역할과 사용 기준을 언급해야 한다.
 - runtime skill 본문은 dev-only `specs/` 경로나 `src/judgment-kit-dev` 경로를 실행 지시로 포함하지 않아야 한다.
 - runtime skill은 product planning judgment 중심이며 UI 표현 기준이나 코드 구현 기준으로 좁아지지 않아야 한다.

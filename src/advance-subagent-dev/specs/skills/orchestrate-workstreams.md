@@ -40,8 +40,8 @@
 
 ## 엔트리포인트 / 대표 표면
 
-- 대표 표면: `skills/orchestrate-workstreams/SKILL.md`
-- 호출 방식: `$advance-subagent-dev:orchestrate-workstreams` 또는 narrow implicit trigger
+- 대표 표면: `advance-subagent/skills/orchestrate-workstreams/SKILL.md`
+- 호출 방식: `$advance-subagent:orchestrate-workstreams` 또는 narrow implicit trigger
 - implicit policy: `allow_implicit_invocation: true`
 - runtime 언어: `SKILL.md`, reference Markdown, agent interface 문구는 영어
 - 자동 포함: software-engineering 또는 cross-domain 요청에서 의미 있고 독립적인 workstream 두 개 이상이 명백한 경우

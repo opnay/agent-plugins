@@ -52,7 +52,7 @@ $advance-subagent:orchestrate-workstreams 시장 조사를 수행하고 독립�
 
 ## 공개 호출
 
-release build에서는 다음 식별자를 사용합니다.
+개발과 설치 모두 다음 식별자를 사용합니다.
 
 - `$advance-subagent:deep-research`
 - `$advance-subagent:orchestrate-workstreams`

@@ -48,7 +48,7 @@ Apple Silicon macOS에서 Apple `container` CLI를 로컬 Linux container의 기
 
 ## 엔트리포인트 / 대표 표면
 
-- 대표 표면: `skills/apple-container/SKILL.md`
+- 대표 표면: `toolkit/skills/apple-container/SKILL.md`
 - 호출 방식: `$toolkit:apple-container`
 - passive trigger: Apple container, container CLI, container k8s, Apple container Kubernetes plugin, Docker Desktop 대체, Docker CLI migration, Podman migration, macOS OCI container
 

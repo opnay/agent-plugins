@@ -1,6 +1,6 @@
-# Judgment Kit Dev
+# Judgment Kit
 
-`judgment-kit-dev`는 Codex 작업에 분야별 professional judgment flow를 적용하기 위한 플러그인입니다.
+`judgment-kit`는 Codex 작업에 분야별 professional judgment flow를 적용하기 위한 플러그인입니다.
 리서처, 기획자, 엔지니어, code keeper, quality manager 관점의 판단을 각각 독립 skill로 제공합니다.
 
 이 플러그인은 특정 제품 구현 workflow나 커밋 절차를 소유하지 않습니다.

@@ -33,7 +33,7 @@
 
 ## 엔트리포인트 / 대표 표면
 
-- 대표 표면: `advance-codex-dev/skills/plugin-creator/SKILL.md`
+- 대표 표면: `advance-codex/skills/plugin-creator/SKILL.md`
 - 호출 방식: 직접 호출하거나 manifest prompt의 안내를 따른다.
 
 ## 핵심 처리 계약

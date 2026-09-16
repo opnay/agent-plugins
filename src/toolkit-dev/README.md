@@ -1,13 +1,13 @@
-# Toolkit Dev
+# Toolkit
 
-`toolkit-dev`는 Codex가 로컬 개발 CLI를 안전하고 일관되게 운용하도록 돕는 플러그인입니다.
+`toolkit`는 Codex가 로컬 개발 CLI를 안전하고 일관되게 운용하도록 돕는 플러그인입니다.
 CLI를 사용한다는 이유만으로 skill을 모으지 않고, 도구 자체의 설치·환경 탐지·명령 계약·호환성·복구가 반복해서 필요한 경우만 포함합니다.
 
 ## Skill 선택
 
 ### Apple Container
 
-`$toolkit-dev:apple-container`는 Apple Silicon macOS에서 Apple `container` CLI와 bundled experimental `k8s` plugin을 사용할 때 적용합니다.
+`$toolkit:apple-container`는 Apple Silicon macOS에서 Apple `container` CLI와 bundled experimental `k8s` plugin을 사용할 때 적용합니다.
 고빈도 명령표는 `SKILL.md`, 조건부 설치·제거 절차와 개념·Kubernetes plugin 설명은 runtime `references/`가 소유합니다.
 
 대표 요청:
@@ -20,7 +20,7 @@ CLI를 사용한다는 이유만으로 skill을 모으지 않고, 도구 자체�
 
 ### Git
 
-`$toolkit-dev:git`은 task-scoped commit, branch, push를 각각 선택하거나 하나의 workflow로 연결할 때 적용합니다.
+`$toolkit:git`은 task-scoped commit, branch, push를 각각 선택하거나 하나의 workflow로 연결할 때 적용합니다.
 고빈도 정상 흐름과 명령은 `SKILL.md`, 조건부 branch prefix와 실패·중단 복구는 runtime `references/`가 소유합니다.
 
 대표 요청:

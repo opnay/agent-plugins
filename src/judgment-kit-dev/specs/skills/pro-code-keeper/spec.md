@@ -35,11 +35,11 @@ runtime은 `SKILL.md` router와 task-specific `references/`로 구성되어 필�
 
 ## 대표 표면
 
-- 대표 runtime 표면: `judgment-kit-dev/skills/pro-code-keeper/SKILL.md`
-- runtime references: `judgment-kit-dev/skills/pro-code-keeper/references/*.md`
-- runtime examples: `judgment-kit-dev/skills/pro-code-keeper/examples/*.md`
-- 사용자 스펙 의도: `judgment-kit-dev/specs/skills/pro-code-keeper/intent.md`
-- skill spec: `judgment-kit-dev/specs/skills/pro-code-keeper/spec.md`
+- 대표 runtime 표면: `judgment-kit/skills/pro-code-keeper/SKILL.md`
+- runtime references: `judgment-kit/skills/pro-code-keeper/references/*.md`
+- runtime examples: `judgment-kit/skills/pro-code-keeper/examples/*.md`
+- 사용자 스펙 의도: `src/judgment-kit-dev/specs/skills/pro-code-keeper/intent.md`
+- skill spec: `src/judgment-kit-dev/specs/skills/pro-code-keeper/spec.md`
 
 ## Runtime Folder 구조
 
@@ -120,10 +120,8 @@ frontmatter `description` 끝에는 `#` 없는 쉼표 구분 plain token 목록�
 
 ## 검증 기준
 
-- dev runtime skill이 `skills/pro-code-keeper/SKILL.md`에 존재해야 한다.
-- dev runtime skill이 계획된 `references/`와 `examples/` 파일을 포함해야 한다.
-- release build 후 root `judgment-kit/skills/pro-code-keeper/SKILL.md`가 존재해야 한다.
-- release build 후 root `judgment-kit/skills/pro-code-keeper/references/`와 `examples/`가 존재해야 한다.
+- runtime skill이 루트 `judgment-kit/skills/pro-code-keeper/SKILL.md`에 존재해야 한다.
+- 같은 skill 폴더에 계획된 `references/`와 `examples/` 파일이 존재해야 한다.
 - plugin spec, README, manifest prompt가 `pro-code-keeper`의 역할과 사용 기준을 언급해야 한다.
 - runtime skill 본문은 dev-only `specs/` 경로나 `src/judgment-kit-dev` 경로를 실행 지시로 포함하지 않아야 한다.
 - runtime skill은 작은 안전 변경과 축소 판단을 소유하되, 보안·검증·명시 기능 축소를 권하지 않아야 한다.

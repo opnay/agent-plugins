@@ -8,11 +8,11 @@
 
 ---
 
-# Judgment Kit Dev 플러그인 스펙
+# Judgment Kit 플러그인 스펙
 
 ## 플러그인 목적
 
-`judgment-kit-dev`는 Codex가 제품 기획, 엔지니어링, 코드 관리, 리서치, 품질 관리 작업에서 각 분야 전문가의 professional judgment flow를 적용하게 하는 플러그인입니다.
+`judgment-kit`는 Codex가 제품 기획, 엔지니어링, 코드 관리, 리서치, 품질 관리 작업에서 각 분야 전문가의 professional judgment flow를 적용하게 하는 플러그인입니다.
 핵심 책임은 research judgment, product planning judgment, engineering judgment, reference-guided lean code stewardship judgment, quality management judgment를 독립 skill로 제공하는 것입니다.
 
 ## 플러그인 경계와 비목표
@@ -43,22 +43,22 @@
 
 ## 대표 표면
 
-- 대표 스펙: `judgment-kit-dev/specs/plugin.md`
-- skill 상세 스펙 위치: `judgment-kit-dev/specs/skills/<skill-name>/spec.md`
+- 대표 스펙: `src/judgment-kit-dev/specs/plugin.md`
+- skill 상세 스펙 위치: `src/judgment-kit-dev/specs/skills/<skill-name>/spec.md`
 - 핵심 선택 기준: 지금 필요한 professional judgment flow가 research, product planning, engineering, lean code stewardship, quality management 중 무엇인가
 
 ## 내장 skill 체계
 
 - `pro-researcher`: 판단 전에 research question, 근거, 사실/가정, source quality, 불확실성, decision input을 정리한다.
-  - spec: `judgment-kit-dev/specs/skills/pro-researcher/spec.md`
+  - spec: `src/judgment-kit-dev/specs/skills/pro-researcher/spec.md`
 - `pro-planner`: 제품, 서비스, 기능 정의에서 넓은 요청을 사용자 문제, 제품 방식 후보, 기능 영역, 디자인 시스템 브리프 같은 부가 기획 표면, 가치, 범위, 요구사항, 우선순위, acceptance criteria, handoff 계약으로 분해한다.
-  - spec: `judgment-kit-dev/specs/skills/pro-planner/spec.md`
+  - spec: `src/judgment-kit-dev/specs/skills/pro-planner/spec.md`
 - `pro-engineering`: 코드 작성과 문제 해결에서 엔지니어링 판단, 원인 분석, 구현 규율, 검증 기준을 제공한다.
-  - spec: `judgment-kit-dev/specs/skills/pro-engineering/spec.md`
+  - spec: `src/judgment-kit-dev/specs/skills/pro-engineering/spec.md`
 - `pro-code-keeper`: 코드 변경과 리뷰에서 reference 기반으로 가장 작고 안전한 변경, root-cause fix, 삭제, 재사용, standard library/native feature, dependency reduction, refactor shrink, lean debt 기준을 제공한다.
-  - spec: `judgment-kit-dev/specs/skills/pro-code-keeper/spec.md`
+  - spec: `src/judgment-kit-dev/specs/skills/pro-code-keeper/spec.md`
 - `pro-quality-manager`: 제품, 디자인, 구현 산출물에서 품질 목표, coverage, quality gate, release confidence, residual risk를 관리한다.
-  - spec: `judgment-kit-dev/specs/skills/pro-quality-manager/spec.md`
+  - spec: `src/judgment-kit-dev/specs/skills/pro-quality-manager/spec.md`
 
 ## SDD 운영 원칙
 

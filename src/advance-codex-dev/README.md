@@ -1,6 +1,6 @@
-# Advance Codex Dev
+# Advance Codex
 
-`advance-codex-dev`는 Codex에서 할 수 있는 일을 더 깊고 안정적으로 활용하기 위한 플러그인입니다.
+`advance-codex`는 Codex에서 할 수 있는 일을 더 깊고 안정적으로 활용하기 위한 플러그인입니다.
 재사용 가능한 skill, installable plugin bundle, reusable instruction evaluation, agent token optimization 같은 Codex 활용 체계를 설계하고 정리하는 작업을 위한 문서화와 가이드를 제공합니다.
 `.agents/sessions/{YYYYMMDD}`는 session-scoped operational artifact를 두는 기본 위치로만 문서화합니다.
 

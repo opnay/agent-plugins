@@ -11,7 +11,7 @@
 
 - 색채·시지각·구성·타이포·상호작용·움직임·반복 원리를 실제 디자인 결정에 연결한다.
 - 일반 원리와 프로젝트의 선택값을 구분한다. 고정 미감, 팔레트, 토큰 값이나 업무별 workflow를 강제하지 않는다.
-- 대표 표면: `skills/design-base/SKILL.md`, `references/{color,space-type-surface,interaction-content,repetition}.md`.
+- 대표 표면: `design-kit/skills/design-base/SKILL.md`, `references/{color,space-type-surface,interaction-content,repetition}.md`.
 - 사용: 디자인의 원인 설명, 표현 개선, 공통 기준 설계. 코드 오류만 다루는 요청에는 적용하지 않는다.
 
 ## 핵심 처리 계약
@@ -64,6 +64,6 @@
 
 ## 독립성·확장
 
-- bundle 내 독립 진입을 보장한다. 프로젝트 규칙 탐색에는 `$design-kit-dev:project-design-rules/references/project-context.md`를 명시적으로 사용한다.
+- bundle 내 독립 진입을 보장한다. 프로젝트 규칙 탐색에는 `$design-kit:project-design-rules/references/project-context.md`를 명시적으로 사용한다.
 - 다른 역할의 선행 실행은 필요 없다. 이론은 이 skill의 reference가 소유하며 역할별 본문에 복제하지 않는다.
 - 새 이론은 실제 선택과 검증을 바꿀 때만 포함한다.

@@ -11,7 +11,7 @@
 
 ## 기본 Spec 구조
 
-각 개발 원본 플러그인은 다음 spec 표면을 사용합니다.
+파일 위치와 편집 대상은 [AGENTS.md의 저장소 레이아웃](../AGENTS.md#저장소-레이아웃)을 따릅니다. 각 spec의 역할은 다음과 같습니다.
 
 - `src/<plugin-name>-dev/specs/plugin.md`: 플러그인 목적, 경계, 사용 표면, 내장 skill 체계를 소유합니다.
 - `src/<plugin-name>-dev/specs/skills/<skill-name>.md`: flat skill spec입니다. 하나의 파일이 해당 skill의 처리 계약을 소유합니다.
@@ -62,7 +62,7 @@ skill spec이 바뀌면 해당 runtime `SKILL.md`는 현재 spec을 기준으로
 
 - spec의 현재 목적, 경계, 처리 계약, 판단 규칙, 검토 질문, 독립성 원칙을 먼저 읽습니다.
 - runtime에서 필요한 계약만 `SKILL.md`, `references/`, `templates/` 같은 설치 후 접근 가능한 표면으로 옮깁니다.
-- dev-only spec 경로를 runtime 실행 지시로 남기지 않습니다.
+- runtime 실행 계약은 작성용 spec을 별도로 읽지 않아도 이해·실행 가능해야 합니다.
 - 이전 runtime 문구를 유지할지는 spec과 runtime 사용성 기준으로 다시 판단합니다.
 - spec 변경이 skill 책임, plugin boundary, sibling 관계를 바꾸면 plugin spec과 인접 skill spec도 같은 변경 단위에서 점검합니다.
 
@@ -132,7 +132,8 @@ authoring operation이나 migration 이력은 change spec 또는 session record�
 
 version-scoped release나 migration 범위는 `src/<plugin-name>-dev/changes/<version>.md` change spec으로 고정할 수 있습니다.
 
-change spec은 릴리즈노트 성격의 변경 기록입니다.
+change spec은 해당 플러그인의 기능·계약·호환성 변경을 담는 릴리즈노트입니다.
+저장소 공통 운영 규칙은 소유 문서에서 관리하며 플러그인별 change spec에 일괄 복제하지 않습니다.
 사용자와의 질문/답변 히스토리를 보관하지 않습니다.
 `사용자 스펙 의도` 형식을 적용하지 않습니다.
 change spec에 필요한 사용자 결정은 릴리즈노트에 필요한 변경 근거로만 짧게 남깁니다.
@@ -150,7 +151,6 @@ change spec은 먼저 짧은 `변경사항 요약` 리스트를 보여주고, �
 change spec은 영구 normative plugin/skill contract를 대체하지 않습니다.
 change spec에서 확정된 지속 규칙은 `specs/plugin.md`, 관련 `specs/skills/*.md`, `specs/skills/<skill-name>/spec.md`, README 같은 소유 표면으로 승격합니다.
 일회성 release history, migration 배경, 제거 범위, 검증 결과는 change spec에 남기고 일반 skill spec으로 옮기지 않습니다.
-release surface에는 `changes/`를 포함하지 않습니다.
 
 ## 템플릿
 
@@ -165,7 +165,7 @@ folder-based skill spec을 만들 때는 `skill-spec.md`를 그대로 모든 chi
 
 ## 변경 Workflow
 
-- 플러그인 수정 요청은 먼저 해당 dev source의 spec을 확인하고 필요한 spec 변경을 반영합니다.
+- 플러그인 수정 요청은 먼저 소유 spec을 확인하고 필요한 spec 변경을 반영합니다.
 - 실제 skill 본문 변경은 spec 변경 또는 spec 확인 이후에 진행합니다.
 - skill spec을 수정했다면 해당 runtime skill을 현재 spec 기준으로 처음부터 재작성합니다.
 - skill 책임, 사용 기준, plugin boundary가 바뀌면 관련 skill spec, plugin spec, upstream/downstream plugin surface를 같은 변경 단위에서 함께 점검합니다.
@@ -175,7 +175,7 @@ folder-based skill spec을 만들 때는 `skill-spec.md`를 그대로 모든 chi
 ## Spec/Runtime 검증
 
 skill spec 또는 runtime skill을 바꾼 뒤에는 spec/runtime 정합성을 검증합니다.
-파일 변경, release surface 변경, multi-spec contract 변경, 사용자 요청 검증에는 clean-context verifier를 기본값으로 둡니다.
+파일 변경, plugin surface 변경, multi-spec contract 변경, 사용자 요청 검증에는 clean-context verifier를 기본값으로 둡니다.
 
 검증 방식:
 

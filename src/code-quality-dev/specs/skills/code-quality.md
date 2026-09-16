@@ -41,9 +41,9 @@
 
 ## 엔트리포인트 / 대표 표면
 
-- 대표 표면: `skills/code-quality/SKILL.md`
-- 상세 기준: `skills/code-quality/references/*.md`
-- 호출 방식: 명시 `$code-quality-dev:code-quality` 또는 production code 구현·수정·검토 요청의 암시 호출
+- 대표 표면: `code-quality/skills/code-quality/SKILL.md`
+- 상세 기준: `code-quality/skills/code-quality/references/*.md`
+- 호출 방식: 명시 `$code-quality:code-quality` 또는 production code 구현·수정·검토 요청의 암시 호출
 
 ## 핵심 처리 계약
 
@@ -55,7 +55,7 @@
 - 변경 후 관련 테스트, 타입 검사, 린트, 포맷 검사, 빌드, 통합 검증 중 가능한 범위의 검증을 수행합니다.
 - 완료 전 diff를 자체 검토해 요구 충족, 기존 동작 보존, 실패 경로, 이름과 구조, 불필요한 추상화, 보안·성능·동시성·데이터 무결성 위험을 확인합니다.
 - 사용자가 단순히 이름, 문체, 들여쓰기, 줄바꿈, 표 정렬, 코드블록 언어 태그처럼 동작·계약·위험 검토가 없는 변경만 요청하면 이 skill은 적용하지 않습니다.
-- generated/vendor code 예외는 좁게 적용합니다. `$code-quality`를 직접 호출했거나 보안·호환성·운영 위험 검토, wrapper/schema/source 대안, 임시 patch 위험 평가가 명시된 경우에만 다룹니다.
+- generated/vendor code 예외는 좁게 적용합니다. `$code-quality:code-quality`를 직접 호출했거나 보안·호환성·운영 위험 검토, wrapper/schema/source 대안, 임시 patch 위험 평가가 명시된 경우에만 다룹니다.
 
 ## 판단 우선순위
 

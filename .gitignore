@@ -1,5 +1,3 @@
 node_modules/
-/src/agent-wiki-dev/scripts/target/
-/src/agent-wiki-dev/scripts/agent-wiki
 /agent-wiki/scripts/target/
 /agent-wiki/scripts/agent-wiki

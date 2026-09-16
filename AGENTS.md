@@ -14,29 +14,31 @@
 
 ## 저장소 레이아웃
 
-- 설치용 빌드 산출물: 저장소 루트 `./<plugin-name>`
-- 개발 원본 플러그인: `./src/<plugin-name>-dev`
-- specs 위치: `./src/<plugin-name>-dev/specs/`
-- 기본 편집 대상: `./src/<plugin-name>-dev`
-- release 플러그인 갱신: build command 산출물만 사용합니다.
+- 실제 플러그인·기본 편집 대상: 저장소 루트 `./<plugin-name>`
+- 스펙·변경 기록·개발 문서: 기존 `./src/<plugin-name>-dev`의 `specs/`, `changes/`, `README.md`
+- 개발·릴리즈는 브랜치로 구분하며 별도 플러그인 복사본이나 복사 빌드를 두지 않습니다.
 - `./plugins/<plugin-name>` 경로는 만들거나 사용하지 않습니다.
 
 ## 브랜치 운영
 
 - `next`: 개발 브랜치
-- 일반 플러그인 수정은 `next`의 `src/<plugin-name>-dev`에 적용합니다.
+- 일반 플러그인 수정은 `next`의 `./<plugin-name>`에 적용합니다.
 
 ## 필수 플러그인 구조
 
-개발 원본 플러그인은 다음을 포함해야 합니다.
+플러그인은 다음을 포함해야 합니다.
 
-- `./src/<plugin-name>-dev/.codex-plugin/plugin.json`
+- `./<plugin-name>/.codex-plugin/plugin.json`
+- `./<plugin-name>/README.md`
+- 선택: `skills/`, `assets/`, `scripts/`, `.mcp.json`, `.app.json`
+
+개발 문서는 기존 위치를 유지합니다.
+
 - `./src/<plugin-name>-dev/README.md`
 - `./src/<plugin-name>-dev/specs/plugin.md`
-- 선택: `specs/skills/`, `skills/`, `assets/`, `scripts/`, `.mcp.json`, `.app.json`
+- 선택: `specs/skills/`, `changes/`
 
 플러그인 폴더 이름과 `plugin.json`의 `"name"` 값은 일치해야 합니다.
-공개 release 플러그인은 `<plugin-name>`, 개발 원본은 `<plugin-name>-dev`를 사용합니다.
 
 ## SDD 규칙
 
@@ -52,20 +54,19 @@
 ## 마켓플레이스
 
 - 단일 진실 공급원: `./.agents/plugins/marketplace.json`
-- `source.path`는 저장소 루트의 빌드 산출물 폴더를 가리켜야 합니다.
+- `source.path`는 저장소 루트의 실제 플러그인 폴더를 가리켜야 합니다.
 - 등록 순서는 `plugins` 배열을 기준으로 유지합니다.
 - 이 저장소 로컬 플러그인을 `./plugins/<plugin-name>`로 등록하지 않습니다.
 - 모든 marketplace 항목은 `policy.installation`, `policy.authentication`, `category`를 포함해야 합니다.
 
 ## 플러그인 변경 Workflow
 
-1. 개발 원본은 `./src/<plugin-name>-dev`에 생성하거나 이동합니다.
-2. README, specs, skills, manifest를 dev source에서 먼저 수정합니다.
+1. 저장소 레이아웃에 따라 플러그인과 개발 문서를 준비합니다.
+2. 소유 spec을 먼저 확인하거나 갱신한 뒤 README, skills, manifest를 맞춥니다.
 3. skill spec을 수정했다면 runtime skill을 현재 spec 기준으로 처음부터 재작성합니다.
-4. skill spec 변경은 `src/<plugin-name>-dev/changes/<version>.md`에 기록합니다.
+4. 변경 기록은 `docs/SDD.md`의 Change Spec 기준을 따릅니다.
 5. 관련 skill spec, plugin spec, upstream/downstream plugin surface를 함께 점검합니다.
-6. `pnpm build:plugin <plugin-name> [--force]`로 루트 release surface를 갱신합니다.
-7. JSON 변경은 파싱 검증합니다.
+6. 실제 플러그인의 파일·참조·동작과 marketplace 경로를 검증합니다. JSON 변경은 파싱 검증합니다.
 
 ## 릴리즈
 
@@ -98,9 +99,8 @@
 ## Runtime Skill과 Spec 분리
 
 - Runtime `SKILL.md`는 영문으로 작성합니다. 의미·실행 조건·검증·권한·정확한 식별자를 유지하면서 짧고 명확한 문장을 사용합니다.
-- `src/<plugin-name>-dev/specs/`는 개발 원본 계약입니다. 설치되는 runtime skill 본문이 의존할 수 있는 표면이 아닙니다.
-- release surface에는 `specs/`가 포함되지 않는다는 전제로 skill 본문을 작성합니다.
-- skill 본문에는 설치 후 존재하지 않는 dev-only spec 경로를 실행 지시로 남기지 않습니다.
+- `src/<plugin-name>-dev/specs/`는 작성·검증 계약이며 설치되는 runtime 표면이 아닙니다.
+- runtime skill의 실행 계약은 작성용 spec을 별도로 읽지 않아도 이해·실행 가능해야 합니다.
 - skill을 작성하거나 재작성할 때 spec은 작성 기준으로만 사용합니다.
 - 결과물인 `SKILL.md`에는 runtime에서 접근 가능한 본문, `references/`, `templates/`만 남깁니다.
 - 상세 계약이 runtime에도 필요하면 본문에 간결히 포함하거나 `skills/<skill-name>/references/`로 승격합니다.
@@ -115,18 +115,16 @@
 
 다음 표면이 plugin usage guidance를 소유합니다.
 
-- `specs/plugin.md`: 플러그인 경계, 내장 skill 체계, 각 skill 시작 기준
-- `README.md`: 사람이 읽는 사용 방법과 대표 호출 예시
-- `.codex-plugin/plugin.json`: 설치 후 노출되는 설명과 `defaultPrompt`
+- `src/<plugin-name>-dev/specs/plugin.md`: 플러그인 경계, 내장 skill 체계, 각 skill 시작 기준
+- `<plugin-name>/README.md`, `src/<plugin-name>-dev/README.md`: 사용 방법과 개발 안내
+- `<plugin-name>/.codex-plugin/plugin.json`: 설치 후 노출되는 설명과 `defaultPrompt`
 
-사용 표면을 바꾸면 남은 skill spec, README, plugin spec, manifest 설명, 호출 예시, release build를 함께 점검합니다.
+사용 표면을 바꾸면 남은 skill spec, README, plugin spec, manifest 설명, 호출 예시, 실제 플러그인 파일을 함께 점검합니다.
 
 ## 저장소 편집 규칙
 
 - 두 번째 레이아웃 관례를 조용히 도입하지 않습니다.
 - 명시적 재정렬 요청이 없으면 marketplace 순서를 유지합니다.
-- 루트 release 플러그인은 직접 편집하지 않습니다.
-- 루트 release 변경은 build command 산출물로만 만듭니다.
 - 메타데이터나 경로만 손보면 스캐폴드 재생성보다 작고 직접적인 수정을 선호합니다.
 - 플러그인을 이동하면 같은 변경 안에서 marketplace 경로도 갱신합니다.
 - 스캐폴드 도구가 `./plugins/<plugin-name>`를 만들었다면 마무리 전에 `./<plugin-name>`로 옮깁니다.

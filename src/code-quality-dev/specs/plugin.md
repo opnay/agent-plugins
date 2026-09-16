@@ -4,11 +4,11 @@
 
 ---
 
-# Code Quality Dev 플러그인 스펙
+# Code Quality 플러그인 스펙
 
 ## 플러그인 목적
 
-`code-quality-dev`는 production code 작업에서 정확성, 이해 가능성, 변경 안전성, 테스트 가능성, 견고성, 적절한 재사용, 단순성을 판단하게 하는 플러그인입니다.
+`code-quality`는 production code 작업에서 정확성, 이해 가능성, 변경 안전성, 테스트 가능성, 견고성, 적절한 재사용, 단순성을 판단하게 하는 플러그인입니다.
 핵심 책임은 구현, 버그 수정, 리팩터링, 테스트, 의존성 판단, architecture tradeoff, 코드 리뷰를 하나의 code-quality skill 표면으로 제공하는 것입니다.
 
 ## 플러그인 경계와 비목표
@@ -23,7 +23,7 @@
   - prose-only 문서 작성
   - 번역
   - 단순 포맷, 스타일, 이름 변경
-  - `$code-quality` 호출 또는 code-quality 위험 검토 요청이 없는 generated code 또는 vendor code 직접 수정
+  - `$code-quality:code-quality` 호출 또는 code-quality 위험 검토 요청이 없는 generated code 또는 vendor code 직접 수정
   - 특정 서적이나 단일 "클린 코드" 교리의 기계적 적용
 
 ## 처리하려는 작업 형태
@@ -37,23 +37,22 @@
 
 ## 대표 표면
 
-- 대표 스펙: `code-quality-dev/specs/plugin.md`
-- skill 상세 스펙 위치: `code-quality-dev/specs/skills/code-quality.md`
-- runtime skill: `code-quality-dev/skills/code-quality/SKILL.md`
-- runtime references: `code-quality-dev/skills/code-quality/references/*.md`
-- 호출 검증 fixture: `code-quality-dev/skills/code-quality/evals/trigger-prompts.csv`
+- 대표 스펙: `src/code-quality-dev/specs/plugin.md`
+- skill 상세 스펙 위치: `src/code-quality-dev/specs/skills/code-quality.md`
+- runtime skill: `code-quality/skills/code-quality/SKILL.md`
+- runtime references: `code-quality/skills/code-quality/references/*.md`
+- 호출 검증 fixture: `code-quality/skills/code-quality/evals/trigger-prompts.csv`
 
 ## 내장 skill 체계
 
 - `code-quality`: production code 구현, 수정, 리팩터링, 테스트, 의존성 판단, 코드 리뷰를 수행한다.
-  - spec: `code-quality-dev/specs/skills/code-quality.md`
+  - spec: `src/code-quality-dev/specs/skills/code-quality.md`
 
 ## SDD 운영 원칙
 
 - plugin spec은 plugin boundary, 대표 표면, skill composition을 소유합니다.
 - `code-quality`의 세부 판단 기준은 skill spec과 runtime references가 소유합니다.
 - skill spec이 바뀌면 runtime `SKILL.md`와 references를 현재 spec 기준으로 다시 점검합니다.
-- release surface에는 `specs/`와 `changes/`를 포함하지 않습니다.
 
 ## 현재 구조 메모
 

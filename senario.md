@@ -2,8 +2,7 @@
 
 ## Target Instruction
 
-- 대상 skill: `src/code-quality-dev/skills/code-quality/SKILL.md`
-- 대상 release skill: `code-quality/skills/code-quality/SKILL.md`
+- 대상 skill: `code-quality/skills/code-quality/SKILL.md`
 - 목적: `code-quality`가 production code 구현, 수정, 리팩터링, 테스트, 의존성 판단, 코드 리뷰에서 의도대로 작동하는지 검증한다.
 
 ## Checklist Design
@@ -27,7 +26,7 @@
 ### 호출되면 안 되는 시나리오 공통 체크리스트
 
 - [critical] prose-only, 번역, generated/vendor code 직접 수정, formatting-only, style-only, naming-only 요청에는 기본적으로 skill을 적용하지 않는다.
-- 사용자가 명시적으로 `$code-quality`를 호출하거나 correctness/security/compatibility/data-integrity/operational-risk 검토를 요청한 경우에만 예외적으로 적용한다.
+- 사용자가 명시적으로 `$code-quality:code-quality`를 호출하거나 correctness/security/compatibility/data-integrity/operational-risk 검토를 요청한 경우에만 예외적으로 적용한다.
 - 코드 품질 판단이 필요한 경계 사례는 조건부로 분류한다.
 
 ## Scenario Set
