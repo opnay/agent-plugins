@@ -119,6 +119,7 @@ Version bump가 필요한 release 승격은 다음 중 하나를 사용합니다
 - 플러그인 소속 skill을 수정할 때는 plugin 안의 역할, sibling 관계, 관련 spec을 함께 확인합니다.
 - 플러그인 관점의 영향이 있으면 skill 단독 수정으로 축소하지 않습니다.
 - Plugin을 통해 설치된 skill은 `$<plugin>:<skill>` 식별자를 사용합니다. 예: `$advance-codex:skill-creator`
+- 다른 skill의 리소스는 설치 절대 경로나 형제 디렉터리 상대 경로 대신 `$<plugin>:<skill>/<resource-path>` 형식으로 참조합니다. 예: `$design-kit:design-base/references/color.md`
 - skill이 에이전트 행동을 보정할 때는 금지 조건을 계속 늘리기보다 허용되는 행동, 판단 기준, 실패 조건을 먼저 정의합니다.
 - blocklist 방식의 차단 조건은 허용 계약을 보완하는 좁은 방어선으로만 둡니다.
 
