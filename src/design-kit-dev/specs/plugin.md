@@ -58,7 +58,7 @@
 - flat skill spec이 처리 계약과 의도를 소유한다. 공통 이론은 design-base, 프로젝트 맥락 읽기·기록은 project-design-rules가 소유한다.
 - runtime은 영문이며 설치되는 리소스만 참조한다. 다른 skill의 리소스는 `$<plugin>:<skill>/<resource-path>`, 자기 skill의 리소스는 내부 상대 경로를 사용한다. dev-only spec은 실행 입력이 아니다.
 - 사용 기준 변경은 README·manifest·해당 skill spec을 함께 갱신한다.
-- 생성물은 build command로 만든다. marketplace 등록은 release 승격 시 수행한다.
+- 생성물은 build command로 만든다.
 
 ## 검증 기준
 

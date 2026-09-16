@@ -14,7 +14,7 @@
 
 ## 저장소 레이아웃
 
-- 공개 설치용 release 플러그인: 저장소 루트 `./<plugin-name>`
+- 설치용 빌드 산출물: 저장소 루트 `./<plugin-name>`
 - 개발 원본 플러그인: `./src/<plugin-name>-dev`
 - specs 위치: `./src/<plugin-name>-dev/specs/`
 - 기본 편집 대상: `./src/<plugin-name>-dev`
@@ -23,21 +23,8 @@
 
 ## 브랜치 운영
 
-- `main`: 공개 release 브랜치
 - `next`: 개발 브랜치
 - 일반 플러그인 수정은 `next`의 `src/<plugin-name>-dev`에 적용합니다.
-- `main`에는 검증된 내용을 release로 승격할 때만 반영합니다.
-- `src/<plugin-name>-dev`는 편집·검증·build를 위한 개발 원본이며, 직접 설치나 marketplace 노출을 요구하지 않습니다.
-- `<plugin-name>-dev` 이름과 `src/<plugin-name>-dev` 구조는 source/release 변환 규약으로 유지합니다.
-- 플러그인 변경마다 build command로 루트 release surface를 갱신합니다.
-
-## 버전 승격
-
-- 마지막 `main` merge 이후 특정 dev 플러그인을 처음 수정하면 먼저 version bump 여부를 확인합니다.
-- bump 종류는 자동 단정하지 않습니다. 사용자에게 patch/minor/major 또는 구체 version을 묻습니다.
-- 사용자가 version 유지 또는 bump를 명시하면 그 결정을 따릅니다.
-- 같은 플러그인의 이후 변경은 추가 bump 없이 build만 수행합니다.
-- 공개 release 단계에서는 `next`를 `main`으로 merge하고, release surface를 루트 폴더로 생성/갱신합니다.
 
 ## 필수 플러그인 구조
 
@@ -65,12 +52,9 @@
 ## 마켓플레이스
 
 - 단일 진실 공급원: `./.agents/plugins/marketplace.json`
-- 공개 release 플러그인은 모두 marketplace 항목을 가져야 합니다.
-- `source.path`는 저장소 루트의 release 플러그인 폴더를 가리켜야 합니다.
-- dev 원본은 marketplace 항목을 요구하지 않습니다.
+- `source.path`는 저장소 루트의 빌드 산출물 폴더를 가리켜야 합니다.
 - 등록 순서는 `plugins` 배열을 기준으로 유지합니다.
 - 이 저장소 로컬 플러그인을 `./plugins/<plugin-name>`로 등록하지 않습니다.
-- 공개 release 항목 추가나 갱신은 release 승격이 요청된 경우에만 수행합니다.
 - 모든 marketplace 항목은 `policy.installation`, `policy.authentication`, `category`를 포함해야 합니다.
 
 ## 플러그인 변경 Workflow
@@ -83,21 +67,9 @@
 6. `pnpm build:plugin <plugin-name> [--force]`로 루트 release surface를 갱신합니다.
 7. JSON 변경은 파싱 검증합니다.
 
-Version bump가 필요한 release 승격은 다음 중 하나를 사용합니다.
+## 릴리즈
 
-- `pnpm release:plugin <plugin-name> --bump <patch|minor|major> [--force]`
-- `pnpm release:plugin <plugin-name> --version <version> [--force]`
-
-## Release 승격 Workflow
-
-1. `next`에서 release 범위를 확인합니다.
-2. dev plugin version bump 반영 여부를 확인합니다.
-3. 마지막 `main` merge 이후 첫 수정인 플러그인은 사용자에게 bump 종류를 확인합니다.
-4. 이후 같은 플러그인 수정은 추가 bump 없이 build만 수행합니다.
-5. `next`를 `main`으로 merge할 release 단위를 확정합니다.
-6. build command로 `src/<plugin-name>-dev`를 루트 release surface로 변환합니다.
-7. release root에 `specs/`가 없는지, manifest와 marketplace가 맞는지 검증합니다.
-8. 검증된 release 변경만 `main`에 반영합니다.
+`main`에 푸시합니다.
 
 ## 플러그인 설계 기준
 
@@ -155,7 +127,6 @@ Version bump가 필요한 release 승격은 다음 중 하나를 사용합니다
 - 명시적 재정렬 요청이 없으면 marketplace 순서를 유지합니다.
 - 루트 release 플러그인은 직접 편집하지 않습니다.
 - 루트 release 변경은 build command 산출물로만 만듭니다.
-- release command를 통한 version bump는 마지막 `main` merge 이후 해당 plugin의 첫 수정 때만 수행합니다.
 - 메타데이터나 경로만 손보면 스캐폴드 재생성보다 작고 직접적인 수정을 선호합니다.
 - 플러그인을 이동하면 같은 변경 안에서 marketplace 경로도 갱신합니다.
 - 스캐폴드 도구가 `./plugins/<plugin-name>`를 만들었다면 마무리 전에 `./<plugin-name>`로 옮깁니다.

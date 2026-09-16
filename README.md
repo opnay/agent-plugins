@@ -1,8 +1,8 @@
 # OPNay Agent Plugins
 
 OPNay가 직접 관리하는 Codex 플러그인 마켓플레이스 저장소입니다.
-공개 설치용 release surface는 저장소 루트 바로 아래에 배치되며, 개발 원본은 `src/` 아래에서 관리합니다.
-`.agents/plugins/marketplace.json`은 공개 설치 가능한 release 플러그인 목록의 단일 진실 공급원입니다.
+설치용 빌드 산출물은 저장소 루트 바로 아래에 배치되며, 개발 원본은 `src/` 아래에서 관리합니다.
+`.agents/plugins/marketplace.json`은 플러그인 목록의 단일 진실 공급원입니다.
 
 ## 마켓플레이스 등록
 
@@ -25,23 +25,15 @@ codex plugin marketplace upgrade
 ## 로컬 개발 원본
 
 로컬 개발 원본은 `src/` 아래에서 관리하고 plugin name에 `-dev` suffix를 붙입니다.
-이 원본은 직접 설치하거나 marketplace에 노출할 필요가 없습니다.
-일반 개발 변경은 `src/<plugin-name>-dev`에 먼저 적용하고, 루트의 공개 release surface는 build command 산출물로 갱신합니다.
+일반 개발 변경은 `src/<plugin-name>-dev`에 먼저 적용하고, 루트의 설치용 산출물은 build command로 갱신합니다.
 
-## 브랜치 모델
+## 브랜치와 릴리즈
 
-- `main`: 공개 release 브랜치입니다.
 - `next`: 개발 브랜치입니다.
 - 플러그인 수정은 기본적으로 `next`의 `src/<plugin-name>-dev`에서 진행합니다.
-- `main`에는 `next`의 개발 내용을 release로 승격할 때만 반영합니다.
-- 마지막 `main` merge 이후 `next`에서 플러그인을 처음 수정할 때, patch/minor/major 또는 target version을 사용자 확인으로 결정합니다.
-- 같은 플러그인의 이후 변경은 추가 version bump 없이 build만 수행합니다.
-- `src/<plugin-name>-dev`의 직접 설치 가능성은 개발 완료 조건이 아닙니다.
-- 루트 `<plugin-name>/` release surface는 매 plugin 변경 뒤 build command로 갱신합니다.
+- 릴리즈는 `main`에 푸시합니다.
 
-`-dev` suffix는 설치 호출 표면이 아니라 개발 원본과 release 산출물을 구분하는 식별자입니다.
-
-자세한 릴리즈/개발 분리 규칙은 `docs/release-pattern.md`를 봅니다.
+브랜치·릴리즈 안내: [release-pattern.md](docs/release-pattern.md).
 
 ## 플러그인
 
@@ -67,7 +59,6 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 - 개발 원본: `src/design-kit-dev/`
 - build 산출물: `design-kit/`
 - 주요 실행 표면: `design-base`, `web-designer`, `product-designer`, `visual-content-designer`, `art-director`, `creative-director`, `project-design-rules`
-- 상태: 개발 및 build 대상. 공개 marketplace 등록은 release 승격 시 수행합니다.
 
 ### Advance Subagent
 
