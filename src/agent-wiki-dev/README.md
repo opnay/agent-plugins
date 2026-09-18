@@ -21,6 +21,12 @@ Rust CLI는 저장 위치·설치를, 세 스킬은 탐색·조사·문서 반�
 - `$agent-wiki:researcher 프로젝트 A 기록과 제공한 최신 자료의 차이를 확인해주세요.`
 - `$agent-wiki:writer 이 조사 결과와 작업 결정을 위키에 반영하고 관련 문서와 연결해주세요.`
 
+## 다중 root 사용
+
+root는 백업·공개·동기화 경계이고, root 안의 폴더는 지식·조사·프로젝트 같은 의미 분류입니다. reader·researcher는 요청·현재 작업·root 이름과 설명에 맞는 root만 읽고 모든 root를 자동 탐색하지 않습니다. 반환 문서는 root 이름과 상대 경로를 함께 표시합니다.
+
+writer는 기록마다 하나의 root를 선택합니다: 사용자 지정, 명확한 현재 작업 root, 이름·설명의 정확한 일치, 비민감하고 모호하지 않은 default 순서입니다. 개인정보나 공개 경계가 섞이거나 대상이 모호하면 먼저 확인합니다. root 사이 Markdown 링크·자동 복사·이동·병합은 만들지 않습니다. root 간 이동은 사용자가 출발 root·대상 root·범위를 명시한 경우에만 수행하며 cross-root 링크를 남기지 않습니다.
+
 ## 과거 작업과 판단 복원
 
 탐색 관계는 **작업 기록 > 판단별 근거 목록 > 자료 출처·요약**입니다. 근거 목록은 작업 문서 안에 두고 자료 요약은 여러 작업에서 공유할 수 있습니다. 고정 폴더나 세 개의 문서를 요구하지 않습니다.
@@ -55,7 +61,7 @@ Rust CLI는 저장 위치·설치를, 세 스킬은 탐색·조사·문서 반�
 
 `index.md`는 상위·하위 인덱스와 영역 진입 문서를 연결합니다. 일반 문서는 인덱스나 더 상세한 일반 문서에 자유롭게 연결합니다. React 개요는 `Knowledge/React/index.md`, React 19 변경사항은 `Knowledge/React/19.md`처럼 정확한 내용을 가진 대상을 가리킵니다. 경로는 예시입니다.
 
-루트에서 모든 문서로, 각 문서에서 루트로 링크를 따라 도달해야 합니다. 일반 문서끼리의 중간 연결도 허용하며 각 문서에 직접 상위 인덱스 링크를 강제하지 않습니다. 작성할 때 주변을 정리하고 작업 종료 시 변경 범위를 점검합니다. 이동·병합은 기존 내용과 참조를 보존합니다.
+각 root에서 그 root의 모든 문서로, 각 문서에서 같은 root로 링크를 따라 도달해야 합니다. 일반 문서끼리의 중간 연결도 허용하며 각 문서에 직접 상위 인덱스 링크를 강제하지 않습니다. 작성할 때 주변을 정리하고 작업 종료 시 변경 범위를 점검합니다. 이동·병합은 같은 root 안에서만 기존 내용과 참조를 보존합니다.
 
 설정·접근이 불가능하면 다른 폴더에 임의 기록하지 않고 본 작업과 위키 미반영 상태를 구분합니다. reader·researcher는 위키를 수정하지 않습니다.
 
@@ -73,8 +79,8 @@ writer는 다른 도구·스킬의 조사 결과도 받아 판단합니다. rese
 
 ## 폴더 제한
 
-- 폴더당 직접 파일은 `index.md`·첨부·숨김 파일을 포함해 최대 25개입니다. 하위 폴더와 ZIP 내부 항목은 합산하지 않습니다.
-- 위키 루트는 깊이 0이며 최대 깊이는 4입니다. `wiki/A/B/C/D/document.md`까지 허용합니다.
+- 각 root의 폴더당 직접 파일은 `index.md`·첨부·숨김 파일을 포함해 최대 25개입니다. 하위 폴더와 ZIP 내부 항목은 합산하지 않습니다.
+- 각 root는 깊이 0이며 최대 깊이는 4입니다. `wiki/A/B/C/D/document.md`까지 허용합니다.
 - 단순 폴더명과 서브 카테고리는 자유롭게 정합니다. 밑줄 복합명은 `<상위>_<하위>` 두 부분까지만 사용합니다. `react_hooks`는 허용하고 `react_hooks_effect`는 사용하지 않습니다. 더 세분화하려면 `react_hooks/effect/`처럼 실제 폴더를 나눕니다. 파일명에는 적용하지 않습니다.
 - writer는 생성·이동 전에 상한을 확인합니다. 초과하면 의미 있는 주제로 분류하되 무관한 내용을 합치거나 삭제하지 않습니다. reader·researcher는 발견한 위반만 알립니다.
 
@@ -107,21 +113,36 @@ export PATH="$HOME/.local/bin:$PATH"
 
 ## 저장 위치 설정·조회
 
-기존 위키 폴더를 지정합니다. 상대 경로와 `~`를 지원하며 절대 경로로 저장합니다.
+root는 백업·공개·동기화의 물리 경계이고, root 안의 폴더는 지식·조사·프로젝트 같은 의미 분류입니다. root 이름은 사용자가 정합니다. 같은 basedir 아래의 여러 root도 서로 다른 경계이지만, basedir 전체를 백업하면 모두 포함될 수 있습니다.
+
+서로 같은 경로나 상하로 중첩된 root는 등록할 수 없고 형제 root는 허용합니다. root 사이 상대 Markdown 링크는 만들지 않습니다.
 
 ```sh
-agent-wiki set ~/Documents/Wiki
+agent-wiki set knowledge ~/Documents/Wiki
+agent-wiki set personality ~/.agents/personality
+agent-wiki default knowledge
+agent-wiki list
+agent-wiki path knowledge
 agent-wiki path
 agent-wiki --help
 ```
 
-설치는 아직 저장 위치를 정하지 않습니다. `set`을 실행할 때 `~/.agents/config.wiki.toml`을 생성하거나 갱신합니다.
+`set <directory>`는 기존 호환 명령이며 default root의 경로를 바꿉니다. 설치는 저장 위치를 정하지 않습니다. `set` 또는 `default`는 `~/.agents/config.wiki.toml`을 원자적으로 갱신합니다.
 
 ```toml
-root = "/Users/example/Documents/Wiki"
+version = 2
+default = "knowledge"
+
+[roots.knowledge]
+path = "/Users/example/Documents/Wiki"
+description = "Shared knowledge"
+
+[roots.personality]
+path = "/Users/example/.agents/personality"
 ```
 
-- `set`은 폴더가 없거나 파일이면 실패하며 기존 설정을 보존합니다.
-- `path`는 설정되지 않았거나 저장 폴더가 사라졌다면 실패합니다.
-- 설정은 최상위 `root` 문자열만 지원합니다. 잘못된 TOML이나 미지원 키가 있으면 덮어쓰지 않습니다. 주석과 서식은 설정 갱신 시 정규화합니다.
+- 기존 `root = "/absolute/path"` 설정은 implicit `default` root로 계속 읽습니다. 첫 성공적인 설정 변경에서 v2 형식으로 정규화될 수 있습니다.
+- `set`은 폴더가 없거나 파일이면 실패하며, 중복·중첩 root도 거부하고 기존 설정을 보존합니다.
+- `path [name]`은 설정되지 않았거나 지정 root가 사라졌다면 실패합니다. `list`는 등록된 이름·경로·default 여부를 보여줍니다.
+- 잘못된 TOML, 미지원 형식, 잘못된 경로, 심볼릭 링크 설정 파일은 덮어쓰지 않습니다. 주석과 서식은 설정 갱신 시 정규화합니다.
 - 도움말과 조회는 파일을 생성하지 않습니다. 셸 설정과 위키 내용도 변경하지 않습니다.
