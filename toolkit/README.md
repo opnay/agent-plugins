@@ -25,12 +25,14 @@ CLI를 사용한다는 이유만으로 skill을 모으지 않고, 도구 자체�
 
 대표 요청:
 
-- task-owned related change unit만 stage하고 risk-proportional check, message 위생, 120자 미만 subject·가장 구체적인 commit type·파일 기반 메시지로 commit한 뒤 실제 저장된 full message를 검증합니다.
+- task-owned related change unit만 stage하고 risk-proportional check, message 위생, 120자 미만 subject·가장 구체적인 commit type·파일 기반 메시지로 commit한 뒤 실제 저장된 full message를 검증합니다. 선택적으로 bundled `git-codex`로 message file 생성·기계 검증·성공 뒤 cleanup을 수행합니다.
 - exact start point에서 branch를 생성하거나 기존 branch로 전환하고, 명시적으로 요청된 경우 `git switch -C`로 branch를 force-create합니다.
 - current branch에 upstream을 설정하고 push합니다.
 - local source와 remote destination이 다른 refspec push를 실행·검증합니다.
 - `codex/`, `jira/prja-000` 같은 policy-sensitive prefix의 owning rule을 확인합니다.
 - commit 또는 push의 부분 실패 상태를 확인하고 완료된 단계를 보존한 채 재개합니다.
+
+`git-codex`는 plugin 설치만으로 PATH에 등록되지 않습니다. `git codex install`로 `~/.local/bin/git-codex`에 설치하고, PATH 설정은 사용자가 관리합니다. installer는 PATH, shell profile, Git config를 수정하지 않습니다.
 
 ## 경계
 
@@ -38,4 +40,3 @@ CLI를 사용한다는 이유만으로 skill을 모으지 않고, 도구 자체�
 - 제외: 일반 shell 명령 모음, 특정 제품 기능 구현, connector가 소유하는 앱 작업, CLI를 우연히 사용하는 workflow
 - Kubernetes 제한: `kubectl`, Helm, Kustomize 등 third-party CLI의 설치·실행·workload 관리는 소유하지 않고 plugin 경계 설명에만 사용합니다.
 - Git 제한: GitHub PR·release·hosting API와 요청에 없는 commit·branch·push mutation은 소유하지 않습니다.
-

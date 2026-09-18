@@ -11,6 +11,8 @@
 - commit message는 skipped verification과 residual risk를 숨기지 않고 literal escape·delimiter·불필요한 blank line을 포함하지 않는다.
 - commit 하나에는 하나의 related change unit만 포함하고 독립적으로 검토할 변경은 분리한다.
 - commit 성공 후 실제 저장된 full message를 다시 읽고 message 계약과 일치하는지 확인한다.
+- Toolkit에 `git codex` external command를 두고 message file 생성·기계 검증·commit 성공 뒤 cleanup을 묶고 싶다.
+- `git codex commit <file>`은 commit 실패 때 message file을 보존하고, installer는 별도 명령으로만 `~/.local/bin`에 설치해야 한다.
 
 ---
 
@@ -19,6 +21,7 @@
 ## 목적
 
 `git`은 사용자 요청 범위의 commit, branch, push를 개별 기능이자 연결 가능한 하나의 Git workflow로 수행합니다.
+bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계적으로 수행하고, skill은 scope·권한·message 의미·후속 검증을 소유합니다.
 고빈도 정상 흐름과 명령은 runtime `SKILL.md`에서 바로 제공하고, 조건부 branch convention과 실패·중단 복구는 필요한 reference만 읽도록 라우팅합니다.
 
 ## 경계
@@ -29,6 +32,7 @@
   - branch 생성·전환, 명시적으로 허용된 force-create와 start point 확인
   - current-branch push, upstream 설정, 명시적 refspec push
   - Git alias 정의 확인과 alias가 수행하는 단계별 side effect 판단
+  - opt-in `git-codex` 설치, executable identity 확인, message file create·validate·commit lifecycle
   - branch convention과 예외 복구 reference routing
 - 제외:
   - 구현 readiness 판단과 제품 코드 변경
@@ -36,6 +40,8 @@
   - 사용자 요청에 없는 commit, branch mutation, push 권한 추정
   - `reset --hard`, working tree를 버리는 강제 branch 전환·삭제, force push, history rewrite의 기본 실행
   - Git 전체 manual과 repository 전용 branch 이름의 보편화
+  - plugin 설치에 따른 PATH, shell profile, Git config 자동 변경
+  - `git-codex`를 통한 stage, branch, push, amend, hook bypass, message 의미 판단
 
 ## 처리하려는 작업 형태
 
@@ -46,10 +52,12 @@
 - local source와 remote destination이 다른 refspec push 작업
 - `codex/`, `jira/prja-000` 같은 prefix가 repository 또는 사용자 규칙의 적용 조건인 작업
 - commit 또는 push가 실패·중단된 뒤 현재 상태를 확인하고 안전하게 재개하는 작업
+- installed `git codex` command로 message file을 생성·검증하고 task-scoped commit을 수행하는 작업
 
 ## 엔트리포인트 / 대표 표면
 
 - 대표 표면: `toolkit/skills/git/SKILL.md`
+- executable surface: `toolkit/skills/git/scripts/git-codex.go`, platform `bin/*/git-codex`
 - 호출 방식: `$toolkit:git`
 - passive trigger: Git commit, branch creation, branch switch, upstream push, refspec push, branch prefix, push recovery
 
@@ -60,7 +68,7 @@
 3. mutation 전에 working tree, current branch, local·remote refs, upstream, remote URL을 필요한 범위에서 확인합니다.
 4. commit, branch, push를 배타적 mode로 분리하지 않고 요청에 필요한 단계만 순서대로 조합합니다.
 5. Git alias는 이름으로 동작을 추정하지 않고 `git config --show-origin --get-regexp '^alias\.'` 등으로 정의를 확인한 뒤 각 side effect를 요청 범위와 대조합니다.
-6. commit은 task-owned 범위만 stage하고 final status와 staged diff를 확인한 뒤 파일 기반 commit message로 생성합니다. staged verification이 불가능하거나 선택 범위와 다르면 commit을 차단하고, staged diff만으로 리스크를 확인할 수 없으면 가장 좁은 supporting check를 적용합니다. instruction priority를 따르고, 현재 사용자가 같은 message 규칙을 명확히 override하면 그 요청을, 그렇지 않으면 repository convention을 적용합니다. subject는 120자 미만으로 유지하며 더 엄격한 repository 제한이 있으면 그 값을 따릅니다. 별도 convention이 없으면 지원 type 중 가장 구체적인 type과 `type: detailed subject` 형식, bullet body를 사용합니다. commit 성공 후 실제 저장된 full message를 읽어 expected message와 적용 convention에 맞는지 확인합니다.
+6. commit은 task-owned 범위만 stage하고 final status와 staged diff를 확인한 뒤 파일 기반 commit message로 생성합니다. staged verification이 불가능하거나 선택 범위와 다르면 commit을 차단하고, staged diff만으로 리스크를 확인할 수 없으면 가장 좁은 supporting check를 적용합니다. instruction priority를 따르고, 현재 사용자가 같은 message 규칙을 명확히 override하면 그 요청을, 그렇지 않으면 repository convention을 적용합니다. subject는 120자 미만으로 유지하며 더 엄격한 repository 제한이 있으면 그 값을 따릅니다. 별도 convention이 없으면 지원 type 중 가장 구체적인 type과 `type: detailed subject` 형식, bullet body를 사용합니다. `git-codex`를 쓸 수 있으면 expected-message readback과 final staged 검증 뒤에만 호출하고, commit 성공 후 실제 저장된 full message를 읽어 expected message와 적용 convention에 맞는지 확인합니다.
 7. 일반 branch 생성은 `git switch -c`를 사용합니다. `git switch -C`는 사용자가 force-create를 명시했거나 repository workflow가 같은 동작을 소유할 때만 사용하며, exact branch, start point, 기존 branch ref, working tree, 다른 worktree 사용 여부를 먼저 확인합니다. `-C` 권한을 `--force`, `--discard-changes`, branch 삭제 권한으로 확장하지 않습니다.
 8. push는 remote, local source, remote destination을 분리해 확인합니다. current branch push와 `<local>:<remote>` refspec push를 같은 의미로 취급하지 않습니다.
 9. `git push origin wip:main`은 local `wip`을 remote `main`으로 보내는 explicit refspec입니다. 일반 push 요청에서 추론하지 않고 repository 규칙과 exact destination이 허용할 때만 실행합니다.
@@ -77,7 +85,7 @@
 
 ## Cheatsheet 소유권
 
-- `SKILL.md`는 repository·alias 확인, status·diff, task-scoped stage, commit, branch 생성·전환, 명시적 force-create, upstream 설정, current-branch push, refspec push, post-operation 확인 명령을 제공합니다.
+- `SKILL.md`는 repository·alias 확인, `git-codex` availability, status·diff, task-scoped stage, commit, branch 생성·전환, 명시적 force-create, upstream 설정, current-branch push, refspec push, post-operation 확인 명령을 제공합니다.
 - 명령 바로 옆에는 source·destination, mutation 범위, destructive option 제외처럼 실행 의미를 바꾸는 조건을 둡니다.
 - 전체 Git flag와 subcommand를 복제하지 않고 설치된 Git의 `git <command> -h`와 repository 규칙을 우선합니다.
 - recovery와 branch convention의 조건부 세부 규칙은 `SKILL.md`에 반복하지 않습니다.
@@ -101,7 +109,18 @@
 - subject는 staged scope를 구체적으로 설명하고 vague wording이나 unrelated concern을 묶지 않습니다.
 - body는 실제 변경과 검증 근거를 bullet list로 설명합니다. skipped verification이나 residual risk는 body 또는 final report에 숨기지 않습니다.
 - literal `\n`, 불필요한 blank line, unrelated scope, shell syntax, heredoc·EOF 같은 delimiter text를 포함하지 않습니다.
-- message file 쓰기 또는 readback이 실패하거나 내용이 계약과 다르면 exact allocated path를 cleanup하고 commit을 차단합니다.
+- message file 쓰기 또는 readback이 실패하거나 내용이 계약과 다르면 생성 시 기록한 identity와 현재 안전 조건이 같을 때만 exact allocated path를 cleanup하고 commit을 차단합니다.
+
+## Git Codex Command
+
+- `git-codex`는 Git external command로 `git codex --version`, `message create`, `message validate <file>`, `commit <file>`만 제공합니다. version은 Toolkit manifest와 일치해야 합니다.
+- `git codex install`은 matching bundled platform executable을 `~/.local/bin/git-codex`에 명시적으로 설치·갱신하고 `install --check`로 검증합니다. PATH, shell profile, Git alias·config는 변경하지 않습니다.
+- `$toolkit:git`은 `alias.codex`가 없고 Git external-command dispatch target, installer `--check` target, `git codex --version`이 같은 current Toolkit executable임을 확인할 때만 사용합니다. 불일치·미설치·unsupported platform은 수동 workflow로 전환하거나 별도 설치 권한을 확인합니다.
+- `message create`는 OS temp directory에 mode `0600`의 absolute `toolkit-git-message.*` path만 출력합니다. skill은 write 전 device·inode를 기록합니다.
+- `message validate`는 canonical temp parent, safe private regular file, UTF-8, NUL·lone CR·literal `\\n` 부재, subject·body delimiter를 기계 검증합니다. 실패한 file은 프로그램이 삭제하지 않습니다.
+- `commit`은 validation과 HEAD를 다시 확인한 뒤 `git commit -F <file>`만 실행합니다. stage, amend, push, branch mutation, hook bypass를 추가하지 않습니다. success와 new HEAD가 함께 확인된 경우에만 input file을 identity 재확인 뒤 삭제합니다.
+- exit status는 `0` success and cleanup, `1` definitive precondition·validation·commit failure, `2` committed but cleanup failed, `3` attempted commit with an unknown outcome입니다. status `1`은 `reason`과 `attempted`를 machine-readable diagnostic으로 반환합니다. status `2`·`3`은 HEAD와 remaining file을 확인하기 전 commit fallback이나 retry를 실행하지 않습니다.
+- 수동 workflow도 validation/readback 실패는 identity-safe cleanup, commit failure는 message file 보존이라는 같은 lifecycle을 유지합니다.
 
 ## Commit Verification
 
@@ -148,6 +167,7 @@
 - 실패한 command와 마지막으로 관찰된 local·remote 상태를 분리합니다.
 - 재시도 전에 current branch, working tree, HEAD, upstream과 필요한 remote ref를 다시 확인합니다.
 - commit 성공 후 push 실패처럼 부분 성공이 있으면 성공한 commit을 되돌리지 않고 남은 push만 판단합니다.
+- `git codex commit`이 status `2` 또는 `3`이면 HEAD, message file identity, stored message를 다시 확인하기 전 command를 재실행하지 않습니다.
 - non-fast-forward를 force push로 자동 전환하지 않고 divergence와 허용된 해결 범위를 보고합니다.
 - remote 결과가 불명확하면 같은 push를 반복하기 전에 remote ref를 조회합니다.
 
@@ -159,6 +179,7 @@
 - commit type이 staged scope에 맞고 subject가 적용 가능한 최대 길이 미만인가?
 - supporting check의 passed·failed·skipped·unavailable 상태와 residual risk를 정확히 구분했는가?
 - commit message에 literal escape, delimiter text, 불필요한 blank line이 없고 skip·residual risk가 숨겨지지 않았는가?
+- `git-codex` executable identity·version이 current Toolkit과 일치하고, installer·PATH mutation authority가 별도로 확인됐는가?
 - staged scope가 하나의 related change unit인가?
 - 실제 저장된 full message가 expected message와 applicable convention에 맞고, 불일치 시 자동 history mutation 없이 보고했는가?
 - branch exact name, start point, upstream이 확인됐는가?
@@ -177,6 +198,7 @@
 
 - commit, branch, push는 하나의 skill 안에서 결합 가능한 기능으로 유지합니다.
 - 정상 흐름의 고빈도 command와 공통 안전 계약은 `SKILL.md`에 유지합니다.
+- 반복되는 message-file lifecycle을 deterministic command로 옮길 때에도 scope·authority·message semantics·post-commit verification은 skill에 남깁니다.
 - 반복되는 조건부 branch policy나 failure recovery가 실제로 필요한 경우만 reference를 추가합니다.
 - rebase, merge, cherry-pick, worktree 생성·이동·삭제, tag, branch deletion, force push는 검증된 별도 책임이 생기기 전까지 기본 범위에 포함하지 않습니다.
 - 기존 `git-committer`와의 migration 또는 제거는 별도 사용자 결정과 change scope가 있을 때만 수행합니다.

@@ -102,7 +102,7 @@
 
 - 목적: plugin cache 경로와 분리된 안정된 Git external command를 제공합니다.
 - 범위:
-  - installer 원본은 `toolkit/skills/git/scripts/install-git-codex`이며 sibling `git-codex`를 `~/.local/bin/git-codex`에 복사합니다.
+  - `git codex install`은 matching bundled platform binary를 `~/.local/bin/git-codex`에 복사합니다.
   - 첫 release의 지원 환경은 macOS와 Linux입니다.
   - `~/.local`과 `~/.local/bin`은 `lstat` 기준 symlink가 아닌 현재 사용자 소유 directory이며 group·other 쓰기 권한이 없어야 합니다. 없는 directory는 이 조건을 충족하도록 생성하고, 기존 directory가 조건을 위반하면 설치·교체하지 않습니다.
   - 설치 파일은 검증된 대상 directory 안의 임시 파일을 완성한 뒤 mode `0755`로 원자 교체합니다.
