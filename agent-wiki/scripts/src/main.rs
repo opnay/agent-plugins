@@ -2,6 +2,7 @@ use std::collections::BTreeMap;
 use std::env;
 use std::error::Error;
 use std::ffi::OsString;
+use std::fmt::Write as _;
 use std::fs;
 use std::io::{self, Write};
 use std::os::unix::fs::PermissionsExt;
@@ -180,25 +181,48 @@ fn canonical_root(path: &Path) -> Result<PathBuf> {
     Ok(root)
 }
 
-fn validate_roots(roots: &BTreeMap<String, RootConfig>) -> Result<()> {
-    let canonical_roots: Vec<_> = roots
+fn validated_roots(roots: &BTreeMap<String, RootConfig>) -> Result<BTreeMap<String, PathBuf>> {
+    let canonical_roots: BTreeMap<_, _> = roots
         .iter()
-        .map(|(name, root)| Ok((name, canonical_root(&root.path)?)))
+        .map(|(name, root)| Ok((name.clone(), canonical_root(&root.path)?)))
         .collect::<Result<_>>()?;
-    for (index, (_, first)) in canonical_roots.iter().enumerate() {
-        for (_, second) in canonical_roots.iter().skip(index + 1) {
+    let paths: Vec<_> = canonical_roots.values().collect();
+    for (index, first) in paths.iter().enumerate() {
+        for second in paths.iter().skip(index + 1) {
             if first == second || first.starts_with(second) || second.starts_with(first) {
                 return Err("root 경로는 중복되거나 중첩될 수 없습니다.".into());
             }
         }
     }
-    Ok(())
+    Ok(canonical_roots)
+}
+
+fn format_root_list(value: &WikiConfig) -> Result<String> {
+    let canonical_roots = validated_roots(&value.roots)?;
+    let mut output = String::new();
+    for (name, root) in &value.roots {
+        let description = root
+            .description
+            .as_deref()
+            .map(|description| format!("{description:?}"))
+            .unwrap_or_else(|| "-".into());
+        writeln!(
+            output,
+            "{}\t{}\tdefault={}\tdescription={}",
+            name,
+            canonical_roots[name].display(),
+            name == &value.default,
+            description
+        )?;
+    }
+    Ok(output)
 }
 
 fn write_config(config: &Path, value: &WikiConfig) -> Result<()> {
     if config.is_symlink() {
         return Err(format!("설정 심볼릭 링크를 변경하지 않습니다: {}", config.display()).into());
     }
+    let canonical_roots = validated_roots(&value.roots)?;
     let mut data = toml::Table::new();
     data.insert("version".into(), toml::Value::Integer(2));
     data.insert("default".into(), toml::Value::String(value.default.clone()));
@@ -208,7 +232,7 @@ fn write_config(config: &Path, value: &WikiConfig) -> Result<()> {
         item.insert(
             "path".into(),
             toml::Value::String(
-                root.path
+                canonical_roots[name]
                     .to_str()
                     .ok_or("설정 경로는 UTF-8이어야 합니다.")?
                     .into(),
@@ -250,7 +274,7 @@ fn set_root(name: &str, directory: &Path, home: &Path, config: &Path) -> Result<
             description,
         },
     );
-    validate_roots(&value.roots)?;
+    validated_roots(&value.roots)?;
     write_config(config, &value)?;
     Ok(root)
 }
@@ -289,22 +313,14 @@ fn configured_root(config: &Path, name: Option<&OsString>) -> Result<PathBuf> {
         return Err("저장 위치가 없습니다. agent-wiki set <directory>를 실행하세요.".into());
     }
     let value = read_config(config)?;
+    let canonical_roots = validated_roots(&value.roots)?;
     let name = name
         .map(|value| value.to_string_lossy().into_owned())
         .unwrap_or(value.default);
-    let root = value
-        .roots
+    let root = canonical_roots
         .get(&name)
         .ok_or("존재하지 않는 root입니다.")?
-        .path
         .clone();
-    if !root.is_dir() {
-        return Err(format!(
-            "저장 폴더가 존재하지 않거나 디렉터리가 아닙니다: {}",
-            root.display()
-        )
-        .into());
-    }
     Ok(root)
 }
 
@@ -338,26 +354,15 @@ fn run(args: &[OsString], home: &Path) -> Result<PathBuf> {
             if !value.roots.contains_key(&name) {
                 return Err("존재하지 않는 root입니다.".into());
             }
-            validate_roots(&value.roots)?;
+            let canonical_roots = validated_roots(&value.roots)?;
             value.default = name;
-            let root = value.roots[&value.default].path.clone();
+            let root = canonical_roots[&value.default].clone();
             write_config(&config, &value)?;
             Ok(root)
         }
         [command] if command == "list" => {
             let value = read_config(&config)?;
-            for (name, root) in &value.roots {
-                println!(
-                    "{}\t{}{}",
-                    name,
-                    root.path.display(),
-                    if name == &value.default {
-                        "\tdefault"
-                    } else {
-                        ""
-                    }
-                );
-            }
+            io::stdout().write_all(format_root_list(&value)?.as_bytes())?;
             Ok(PathBuf::new())
         }
         [command] if command == "path" => configured_root(&config, None),

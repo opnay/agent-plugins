@@ -1,4 +1,4 @@
-# Agent Wiki 001: Multiple Root 계획
+# Agent Wiki 001: Multiple Root
 
 ## 변경사항 요약
 
@@ -19,11 +19,11 @@
 - 독자에게 보이는 변화: 여러 위키 root를 이름으로 등록하고 기본 root를 지정할 수 있습니다.
 - 호환성 영향: 기존 단일 `root` 설정과 인자 없는 `path`는 계속 동작합니다.
 - migration 필요 여부: 강제 migration은 없습니다. 기존 설정은 단일 implicit root로 해석하고 설정을 갱신할 때 새 형식으로 정규화할 수 있습니다.
-- 운영자/사용자가 알아야 할 검증 결과: 이 문서는 구현 계획입니다. CLI·skill·release 검증 결과는 후속 구현 후 기록합니다.
+- 운영자/사용자가 알아야 할 검증 결과: named roots CLI·skill·release 표면을 구현했고 임시 HOME 검증으로 실제 설정과 위키를 변경하지 않았습니다.
 
 ## 기록 근거
 
-- 관련 커밋: 후속 구현 시 기록합니다.
+- 관련 커밋: `2794c3d` (`feat: support multiple Agent Wiki roots`, 기본 구현).
 - 관련 세션 기록: 2026-09-18 다중 저장 경계 설계 요청.
 
 ## 변경 상세
@@ -88,8 +88,8 @@ description = "프로젝트별 작업 과정과 의사결정 기록"
 
 - 목적: named roots를 관리하면서 기존 자동화와 설정을 깨지 않습니다.
 - 범위:
-  - `agent-wiki list`: 설정된 root 이름과 경로를 조회합니다.
-  - `agent-wiki path [name]`: 이름이 있으면 해당 root, 없으면 default root 경로를 출력합니다.
+  - `agent-wiki list`: 전체 root 경계를 검증한 뒤 이름, canonical 경로, default 여부, 선택용 description을 조회합니다.
+  - `agent-wiki path [name]`: 전체 root 경계를 검증한 뒤 이름이 있으면 해당 root, 없으면 default root의 canonical 경로를 출력합니다.
   - `agent-wiki set <name> <directory>`: named root를 생성하거나 경로를 갱신합니다.
   - `agent-wiki default <name>`: 기존 named root를 default로 지정합니다.
   - 기존 `agent-wiki set <directory>`는 default root 경로를 설정하는 호출로 유지합니다.
@@ -123,6 +123,16 @@ description = "프로젝트별 작업 과정과 의사결정 기록"
 - `cargo fmt --check`, `cargo clippy --locked`, `cargo test --locked`와 네이티브 바이너리 smoke test를 통과합니다.
 - release surface에 dev-only `specs/`·`changes/`가 포함되지 않고 source/release runtime과 manifest가 일치합니다.
 - 실제 설정이나 위키 문서를 변경하지 않는 임시 홈 시나리오로 검증합니다.
+
+## 구현 및 검증 결과
+
+- Rust CLI는 legacy·v2 설정, named root `set`·`default`·`list`·`path`, canonical 중복·중첩 거부, 실패 시 설정 보존을 구현합니다.
+- `list`와 `path`는 조회 시에도 전체 root 경계를 검증합니다. `list`는 root 선택에 필요한 description을 포함합니다.
+- 2026-09-19 기준 `cargo fmt --check`, `cargo clippy --locked --all-targets -- -D warnings`, `cargo test --locked`가 통과했고 Rust 테스트 11개가 통과했습니다.
+- reader·researcher·writer는 system `$skill-creator`의 `scripts/quick_validate.py`를 `uv run --with pyyaml python ...`으로 실행해 통과했습니다.
+- release 바이너리는 임시 HOME에서 두 named root 등록, default 변경, `list`, 인자 없는 `path` smoke test를 통과했습니다.
+- source·release README의 공통 사용 계약 정합성을 확인했습니다. dev README만 spec 소유권과 저장소 기준 실행 위치를 추가로 안내합니다.
+- manifest·marketplace JSON 파싱과 release surface의 dev-only `specs/`·`changes/` 부재를 확인했습니다.
 
 ## 정식 규칙 승격 여부
 

@@ -129,6 +129,8 @@ agent-wiki --help
 
 `set <directory>`는 기존 호환 명령이며 default root의 경로를 바꿉니다. 설치는 저장 위치를 정하지 않습니다. `set` 또는 `default`는 `~/.agents/config.wiki.toml`을 원자적으로 갱신합니다.
 
+`list`는 각 root의 이름, canonical 경로, default 여부, 선택용 description을 탭 구분 필드로 출력합니다. description이 없으면 `-`를 출력합니다.
+
 ```toml
 version = 2
 default = "knowledge"
@@ -143,6 +145,6 @@ path = "/Users/example/.agents/personality"
 
 - 기존 `root = "/absolute/path"` 설정은 implicit `default` root로 계속 읽습니다. 첫 성공적인 설정 변경에서 v2 형식으로 정규화될 수 있습니다.
 - `set`은 폴더가 없거나 파일이면 실패하며, 중복·중첩 root도 거부하고 기존 설정을 보존합니다.
-- `path [name]`은 설정되지 않았거나 지정 root가 사라졌다면 실패합니다. `list`는 등록된 이름·경로·default 여부를 보여줍니다.
+- `path [name]`은 설정되지 않았거나 root 경계가 유효하지 않다면 실패하고 canonical 경로를 출력합니다. `list`도 전체 root의 중복·중첩·존재 여부를 검증한 뒤 이름·canonical 경로·default 여부·description을 보여줍니다.
 - 잘못된 TOML, 미지원 형식, 잘못된 경로, 심볼릭 링크 설정 파일은 덮어쓰지 않습니다. 주석과 서식은 설정 갱신 시 정규화합니다.
 - 도움말과 조회는 파일을 생성하지 않습니다. 셸 설정과 위키 내용도 변경하지 않습니다.

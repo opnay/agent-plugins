@@ -77,7 +77,15 @@ fn named_roots_support_path_and_default_selection() {
         run(&args(&["path"]), home.path()).unwrap(),
         personality.canonicalize().unwrap()
     );
-    assert_eq!(run(&args(&["list"]), home.path()).unwrap(), PathBuf::new());
+    let parsed = read_config(&config(home.path())).unwrap();
+    assert_eq!(
+        format_root_list(&parsed).unwrap(),
+        format!(
+            "knowledge\t{}\tdefault=false\tdescription=-\npersonality\t{}\tdefault=true\tdescription=-\n",
+            knowledge.canonicalize().unwrap().display(),
+            personality.canonicalize().unwrap().display()
+        )
+    );
 }
 
 #[test]
@@ -85,6 +93,7 @@ fn v2_config_preserves_optional_description() {
     let home = tempfile::tempdir().unwrap();
     let knowledge = home.path().join("knowledge");
     let work = home.path().join("work");
+    let configured_work = work.join("..").join("work");
     let refreshed_knowledge = home.path().join("refreshed-knowledge");
     fs::create_dir(&knowledge).unwrap();
     fs::create_dir(&work).unwrap();
@@ -95,7 +104,7 @@ fn v2_config_preserves_optional_description() {
         &target,
         format!(
             "version = 2\ndefault = \"knowledge\"\n\n[roots.knowledge]\npath = {:?}\ndescription = \"shared\"\n\n[roots.work]\npath = {:?}\n",
-            knowledge, work
+            knowledge, configured_work
         ),
     )
     .unwrap();
@@ -112,6 +121,37 @@ fn v2_config_preserves_optional_description() {
         Some("shared")
     );
     assert_eq!(parsed.default, "work");
+    assert_eq!(parsed.roots["work"].path, work.canonicalize().unwrap());
+    assert_eq!(
+        format_root_list(&parsed).unwrap(),
+        format!(
+            "knowledge\t{}\tdefault=false\tdescription=\"shared\"\nwork\t{}\tdefault=true\tdescription=-\n",
+            refreshed_knowledge.canonicalize().unwrap().display(),
+            work.canonicalize().unwrap().display()
+        )
+    );
+}
+
+#[test]
+fn query_commands_reject_duplicate_v2_roots_without_overwriting_config() {
+    let home = tempfile::tempdir().unwrap();
+    let root = home.path().join("wiki");
+    fs::create_dir(&root).unwrap();
+    let target = config(home.path());
+    fs::create_dir(target.parent().unwrap()).unwrap();
+    fs::write(
+        &target,
+        format!(
+            "version = 2\ndefault = \"knowledge\"\n\n[roots.knowledge]\npath = {:?}\n\n[roots.personality]\npath = {:?}\n",
+            root, root
+        ),
+    )
+    .unwrap();
+    let before = fs::read(&target).unwrap();
+
+    assert!(run(&args(&["list"]), home.path()).is_err());
+    assert!(run(&args(&["path", "knowledge"]), home.path()).is_err());
+    assert_eq!(fs::read(target).unwrap(), before);
 }
 
 #[test]
