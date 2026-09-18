@@ -25,12 +25,28 @@ CLI를 사용한다는 이유만으로 skill을 모으지 않고, 도구 자체�
 
 대표 요청:
 
-- task-owned related change unit만 stage하고 risk-proportional check, message 위생, 120자 미만 subject·가장 구체적인 commit type·파일 기반 메시지로 commit한 뒤 실제 저장된 full message를 검증합니다. 선택적으로 bundled `git-codex`로 message file 생성·기계 검증·성공 뒤 cleanup을 수행합니다.
+- task-owned related change unit만 stage하고 risk-proportional check, message 위생, 120자 미만 subject·가장 구체적인 commit type·파일 기반 메시지로 commit한 뒤 실제 저장된 full message를 검증합니다. bundled `git-codex`는 heredoc 입력·자동 validation·성공 뒤 cleanup을 제공합니다.
 - exact start point에서 branch를 생성하거나 기존 branch로 전환하고, 명시적으로 요청된 경우 `git switch -C`로 branch를 force-create합니다.
 - current branch에 upstream을 설정하고 push합니다.
 - local source와 remote destination이 다른 refspec push를 실행·검증합니다.
 - `codex/`, `jira/prja-000` 같은 policy-sensitive prefix의 owning rule을 확인합니다.
 - commit 또는 push의 부분 실패 상태를 확인하고 완료된 단계를 보존한 채 재개합니다.
+
+### 메시지 생성
+
+skill의 alias·staged 범위 확인 뒤 quoted heredoc 입력을 우선합니다.
+
+```sh
+git codex message create --stdin <<'EOF'
+fix: 변경 내용을 구체적으로 설명
+
+- 변경 사항과 검증 근거
+EOF
+```
+
+성공 시 자동 validation을 마친 `MSG-…` ID 하나를 반환합니다. 일반 repository에서는 `.git/MSG-…`에 저장하며, Git이 실제 metadata 경로를 찾아 하위 디렉터리·linked worktree에서도 동작합니다. 같은 repository·worktree에서 `git codex commit <반환된-MSG-ID>`로 사용합니다. 생성 후 파일을 수정하지 않았다면 별도 validation을 반복하지 않습니다.
+
+빈 파일이 필요한 경우 `message create`를 사용하고 작성 후 `message validate <MSG-ID>`를 실행합니다. push 등은 종료 상태와 대상별 결과 출력이 명확하면 그대로 보고하고, 호출 오류·중단·결과 불명확에 필요한 조회만 수행합니다.
 
 ## git-codex 설치
 

@@ -1,5 +1,7 @@
 # Toolkit 001: git-codex 계획
 
+이 기록은 최초 도입 계약입니다. 메시지 입력·저장 경로·결과 검증의 후속 변경은 [002](002-git-message-input.md), 현재 실행 계약은 [git skill spec](../specs/skills/git.md)을 따릅니다.
+
 ## 변경사항 요약
 
 - Toolkit에 Git 외부 서브커맨드용 단일 실행 파일 `git-codex`를 포함합니다.

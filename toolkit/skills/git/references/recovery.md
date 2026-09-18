@@ -32,9 +32,9 @@ Read the branch-conventions reference when a prefix or repository branch policy 
 
 1. Check whether `HEAD` changed and whether the intended commit already exists.
 2. Recheck staged and unstaged state; do not assume a failed client command means no hook or commit side effect occurred.
-3. If the exact `/tmp/toolkit-git-message.*` path from the current allocator invocation is preserved in task state, run `unlink` once and report its result separately.
-4. Do not delete a guessed path or a path whose allocator provenance is unknown.
-5. Start a new commit attempt only after cleanup and current staged scope are resolved.
+3. Preserve the message after a definitive commit failure or an unknown outcome. Resolve a retained `MSG-…` ID through the same repository/worktree's `git rev-parse --absolute-git-dir`; never assume the current directory contains a `.git` directory.
+4. For a pre-commit validation failure, remove only the exact allocated file whose recorded device/inode and safety conditions still match. Preserve unknown or changed identities and report the path.
+5. Start another commit attempt only after the previous outcome and current staged scope are resolved. Cleanup failure after a successful commit calls for cleanup, not another commit.
 
 A successful commit followed by cleanup failure remains a successful commit with a separate cleanup failure. Do not undo the commit.
 
@@ -50,6 +50,8 @@ Continue only the authorized unfinished step. Never rerun the whole alias to rec
 
 ## Push Is Rejected
 
+Use the exit status and destination-specific output as evidence of a clear rejection. Do not query refs solely to reconfirm it; inspect divergence or authentication state only when needed for an authorized recovery step.
+
 - Non-fast-forward: do not retry with force. Inspect local source, remote destination, and divergence; merge, rebase, reset, or force requires its own authorized scope.
 - Protected branch or server policy: preserve the local commit and report the rejected destination and server evidence.
 - Hook rejection: keep the hook result distinct from authentication and divergence. Do not add `--no-verify` automatically.
@@ -57,7 +59,7 @@ Continue only the authorized unfinished step. Never rerun the whole alias to rec
 
 ## Push Result Is Unclear
 
-Query the remote before repeating the mutation:
+An exit status and complete output identifying the expected destination normally establish success, rejection, or no-op without another query. Query the remote when the invocation targeted the wrong ref, the command was interrupted, output is incomplete or conflicting, or the result remains uncertain, before any retry:
 
 ```sh
 git rev-parse <local-source>

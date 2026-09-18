@@ -24,7 +24,7 @@
   "interface": {
     "displayName": "Toolkit",
     "shortDescription": "Operate Apple container and bounded Git workflows.",
-    "longDescription": "Provides bounded skills for Apple container lifecycle and task-scoped Git commit, branch, push, recovery, and opt-in git-codex message-file lifecycle workflows.",
+    "longDescription": "Provides bounded skills for Apple container lifecycle and task-scoped Git commit, branch, push, recovery, and opt-in git-codex heredoc input with automatic validation and repository-local message IDs.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": [
@@ -34,7 +34,7 @@
     ],
     "defaultPrompt": [
       "Use $toolkit:apple-container for Apple container CLI tasks on Apple silicon macOS, including common commands, lifecycle checks, compatibility limits, installation, uninstallation, containerization concepts, and the bundled experimental k8s plugin without assuming third-party Kubernetes CLI execution.",
-      "Use $toolkit:git when the requested outcome includes a task-scoped Git commit with risk-proportional checks, message hygiene, one-related-change-unit granularity, a typed subject under 120 characters, and post-commit full-message verification; explicit git-codex installation or update; git-codex message-file create, validation, commit, and cleanup; branch creation; explicit git switch -C force-create; branch switching; upstream configuration; current-branch push; explicit refspec push; branch-prefix policy resolution; or recovery from a partial Git workflow."
+      "Use $toolkit:git for task-scoped commits with risk-proportional checks, message hygiene, one related change unit, a typed subject under 120 characters, and stored full-message verification; prefer git-codex message create --stdin with a quoted heredoc, automatic validation, and short MSG IDs in the current Git directory. It also covers explicitly requested git-codex installation, branch creation or switching, explicit git switch -C, upstream and refspec pushes, branch policy, and recovery. Use clear command results directly and query additional state only for incorrect invocations or uncertain outcomes."
     ],
     "brandColor": "#24292F"
   }
