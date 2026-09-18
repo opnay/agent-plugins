@@ -32,7 +32,9 @@ CLI를 사용한다는 이유만으로 skill을 모으지 않고, 도구 자체�
 - `codex/`, `jira/prja-000` 같은 policy-sensitive prefix의 owning rule을 확인합니다.
 - commit 또는 push의 부분 실패 상태를 확인하고 완료된 단계를 보존한 채 재개합니다.
 
-`git-codex`는 plugin 설치만으로 PATH에 등록되지 않습니다. `git codex install`로 `~/.local/bin/git-codex`에 설치하고, PATH 설정은 사용자가 관리합니다. installer는 PATH, shell profile, Git config를 수정하지 않습니다.
+## git-codex 설치
+
+plugin 설치는 이 workflow를 시작하지 않습니다. `git-codex` 설치·갱신 요청은 plugin의 matching `skills/git/scripts/bin/<os>-<arch>/git-codex`로 수행하고, 뒤이어 `git codex install --check`와 `git codex --version`으로 결과를 검증합니다. installer는 PATH, shell profile, Git config를 수정하지 않습니다.
 
 ## 경계
 

@@ -36,11 +36,9 @@
   - 프로그램 원본은 `toolkit:git`이 소유하는 `toolkit/skills/git/scripts/`에 둡니다.
   - 프로그램은 Git repository 안에서 실행하며 현재 process의 working directory와 Git이 확인한 repository를 사용합니다.
   - `git codex --version`은 `toolkit-git-codex <version>` 형식의 식별자를 출력하며 version은 Toolkit plugin manifest version과 일치합니다.
-  - `$toolkit:git`은 `alias.codex` 존재 여부를 확인하고, alias가 있으면 어떤 external command가 실행될지 추측하지 않고 `git codex` 사용을 차단합니다.
-  - alias가 없더라도 Git의 external-command 검색 순서에서 실제 선택되는 canonical executable을 확인합니다. `GIT_EXEC_PATH`, `git --exec-path`, PATH를 포함한 dispatch 결과가 installer `--check`가 반환한 `~/.local/bin/git-codex`와 같은 파일이고 `git codex --version` 검증까지 통과할 때만 실행 프로그램을 사용합니다.
-  - 첫 범위는 `--help`, `--version`, `message create`, `message validate`, `commit`입니다. namespace는 미래 확장을 허용하지만 다른 subcommand를 미리 약속하지 않습니다.
+  - 첫 범위는 `--help`, `--version`, `install [--force|--check]`, `message create`, `message validate`, `commit`입니다. namespace는 미래 확장을 허용하지만 다른 subcommand를 미리 약속하지 않습니다.
 - 관련 표면: plugin spec, git skill spec/runtime, Toolkit README·manifest, 실행 파일과 테스트.
-- 검증: PATH에 임시 설치한 `git-codex`를 `git codex --help`와 각 subcommand로 호출하고, `alias.codex` 충돌과 잘못된 version 식별자를 차단해야 합니다.
+- 검증: PATH에 임시 설치한 `git-codex`를 `git codex --help`와 각 subcommand로 호출하고, 올바른 version 식별자를 확인해야 합니다.
 
 ### `git codex message create`
 
@@ -102,7 +100,7 @@
 
 - 목적: plugin cache 경로와 분리된 안정된 Git external command를 제공합니다.
 - 범위:
-  - `git codex install`은 matching bundled platform binary를 `~/.local/bin/git-codex`에 복사합니다.
+  - matching bundled platform binary의 `install` command는 `~/.local/bin/git-codex`에 설치 파일을 복사합니다.
   - 첫 release의 지원 환경은 macOS와 Linux입니다.
   - `~/.local`과 `~/.local/bin`은 `lstat` 기준 symlink가 아닌 현재 사용자 소유 directory이며 group·other 쓰기 권한이 없어야 합니다. 없는 directory는 이 조건을 충족하도록 생성하고, 기존 directory가 조건을 위반하면 설치·교체하지 않습니다.
   - 설치 파일은 검증된 대상 directory 안의 임시 파일을 완성한 뒤 mode `0755`로 원자 교체합니다.
@@ -115,6 +113,17 @@
 - 관련 표면: installer, README 설치·갱신 안내, plugin manifest의 실제 executable surface 설명.
 - 검증: 최초 설치, 동일 파일 재설치, 충돌 보존, 명시적 교체, symlink·directory 보존, PATH가 없는 환경의 직접 실행을 확인합니다.
 
+### Error routing
+
+- 목적: commit lifecycle failure와 installation workflow를 자동으로 연결하지 않습니다.
+- 범위:
+  - availability용 `message create`와 설치 후 검증을 포함한 모든 `git codex` 호출은 `alias.codex` 부재 확인 뒤 실행합니다. alias 충돌·조회 오류에서는 호출을 차단하고 설정을 보존합니다.
+  - `message create` unavailable은 installation required를 보고하고 현재 lifecycle을 종료합니다.
+  - 설치·갱신은 별도 사용자 요청에서만 시작합니다.
+  - 다른 create·validate·commit·push failure는 관찰한 상태를 보존하고 recovery workflow로 라우팅합니다.
+- 관련 표면: git skill spec/runtime, recovery reference.
+- 검증: external command가 없는 alias 환경에서도 availability 검사가 alias를 실행하지 않아야 합니다. unavailable create는 installer를 실행하지 않고 설치 필요만 보고하며, alias 충돌과 다른 failure가 installation required로 오인되지 않아야 합니다.
+
 ### `$toolkit:git` workflow 통합
 
 - 목적: 실행 프로그램이 기계적 lifecycle을 맡되 기존 판단·권한 계약을 유지합니다.
@@ -123,7 +132,6 @@
   - `message create` 직후 파일의 device·inode를 기록하고, commit 전 cleanup은 현재 identity와 안전 조건이 일치할 때만 수행합니다.
   - expected-message readback이나 message validation이 실패하면 exact path를 cleanup하고 commit을 차단합니다. commit command 실패 때만 재개를 위해 파일을 유지합니다.
   - 실행 프로그램을 사용할 수 없어 수동 workflow로 전환해도 같은 cleanup·보존 계약을 유지합니다.
-  - `alias.codex`, Git의 external-command dispatch 결과, installer `--check`, `git codex --version`으로 사용 가능성과 identity를 확인합니다. Git이 실제 선택할 canonical executable과 `--check`가 반환한 설치 경로는 같은 파일이어야 하며, 식별자의 version은 현재 Toolkit manifest version과 정확히 일치해야 합니다. 미설치·충돌·identity·version 불일치는 자동 수정하지 않고 기존 수동 workflow를 사용하거나 설치·갱신 권한을 별도로 확인합니다.
   - status `1`은 reason과 `attempted`를 해석합니다. `validation_failed`는 identity가 유지될 때 cleanup하고, `head_unavailable`은 commit 미실행 상태로 보존하며, `commit_failed`는 재개를 위해 보존합니다. `attempted=true`이면 상태 확인 전 수동 fallback을 실행하지 않습니다.
   - commit 요청은 `git-codex` 설치, push, branch 변경 권한을 만들지 않습니다.
   - post-commit full-message 검증과 local state 확인은 실행 프로그램 밖에서 `$toolkit:git`이 계속 소유합니다.
@@ -143,15 +151,15 @@
 ## 호환성 및 마이그레이션
 
 - `git-codex`가 없거나 설치가 허용되지 않은 환경에서는 같은 validation·cleanup·보존 계약으로 수동 message-file workflow를 유지합니다.
-- `alias.codex` 충돌, 설치 경로·byte identity·version 식별 실패, unsupported platform은 mutation 전에 중단하거나 수동 workflow로 전환합니다.
+- create failure는 mutation 전에 원인을 분리해 보고합니다. unavailable create는 설치 필요 상태이며 설치·갱신은 명시적 installer 실행으로만 수행합니다.
 - 기존 Git alias·hook·repository config는 변경하지 않습니다.
-- 설치된 구버전과 plugin bundled version은 `git codex --version`과 Toolkit manifest version으로 비교하며 갱신은 명시적 installer 실행으로 수행합니다.
+- 설치·갱신이 명시적으로 요청된 경우에만 `git codex --version`과 Toolkit manifest version을 비교하고 `install --check`로 설치 결과를 검증합니다.
 - 구현 언어와 패키징은 설치된 파일 하나가 macOS·Linux에서 추가 비표준 runtime 없이 실행된다는 계약을 충족해야 합니다.
 
 ## 검증 기준
 
 - 임시 HOME·PATH·Git repository에서 실제 `git codex` 호출로 통합 테스트합니다.
-- `alias.codex` 충돌, `GIT_EXEC_PATH`·Git exec path·PATH를 포함한 dispatch 해석, installer `--check`와 동일 executable 결합, 올바른 `--version`, 다른 version·shadow 실행 파일 식별 실패를 검증합니다.
+- 일반 workflow가 `message create`를 직접 실행하는지, unavailable create가 설치 필요 응답으로 이어지고 다른 create failure가 설치 부재로 오인되지 않는지 검증합니다. 명시 설치·갱신 경로에서는 installer 뒤 `--check`와 `--version`을 검증합니다.
 - message create의 원자적 생성, 고유 경로, mode `0600`, stdout 계약을 검증합니다.
 - message validate의 canonical temp parent, basename, owner·mode·symlink, UTF-8·NUL·CR·subject/body·literal escape와 비파괴 실패를 검증합니다.
 - commit 성공 시 정확한 message와 새 HEAD를 확인하고 exact file 삭제를 검증합니다.

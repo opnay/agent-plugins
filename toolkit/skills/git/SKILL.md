@@ -1,37 +1,52 @@
 ---
 name: git
-description: Run task-scoped Git commit, branch, force-create, and push workflows with working-tree, ref, alias, and remote verification. Use for commits, branch creation or switching, explicit git switch -C, upstream setup, current-branch or explicit refspec pushes, and partial Git workflow recovery; do not activate for incidental read-only Git inspection.
+description: Run task-scoped Git commit, git-codex installation, branch, force-create, push, and recovery workflows with working-tree, ref, alias, and remote verification. Use for commits, git-codex setup, branch creation or switching, explicit git switch -C, upstream setup, current-branch or explicit refspec pushes, and partial Git workflow recovery; do not activate for incidental read-only Git inspection.
 ---
 
 # Git Workflow
 
-## Boundary
+## Scope and workflow selection
 
-- Own commit, branch, and push as selectable workflow steps. Combine only user-authorized steps.
-- Read repository instructions first. Keep commit, branch, push, installation, and release authority separate.
-- Do not infer push, force, destructive cleanup, version bumps, GitHub work, or publishing from a commit request.
-- Do not default to history rewriting, hook bypass, forced branch deletion, force push, `reset --hard`, `--discard-changes`, or unrelated working-tree cleanup.
-- `git-codex` owns only message-file lifecycle and commit outcome detection. It never stages, amends, pushes, changes branches, bypasses hooks, or judges message meaning.
+Read repository instructions first. Select and combine only authorized workflows:
 
-## Preflight
+- **Commit**: stage one task-owned change unit, verify it, create a file-based message, commit, and verify the stored message.
+- **Installation**: install or update `git-codex` only on an explicit user request.
+- **Branch and push**: create, switch, force-create, set upstream, or push the requested refs.
+- **Recovery**: inspect failed or uncertain operations while preserving completed steps.
 
-Run only the checks needed for the requested steps:
+Keep commit, installation, branch, push, and release authority separate. A commit request does not authorize push, force, destructive cleanup, version bumps, GitHub work, or publishing. Do not default to history rewriting, hook bypass, forced branch deletion, force push, `reset --hard`, or `--discard-changes`.
+
+`git-codex` owns message-file lifecycle and commit outcome detection only. It never stages, amends, pushes, changes branches, bypasses hooks, or judges message meaning. Apply this skill without relying on sibling skills or development-only documents.
+
+## Alias checks before execution
+
+Before using a Git alias in any workflow, inspect its definition and compare every expanded side effect with the authorized task:
 
 ```sh
-git status --short --branch
-git branch --show-current
-git branch -vv
-git remote -v
-git diff
-git diff --staged
 git config --show-origin --get-regexp '^alias\.'
 ```
 
-Inspect an alias before using it. Treat every expanded side effect as a separate mutation requiring authority. Do not use a broad alias because its name sounds relevant.
+Before every `git codex` invocation, including `message create` for availability and installation verification, run this read-only check in the same repository and configuration context:
 
-## Commit
+```sh
+git config --show-origin --get-all alias.codex
+```
 
-Keep one related change unit per commit. Stage only task-owned paths, then inspect the exact staged result:
+Exit status `1` means no alias is defined. If a definition is returned, inspect its expansion and side effects, report an alias conflict, and stop before invoking `git codex`. Any other lookup failure also blocks the invocation. Preserve Git config.
+
+Git can dispatch to `alias.codex` when the external command is missing. Never execute that alias as an availability probe or classify an alias conflict as an installation-required result. After this check passes, use `message create` itself to determine lifecycle availability.
+
+## Commit workflow
+
+Inspect the working tree and staged scope:
+
+```sh
+git status --short --branch
+git diff
+git diff --staged
+```
+
+Keep one related change unit per commit. Preserve unrelated changes, stage only task-owned paths, and inspect the result:
 
 ```sh
 git add -- <path>...
@@ -39,34 +54,26 @@ git status --short
 git diff --staged
 ```
 
-Block the commit when staged scope is unavailable or differs from the intended change. When the diff does not cover material risk, run the narrowest deterministic check:
+Block the commit if staged verification is unavailable or the scope differs from the intended change. When the diff does not establish readiness, run the narrowest relevant supporting check: readback, formatting, or whitespace for docs; lint, typecheck, test, or build for code.
 
-- Docs: staged readback, formatting, or whitespace.
-- Code: relevant lint, typecheck, test, or build.
+Distinguish passed, failed, unavailable, and skipped checks. Fix and rerun failed checks or report the blocker. Continue past an unavailable check only when task risk permits, reporting the reason and residual risk. A skip needs user approval or a proportionality reason; report its residual risk.
 
-Distinguish passed, failed, unavailable, and skipped checks. A skip needs user approval or a proportionality reason; report its residual risk.
+### Message content
 
-### Commit message
+Follow instruction priority and the current user's explicit override of the same rule; otherwise preserve repository convention. Keep the subject under 120 characters or a stricter repository limit. Without another convention, use `type: detailed subject`, one blank line, and a bullet body explaining changes and verification.
 
-Apply a repository convention unless a higher-priority instruction changes it. Otherwise use `type: detailed subject`, subject under 120 characters, and a bullet body after one blank line. Select the most specific type: `feat`, `fix`, `refactor`, `docs`, `test`, `perf`, `style`, `build`, `ci`, or `chore`.
+Choose the most specific supported type: `feat`, `fix`, `refactor`, `docs`, `test`, `perf`, `style`, `build`, `ci`, or `chore`. Follow a different applicable type set without inventing types. Describe the staged scope specifically; keep unrelated concerns in separate commits.
 
-Keep the message specific to staged scope. Do not include literal `\n`, shell syntax, heredoc delimiters, quoting wrappers, unnecessary blank lines, or hidden skipped checks and residual risk.
+Do not include literal `\n`, shell syntax, heredoc delimiters, quoting wrappers, or unnecessary blank lines. Disclose skipped verification and residual risk in the body or final report.
 
-### Preferred `git-codex` lifecycle
+### Message lifecycle
 
-Use the bundled command only when all checks pass:
-
-1. `alias.codex` is absent.
-2. The Git external-command dispatch target is the same canonical executable returned by `git codex install --check`.
-3. `git codex --version` is `toolkit-git-codex <current Toolkit manifest version>`.
-
-Do not install or update it without separate authority. `git codex install` copies its bundled platform binary to `~/.local/bin/git-codex`; it never changes PATH, shell profiles, or Git config. Use `install --check` for read-only verification and `install --force` only when replacement is authorized.
-
-When available, run this order:
+Apply the alias checks before each `git codex` command, then follow this sequence:
 
 ```text
 stage verification
 > git codex message create
+> record allocated file identity
 > write expected message
 > read back and compare expected message
 > git codex message validate <exact-file>
@@ -75,61 +82,82 @@ stage verification
 > inspect stored full message
 ```
 
-`message create` prints one absolute `toolkit-git-message.*` path in the OS temp directory with mode `0600`. Record its device and inode before writing. `message validate` checks the canonical temp parent, private user-owned regular-file safety, UTF-8, NUL, lone CR, literal `\n`, subject, and body delimiter. It never edits or deletes the file.
+`message create` returns only an absolute `toolkit-git-message.*` path in the OS temp directory with mode `0600`. Record its device and inode before writing. `message validate` checks the canonical temp parent, private user-owned regular-file safety, UTF-8, NUL, lone CR, literal `\n`, subject, and body delimiter. It does not edit or delete failed files.
 
-If write, readback, or validation fails, clean only that exact file when its recorded identity and safety conditions still match; otherwise preserve it and report the path. Block the commit.
+If writing, readback, or validation fails, block the commit. Clean only the exact allocated file when its recorded identity and current safety conditions match; otherwise preserve it and report its path.
 
-`git codex commit <file>` reruns mechanical validation, records HEAD, invokes only `git commit -F <file>`, confirms the new HEAD, and deletes the same safe file on success. Interpret outcomes as follows:
+Immediately before committing, inspect `git status --short` and `git diff --staged` again. `git codex commit <exact-file>` repeats mechanical validation, records HEAD, runs only `git commit -F <file>`, and deletes the same safe file only after confirming command success and a new HEAD.
+
+Interpret its status before taking another action:
 
 - `0`: commit confirmed and file deleted.
-- `1`: definitive precondition, validation, or commit failure. Read final `git-codex: commit_result: reason=<code> attempted=<true|false>` before deciding cleanup or recovery.
-- `2`: commit confirmed; cleanup failed. Check HEAD and resolve only the remaining file.
-- `3`: commit was attempted but its result is unknown. Re-observe HEAD and the message before any retry or manual fallback.
+- `1`: definitive precondition, validation, or commit failure. Read the final `git-codex: commit_result: reason=<code> attempted=<true|false>` diagnostic. Clean `validation_failed` only when identity remains safe; preserve `head_unavailable` and `commit_failed` files. If `attempted=true`, inspect state before recovery or fallback.
+- `2`: commit confirmed; cleanup failed. Inspect HEAD, file identity, and stored message, then resolve only the remaining file.
+- `3`: commit attempted with an unknown result. Inspect HEAD, file identity, and stored message before any retry or manual fallback.
 
-For status `1`, clean a `validation_failed` file only when identity remains safe; preserve `head_unavailable` and `commit_failed` files. If `attempted=true`, inspect state before any fallback.
-
-### Manual fallback
-
-If `git-codex` is unavailable, conflicting, stale, or unsupported, preserve the same lifecycle with a dedicated OS-temp message file. On write/readback/validation failure, perform identity-safe cleanup. On a failed `git commit -F <exact-file>`, preserve the message file for recovery. Do not use heredocs, `git commit -F -`, multiple `-m` arguments, or a combined shell script.
-
-After a confirmed commit and message-file cleanup, verify the stored message:
+After a confirmed commit and message-file cleanup, read the stored hash, full message, and local state:
 
 ```sh
 git log -1 --format='%H%n%B'
 git status --short --branch
 ```
 
-Compare the full stored message with expected content and applicable convention. Report a mismatch without automatic amend, reset, or rollback.
+Compare the subject, body, and any hook-added trailers with expected content and applicable convention. Report a mismatch as failed message verification; do not automatically amend, reset, or roll back the commit.
 
-## Branches and push
+## Installation workflow
 
-Create a normal branch from an explicit start point:
+Enter only for an explicit `git-codex` installation or update request.
+
+1. Locate the matching bundled `scripts/bin/<os>-<arch>/git-codex` executable.
+2. Run that executable's `install` command to install at `~/.local/bin/git-codex`.
+3. Apply the alias checks, then run `git codex install --check` to verify the installed target and dispatch.
+4. Apply the alias checks, then run `git codex --version` and compare `toolkit-git-codex <version>` with the Toolkit manifest version.
+
+The installer preserves PATH, shell profiles, and Git config. `--force` requires explicit replacement authority. Report installation and verification separately if a later check fails.
+
+## Error and recovery workflow
+
+- If `git codex message create` is unavailable after alias checks pass, report that installation is required and end the current commit lifecycle. A later explicit request selects installation.
+- An alias conflict, alias lookup error, or other create failure is not proof of a missing installation. Report the observed cause; read [references/recovery.md](references/recovery.md) when recovery is needed.
+- Preserve completed steps after failure. Re-observe current branch, working tree, HEAD, upstream, and required remote refs before another mutation. Apply the status-specific message-file rules above before cleanup or retry.
+- Read [references/recovery.md](references/recovery.md) for blocked branch changes, detached HEAD, interrupted or uncertain commits, partial alias execution, authentication failures, rejected or uncertain pushes, or divergent refs.
+- A non-fast-forward rejection does not authorize force push. Query an uncertain remote result before repeating a push.
+
+A manual message-file workflow is available when the user selects it or `git-codex` is unsupported. Preserve the same validation, readback, identity-safe cleanup, commit-failure preservation, and stored-message verification contract.
+
+## Branch and push workflow
+
+Create a normal branch from a confirmed start point:
 
 ```sh
 git switch -c <branch> <start-point>
 ```
 
-Switch to an existing local branch without changing its ref:
+Switch to an existing local branch without resetting its ref:
 
 ```sh
 git switch <branch>
 ```
 
-`git switch -C <branch> <start-point>` is force-create only. Before it, inspect working tree, current ref, target ref, start point, and `git worktree list --porcelain`. It does not authorize discard changes, branch deletion, or force push.
+Use `git switch -C <branch> <start-point>` only when the user or owning repository workflow explicitly authorizes force-create. First confirm the exact branch, start point, existing target ref, working tree, and `git worktree list --porcelain`. This authority does not include discarding changes, branch deletion, or force push.
 
-Before push, resolve remote, local source, remote destination, and upstream separately:
+Before pushing, resolve remote URL, local source, remote destination, and upstream separately:
 
 ```sh
+git branch --show-current
+git branch -vv
+git remote -v
 git push -u <remote> <branch>
 git push <remote> <local-source>:<remote-destination>
 ```
 
-`git push origin wip:main` maps local `wip` to remote `main`; never infer that mapping from a general push request. After an authorized push, compare the requested local and remote refs without repeating the mutation.
+`git push origin wip:main` maps local `wip` to remote `main`. Never infer this mapping from a general push request; repository restrictions and authorization for the exact destination still apply. After mutation, verify local branch or commit state and the required remote ref without repeating the mutation. Report branch, commit, and push outcomes separately.
 
-## Recovery
+After an authorized push, compare the source commit with the destination ref:
 
-Preserve completed steps and stop additional mutation after a failure. Re-observe the current branch, working tree, HEAD, upstream, and required remote refs before retrying. Do not transform a rejection into force push.
+```sh
+git rev-parse <local-source>
+git ls-remote --heads <remote> refs/heads/<remote-destination>
+```
 
-Read [references/branch-conventions.md](references/branch-conventions.md) for policy-sensitive prefixes such as `codex/` or `jira/prja-000`, derived branch names, or force-create naming conflicts.
-
-Read [references/recovery.md](references/recovery.md) when switching or force-create is blocked, HEAD is detached, a commit is interrupted or uncertain, an alias partially executes, authentication fails, push is rejected, or refs diverge.
+Read [references/branch-conventions.md](references/branch-conventions.md) for policy-sensitive prefixes such as `codex/` or `jira/prja-000`, derived names, or force-create naming conflicts. Preserve exact user-provided names; a prefix alone does not determine start point, remote destination, or push permission.

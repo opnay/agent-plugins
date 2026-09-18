@@ -45,7 +45,7 @@
 
 - `apple-container`: Apple Silicon macOS에서 Apple `container` CLI와 bundled `k8s` plugin을 확인하고 사용하며 설치·제거·개념·Kubernetes plugin reference로 라우팅합니다.
   - spec: `src/toolkit-dev/specs/skills/apple-container.md`
-- `git`: supporting check·message 위생·granularity·typed subject·post-commit full-message 검증을 포함한 task-scoped commit, branch 생성·전환·명시적 force-create, push를 하나의 workflow로 조합합니다. opt-in `git-codex` executable은 message file lifecycle과 commit 결과 판정만 수행하며, 고빈도 명령과 조건부 branch convention·recovery reference를 제공합니다.
+- `git`: supporting check·message 위생·granularity·typed subject·post-commit full-message 검증을 포함한 task-scoped commit, branch 생성·전환·명시적 force-create, push를 하나의 workflow로 조합합니다. opt-in `git-codex` executable은 message file lifecycle과 commit 결과 판정만 수행합니다. 일반 workflow는 `message create`로 availability를 판단합니다.
   - spec: `src/toolkit-dev/specs/skills/git.md`
 
 ## Plugin Usage 계약
@@ -54,6 +54,13 @@
 - 새로운 CLI skill은 도구 자체의 환경, lifecycle, 호환성, 실패 복구 계약이 독립적으로 필요할 때만 추가합니다.
 - plugin 공통 선택 기준은 plugin spec, README, manifest가 소유하며 개별 skill에 반복하지 않습니다.
 - 개별 skill은 sibling context 없이 독립 실행할 수 있어야 합니다.
+
+## git-codex 설치
+
+- plugin 설치는 `git-codex`를 PATH에 등록하지 않습니다.
+- plugin 설치는 git-codex installation workflow를 시작하지 않습니다.
+- 설치·갱신 요청은 plugin의 matching bundled platform executable로 수행하고, 완료 후 `git codex install --check`와 `git codex --version`으로 확인합니다.
+- PATH, shell profile, Git config는 설치 과정에서 변경하지 않습니다.
 
 ## SDD 운영 원칙
 
