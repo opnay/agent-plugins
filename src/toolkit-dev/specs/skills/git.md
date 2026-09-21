@@ -20,6 +20,7 @@
 - 기존 OS-temp 메시지의 하위 호환 처리를 두지 않는다.
 - `alias.codex`의 설치·제거·진단은 명시적으로 요청된 maintenance workflow에서만 수행한다.
 - CLI가 명확한 성공 결과를 반환하면 같은 결과를 다시 조회해 검증하지 않는다.
+- runtime `SKILL.md`는 정상 실행에 필요한 짧은 지침만 두고, 조건부 lifecycle·recovery 세부는 reference로 라우팅한다.
 
 ---
 
@@ -29,7 +30,7 @@
 
 `git`은 사용자 요청 범위의 commit, branch, push를 개별 기능이자 연결 가능한 하나의 Git workflow로 수행합니다.
 bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계적으로 수행하고, skill은 scope·권한·message 의미·후속 검증을 소유합니다.
-고빈도 정상 흐름과 명령은 runtime `SKILL.md`에서 바로 제공하고, 조건부 branch convention과 실패·중단 복구는 필요한 reference만 읽도록 라우팅합니다.
+고빈도 정상 흐름과 명령은 runtime `SKILL.md`에서 짧고 직접적인 지침으로 제공하고, 조건부 lifecycle·branch convention·실패 복구는 필요한 reference만 읽도록 라우팅합니다.
 
 ## 경계
 
@@ -84,6 +85,7 @@ bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계�
 11. `git push origin wip:main`은 local `wip`을 remote `main`으로 보내는 explicit refspec입니다. 사용자가 이 형식을 지정했고 repository 규칙이 허용할 때만 실행합니다.
 12. mutation 결과는 종료 상태와 출력으로 판단하고 commit, branch, push 결과를 구분해 보고합니다. 예상한 대상과 성공·실패가 명확하면 같은 결과를 확인하는 추가 조회를 생략합니다. 호출 대상 오류, 불완전·상충 출력, 중단·결과 불명확에는 필요한 상태만 조회합니다.
 13. prefix 조건이나 실패·중단 상태가 정상 치트시트만으로 해결되지 않으면 해당 runtime reference를 읽고, 현재 상태를 관찰하기 전에 mutation을 재시도하거나 자동 rollback하지 않습니다.
+14. runtime `SKILL.md`는 명령, 선택 조건, 다음 행동을 우선하고, 일반 능력 설명·반복된 이유·조건부 세부 계약은 reference에 둡니다.
 
 ## Workflow 선택 및 조합
 
@@ -97,10 +99,10 @@ bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계�
 
 ## Cheatsheet 소유권
 
-- `SKILL.md`는 workflow selection, task-scoped stage, `git-codex` commit·error workflow, alias maintenance reference routing, branch 생성·전환, 명시적 force-create, upstream 설정, current-branch push, refspec push를 제공합니다.
+- `SKILL.md`는 workflow selection, task-scoped stage, stdin message create·commit, alias maintenance reference routing, branch 생성·전환, 명시적 force-create, current-branch push, refspec push를 제공합니다.
 - 명령 바로 옆에는 current-branch와 refspec의 구분, mutation 범위, destructive option 제외처럼 실행 의미를 바꾸는 조건을 둡니다.
 - 전체 Git flag와 subcommand를 복제하지 않고 설치된 Git의 `git <command> -h`와 repository 규칙을 우선합니다.
-- recovery와 branch convention의 조건부 세부 규칙은 `SKILL.md`에 반복하지 않습니다.
+- message-file lifecycle, recovery, branch convention의 조건부 세부 규칙은 `SKILL.md`에 반복하지 않습니다.
 
 ## Commit Message
 
@@ -164,6 +166,7 @@ bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계�
 ## Reference Routing
 
 - `references/branch-conventions.md`: branch name이 `codex/`, `jira/prja-000` 같은 policy-sensitive prefix와 맞거나 prefix로 branch 이름을 파생해야 할 때 읽습니다.
+- `references/message-lifecycle.md`: empty allocation, message-file path·validation, commit exit status, retained file을 다룰 때 읽습니다.
 - `references/recovery.md`: branch 전환 차단, detached HEAD, commit 중단, alias의 부분 실행, push 거부·인증 실패·결과 불명확·remote divergence가 발생했을 때 읽습니다.
 - `references/alias-codex.md`: `alias.codex` install·uninstall·doctor를 명시적으로 요청했을 때 읽습니다.
 - `SKILL.md`가 reference 선택 조건을 소유하고 reference끼리 같은 정상 workflow를 반복하지 않습니다.
