@@ -22,6 +22,8 @@
 - 대안은 요구 적합성, 복잡도, 변경 비용, reliability, security, performance, 운영 가능성으로 비교한다.
 - data ownership, consistency, lifecycle, failure handling, integration contract를 명시한다.
 - 선택과 보류안을 근거, 영향, migration 또는 rollback 조건과 함께 기록한다.
+- 미래 확장 가능성은 현재 요구, 확인된 후속 계획, 독립 소비자, 호환성·운영 제약 같은 근거가 있을 때만 선택 근거로 쓴다.
+- 가능성만으로 계층, 공용 모듈, interface, 저장소, event flow, 설정 지점을 만들지 않는다. 현재 구조의 비용이나 위험이 확인됐거나 가까운 후속 요구가 같은 경계를 공유할 때 확장을 선택하고, 그렇지 않으면 확장 trigger를 남긴다.
 - 확실하지 않은 사실은 가정으로 표시하고 검증 경로를 제시한다.
 
 ## 검토 질문
@@ -30,6 +32,7 @@
 - 데이터의 소유·수명·일관성은 분명한가?
 - 실패, migration, observability, rollback은 어떻게 다루는가?
 - 현재 복잡도가 실제 위험과 변화에 비례하는가?
+- 어떤 관찰 가능한 신호가 생기면 구조를 넓혀야 하는가?
 
 ## 독립성 원칙
 

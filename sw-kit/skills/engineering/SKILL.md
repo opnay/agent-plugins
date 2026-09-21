@@ -13,6 +13,10 @@ Establish the required behavior, non-functional constraints, current system, dat
 
 Compare viable options by requirement fit, complexity, change cost, reliability, security, performance, and operability. Prefer the smallest direction that meets present constraints without blocking known change.
 
+Future extensibility is evidence only when current requirements, confirmed follow-on work, independent consumers, or compatibility and operational constraints support it. Do not add layers, shared modules, interfaces, storage, event flows, or configuration points solely for a possible future.
+
+Choose expansion when current structure has a demonstrated cost or risk, or near-term work actually shares the boundary. Otherwise keep the smaller direction and state the observable trigger that would justify expansion.
+
 ## Define the direction
 
 Make these decisions explicit when relevant:
@@ -26,4 +30,4 @@ State the chosen direction, alternatives rejected or deferred, rationale, conseq
 
 ## Handoff
 
-Give implementation a concise contract: the boundaries to preserve, data and integration contracts, key failure modes, and acceptance or operational signals. Do not prescribe files, local abstractions, or routine code style.
+Give implementation a concise contract: the boundaries to preserve, data and integration contracts, key failure modes, acceptance or operational signals, and `expand when` trigger. Do not prescribe files, local abstractions, or routine code style.
