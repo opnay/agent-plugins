@@ -1,31 +1,19 @@
 ---
 name: git
-description: Run task-scoped Git commit, git-codex installation, branch, force-create, push, and recovery workflows. Use for heredoc commit messages, commits, git-codex setup, branch creation or switching, explicit git switch -C, upstream setup, current-branch or explicit refspec pushes, and partial Git workflow recovery; do not activate for incidental read-only Git inspection.
+description: Run task-scoped Git commit, managed alias.codex maintenance, branch, force-create, push, and recovery workflows. Use for heredoc commit messages, commits, alias.codex install, uninstall, or doctor, branch creation or switching, explicit git switch -C, upstream setup, current-branch or explicit refspec pushes, and partial Git workflow recovery; do not activate for incidental read-only Git inspection.
 ---
 
 # Git Workflow
 
 ## Select the authorized work
 
-Read repository instructions first. Commit, installation, branch, push, and recovery are composable steps with separate authority. A commit request does not authorize installation, push, force, destructive cleanup, version bumps, GitHub work, or publishing.
+Read repository instructions first. Commit, alias maintenance, branch, push, and recovery are composable steps with separate authority. A commit request does not authorize alias changes, push, force, destructive cleanup, version bumps, GitHub work, or publishing.
 
 `git-codex` owns message-file lifecycle and commit outcome detection. It does not stage, amend, push, change branches, bypass hooks, or judge message meaning. Use this skill without sibling skills or development-only documents. Do not default to history rewriting, forced branch deletion, force push, `reset --hard`, or `--discard-changes`.
 
-## Alias checks
+## Alias codex maintenance
 
-Before using an alias, inspect its definition and compare every expanded side effect with the authorized task:
-
-```sh
-git config --show-origin --get-regexp '^alias\.'
-```
-
-Before every `git codex` invocation, including availability and installation verification, check in the same repository and configuration context:
-
-```sh
-git config --show-origin --get-all alias.codex
-```
-
-Only exit status `1` means no alias is defined. A definition or any other lookup failure blocks the invocation. Inspect defined side effects, report the alias conflict or lookup error, and preserve Git config. Git can run `alias.codex` when the external command is missing; never execute it as an availability probe or report that conflict as a missing installation.
+`git codex` uses the managed global `alias.codex` dispatch to `$HOME/.local/bin/git-codex`. For an explicit `alias.codex` install, uninstall, or doctor request, read [references/alias-codex.md](references/alias-codex.md). That reference owns the expected value, binary installation, verification, force, and preservation rules.
 
 ## Commit scope and message
 
@@ -50,7 +38,7 @@ Use the most specific supported type: `feat`, `fix`, `refactor`, `docs`, `test`,
 
 ## Preferred message lifecycle
 
-After staged verification and alias checks, create the complete message with a quoted heredoc:
+After staged verification, create the complete message with a quoted heredoc:
 
 ```sh
 git codex message create --stdin <<'EOF'
@@ -105,17 +93,6 @@ git log -1 --format='%H%n%B'
 
 Compare its subject, body, and hook-added trailers with expected content and applicable convention. Report a mismatch as failed message verification without automatic amend, reset, or rollback. Do not add a status query solely to reconfirm an already clear success.
 
-## Installation
-
-Enter only for an explicit `git-codex` installation or update request.
-
-1. Find the matching bundled `scripts/bin/<os>-<arch>/git-codex`.
-2. Run that executable's `install` command to install at `~/.local/bin/git-codex`.
-3. Apply alias checks, then run `git codex install --check` to verify the installed target and dispatch.
-4. Apply alias checks, then compare `git codex --version` with `toolkit-git-codex <Toolkit manifest version>`.
-
-The installer preserves PATH, shell profiles, and Git config. `--force` requires explicit replacement authority. Report installation separately if later verification fails.
-
 ## Branch and push
 
 Create from a confirmed start point or switch to an existing local branch:
@@ -145,8 +122,7 @@ Read [references/branch-conventions.md](references/branch-conventions.md) for po
 
 ## Errors and recovery
 
-- After alias checks pass, use `message create` itself for lifecycle availability. If the command is unavailable, report installation required and end that lifecycle. Installation starts only on a later explicit request.
-- Alias conflicts, lookup errors, unsupported flags, missing repository context, invalid input, and other create failures are not evidence of a missing installation. Report the observed cause.
+- Use `message create` itself for lifecycle availability. Report an observed failure without changing alias configuration.
 - Preserve completed work. Before another mutation after failure, inspect only the local or remote state needed to resolve that failure. A rejected push does not undo a successful commit or authorize force push.
 - Read [references/recovery.md](references/recovery.md) for blocked branch changes, detached HEAD, interrupted or uncertain commits, partial alias execution, authentication failures, rejected or uncertain pushes, or divergent refs. Apply the message-file status rules above before cleanup.
 - A user-selected manual workflow or unsupported platform preserves the same message validation, identity-safe cleanup, commit-failure preservation, and full-message verification contract.

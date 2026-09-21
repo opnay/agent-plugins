@@ -48,9 +48,9 @@ EOF
 
 빈 파일이 필요한 경우 `message create`를 사용하고 작성 후 `message validate <MSG-ID>`를 실행합니다. push 등은 종료 상태와 대상별 결과 출력이 명확하면 그대로 보고하고, 호출 오류·중단·결과 불명확에 필요한 조회만 수행합니다.
 
-## git-codex 설치
+## alias.codex 관리
 
-plugin 설치는 이 workflow를 시작하지 않습니다. `git-codex` 설치·갱신 요청은 plugin의 matching `skills/git/scripts/bin/<os>-<arch>/git-codex`로 수행하고, 뒤이어 `git codex install --check`와 `git codex --version`으로 결과를 검증합니다. installer는 PATH, shell profile, Git config를 수정하지 않습니다.
+`git codex`는 관리되는 global `alias.codex`를 통해 `$HOME/.local/bin/git-codex`를 호출합니다. alias install·uninstall·doctor는 명시 요청에서만 runtime `skills/git/references/alias-codex.md`를 따릅니다.
 
 ## 경계
 

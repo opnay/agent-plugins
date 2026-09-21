@@ -41,9 +41,13 @@ func testEnv() []string {
 }
 
 func execute(t *testing.T, dir, input, command string, args ...string) (string, string, int) {
+	return executeEnv(t, dir, input, testEnv(), command, args...)
+}
+
+func executeEnv(t *testing.T, dir, input string, env []string, command string, args ...string) (string, string, int) {
 	t.Helper()
 	cmd := exec.Command(command, args...)
-	cmd.Dir, cmd.Env = dir, testEnv()
+	cmd.Dir, cmd.Env = dir, env
 	cmd.Stdin = strings.NewReader(input)
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout, cmd.Stderr = &stdout, &stderr
@@ -56,6 +60,20 @@ func execute(t *testing.T, dir, input, command string, args ...string) (string, 
 	}
 	t.Fatalf("execute %s: %v", command, err)
 	return "", "", -1
+}
+
+func aliasEnv(t *testing.T) ([]string, string) {
+	t.Helper()
+	home := t.TempDir()
+	config := filepath.Join(home, "gitconfig")
+	writeFixture(t, config, "", 0600)
+	var env []string
+	for _, entry := range testEnv() {
+		if !strings.HasPrefix(entry, "HOME=") && !strings.HasPrefix(entry, "GIT_CONFIG_GLOBAL=") {
+			env = append(env, entry)
+		}
+	}
+	return append(env, "HOME="+home, "GIT_CONFIG_GLOBAL="+config), home
 }
 
 func git(t *testing.T, dir string, args ...string) string {
@@ -391,4 +409,78 @@ func TestLinkedWorktreeCommitFromNestedDirectory(t *testing.T) {
 	if subject := git(t, repo, "log", "-1", "--format=%s"); subject != "initial" {
 		t.Fatalf("main worktree HEAD changed: %q", subject)
 	}
+}
+
+func TestAliasCodexMaintenance(t *testing.T) {
+	env, home := aliasEnv(t)
+	dir := t.TempDir()
+
+	out, stderr, code := executeEnv(t, dir, "", env, testBinary, "install")
+	if code != 0 || stderr != "" || !strings.Contains(out, "binary=") {
+		t.Fatalf("install: status=%d stdout=%q stderr=%q", code, out, stderr)
+	}
+	if _, err := os.Stat(filepath.Join(home, ".local", "bin", "git-codex")); err != nil {
+		t.Fatalf("installed binary: %v", err)
+	}
+	value := gitWithEnv(t, dir, env, "config", "--global", "--get-all", aliasKey)
+	if value != aliasValue {
+		t.Fatalf("alias value: %q", value)
+	}
+	dispatchVersion, stderr, code := executeEnv(t, dir, "", env, "git", "codex", "--version")
+	if code != 0 || stderr != "" || dispatchVersion != "toolkit-git-codex "+version+"\n" {
+		t.Fatalf("dispatch: status=%d stdout=%q stderr=%q", code, dispatchVersion, stderr)
+	}
+
+	_, stderr, code = executeEnv(t, dir, "", env, testBinary, "doctor")
+	if code != 0 || stderr != "" {
+		t.Fatalf("doctor: status=%d stderr=%q", code, stderr)
+	}
+	gitWithEnv(t, dir, env, "config", "--global", "--replace-all", aliasKey, "!echo foreign")
+	_, stderr, code = executeEnv(t, dir, "", env, testBinary, "install")
+	if code != 1 || !strings.Contains(stderr, "existing alias is preserved") {
+		t.Fatalf("preserve alias: status=%d stderr=%q", code, stderr)
+	}
+	if value := gitWithEnv(t, dir, env, "config", "--global", "--get-all", aliasKey); value != "!echo foreign" {
+		t.Fatalf("preserved alias: %q", value)
+	}
+	_, stderr, code = executeEnv(t, dir, "", env, testBinary, "install", "--force")
+	if code != 0 || stderr != "" {
+		t.Fatalf("force install: status=%d stderr=%q", code, stderr)
+	}
+	_, stderr, code = executeEnv(t, dir, "", env, testBinary, "uninstall")
+	if code != 0 || stderr != "" {
+		t.Fatalf("uninstall: status=%d stderr=%q", code, stderr)
+	}
+	_, _, code = executeEnv(t, dir, "", env, "git", "config", "--global", "--get-all", aliasKey)
+	if code != 1 {
+		t.Fatalf("alias remains after uninstall: %d", code)
+	}
+	_, stderr, code = executeEnv(t, dir, "", env, testBinary, "install")
+	if code != 0 || stderr != "" {
+		t.Fatalf("reinstall: status=%d stderr=%q", code, stderr)
+	}
+	gitWithEnv(t, dir, env, "config", "--global", "--replace-all", aliasKey, "!echo foreign")
+	_, stderr, code = executeEnv(t, dir, "", env, testBinary, "uninstall")
+	if code != 1 || !strings.Contains(stderr, "existing alias is preserved") {
+		t.Fatalf("preserve on uninstall: status=%d stderr=%q", code, stderr)
+	}
+	if value := gitWithEnv(t, dir, env, "config", "--global", "--get-all", aliasKey); value != "!echo foreign" {
+		t.Fatalf("preserved uninstall alias: %q", value)
+	}
+	_, stderr, code = executeEnv(t, dir, "", env, testBinary, "uninstall", "--force")
+	if code != 0 || stderr != "" {
+		t.Fatalf("force uninstall: status=%d stderr=%q", code, stderr)
+	}
+	if _, err := os.Stat(filepath.Join(home, ".local", "bin", "git-codex")); err != nil {
+		t.Fatalf("uninstall removed binary: %v", err)
+	}
+}
+
+func gitWithEnv(t *testing.T, dir string, env []string, args ...string) string {
+	t.Helper()
+	out, stderr, code := executeEnv(t, dir, "", env, "git", args...)
+	if code != 0 {
+		t.Fatalf("git %v: status=%d stdout=%q stderr=%q", args, code, out, stderr)
+	}
+	return strings.TrimSuffix(out, "\n")
 }

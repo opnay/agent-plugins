@@ -15,10 +15,12 @@ import (
 
 const version = "0.1.0"
 const prefix = "MSG-"
+const aliasKey = "alias.codex"
+const aliasValue = `!f() { "$HOME/.local/bin/git-codex" "$@"; }; f`
 
 func fail(code, message string) { fmt.Fprintf(os.Stderr, "git-codex: %s: %s\n", code, message) }
 func usage() {
-	fmt.Println("Usage:\n  git codex --help\n  git codex --version\n  git codex install [--force|--check]\n  git codex message create [--stdin]\n  git codex message validate <message>\n  git codex commit <message>\n\nMessages are stored in the current Git directory. Use the returned MSG-... ID\nfrom any directory in the same repository/worktree. --stdin reads through EOF\nand validates before returning the ID; without it, create allocates an empty file.")
+	fmt.Println("Usage:\n  git codex --help\n  git codex --version\n  git codex install [--force]\n  git codex uninstall [--force]\n  git codex doctor\n  git codex message create [--stdin]\n  git codex message validate <message>\n  git codex commit <message>\n\nMessages are stored in the current Git directory. Use the returned MSG-... ID\nfrom any directory in the same repository/worktree. --stdin reads through EOF\nand validates before returning the ID; without it, create allocates an empty file.")
 }
 
 func gitRoot() (string, error) {
@@ -192,72 +194,85 @@ func safeDir(path string) error {
 	}
 	return nil
 }
-func install(force, check bool) error {
+func installPaths() (string, string, string, error) {
 	self, e := os.Executable()
 	if e != nil {
-		return e
+		return "", "", "", e
 	}
 	home := os.Getenv("HOME")
 	if home == "" {
-		return fmt.Errorf("HOME is required")
+		return "", "", "", fmt.Errorf("HOME is required")
 	}
 	local := filepath.Join(home, ".local")
 	bin := filepath.Join(local, "bin")
 	target := filepath.Join(bin, "git-codex")
-	if check {
-		if e = safeDir(local); e != nil {
-			return e
-		}
-		if e = safeDir(bin); e != nil {
-			return e
-		}
-		a, e := os.ReadFile(self)
-		if e != nil {
-			return e
-		}
-		b, e := os.ReadFile(target)
-		if e != nil || !bytes.Equal(a, b) {
-			return fmt.Errorf("installed binary does not match")
-		}
-		fmt.Println(target)
-		return nil
+	return self, local, target, nil
+}
+
+func installedBinary() (string, error) {
+	self, local, target, e := installPaths()
+	if e != nil {
+		return "", e
 	}
+	if e = safeDir(local); e != nil {
+		return "", e
+	}
+	if e = safeDir(filepath.Dir(target)); e != nil {
+		return "", e
+	}
+	a, e := os.ReadFile(self)
+	if e != nil {
+		return "", e
+	}
+	b, e := os.ReadFile(target)
+	if e != nil || !bytes.Equal(a, b) {
+		return "", fmt.Errorf("installed binary does not match")
+	}
+	return target, nil
+}
+
+func installBinary(force bool) (string, error) {
+	self, local, target, e := installPaths()
+	if e != nil {
+		return "", e
+	}
+	bin := filepath.Dir(target)
 	for _, d := range []string{local, bin} {
 		if _, e = os.Lstat(d); os.IsNotExist(e) {
 			if e = os.Mkdir(d, 0755); e != nil {
-				return e
+				return "", e
 			}
 		}
 		if e = safeDir(d); e != nil {
-			return e
+			return "", e
 		}
 	}
 	if info, e := os.Lstat(target); e == nil {
 		if !info.Mode().IsRegular() || info.Mode()&os.ModeSymlink != 0 {
-			return fmt.Errorf("refusing to replace a symlink or directory")
+			return "", fmt.Errorf("refusing to replace a symlink or directory")
 		}
 		a, _ := os.ReadFile(self)
 		b, _ := os.ReadFile(target)
 		if bytes.Equal(a, b) && info.Mode().Perm() == 0755 {
-			return nil
+			return target, nil
 		}
 		if !force {
-			return fmt.Errorf("existing file is preserved; rerun with --force")
+			return "", fmt.Errorf("existing file is preserved; rerun with --force")
 		}
 	}
 	src, e := os.Open(self)
 	if e != nil {
-		return e
+		return "", e
 	}
 	defer src.Close()
 	tmp, e := os.CreateTemp(bin, ".git-codex.*")
 	if e != nil {
-		return e
+		return "", e
 	}
 	if _, e = io.Copy(tmp, src); e != nil {
 		tmp.Close()
 		os.Remove(tmp.Name())
-		return e
+		return "", e
 	}
 	if e = tmp.Chmod(0755); e == nil {
 		e = tmp.Close()
@@ -265,7 +280,78 @@ func install(force, check bool) error {
 	if e == nil {
 		e = os.Rename(tmp.Name(), target)
 	}
-	return e
+	if e != nil {
+		return "", e
+	}
+	return target, nil
+}
+
+func aliasValues() ([]string, error) {
+	b, e := exec.Command("git", "config", "--global", "--get-all", aliasKey).Output()
+	if e != nil {
+		if exit, ok := e.(*exec.ExitError); ok && exit.ExitCode() == 1 {
+			return nil, nil
+		}
+		return nil, e
+	}
+	return strings.FieldsFunc(strings.TrimSpace(string(b)), func(r rune) bool { return r == '\n' || r == '\r' }), nil
+}
+
+func expectedAlias(values []string) bool {
+	return len(values) > 0 && all(values, func(value string) bool { return value == aliasValue })
+}
+
+func all(values []string, predicate func(string) bool) bool {
+	for _, value := range values {
+		if !predicate(value) {
+			return false
+		}
+	}
+	return true
+}
+
+func configureAlias(force bool) error {
+	values, e := aliasValues()
+	if e != nil {
+		return e
+	}
+	if len(values) == 0 {
+		return exec.Command("git", "config", "--global", aliasKey, aliasValue).Run()
+	}
+	if expectedAlias(values) {
+		return nil
+	}
+	if !force {
+		return fmt.Errorf("existing alias is preserved; rerun with --force")
+	}
+	return exec.Command("git", "config", "--global", "--replace-all", aliasKey, aliasValue).Run()
+}
+
+func uninstall(force bool) error {
+	values, e := aliasValues()
+	if e != nil || len(values) == 0 {
+		return e
+	}
+	if !expectedAlias(values) && !force {
+		return fmt.Errorf("existing alias is preserved; rerun with --force")
+	}
+	return exec.Command("git", "config", "--global", "--unset-all", aliasKey).Run()
+}
+
+func doctor() error {
+	values, e := aliasValues()
+	if e != nil {
+		return e
+	}
+	if !expectedAlias(values) {
+		return fmt.Errorf("managed alias is missing or differs")
+	}
+	target, e := installedBinary()
+	if e != nil {
+		return e
+	}
+	fmt.Printf("alias=%s\nbinary=%s\nversion=toolkit-git-codex %s\n", aliasValue, target, version)
+	return nil
 }
 func main() {
 	a := os.Args[1:]
@@ -283,13 +369,43 @@ func main() {
 			os.Exit(1)
 		}
 		force := len(a) == 2 && a[1] == "--force"
-		check := len(a) == 2 && a[1] == "--check"
-		if len(a) == 2 && !force && !check {
+		if len(a) == 2 && !force {
 			usage()
 			os.Exit(1)
 		}
-		if e := install(force, check); e != nil {
+		if _, e := installBinary(force); e != nil {
 			fail("install_failed", e.Error())
+			os.Exit(1)
+		}
+		if e := configureAlias(force); e != nil {
+			fail("install_failed", e.Error())
+			os.Exit(1)
+		}
+		if e := doctor(); e != nil {
+			fail("install_failed", e.Error())
+			os.Exit(1)
+		}
+		return
+	}
+	if len(a) >= 1 && a[0] == "uninstall" {
+		if len(a) > 2 {
+			usage()
+			os.Exit(1)
+		}
+		force := len(a) == 2 && a[1] == "--force"
+		if len(a) == 2 && !force {
+			usage()
+			os.Exit(1)
+		}
+		if e := uninstall(force); e != nil {
+			fail("uninstall_failed", e.Error())
+			os.Exit(1)
+		}
+		return
+	}
+	if len(a) == 1 && a[0] == "doctor" {
+		if e := doctor(); e != nil {
+			fail("doctor_failed", e.Error())
 			os.Exit(1)
 		}
 		return

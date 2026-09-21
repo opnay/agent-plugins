@@ -12,13 +12,14 @@
 - commit 하나에는 하나의 related change unit만 포함하고 독립적으로 검토할 변경은 분리한다.
 - commit 성공 후 실제 저장된 full message를 다시 읽고 message 계약과 일치하는지 확인한다.
 - Toolkit에 `git codex` external command를 두고 message file 생성·기계 검증·commit 성공 뒤 cleanup을 묶고 싶다.
-- `git codex commit <file>`은 commit 실패 때 message file을 보존하고, installer는 별도 명령으로만 `~/.local/bin`에 설치해야 한다.
+- `git codex`는 관리되는 global `alias.codex`를 통해 실행하고, alias install·uninstall·doctor는 별도 reference로 둔다.
 - 일반 commit workflow는 `git codex message create`로 lifecycle availability를 판단한다.
 - 사용자가 설치를 요청하면 installer를 실행하고, `git codex message create`가 unavailable로 실패하면 설치 필요와 다음 권한 또는 수동 workflow 선택을 알린다.
 - 메시지는 파일 수정 도구보다 생성 시 quoted heredoc으로 입력하고 자동 검증하는 경로를 우선한다.
 - 메시지 파일은 Git 메타데이터 디렉터리의 `MSG-…`에 저장하고 하위 디렉터리·linked worktree에서도 Git 경로 해석을 따른다.
 - push처럼 종료 상태와 결과 출력이 명확하면 중복 조회하지 않고, 잘못된 호출이나 불확실한 결과에 필요한 검증만 수행한다.
 - 기존 OS-temp 메시지의 하위 호환 처리를 두지 않는다.
+- `alias.codex`의 설치·제거·진단은 명시적으로 요청된 maintenance workflow에서만 수행한다.
 
 ---
 
@@ -37,7 +38,7 @@ bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계�
   - task-scoped staging, commit message, commit 생성과 post-commit 확인
   - branch 생성·전환, 명시적으로 허용된 force-create와 start point 확인
   - current-branch push, upstream 설정, 명시적 refspec push
-  - Git alias 정의 확인과 alias가 수행하는 단계별 side effect 판단
+  - `alias.codex` install·uninstall·doctor의 명시적 maintenance workflow
   - installed `git-codex`의 message file create·validate·commit lifecycle
   - branch convention과 예외 복구 reference routing
 - 제외:
@@ -59,7 +60,7 @@ bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계�
 - `codex/`, `jira/prja-000` 같은 prefix가 repository 또는 사용자 규칙의 적용 조건인 작업
 - commit 또는 push가 실패·중단된 뒤 현재 상태를 확인하고 안전하게 재개하는 작업
 - installed `git codex` command로 message file을 생성·검증하고 task-scoped commit을 수행하는 작업
-- 사용자가 명시적으로 요청한 `git-codex` 설치·갱신과 사후 검증 작업
+- 사용자가 명시적으로 요청한 `alias.codex` install·uninstall·doctor 작업
 
 ## 엔트리포인트 / 대표 표면
 
@@ -74,13 +75,10 @@ bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계�
 2. repository의 `AGENTS.md`와 관련 운영 문서를 먼저 확인하고 runtime 일반 규칙보다 우선합니다. 규칙 충돌은 instruction priority와 현재 요청의 명시성을 따르며, 사용자가 같은 규칙을 명확히 override하지 않았다면 repository 기본값을 유지합니다.
 3. mutation 전에 working tree, current branch, local·remote refs, upstream, remote URL을 필요한 범위에서 확인합니다.
 4. commit, branch, push를 배타적 mode로 분리하지 않고 요청에 필요한 단계만 순서대로 조합합니다.
-5. Git alias는 이름으로 동작을 추정하지 않고 `git config --show-origin --get-regexp '^alias\.'` 등으로 정의를 확인한 뒤 각 side effect를 요청 범위와 대조합니다.
-   - 모든 `git codex` 호출 전에는 같은 실행 문맥에서 `git config --show-origin --get-all alias.codex`로 alias를 확인합니다. availability용 `message create`와 설치 후 검증도 포함합니다.
-   - 조회 status `1`만 alias 부재로 판단합니다. 정의가 있으면 expansion과 side effect를 검토하고 alias 충돌을 보고하며 `git codex` 호출을 중단합니다. 다른 조회 오류도 호출을 차단합니다.
-   - Git은 external command를 찾지 못하면 alias로 dispatch할 수 있으므로 alias를 availability probe로 실행하지 않습니다. alias 충돌을 설치 부재로 분류하거나 Git config를 자동 변경하지 않습니다.
+5. `git codex`는 managed global `alias.codex`가 `$HOME/.local/bin/git-codex`를 dispatch한다는 설치 계약을 전제로 사용합니다. alias install·uninstall·doctor는 사용자가 명시적으로 요청할 때만 runtime `references/alias-codex.md`의 bounded workflow로 수행합니다. 기존 alias 값이 다르면 `--force` 없는 install·uninstall은 보존하고 중단합니다.
 6. commit은 task-owned 범위만 stage하고 final status와 staged diff를 확인한 뒤 파일 기반 commit message로 생성합니다. staged verification이 불가능하거나 선택 범위와 다르면 commit을 차단하고, staged diff만으로 리스크를 확인할 수 없으면 가장 좁은 supporting check를 적용합니다. instruction priority를 따르고, 현재 사용자가 같은 message 규칙을 명확히 override하면 그 요청을, 그렇지 않으면 repository convention을 적용합니다. subject는 120자 미만으로 유지하며 더 엄격한 repository 제한이 있으면 그 값을 따릅니다. 별도 convention이 없으면 지원 type 중 가장 구체적인 type과 `type: detailed subject` 형식, bullet body를 사용합니다. commit lifecycle은 `message create`(stdin은 자동 validation, 수동 편집은 explicit validation) `> commit`을 따르고, commit 성공 후 실제 저장된 full message를 읽어 expected message와 적용 convention에 맞는지 확인합니다.
-7. installation workflow는 사용자 요청에서만 선택합니다. matching bundled platform executable로 설치·갱신한 뒤 `git codex install --check`와 `git codex --version`으로 결과를 확인합니다.
-8. `message create` unavailable은 installation required를 보고하는 error result입니다. 현재 commit lifecycle은 종료하고, 이후 설치 workflow는 별도 사용자 요청으로만 시작합니다. 다른 create·validate·commit·push failure는 recovery workflow로 분리합니다.
+7. `alias.codex` maintenance workflow는 사용자 요청에서만 선택합니다. matching bundled platform executable을 설치한 뒤 expected alias와 `git codex --version` dispatch를 확인합니다.
+8. create·validate·commit·push failure는 observed cause를 보존해 recovery workflow로 분리합니다.
 9. 일반 branch 생성은 `git switch -c`를 사용합니다. `git switch -C`는 사용자가 force-create를 명시했거나 repository workflow가 같은 동작을 소유할 때만 사용하며, exact branch, start point, 기존 branch ref, working tree, 다른 worktree 사용 여부를 먼저 확인합니다. `-C` 권한을 `--force`, `--discard-changes`, branch 삭제 권한으로 확장하지 않습니다.
 10. push는 remote, local source, remote destination을 분리해 확인합니다. current branch push와 `<local>:<remote>` refspec push를 같은 의미로 취급하지 않습니다.
 11. `git push origin wip:main`은 local `wip`을 remote `main`으로 보내는 explicit refspec입니다. 일반 push 요청에서 추론하지 않고 repository 규칙과 exact destination이 허용할 때만 실행합니다.
@@ -90,8 +88,8 @@ bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계�
 ## Workflow 선택 및 조합
 
 - `commit`: scope 확인 > stage > staged 검증 > heredoc create·자동 validation > commit > 저장된 message 확인
-- `installation`: 명시 요청 > bundled executable 설치·갱신 > `install --check` > `--version`
-- `error`: unavailable create는 installation required 보고 후 종료, 나머지 실패는 상태 관찰 > recovery 판단
+- `alias maintenance`: 명시 요청 > reference의 install·uninstall·doctor
+- `error`: 상태 관찰 > recovery 판단
 - `branch > commit`: start point 확인 > branch 생성·전환 > commit
 - `push`: source·destination·remote 확인 > push 결과 해석 > 결과 불명확·호출 오류에 필요한 확인
 - `branch > commit > push`: 각 단계의 독립 권한과 검증을 보존한 채 연결
@@ -99,7 +97,7 @@ bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계�
 
 ## Cheatsheet 소유권
 
-- `SKILL.md`는 workflow selection, task-scoped stage, `git-codex` commit·installation·error workflow, branch 생성·전환, 명시적 force-create, upstream 설정, current-branch push, refspec push, post-operation 확인 명령을 제공합니다.
+- `SKILL.md`는 workflow selection, task-scoped stage, `git-codex` commit·error workflow, alias maintenance reference routing, branch 생성·전환, 명시적 force-create, upstream 설정, current-branch push, refspec push, post-operation 확인 명령을 제공합니다.
 - 명령 바로 옆에는 source·destination, mutation 범위, destructive option 제외처럼 실행 의미를 바꾸는 조건을 둡니다.
 - 전체 Git flag와 subcommand를 복제하지 않고 설치된 Git의 `git <command> -h`와 repository 규칙을 우선합니다.
 - recovery와 branch convention의 조건부 세부 규칙은 `SKILL.md`에 반복하지 않습니다.
@@ -127,7 +125,7 @@ bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계�
 
 ## Git Codex Command
 
-- `git-codex`는 Git external command로 `git codex install [--force|--check]`, `--version`, `message create [--stdin]`, `message validate <message>`, `commit <message>`를 제공합니다. version은 Toolkit manifest와 일치해야 합니다.
+- `git-codex`는 Git external command로 `git codex install [--force]`, `uninstall [--force]`, `doctor`, `--version`, `message create [--stdin]`, `message validate <message>`, `commit <message>`를 제공합니다. version은 Toolkit manifest와 일치해야 합니다.
 - 우선 경로는 `git codex message create --stdin <<'EOF'`입니다. quoted delimiter는 shell expansion을 막습니다. 프로그램은 EOF까지 입력을 저장하고 자동 validation을 통과한 경우에만 stdout에 짧은 `MSG-…` 식별자 하나를 출력합니다. create는 commit을 실행하지 않습니다.
 - 파일은 `git rev-parse --absolute-git-dir`로 구한 현재 repository·worktree의 canonical Git 메타데이터 디렉터리에 `MSG-…`, mode `0600`으로 원자 생성합니다. 해당 directory는 현재 사용자 소유이며 group·other 쓰기 권한이 없어야 합니다. 일반 repository에서는 `.git/MSG-…`이며 하위 디렉터리, `.git` gitfile, linked worktree, 별도 Git directory, bare repository도 Git의 경로 해석을 따릅니다. 안전한 Git directory를 찾지 못하면 파일을 만들지 않고 실패합니다.
 - `validate`·`commit`은 `MSG-…` 식별자를 같은 repository·worktree의 Git directory에 상대적으로 해석합니다. 현재 Git directory 안의 `MSG-…` 실제 상대·절대 파일 경로도 허용합니다. 그 밖의 파일은 거부합니다.
@@ -139,12 +137,11 @@ bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계�
 - `commit` command의 status `1`은 입력 파일을 보존합니다. `validation_failed`의 cleanup은 생성 때 기록한 identity를 가진 skill caller가 판단하며, command가 validation 실패 파일을 임의 삭제하지 않습니다. `create --stdin`은 자신이 생성한 파일의 실패 cleanup을 직접 소유합니다.
 - 수동 workflow도 validation/readback 실패는 identity-safe cleanup, commit failure는 message file 보존이라는 같은 lifecycle을 유지합니다.
 
-## Installation Workflow
+## Alias Codex Maintenance
 
-- entry: 사용자가 `git-codex` 설치·갱신을 명시적으로 요청한 경우입니다.
-- matching bundled platform executable로 `~/.local/bin/git-codex`에 설치·갱신합니다.
-- 설치 성공 뒤 `git codex install --check`와 `git codex --version`으로 installed target, dispatch, Toolkit version을 확인합니다.
-- installer는 PATH, shell profile, Git alias·config를 변경하지 않습니다.
+- entry: 사용자가 `alias.codex` install·uninstall·doctor를 명시적으로 요청한 경우입니다.
+- exact alias value, binary installation, version dispatch, force and preservation rules는 `git-codex` CLI가 소유하고 runtime `references/alias-codex.md`는 해당 command를 라우팅합니다.
+- 일반 commit·branch·push workflow는 이 maintenance workflow를 선택하지 않습니다.
 
 ## Commit Verification
 
@@ -176,6 +173,7 @@ bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계�
 
 - `references/branch-conventions.md`: branch name이 `codex/`, `jira/prja-000` 같은 policy-sensitive prefix와 맞거나 prefix로 branch 이름을 파생해야 할 때 읽습니다.
 - `references/recovery.md`: branch 전환 차단, detached HEAD, commit 중단, alias의 부분 실행, push 거부·인증 실패·결과 불명확·remote divergence가 발생했을 때 읽습니다.
+- `references/alias-codex.md`: `alias.codex` install·uninstall·doctor를 명시적으로 요청했을 때 읽습니다.
 - `SKILL.md`가 reference 선택 조건을 소유하고 reference끼리 같은 정상 workflow를 반복하지 않습니다.
 
 ## Branch Convention 판단
@@ -192,7 +190,7 @@ bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계�
 - 재시도 전에 current branch, working tree, HEAD, upstream과 필요한 remote ref를 다시 확인합니다.
 - commit 성공 후 push 실패처럼 부분 성공이 있으면 성공한 commit을 되돌리지 않고 남은 push만 판단합니다.
 - `git codex commit`이 status `2` 또는 `3`이면 HEAD, message file identity, stored message를 다시 확인하기 전 command를 재실행하지 않습니다.
-- `message create` unavailable은 installation required를 보고하고 현재 lifecycle을 종료합니다. 그 밖의 create failure는 원인을 보존해 recovery를 판단합니다.
+- create failure는 원인을 보존해 recovery를 판단합니다.
 - non-fast-forward를 force push로 자동 전환하지 않고 divergence와 허용된 해결 범위를 보고합니다.
 - remote 결과가 불명확하면 같은 push를 반복하기 전에 remote ref를 조회합니다.
 
@@ -204,8 +202,8 @@ bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계�
 - commit type이 staged scope에 맞고 subject가 적용 가능한 최대 길이 미만인가?
 - supporting check의 passed·failed·skipped·unavailable 상태와 residual risk를 정확히 구분했는가?
 - commit message에 literal escape, delimiter text, 불필요한 blank line이 없고 skip·residual risk가 숨겨지지 않았는가?
-- 모든 `git codex` 호출 전에 `alias.codex` 부재를 확인하고 alias 충돌·조회 오류에서는 호출을 차단했는가?
-- alias 검사 통과 후 일반 workflow에서 `message create`를 직접 실행했고 unavailable 결과와 기타 실패 원인을 구분했는가?
+- alias maintenance가 명시적으로 요청됐고 reference의 expected value·preservation rules를 따랐는가?
+- 일반 workflow에서 `message create`를 직접 실행했고 failure 원인을 구분했는가?
 - staged scope가 하나의 related change unit인가?
 - 실제 저장된 full message가 expected message와 applicable convention에 맞고, 불일치 시 자동 history mutation 없이 보고했는가?
 - branch exact name, start point, upstream이 확인됐는가?

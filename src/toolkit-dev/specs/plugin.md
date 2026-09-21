@@ -55,12 +55,11 @@
 - plugin 공통 선택 기준은 plugin spec, README, manifest가 소유하며 개별 skill에 반복하지 않습니다.
 - 개별 skill은 sibling context 없이 독립 실행할 수 있어야 합니다.
 
-## git-codex 설치
+## alias.codex 관리
 
-- plugin 설치는 `git-codex`를 PATH에 등록하지 않습니다.
-- plugin 설치는 git-codex installation workflow를 시작하지 않습니다.
-- 설치·갱신 요청은 plugin의 matching bundled platform executable로 수행하고, 완료 후 `git codex install --check`와 `git codex --version`으로 확인합니다.
-- PATH, shell profile, Git config는 설치 과정에서 변경하지 않습니다.
+- `git codex`는 managed global `alias.codex`가 `$HOME/.local/bin/git-codex`를 dispatch하는 계약으로 사용합니다.
+- alias install·uninstall·doctor는 명시 요청에서만 `$toolkit:git/references/alias-codex.md`의 maintenance workflow를 따릅니다.
+- 일반 commit·branch·push 요청은 alias maintenance 권한을 만들지 않습니다.
 
 ## SDD 운영 원칙
 

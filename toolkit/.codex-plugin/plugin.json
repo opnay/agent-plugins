@@ -1,7 +1,7 @@
 {
   "name": "toolkit",
   "version": "0.1.0",
-  "description": "Tool-specific CLI guidance for Apple container and Git workflows, including opt-in git-codex message-file lifecycle automation.",
+  "description": "Tool-specific CLI guidance for Apple container and Git workflows, including opt-in git-codex alias and message-file lifecycle automation.",
   "author": {
     "name": "opnay"
   },
@@ -24,7 +24,7 @@
   "interface": {
     "displayName": "Toolkit",
     "shortDescription": "Operate Apple container and bounded Git workflows.",
-    "longDescription": "Provides bounded skills for Apple container lifecycle and task-scoped Git commit, branch, push, recovery, and opt-in git-codex heredoc input with automatic validation and repository-local message IDs.",
+    "longDescription": "Provides bounded skills for Apple container lifecycle and task-scoped Git commit, branch, push, recovery, managed git-codex alias maintenance, and opt-in heredoc input with automatic validation and repository-local message IDs.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": [
@@ -34,7 +34,7 @@
     ],
     "defaultPrompt": [
       "Use $toolkit:apple-container for Apple container CLI tasks on Apple silicon macOS, including common commands, lifecycle checks, compatibility limits, installation, uninstallation, containerization concepts, and the bundled experimental k8s plugin without assuming third-party Kubernetes CLI execution.",
-      "Use $toolkit:git for task-scoped commits with risk-proportional checks, message hygiene, one related change unit, a typed subject under 120 characters, and stored full-message verification; prefer git-codex message create --stdin with a quoted heredoc, automatic validation, and short MSG IDs in the current Git directory. It also covers explicitly requested git-codex installation, branch creation or switching, explicit git switch -C, upstream and refspec pushes, branch policy, and recovery. Use clear command results directly and query additional state only for incorrect invocations or uncertain outcomes."
+      "Use $toolkit:git for task-scoped commits with risk-proportional checks, message hygiene, one related change unit, a typed subject under 120 characters, and stored full-message verification; prefer git-codex message create --stdin with a quoted heredoc, automatic validation, and short MSG IDs in the current Git directory. It also covers explicitly requested alias.codex install, uninstall, and doctor, branch creation or switching, explicit git switch -C, upstream and refspec pushes, branch policy, and recovery. Use clear command results directly and query additional state only for incorrect invocations or uncertain outcomes."
     ],
     "brandColor": "#24292F"
   }
