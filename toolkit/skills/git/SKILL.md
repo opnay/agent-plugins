@@ -1,6 +1,6 @@
 ---
 name: git
-description: Run task-scoped Git commit, managed alias.codex maintenance, branch, force-create, push, and recovery workflows. Use for heredoc commit messages, commits, alias.codex install, uninstall, or doctor, branch creation or switching, explicit git switch -C, upstream setup, current-branch or explicit refspec pushes, and partial Git workflow recovery; do not activate for incidental read-only Git inspection.
+description: Run task-scoped Git commit, managed alias.codex maintenance, branch, force-create, push, and recovery workflows. Use for heredoc commit messages, commits, alias.codex install, uninstall, or doctor, branch creation or switching, explicit git switch -C, current-branch or exact refspec pushes, and partial Git workflow recovery; do not activate for incidental read-only Git inspection.
 ---
 
 # Git Workflow
@@ -13,7 +13,7 @@ Read repository instructions first. Commit, alias maintenance, branch, push, and
 
 ## Alias codex maintenance
 
-`git codex` uses the managed global `alias.codex` dispatch to `$HOME/.local/bin/git-codex`. For an explicit `alias.codex` install, uninstall, or doctor request, read [references/alias-codex.md](references/alias-codex.md). That reference owns the expected value, binary installation, verification, force, and preservation rules.
+`git codex` uses the managed global `alias.codex` dispatch to `$HOME/.local/bin/git-codex`. For an explicit `alias.codex` install, uninstall, or doctor request, read [references/alias-codex.md](references/alias-codex.md). That reference owns the expected value, binary installation, force, and preservation rules. Treat the command's clear success or failure output as its result; do not add a normal post-command state query.
 
 ## Commit scope and message
 
@@ -85,6 +85,8 @@ If stdin reading, writing, or automatic validation fails, create removes only it
 - `2`: commit confirmed; cleanup failed. Inspect HEAD, file identity, and stored message, then address only the remaining file.
 - `3`: attempted commit with an unknown result. Inspect HEAD, file identity, and stored message before retrying or using a manual fallback.
 
+For a clear successful result, do not add a status or stored-message query solely to verify it.
+
 ## Branch and push
 
 Create from a confirmed start point or switch to an existing local branch:
@@ -96,19 +98,16 @@ git switch <branch>
 
 Use `git switch -C <branch> <start-point>` only with explicit force-create authority from the user or owning repository workflow. Confirm exact branch, start point, existing target ref, working tree, and `git worktree list --porcelain` first. This does not authorize discarding changes, branch deletion, or force push.
 
-Before push, resolve the remote URL, local source, remote destination, and upstream:
+Treat the user's requested push form and location as authoritative. Execute a requested current-branch form or exact refspec directly; do not pre-read the remote URL, local source, remote destination, or upstream:
 
 ```sh
-git branch --show-current
-git branch -vv
-git remote -v
 git push -u <remote> <branch>
 git push <remote> <local-source>:<remote-destination>
 ```
 
-`git push origin wip:main` maps local `wip` to remote `main`; do not infer this from a general push request. Repository restrictions and authorization for the exact destination still apply.
+`git push origin wip:main` maps local `wip` to remote `main`; do not infer this refspec from a general push request. Repository restrictions and authorization for the exact destination still apply.
 
-Interpret exit status and result text together. When the output clearly identifies the expected destination and success, rejection, or no-op, report that result without another status, fetch, or remote-ref query. Query only the state needed to resolve a wrong invocation, interruption, missing or conflicting output, or an uncertain outcome; do not repeat a mutation to verify it.
+Interpret exit status and result text together. When the output clearly identifies the requested destination and success, rejection, or no-op, report that result without another status, fetch, or remote-ref query. Query only the state needed to resolve a wrong invocation, interruption, missing or conflicting output, or an uncertain outcome; do not repeat a mutation to verify it.
 
 Read [references/branch-conventions.md](references/branch-conventions.md) for policy-sensitive prefixes such as `codex/` or `jira/prja-000`, derived names, or force-create conflicts. Preserve exact supplied names; a prefix alone does not determine base, remote destination, or permission.
 
@@ -117,4 +116,4 @@ Read [references/branch-conventions.md](references/branch-conventions.md) for po
 - Use `message create` itself for lifecycle availability. Report an observed failure without changing alias configuration.
 - Preserve completed work. Before another mutation after failure, inspect only the local or remote state needed to resolve that failure. A rejected push does not undo a successful commit or authorize force push.
 - Read [references/recovery.md](references/recovery.md) for blocked branch changes, detached HEAD, interrupted or uncertain commits, partial alias execution, authentication failures, rejected or uncertain pushes, or divergent refs. Apply the message-file status rules above before cleanup.
-- A user-selected manual workflow or unsupported platform preserves the same message validation, identity-safe cleanup, commit-failure preservation, and full-message verification contract.
+- A user-selected manual workflow or unsupported platform preserves the same message validation, identity-safe cleanup, and commit-failure preservation contract.
