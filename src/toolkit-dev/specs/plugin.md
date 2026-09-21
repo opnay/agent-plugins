@@ -45,7 +45,7 @@
 
 - `apple-container`: Apple Silicon macOS에서 Apple `container` CLI와 bundled `k8s` plugin을 확인하고 사용하며 설치·제거·개념·Kubernetes plugin reference로 라우팅합니다.
   - spec: `src/toolkit-dev/specs/skills/apple-container.md`
-- `git`: supporting check·message 위생·granularity·typed subject·post-commit full-message 검증을 포함한 task-scoped commit, branch 생성·전환·명시적 force-create, push를 하나의 workflow로 조합합니다. opt-in `git-codex` executable은 Git 메타데이터의 `MSG-…` file lifecycle과 commit 결과 판정만 수행합니다. 일반 workflow는 quoted heredoc을 받는 `message create --stdin`과 자동 validation을 우선하며, 짧은 ID를 같은 repository·worktree에서 사용합니다. push처럼 종료 상태와 출력이 명확한 결과는 중복 조회하지 않습니다.
+- `git`: supporting check·message 위생·granularity·typed subject를 포함한 task-scoped commit, branch 생성·전환·명시적 force-create, push를 하나의 workflow로 조합합니다. opt-in `git-codex` executable은 Git 메타데이터의 `MSG-…` file lifecycle과 commit 결과 판정만 수행합니다. 일반 workflow는 quoted heredoc을 받는 `message create --stdin`과 자동 validation을 우선하며, 짧은 ID를 같은 repository·worktree에서 사용합니다. 종료 상태와 출력이 명확한 CLI 결과는 중복 조회하지 않습니다.
   - spec: `src/toolkit-dev/specs/skills/git.md`
 
 ## Plugin Usage 계약

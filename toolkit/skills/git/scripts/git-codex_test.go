@@ -416,7 +416,7 @@ func TestAliasCodexMaintenance(t *testing.T) {
 	dir := t.TempDir()
 
 	out, stderr, code := executeEnv(t, dir, "", env, testBinary, "install")
-	if code != 0 || stderr != "" || !strings.Contains(out, "binary=") {
+	if code != 0 || stderr != "" || !strings.Contains(out, "installed=") {
 		t.Fatalf("install: status=%d stdout=%q stderr=%q", code, out, stderr)
 	}
 	if _, err := os.Stat(filepath.Join(home, ".local", "bin", "git-codex")); err != nil {

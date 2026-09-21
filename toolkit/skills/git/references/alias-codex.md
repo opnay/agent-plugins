@@ -13,7 +13,7 @@ git codex install
 git codex install --force
 ```
 
-Install copies the current executable to `$HOME/.local/bin/git-codex`, configures the expected global alias, and runs its doctor checks. A different existing binary or alias is preserved unless `--force` is explicitly authorized.
+Install copies the current executable to `$HOME/.local/bin/git-codex` and configures the expected global alias. Its success result is sufficient; run `doctor` only when explicitly requested. A different existing binary or alias is preserved unless `--force` is explicitly authorized.
 
 ## Uninstall
 

@@ -373,7 +373,8 @@ func main() {
 			usage()
 			os.Exit(1)
 		}
-		if _, e := installBinary(force); e != nil {
+		target, e := installBinary(force)
+		if e != nil {
 			fail("install_failed", e.Error())
 			os.Exit(1)
 		}
@@ -381,10 +382,7 @@ func main() {
 			fail("install_failed", e.Error())
 			os.Exit(1)
 		}
-		if e := doctor(); e != nil {
-			fail("install_failed", e.Error())
-			os.Exit(1)
-		}
+		fmt.Printf("installed=%s\nalias=%s\n", target, aliasValue)
 		return
 	}
 	if len(a) >= 1 && a[0] == "uninstall" {

@@ -85,14 +85,6 @@ If stdin reading, writing, or automatic validation fails, create removes only it
 - `2`: commit confirmed; cleanup failed. Inspect HEAD, file identity, and stored message, then address only the remaining file.
 - `3`: attempted commit with an unknown result. Inspect HEAD, file identity, and stored message before retrying or using a manual fallback.
 
-After confirmed commit and cleanup, inspect the stored full message, which ordinary commit output does not provide:
-
-```sh
-git log -1 --format='%H%n%B'
-```
-
-Compare its subject, body, and hook-added trailers with expected content and applicable convention. Report a mismatch as failed message verification without automatic amend, reset, or rollback. Do not add a status query solely to reconfirm an already clear success.
-
 ## Branch and push
 
 Create from a confirmed start point or switch to an existing local branch:

@@ -10,7 +10,7 @@
 ### Alias maintenance
 
 - 목적: normal Git workflow의 검증 부담과 alias configuration 관리를 분리합니다.
-- 범위: explicit install은 bundled `git-codex` binary와 expected global alias를 설치·검증합니다. uninstall은 expected alias만 제거하고 binary는 보존합니다. doctor는 read-only로 alias·binary·version을 진단합니다.
+- 범위: explicit install은 bundled `git-codex` binary와 expected global alias를 설치하고 성공 결과를 반환합니다. uninstall은 expected alias만 제거하고 binary는 보존합니다. doctor는 read-only로 alias·binary·version을 진단합니다.
 - 보존: existing alias가 expected value와 다르면 `--force` 없는 install·uninstall은 중단하고 값을 보존합니다.
 - 비목표: 일반 commit·branch·push workflow에서 alias maintenance를 자동으로 실행하지 않습니다.
 - 관련 표면: `git-codex.go`, tests, git skill spec/runtime, `references/alias-codex.md`, plugin spec, README.
@@ -19,5 +19,6 @@
 
 - skill spec, runtime, reference가 같은 managed alias contract를 설명합니다.
 - CLI tests cover install, doctor, preservation, force replacement, and uninstall.
+- 명확한 CLI 성공 결과 뒤에는 같은 상태를 재조회하지 않습니다.
 - runtime frontmatter와 bundled reference link를 검증합니다.
 - `git diff --check`를 통과합니다.
