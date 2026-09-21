@@ -10,7 +10,7 @@ description: Extend Figma inspection, import, design-to-code, code-to-design, an
 - Add layout and handoff judgment to tasks that already use an available Figma capability.
 - Do not replace or bypass upstream Figma prerequisites, tool schemas, authentication, or mutation rules.
 - Do not configure or install a Figma connection. If the required capability is unavailable, report the limitation before mutation.
-- Do not own generic visual design judgment, branding, product quality, unrelated frontend implementation, or code-quality decisions.
+- Do not own generic visual design judgment, branding, product quality, unrelated frontend implementation, or source-level code decisions.
 
 ## Workflow
 

@@ -1,9 +1,9 @@
-# code-quality 시나리오 세트
+# sw-kit:code 시나리오 세트
 
 ## Target Instruction
 
-- 대상 skill: `code-quality/skills/code-quality/SKILL.md`
-- 목적: `code-quality`가 production code 구현, 수정, 리팩터링, 테스트, 의존성 판단, 코드 리뷰에서 의도대로 작동하는지 검증한다.
+- 대상 skill: `sw-kit/skills/code/SKILL.md`
+- 목적: `code`가 production code 구현, 수정, 리팩터링, 테스트, 의존성 판단, 코드 리뷰에서 의도대로 작동하는지 검증한다.
 
 ## Checklist Design
 
@@ -26,23 +26,23 @@
 ### 호출되면 안 되는 시나리오 공통 체크리스트
 
 - [critical] prose-only, 번역, generated/vendor code 직접 수정, formatting-only, style-only, naming-only 요청에는 기본적으로 skill을 적용하지 않는다.
-- 사용자가 명시적으로 `$code-quality:code-quality`를 호출하거나 correctness/security/compatibility/data-integrity/operational-risk 검토를 요청한 경우에만 예외적으로 적용한다.
+- 사용자가 명시적으로 `$sw-kit:code`를 호출하거나 correctness/security/compatibility/data-integrity/operational-risk 검토를 요청한 경우에만 예외적으로 적용한다.
 - 코드 품질 판단이 필요한 경계 사례는 조건부로 분류한다.
 
 ## Scenario Set
 
 | ID | Trigger | Category | Prompt | Expected focus |
 |---|---|---|---|---|
-| CQ-001 | true | explicit | `$code-quality`로 결제 금액 반올림 버그를 수정하고 회귀 테스트를 추가해줘. | 명시 호출, 금액/정밀도, 기존 결제 규칙 조사 |
-| CQ-002 | true | explicit | `$code-quality` 이 PR에서 P0/P1 수준의 실제 장애나 데이터 손실로 이어질 수 있는 코드만 리뷰해줘. | 리뷰 모드, P0/P1 심각도 중심 |
-| CQ-003 | true | explicit | `$code-quality` 사용자 입력으로 파일 경로를 만드는 부분을 안전하게 고쳐줘. | 보안, path traversal, 기존 path API |
-| CQ-004 | true | explicit | `$code-quality` 새 로깅 래퍼를 만들기 전에 프레임워크 로거로 충분한지 판단해줘. | wrapper 필요성 판단 |
-| CQ-005 | true | explicit | `$code-quality` 기존 `DateHelper`를 써서 타임존 변환을 처리해도 되는지 봐줘. | 유틸리티 계약 검사 |
-| CQ-006 | true | explicit | `$code-quality` 이 캐시 구현이 동시 요청에서 안전한지 검토하고 수정해줘. | 동시성, 상태 소유권 |
-| CQ-007 | true | explicit | `$code-quality` UUID 생성 때문에 새 패키지를 넣자는 변경을 검토해줘. | 표준 라이브러리, 의존성 비용 |
-| CQ-008 | true | explicit | `$code-quality` 실패를 삼키는 try/catch를 저장소 오류 모델에 맞게 고쳐줘. | 오류 처리, 진단 정보 |
-| CQ-009 | true | explicit | `$code-quality` 두 API 클라이언트의 중복 재시도 로직을 공통화해도 되는지 판단해줘. | DRY 적합성, retry 계약 |
-| CQ-010 | true | explicit | `$code-quality` 직접 만든 JWT 검증 로직을 리뷰하고 안전한 대안을 제안해줘. | 보안 프로토콜 직접 구현 금지 |
+| CQ-001 | true | explicit | `$sw-kit:code`로 결제 금액 반올림 버그를 수정하고 회귀 테스트를 추가해줘. | 명시 호출, 금액/정밀도, 기존 결제 규칙 조사 |
+| CQ-002 | true | explicit | `$sw-kit:code` 이 PR에서 P0/P1 수준의 실제 장애나 데이터 손실로 이어질 수 있는 코드만 리뷰해줘. | 리뷰 모드, P0/P1 심각도 중심 |
+| CQ-003 | true | explicit | `$sw-kit:code` 사용자 입력으로 파일 경로를 만드는 부분을 안전하게 고쳐줘. | 보안, path traversal, 기존 path API |
+| CQ-004 | true | explicit | `$sw-kit:code` 새 로깅 래퍼를 만들기 전에 프레임워크 로거로 충분한지 판단해줘. | wrapper 필요성 판단 |
+| CQ-005 | true | explicit | `$sw-kit:code` 기존 `DateHelper`를 써서 타임존 변환을 처리해도 되는지 봐줘. | 유틸리티 계약 검사 |
+| CQ-006 | true | explicit | `$sw-kit:code` 이 캐시 구현이 동시 요청에서 안전한지 검토하고 수정해줘. | 동시성, 상태 소유권 |
+| CQ-007 | true | explicit | `$sw-kit:code` UUID 생성 때문에 새 패키지를 넣자는 변경을 검토해줘. | 표준 라이브러리, 의존성 비용 |
+| CQ-008 | true | explicit | `$sw-kit:code` 실패를 삼키는 try/catch를 저장소 오류 모델에 맞게 고쳐줘. | 오류 처리, 진단 정보 |
+| CQ-009 | true | explicit | `$sw-kit:code` 두 API 클라이언트의 중복 재시도 로직을 공통화해도 되는지 판단해줘. | DRY 적합성, retry 계약 |
+| CQ-010 | true | explicit | `$sw-kit:code` 직접 만든 JWT 검증 로직을 리뷰하고 안전한 대안을 제안해줘. | 보안 프로토콜 직접 구현 금지 |
 | CQ-011 | true | implementation | 주문 취소 API에 부분 취소 기능을 추가해줘. | 도메인 규칙, API 호환성, 테스트 |
 | CQ-012 | true | implementation | 사용자 프로필 저장 시 display name 정규화를 추가해줘. | 기존 도메인 모듈, 이름 규칙 |
 | CQ-013 | true | implementation | CSV 업로드에서 빈 줄과 잘못된 인코딩을 처리해줘. | 경계값, 표준/라이브러리 파서 |
@@ -151,18 +151,18 @@
 | CQ-116 | false | non-trigger | changelog 문체를 간결하게 바꿔줘. | prose-only exclusion |
 | CQ-117 | false | non-trigger | 코드 블록 안 주석 문장만 번역해줘. | translation-only unless code semantics asked |
 | CQ-118 | conditional | boundary | 블로그 글에 넣을 예제 코드를 더 예쁘게 다듬어줘. | production correctness 요청이면 trigger |
-| CQ-119 | conditional | boundary | `$code-quality` generated client를 upstream 패치 전 임시로 직접 고쳐야 하는데 보안·호환성 위험을 먼저 평가해줘. | explicit generated-code exception이면 trigger |
+| CQ-119 | conditional | boundary | `$sw-kit:code` generated client를 upstream 패치 전 임시로 직접 고쳐야 하는데 보안·호환성 위험을 먼저 평가해줘. | explicit generated-code exception이면 trigger |
 | CQ-120 | false | boundary | 동작이나 의미 검토 없이 변수 이름만 더 예쁘게 바꿔줘. | pure naming/style이면 no |
-| CQ-121 | true | explicit | `$code-quality`로 새 외부 API 연동 코드를 구현하기 전에 기존 클라이언트와 재시도 정책을 조사해줘. | 명시 호출, 기존 클라이언트와 오류 계약 |
-| CQ-122 | true | explicit | `$code-quality` 이 모듈의 반복 DB 호출 병목을 고치되 쿼리 횟수나 benchmark 같은 측정 가능한 근거를 남겨줘. | 명시 호출, 성능 근거와 검증 |
-| CQ-123 | true | explicit | `$code-quality` 사용자 개인정보가 로그에 남지 않게 수정하고 관련 테스트를 추가해줘. | 명시 호출, 보안/개인정보 |
-| CQ-124 | true | explicit | `$code-quality` 기존 암호화 helper를 새 기능에 써도 되는지 계약을 확인해줘. | 명시 호출, 보안 유틸리티 적합성 |
-| CQ-125 | true | explicit | `$code-quality` 이 리팩터링이 공개 API 호환성을 깨지 않는지 먼저 확인해줘. | 명시 호출, 호환성 우선 |
-| CQ-126 | true | explicit | `$code-quality` 저장 데이터 migration 없이 필드를 바꿀 수 있는지 검토해줘. | 명시 호출, 저장 데이터 호환성 |
-| CQ-127 | true | explicit | `$code-quality` framework validation 기능을 쓰는 편이 나은지 직접 구현과 비교해줘. | 명시 호출, 프레임워크 API 비교 |
-| CQ-128 | true | explicit | `$code-quality` 새 helper를 `utils`에 추가하기 전에 도메인 소유 위치를 판단해줘. | 명시 호출, 유틸리티 위치와 소유권 |
-| CQ-129 | true | explicit | `$code-quality` 현재 diff에 필요한 최소 테스트 범위를 정하고 실행해줘. | 명시 호출, 검증 범위 |
-| CQ-130 | true | explicit | `$code-quality` 동작 변경 없이 타입 모델만 더 안전하게 정리해줘. | 명시 호출, 타입 모델과 동작 보존 |
+| CQ-121 | true | explicit | `$sw-kit:code`로 새 외부 API 연동 코드를 구현하기 전에 기존 클라이언트와 재시도 정책을 조사해줘. | 명시 호출, 기존 클라이언트와 오류 계약 |
+| CQ-122 | true | explicit | `$sw-kit:code` 이 모듈의 반복 DB 호출 병목을 고치되 쿼리 횟수나 benchmark 같은 측정 가능한 근거를 남겨줘. | 명시 호출, 성능 근거와 검증 |
+| CQ-123 | true | explicit | `$sw-kit:code` 사용자 개인정보가 로그에 남지 않게 수정하고 관련 테스트를 추가해줘. | 명시 호출, 보안/개인정보 |
+| CQ-124 | true | explicit | `$sw-kit:code` 기존 암호화 helper를 새 기능에 써도 되는지 계약을 확인해줘. | 명시 호출, 보안 유틸리티 적합성 |
+| CQ-125 | true | explicit | `$sw-kit:code` 이 리팩터링이 공개 API 호환성을 깨지 않는지 먼저 확인해줘. | 명시 호출, 호환성 우선 |
+| CQ-126 | true | explicit | `$sw-kit:code` 저장 데이터 migration 없이 필드를 바꿀 수 있는지 검토해줘. | 명시 호출, 저장 데이터 호환성 |
+| CQ-127 | true | explicit | `$sw-kit:code` framework validation 기능을 쓰는 편이 나은지 직접 구현과 비교해줘. | 명시 호출, 프레임워크 API 비교 |
+| CQ-128 | true | explicit | `$sw-kit:code` 새 helper를 `utils`에 추가하기 전에 도메인 소유 위치를 판단해줘. | 명시 호출, 유틸리티 위치와 소유권 |
+| CQ-129 | true | explicit | `$sw-kit:code` 현재 diff에 필요한 최소 테스트 범위를 정하고 실행해줘. | 명시 호출, 검증 범위 |
+| CQ-130 | true | explicit | `$sw-kit:code` 동작 변경 없이 타입 모델만 더 안전하게 정리해줘. | 명시 호출, 타입 모델과 동작 보존 |
 | CQ-131 | true | bugfix | 업로드 취소 시 multipart state가 남아 다음 업로드가 실패해. 고쳐줘. | 자원 cleanup, 상태 초기화 |
 | CQ-132 | true | bugfix | 외부 API timeout이 무한 대기로 이어져 worker가 쌓여. 수정해줘. | timeout, 자원 제한 |
 | CQ-133 | true | bugfix | 같은 이벤트를 두 번 처리하면 포인트가 중복 적립돼. 고쳐줘. | idempotency, 데이터 무결성 |

@@ -41,10 +41,10 @@
       "category": "Developer Tools"
     },
     {
-      "name": "code-quality",
+      "name": "sw-kit",
       "source": {
         "source": "local",
-        "path": "./code-quality"
+        "path": "./sw-kit"
       },
       "policy": {
         "installation": "AVAILABLE",

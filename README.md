@@ -39,10 +39,10 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 
 ### Judgment Kit
 
-`judgment-kit`은 리서치, 기획, 엔지니어링, lean code, 품질 관리 판단 기준을 제공하는 플러그인입니다.
+`judgment-kit`은 리서치, 제품 기획, 품질 관리 판단 기준을 제공하는 플러그인입니다.
 
 - 경로: `judgment-kit/`
-- 주요 실행 표면: `pro-researcher`, `pro-planner`, `pro-engineering`, `pro-code-keeper`, `pro-quality-manager`
+- 주요 실행 표면: `pro-researcher`, `pro-planner`, `pro-quality-manager`
 
 ### Design Kit
 
@@ -60,12 +60,12 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 - 경로: `advance-subagent/`
 - 주요 실행 표면: `deep-research`, `orchestrate-workstreams`
 
-### Code Quality
+### SW Kit
 
-`code-quality`는 production code 변경과 리뷰에서 correctness, maintainability, testability, robustness 기준을 적용합니다.
+`sw-kit`는 요구 행동 계약, 기술 방향, production code 품질, 코드베이스 유지보수를 제공합니다.
 
-- 경로: `code-quality/`
-- 주요 실행 표면: `code-quality`
+- 경로: `sw-kit/`
+- 주요 실행 표면: `spec`, `engineering`, `code`, `maintenance`
 
 ## 저장소 구조
 
@@ -76,7 +76,7 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 ├── advance-subagent/
 ├── agent-wiki/
 ├── app-extensions/
-├── code-quality/
+├── sw-kit/
 ├── design-kit/
 ├── judgment-kit/
 ├── toolkit/

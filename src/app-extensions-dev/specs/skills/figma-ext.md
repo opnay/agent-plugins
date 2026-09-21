@@ -30,7 +30,7 @@ upstream Figma plugin이 소유하는 tool-use contract를 유지하면서, 디�
   - Figma plugin manifest, MCP tool, app connection, 인증 구성
   - upstream Figma skill의 prerequisite, tool schema, API syntax 복제 또는 우회
   - 일반 시각 디자인, 브랜딩, 색상, tone, product design quality 판단
-  - Figma와 무관한 generic frontend 구현이나 code-quality 판단
+  - Figma와 무관한 generic frontend 구현이나 source-level code 판단
   - 근거 없는 responsive variant, coordinate, overlay behavior 생성
 
 ## 처리하려는 작업 형태

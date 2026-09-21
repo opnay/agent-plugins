@@ -1,0 +1,24 @@
+{
+  "name": "sw-kit",
+  "version": "0.1.0",
+  "description": "Software behavior contracts, engineering direction, production code quality, and codebase maintenance.",
+  "author": { "name": "opnay" },
+  "license": "UNLICENSED",
+  "keywords": ["software", "specification", "engineering", "code-quality", "maintenance"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SW Kit",
+    "shortDescription": "Turn requirements into sound software and maintain it well.",
+    "longDescription": "Provides software behavior specification, technical direction, production code quality, and codebase lifecycle maintenance.",
+    "developerName": "opnay",
+    "category": "Developer Tools",
+    "capabilities": ["Analyze", "Plan", "Write"],
+    "defaultPrompt": [
+      "Use $sw-kit:spec to turn a product or user request into a technology-neutral software behavior contract.",
+      "Use $sw-kit:engineering for architecture, data model, technology, integration, migration, or operations decisions.",
+      "Use $sw-kit:code to implement, refactor, test, or review production code within the selected technical direction.",
+      "Use $sw-kit:maintenance to audit and plan safe reduction of dependency, deprecation, dead-code, drift, and debt costs."
+    ],
+    "brandColor": "#256B5E"
+  }
+}
