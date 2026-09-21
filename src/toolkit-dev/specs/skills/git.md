@@ -21,6 +21,7 @@
 - `alias.codex`의 설치·제거·진단은 명시적으로 요청된 maintenance workflow에서만 수행한다.
 - CLI가 명확한 성공 결과를 반환하면 같은 결과를 다시 조회해 검증하지 않는다.
 - runtime `SKILL.md`는 정상 실행에 필요한 짧은 지침만 두고, 조건부 lifecycle·recovery 세부는 reference로 라우팅한다.
+- branch convention과 recovery reference도 현재 조건에 필요한 상태·다음 행동만 안내하고, 정상 push의 연결정보 재탐색을 요구하지 않는다.
 
 ---
 
@@ -86,6 +87,7 @@ bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계�
 12. mutation 결과는 종료 상태와 출력으로 판단하고 commit, branch, push 결과를 구분해 보고합니다. 예상한 대상과 성공·실패가 명확하면 같은 결과를 확인하는 추가 조회를 생략합니다. 호출 대상 오류, 불완전·상충 출력, 중단·결과 불명확에는 필요한 상태만 조회합니다.
 13. prefix 조건이나 실패·중단 상태가 정상 치트시트만으로 해결되지 않으면 해당 runtime reference를 읽고, 현재 상태를 관찰하기 전에 mutation을 재시도하거나 자동 rollback하지 않습니다.
 14. runtime `SKILL.md`는 명령, 선택 조건, 다음 행동을 우선하고, 일반 능력 설명·반복된 이유·조건부 세부 계약은 reference에 둡니다.
+15. branch convention과 recovery reference는 branch collision 또는 실패 유형에 필요한 상태만 조회하게 하며, normal push의 remote·upstream·ref mapping preflight를 추가하지 않습니다.
 
 ## Workflow 선택 및 조합
 
@@ -182,7 +184,7 @@ bundled `git-codex`는 message file lifecycle과 commit 결과 판정만 기계�
 ## 실패와 재개 판단
 
 - 실패한 command와 마지막으로 관찰된 local·remote 상태를 분리합니다.
-- 재시도 전에 current branch, working tree, HEAD, upstream과 필요한 remote ref를 다시 확인합니다.
+- 재시도 전에는 실패 유형에 필요한 current branch, working tree, HEAD, target ref, worktree, remote ref만 다시 확인합니다.
 - commit 성공 후 push 실패처럼 부분 성공이 있으면 성공한 commit을 되돌리지 않고 남은 push만 판단합니다.
 - `git codex commit`이 status `2` 또는 `3`이면 HEAD, message file identity, stored message를 다시 확인하기 전 command를 재실행하지 않습니다.
 - create failure는 원인을 보존해 recovery를 판단합니다.

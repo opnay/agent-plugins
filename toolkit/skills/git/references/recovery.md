@@ -1,84 +1,38 @@
-# Git Workflow Recovery
+# Git workflow recovery
 
-Read this reference after a Git mutation fails, is interrupted, or has an unclear result. Recover from observed state; do not replay the original workflow blindly.
+Read this reference after a failed, interrupted, conflicting, or unclear mutation. Use command output first, then inspect only the state needed to decide the unfinished authorized step. Do not retry blindly or undo completed work.
 
-## Snapshot Before Recovery
+## Branch
 
-Run the relevant local checks before another mutation:
+For a blocked switch or `git switch -C`, inspect the current branch, `HEAD`, target ref, working tree, and other worktree use. Preserve dirty changes. Do not use `--force`, `--discard-changes`, reset, or cleanup as a shortcut.
 
-```sh
-git status --short --branch
-git branch --show-current
-git rev-parse HEAD
-git branch -vv
-git remote -v
-git worktree list --porcelain
-```
+If a force-create may have completed, determine whether it created, reset, or switched before another mutation. Keep a completed branch result; restoring an old ref needs separate authority.
 
-Record the failed command, its exit status and output, the last confirmed successful step, and any exact temporary path or pre-reset branch object ID retained in task state. Separate command failure from repository state.
+## Commit
 
-## Branch Switch, Creation, Or Force-Create Is Blocked
+Check whether `HEAD` changed, then inspect staged and unstaged scope. Preserve a retained `MSG-…` file after a definitive failure or unknown outcome. Read [message-lifecycle.md](message-lifecycle.md) for file identity, cleanup, and result codes.
 
-- Dirty working tree: preserve staged, unstaged, and untracked changes. Do not use `--force`, `--discard-changes`, reset, or cleanup as a shortcut.
-- Move current work to a new branch: when the user requested this outcome, verify the start point and create the branch without discarding the working tree.
-- Name collision: inspect the existing local, remote-tracking, and worktree ownership before deciding whether reuse or explicit force-create is valid.
-- `git switch -C` failure or interruption: recheck current branch, `HEAD`, and the target branch ref before deciding whether it created, reset, switched, or left the branch unchanged. Do not repeat it blindly.
-- Completed force-create followed by a later failure: preserve the completed branch result. Do not restore the retained old object ID without separate authorization.
-- Detached HEAD: identify the exact `HEAD` commit. Create a named branch at that commit only when the requested task or user direction requires preserving it there.
+A successful commit with cleanup failure needs cleanup, not another commit.
 
-Read the branch-conventions reference when a prefix or repository branch policy affects the recovery decision.
+## Aliases
 
-## Commit Is Interrupted Or Fails
+For an alias that stages, commits, and pushes, determine the completed requested steps from staged state and `HEAD`. Query the remote only when the push result is unclear. Continue with the authorized unfinished step; do not rerun the alias.
 
-1. Check whether `HEAD` changed and whether the intended commit already exists.
-2. Recheck staged and unstaged state; do not assume a failed client command means no hook or commit side effect occurred.
-3. Preserve the message after a definitive commit failure or an unknown outcome. Resolve a retained `MSG-…` ID through the same repository/worktree's `git rev-parse --absolute-git-dir`; never assume the current directory contains a `.git` directory.
-4. For a pre-commit validation failure, remove only the exact allocated file whose recorded device/inode and safety conditions still match. Preserve unknown or changed identities and report the path.
-5. Start another commit attempt only after the previous outcome and current staged scope are resolved. Cleanup failure after a successful commit calls for cleanup, not another commit.
+## Push
 
-A successful commit followed by cleanup failure remains a successful commit with a separate cleanup failure. Do not undo the commit.
+Treat destination-specific rejection output as a clear rejection. Do not query only to reconfirm it.
 
-## An Alias Partially Executes
-
-Inspect the alias definition, then determine which steps completed from repository state. For an alias that stages, commits, and pushes:
-
-- staged changes with no new commit indicate an early commit failure;
-- a new local commit with an unchanged remote indicates push did not complete;
-- a matching remote ref indicates push completed even if later reporting was interrupted.
-
-Continue only the authorized unfinished step. Never rerun the whole alias to recover.
-
-## Push Is Rejected
-
-Use the exit status and destination-specific output as evidence of a clear rejection. Do not query refs solely to reconfirm it; inspect divergence or authentication state only when needed for an authorized recovery step.
-
-- Non-fast-forward: do not retry with force. Inspect local source, remote destination, and divergence; merge, rebase, reset, or force requires its own authorized scope.
-- Protected branch or server policy: preserve the local commit and report the rejected destination and server evidence.
-- Hook rejection: keep the hook result distinct from authentication and divergence. Do not add `--no-verify` automatically.
-- Authentication or network failure: do not rewrite the remote URL, weaken authentication, or repeat credential prompts indefinitely. Report the failed boundary and retain the local result.
-
-## Push Result Is Unclear
-
-An exit status and complete output identifying the expected destination normally establish success, rejection, or no-op without another query. Query the remote when the invocation targeted the wrong ref, the command was interrupted, output is incomplete or conflicting, or the result remains uncertain, before any retry:
+- Non-fast-forward: inspect divergence before an authorized merge, rebase, reset, or force decision. Never switch to force push automatically.
+- Protected branch, hook, authentication, or network failure: preserve the local commit and report the failed boundary. Do not bypass hooks, alter the remote URL, or weaken authentication.
+- Unclear result: before retrying, compare the attempted local source with the attempted remote destination:
 
 ```sh
 git rev-parse <local-source>
 git ls-remote --heads <remote> refs/heads/<remote-destination>
 ```
 
-- Matching object IDs: treat the remote update as complete and do not push again.
-- Different object IDs: report divergence; do not infer that retrying is safe.
-- Missing destination: report that the expected remote branch was not observed.
-- Query unavailable: report the push as unverified rather than failed or complete.
+Matching IDs mean the update completed. Different IDs mean divergence. A missing destination or unavailable query leaves the result unverified.
 
-## Partial Success Reporting
+## Report
 
-Report each requested step independently:
-
-- branch: created, reset, switched, unchanged, failed, or unverified;
-- commit: created, unchanged, failed, or unverified;
-- cleanup: completed or failed with the exact retained path;
-- push: updated, rejected, failed before remote mutation, or unverified;
-- remaining state: staged, unstaged, untracked, ahead, behind, or divergent.
-
-Do not automatically roll back a completed branch, force-create, or commit because a later step failed.
+Report each requested step separately: branch, commit, cleanup, push, and remaining staged or unstaged work.
