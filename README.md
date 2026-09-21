@@ -67,6 +67,14 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 - 경로: `sw-kit/`
 - 주요 실행 표면: `spec`, `engineering`, `code`, `maintenance`
 
+### Jev
+
+`jev`는 TypeSafe의 hosted Jev Choice 모델을 호출하는 Go CLI와 사용 스킬입니다.
+
+- 플러그인: `jev/`, 개발 문서: `src/jev-dev/`
+- 주요 실행 표면: `$jev:jev`, CLI 판정, `config`, `install`, `uninstall`, `doctor`
+- 설정: `~/.agents/jev.toml`. 플러그인 설치와 바이너리·토큰 설정은 별개입니다.
+
 ## 저장소 구조
 
 ```text
@@ -79,6 +87,7 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 ├── sw-kit/
 ├── design-kit/
 ├── judgment-kit/
+├── jev/
 ├── toolkit/
 ├── src/<plugin-name>-dev/  # 스펙·변경 기록·개발 README
 └── docs/
