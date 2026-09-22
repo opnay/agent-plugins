@@ -8,40 +8,31 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 	"time"
 )
 
 const endpoint = "https://api.typesafe.ai/v1/systemone"
 
-type choiceQuestion struct {
-	Type         string         `json:"type"`
-	Instructions string         `json:"instructions"`
-	Criteria     map[string]any `json:"criteria"`
+type evaluationQuestion struct {
+	Type         primitive `json:"type"`
+	Instructions string    `json:"instructions"`
+	Criteria     any       `json:"criteria,omitempty"`
 }
 
 type evaluationRequest struct {
-	State     string                    `json:"state"`
-	Model     string                    `json:"model"`
-	Questions map[string]choiceQuestion `json:"questions"`
+	State     string                        `json:"state"`
+	Model     string                        `json:"model"`
+	Questions map[string]evaluationQuestion `json:"questions"`
 }
 
-type choiceAnswer struct {
-	Type          string              `json:"type"`
-	Choice        string              `json:"choice"`
-	Probabilities map[string]*float64 `json:"probabilities"`
-	Confidence    *float64            `json:"confidence"`
+type evaluationEnvelope struct {
+	Model   string                     `json:"model"`
+	Answers map[string]json.RawMessage `json:"answers"`
 }
 
 func evaluate(ctx context.Context, o evaluationOptions, s settings, transport http.RoundTripper) (result, error) {
-	criteria := make(map[string]any, len(o.choices))
-	for _, choice := range o.choices {
-		criteria[choice] = nil
-	}
 	payload := evaluationRequest{State: o.question, Model: s.Model,
-		Questions: map[string]choiceQuestion{"result": {
-			Type: "choice", Instructions: "Select the option that best answers the question in state.", Criteria: criteria,
-		}}}
+		Questions: map[string]evaluationQuestion{"result": o.questionPayload()}}
 	body, err := json.Marshal(payload)
 	if err != nil {
 		return result{}, errors.New("could not encode API request")
@@ -52,7 +43,7 @@ func evaluate(ctx context.Context, o evaluationOptions, s settings, transport ht
 	}
 	req.Header.Set("Authorization", "Bearer "+s.APIKey)
 	req.Header.Set("Content-Type", "application/json")
-	timeout, _ := time.ParseDuration(s.Timeout) // Validated before network access.
+	timeout, _ := time.ParseDuration(s.Timeout)
 	client := &http.Client{Transport: transport, Timeout: timeout,
 		CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
 	response, err := client.Do(req)
@@ -76,38 +67,24 @@ func evaluate(ctx context.Context, o evaluationOptions, s settings, transport ht
 	if len(data) > 4*1024*1024 {
 		return result{}, errors.New("API response exceeds 4 MiB")
 	}
-	var envelope struct {
-		Model   string                  `json:"model"`
-		Answers map[string]choiceAnswer `json:"answers"`
-	}
+	var envelope evaluationEnvelope
 	if err := json.Unmarshal(data, &envelope); err != nil {
 		return result{}, errors.New("invalid JSON in API response")
 	}
-	answer, ok := envelope.Answers["result"]
-	if !ok || strings.TrimSpace(envelope.Model) == "" || answer.Type != "choice" ||
-		answer.Confidence == nil || !probability(*answer.Confidence) {
-		return result{}, errors.New("API response is missing valid model or Choice fields")
-	}
-	probabilities := make(map[string]float64, len(o.choices))
-	if len(answer.Probabilities) != len(o.choices) {
-		return result{}, errors.New("API probabilities do not match requested choices")
-	}
-	for _, choice := range o.choices {
-		p := answer.Probabilities[choice]
-		if p == nil || !probability(*p) {
-			return result{}, errors.New("API response contains a missing or invalid probability")
+	return parseResponse(envelope, o)
+}
+
+func (o evaluationOptions) questionPayload() evaluationQuestion {
+	switch o.primitive {
+	case primitiveNoul:
+		return evaluationQuestion{Type: o.primitive, Instructions: "Answer whether the proposition or question in state is true."}
+	case primitiveScore:
+		return evaluationQuestion{Type: o.primitive, Instructions: "Rate the state against the ordered criteria.", Criteria: o.levels}
+	default:
+		criteria := make(map[string]any, len(o.choices))
+		for _, choice := range o.choices {
+			criteria[choice] = nil
 		}
-		probabilities[choice] = *p
+		return evaluationQuestion{Type: o.primitive, Instructions: "Select the option that best answers the question in state.", Criteria: criteria}
 	}
-	selected, ok := probabilities[answer.Choice]
-	if !ok {
-		return result{}, errors.New("API selected an unknown choice")
-	}
-	for _, p := range probabilities {
-		if p > selected {
-			return result{}, errors.New("API choice is not a highest-probability option")
-		}
-	}
-	return result{Answer: answer.Choice, Probabilities: probabilities,
-		Confidence: *answer.Confidence, Model: envelope.Model}, nil
 }

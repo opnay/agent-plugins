@@ -20,6 +20,7 @@ func TestConfigRoundTrip(t *testing.T) {
 	for _, args := range [][]string{
 		{"config", "set", "api_key", "--stdin"},
 		{"config", "set", "threshold", "0.8"},
+		{"config", "set", "min_score", "1.5"},
 		{"config", "set", "json", "false"},
 		{"config", "set", "model", "chosen-model"},
 		{"config", "set", "timeout", "45s"},
@@ -30,7 +31,8 @@ func TestConfigRoundTrip(t *testing.T) {
 		}
 	}
 	c, err := readConfig(a.path)
-	if err != nil || c.APIKey != "secret-for-test" || c.Threshold == nil || *c.Threshold != .8 || c.JSON == nil || *c.JSON {
+	if err != nil || c.APIKey != "secret-for-test" || c.Threshold == nil || *c.Threshold != .8 ||
+		c.MinScore == nil || *c.MinScore != 1.5 || c.JSON == nil || *c.JSON {
 		t.Fatalf("config did not preserve stored settings: %v", err)
 	}
 	info, err := os.Stat(a.path)
@@ -44,7 +46,7 @@ func TestConfigRoundTrip(t *testing.T) {
 	if err := toml.Unmarshal(out.Bytes(), &shown); err != nil || shown.APIKey != "********" || shown.Model != "chosen-model" || shown.Timeout != "45s" {
 		t.Fatalf("display did not reflect settings: %v", err)
 	}
-	for _, key := range []string{"threshold", "model", "timeout", "json", "pick", "api_key"} {
+	for _, key := range []string{"threshold", "min_score", "model", "timeout", "json", "pick", "api_key"} {
 		out.Reset()
 		if code := a.run(context.Background(), []string{"config", "unset", key}); code != 0 || out.Len() != 0 {
 			t.Fatalf("unset %s: code=%d stderr=%s", key, code, errOut)
@@ -52,7 +54,7 @@ func TestConfigRoundTrip(t *testing.T) {
 	}
 	c, err = readConfig(a.path)
 	s := c.resolve("")
-	if err != nil || s.Threshold != nil || s.JSON || s.Model != "jev-latest" || s.Timeout != "30s" || len(s.Pick) != 0 || s.APIKey != "" {
+	if err != nil || s.Threshold != nil || s.MinScore != nil || s.JSON || s.Model != "jev-latest" || s.Timeout != "30s" || len(s.Pick) != 0 || s.APIKey != "" {
 		t.Fatal("unset did not restore defaults")
 	}
 }
@@ -102,6 +104,36 @@ func TestConfigPrecedence(t *testing.T) {
 	}
 }
 
+func TestPrimitiveConfigCriteriaScope(t *testing.T) {
+	threshold, minScore := .9, 1.3
+	tests := []struct {
+		name    string
+		stored  config
+		args    []string
+		fixture string
+		code    int
+	}{
+		{"threshold applies to noul", config{Threshold: &threshold}, noulArgs(), noulFixture, 2},
+		{"threshold ignored by score", config{Threshold: &threshold}, scoreArgs(), scoreFixture, 0},
+		{"min_score applies to score", config{MinScore: &minScore}, scoreArgs(), scoreFixture, 2},
+		{"min_score ignored by choice", config{MinScore: &minScore}, evaluationArgs(), choiceFixture, 0},
+		{"noul flag overrides file", config{Threshold: &threshold}, noulArgs("--threshold", "0"), noulFixture, 0},
+		{"score flag overrides file", config{MinScore: &minScore}, scoreArgs("--min-score", "0"), scoreFixture, 0},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			a, out, errOut := harness(t)
+			if err := writeConfig(a.path, tc.stored); err != nil {
+				t.Fatal(err)
+			}
+			a.transport = roundTripFunc(func(*http.Request) (*http.Response, error) { return response(200, tc.fixture), nil })
+			if code := a.run(context.Background(), tc.args); code != tc.code {
+				t.Fatalf("code=%d stdout=%q stderr=%q", code, out, errOut)
+			}
+		})
+	}
+}
+
 func TestConfigFailuresDoNotLeakOrReplace(t *testing.T) {
 	a, out, errOut := harness(t)
 	if err := writeConfig(a.path, config{APIKey: "retained-secret"}); err != nil {
@@ -109,6 +141,7 @@ func TestConfigFailuresDoNotLeakOrReplace(t *testing.T) {
 	}
 	for _, args := range [][]string{
 		{"config", "set", "api_key", "argument-secret"}, {"config", "set", "threshold", "NaN"},
+		{"config", "set", "min_score", "-1"}, {"config", "set", "min_score", "NaN"},
 		{"config", "set", "timeout", "0s"}, {"config", "set", "json", "maybe"},
 		{"config", "set", "pick", "unknown"}, {"config", "unset", "unknown"},
 	} {

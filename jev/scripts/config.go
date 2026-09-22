@@ -11,6 +11,7 @@ import (
 type config struct {
 	APIKey    string    `toml:"api_key,omitempty"`
 	Threshold *float64  `toml:"threshold,omitempty"`
+	MinScore  *float64  `toml:"min_score,omitempty"`
 	Model     *string   `toml:"model,omitempty"`
 	Timeout   *string   `toml:"timeout,omitempty"`
 	JSON      *bool     `toml:"json,omitempty"`
@@ -20,6 +21,7 @@ type config struct {
 type settings struct {
 	APIKey    string   `toml:"api_key"`
 	Threshold *float64 `toml:"threshold,omitempty"`
+	MinScore  *float64 `toml:"min_score,omitempty"`
 	Model     string   `toml:"model"`
 	Timeout   string   `toml:"timeout"`
 	JSON      bool     `toml:"json"`
@@ -27,7 +29,7 @@ type settings struct {
 }
 
 func (c config) resolve(envToken string) settings {
-	s := settings{APIKey: strings.TrimSpace(c.APIKey), Threshold: c.Threshold,
+	s := settings{APIKey: strings.TrimSpace(c.APIKey), Threshold: c.Threshold, MinScore: c.MinScore,
 		Model: "jev-latest", Timeout: "30s", Pick: []string{}}
 	if c.Model != nil {
 		s.Model = *c.Model
@@ -51,6 +53,9 @@ func (c *config) override(flags config) {
 	if flags.Threshold != nil {
 		c.Threshold = flags.Threshold
 	}
+	if flags.MinScore != nil {
+		c.MinScore = flags.MinScore
+	}
 	if flags.Model != nil {
 		c.Model = flags.Model
 	}
@@ -69,6 +74,9 @@ func (s settings) validate() error {
 	if s.Threshold != nil && !probability(*s.Threshold) {
 		return errors.New("threshold must be a finite number between 0 and 1")
 	}
+	if s.MinScore != nil && (!finite(*s.MinScore) || *s.MinScore < 0) {
+		return errors.New("min_score must be a finite non-negative number")
+	}
 	if strings.TrimSpace(s.Model) == "" {
 		return errors.New("model must not be empty")
 	}
@@ -82,8 +90,10 @@ func (s settings) validate() error {
 }
 
 func probability(value float64) bool {
-	return !math.IsNaN(value) && !math.IsInf(value, 0) && value >= 0 && value <= 1
+	return finite(value) && value >= 0 && value <= 1
 }
+
+func finite(value float64) bool { return !math.IsNaN(value) && !math.IsInf(value, 0) }
 
 func splitList(value string) []string {
 	if value == "" {

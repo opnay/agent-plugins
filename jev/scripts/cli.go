@@ -56,11 +56,14 @@ func (a application) execute(ctx context.Context, args []string) (int, error) {
 	}
 	o, err := parseEvaluation(args)
 	if errors.Is(err, flag.ErrHelp) {
-		_, err = io.WriteString(a.out, usage)
+		_, err = io.WriteString(a.out, usageFor(string(o.primitive)))
 		return exitCode(err), err
 	}
 	if err != nil {
 		return 1, err
+	}
+	if err := validateEvaluationFlags(o); err != nil {
+		return 1, evaluationHelpError(o.primitive, err)
 	}
 	path, err := a.configPath()
 	if err != nil {
@@ -73,10 +76,16 @@ func (a application) execute(ctx context.Context, args []string) (int, error) {
 	c.override(o.flags)
 	s := c.resolve(a.envToken)
 	if err := s.validate(); err != nil {
-		return 1, err
+		return 1, evaluationHelpError(o.primitive, err)
 	}
 	if len(s.Pick) > 0 && !s.JSON {
-		return 1, errors.New("pick requires JSON output; use --json or --pick ''")
+		return 1, evaluationHelpError(o.primitive, errors.New("pick requires JSON output; use --json or --pick ''"))
+	}
+	if err := o.primitive.validatePick(s.Pick); err != nil {
+		return 1, evaluationHelpError(o.primitive, err)
+	}
+	if o.primitive == primitiveScore && s.MinScore != nil && *s.MinScore > float64(len(o.levels)-1) {
+		return 1, evaluationHelpError(o.primitive, fmt.Errorf("min_score must not exceed the highest Score level %d", len(o.levels)-1))
 	}
 	if s.APIKey == "" {
 		return 1, errors.New("API key missing; set TYPESAFE_API_KEY or use jev config set api_key --stdin")
@@ -85,9 +94,18 @@ func (a application) execute(ctx context.Context, args []string) (int, error) {
 	if err != nil {
 		return 1, err
 	}
-	if s.Threshold != nil && result.Probabilities[result.Answer] < *s.Threshold {
-		return 2, fmt.Errorf("threshold not met: %g < %g (answer: %s)",
-			result.Probabilities[result.Answer], *s.Threshold, result.Answer)
+	if o.primitive == primitiveChoice && s.Threshold != nil {
+		answer := result.Answer.(string)
+		if result.Probabilities[answer] < *s.Threshold {
+			return 2, fmt.Errorf("threshold not met: %g < %g (answer: %s)",
+				result.Probabilities[answer], *s.Threshold, answer)
+		}
+	}
+	if o.primitive == primitiveNoul && s.Threshold != nil && result.Answer.(float64) < *s.Threshold {
+		return 2, fmt.Errorf("threshold not met: %g < %g", result.Answer, *s.Threshold)
+	}
+	if o.primitive == primitiveScore && s.MinScore != nil && result.Answer.(float64) < *s.MinScore {
+		return 2, fmt.Errorf("min_score not met: %g < %g", result.Answer, *s.MinScore)
 	}
 	err = writeResult(a.out, result, s)
 	return exitCode(err), err
@@ -98,4 +116,26 @@ func exitCode(err error) int {
 		return 1
 	}
 	return 0
+}
+
+func evaluationHelpError(p primitive, err error) error {
+	return fmt.Errorf("%w; see jev %s --help", err, p)
+}
+
+func validateEvaluationFlags(o evaluationOptions) error {
+	if err := o.flags.resolve("").validate(); err != nil {
+		return err
+	}
+	if o.flags.Pick != nil {
+		if err := o.primitive.validatePick(*o.flags.Pick); err != nil {
+			return err
+		}
+		if len(*o.flags.Pick) > 0 && o.flags.JSON != nil && !*o.flags.JSON {
+			return errors.New("pick requires JSON output; use --json or --pick ''")
+		}
+	}
+	if o.primitive == primitiveScore && o.flags.MinScore != nil && *o.flags.MinScore > float64(len(o.levels)-1) {
+		return fmt.Errorf("min_score must not exceed the highest Score level %d", len(o.levels)-1)
+	}
+	return nil
 }

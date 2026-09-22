@@ -1,59 +1,69 @@
 ---
 name: jev
-description: Evaluate a question with explicit choices through TypeSafe's Jev CLI, manage its settings, or install, uninstall, and diagnose the executable. Use for Jev or TypeSafe requests, not general questions or whole-codebase review.
+description: Evaluate a yes/no proposition, discrete choice, or ordered scale through TypeSafe's Jev CLI; manage its settings or executable when requested. Use for Jev or TypeSafe requests, not general questions or whole-codebase review.
 ---
 
 # Jev
 
-Use `jev` for one Choice question. The model is hosted by TypeSafe; questions and choices leave the machine. Send only context authorized for that external call.
+Use the hosted Jev CLI for one structured judgment. Questions, context, options, and levels leave the machine for TypeSafe. Send only content authorized for that external call.
 
-## Form the input
+## Choose the primitive
 
-Put the question and its necessary context together in `--if`. Supply 2–255 distinct, nonempty labels through `--conditions`, separated by commas. Labels cannot contain commas.
+- `noul`: whether one proposition is true. The answer is the probability of yes from 0 to 1.
+- `choice`: which member of a discrete set applies. The answer is the API's highest-probability supplied label; preserve its selection when probabilities tie.
+- `score`: where the input lies on ordered descriptive levels. The answer is a probability-weighted number from 0 through `level count - 1` and may fall between levels.
+
+Use one primitive for one question. Keep relationships needed for the judgment in `--if`; separate per-file calls do not establish a system-wide conclusion. Do not report a judgment based on facts absent from the supplied input.
 
 ```sh
-jev --if "The setting is recommended but optional. Is it mandatory?" \
-  --conditions supported,contradicted,undetermined
+jev noul --if "Is the statement mandatory? Context: ..."
+
+jev choice --if "How does the evidence relate to the claim? Context: ..." \
+  --conditions supported,conflicting,undetermined
+
+jev score --if "How severe is the issue? Context: ..." \
+  --level "No functional impact" \
+  --level "Degraded with a workaround" \
+  --level "Blocked with no workaround"
 ```
 
-Keep relationships needed for the decision. Per-file answers do not establish a conclusion about a whole system. Clarify ambiguous choice meanings in the input; do not invent missing evidence.
+Choice accepts 2–255 distinct comma-separated labels; labels cannot contain commas. Labels are free strings, but prefer `snake_case` when code will consume them. Score accepts 2–10 distinct `--level` values in ascending order; levels are natural-language criteria and may contain commas. The legacy form `jev --if ... --conditions ...` remains a Choice call.
 
-## Select output and use the result
+## Use output and result criteria
 
-Default output is the API's highest-probability answer and a newline. Preserve its tie choice and scores.
+Default stdout is the primitive's answer and one newline. Use JSON only when the task needs supporting fields:
 
-- `--json`: an object containing `answer`, `probabilities`, `confidence`, and the actual response `model`.
-- `--json --pick answer,probabilities`: only named top-level fields. A single field still produces an object.
-- `--pick ''`: clear a configured field restriction. Nonempty pick requires JSON mode. Unknown, empty, or duplicate fields fail.
-- `--threshold 0.8`: require `probabilities[answer] >= 0.8`. Without a threshold, no filter applies.
+- Noul: `answer`, `model`.
+- Choice: `answer`, `probabilities`, `confidence`, `model`.
+- Score: `answer`, `legend`, `probabilities`, `confidence`, `model`.
 
-API `confidence` is a separate distribution-derived value, not the threshold measure. Scores do not guarantee correctness.
+`--json --pick answer,probabilities` keeps named fields in an object. A field must exist for the selected primitive. `--pick ''` clears a saved restriction. CLI, config, and JSON-owned keys use `snake_case`.
 
-Exit `0` means consume stdout. Exit `2` means threshold not met: stdout is empty and stderr identifies the choice, probability, and threshold. Report the shortfall without silently lowering the threshold. Exit `1` means an execution error, not a classification; explain the reported input, setup, API, or output failure.
+For Choice, `--threshold 0.8` requires the selected label's probability to be at least 0.8. For Noul, it requires the probability of yes to be at least 0.8. For Score, use `--min-score 1.5`; its maximum is the highest level index. API confidence is separate and is not used for either criterion.
 
-JSON mode does not change failure streams. The CLI does not retry automatically. A successful result needs no second API call or connection probe. Address installation or authentication when execution reports a setup problem; do not make doctor a prerequisite for ordinary evaluation.
+Exit `0` means consume stdout. Exit `2` means the result criterion was not met: stdout is empty and stderr reports the result and boundary. Do not silently lower the boundary. Exit `1` is an execution error, not a judgment. A successful result needs no second API call or connection probe.
 
 ## Configure defaults
 
-Settings live in `~/.agents/jev.toml`. Explicit CLI flags override file values, which override built-in defaults. Nonempty `TYPESAFE_API_KEY` overrides the file's `api_key`.
+Settings live in `~/.agents/jev.toml`. Explicit flags override file values, which override built-ins. Nonempty `TYPESAFE_API_KEY` overrides file `api_key`.
 
 ```sh
 jev config
 jev config path
 jev config set threshold 0.8
+jev config set min_score 1.5
+jev config set pick answer,model
 jev config unset threshold
 jev config set api_key --stdin
 ```
 
-Config commands are offline and need no token. `config` shows effective settings with the whole token masked. `path` works even with invalid TOML. `set` stores a value; `unset` restores fallback behavior. Successful mutations print nothing, and reads do not create files.
+Config commands are offline. `config` masks the entire token; `path` does not require a valid file. Successful mutations print nothing. Reads do not create files. Built-ins are no token, no result criteria, `model = "jev-latest"`, `timeout = "30s"`, `json = false`, and no pick restriction.
 
-Keys and defaults: no `api_key`, `threshold` off, `model = "jev-latest"`, `timeout = "30s"`, `json = false`, and no `pick` restriction. Set pick with `jev config set pick answer,model`; TOML stores an array. Enable JSON before evaluating with a nonempty pick.
+Saved `threshold` applies to Choice and Noul; saved `min_score` applies to Score. A saved pick incompatible with the selected primitive fails before the API call. Override calls with `--model`, `--timeout`, `--json[=false]`, `--pick`, and the primitive's result criterion.
 
-Override a call with `--model`, `--timeout`, `--json[=false]`, `--pick`, or `--threshold`. Explicit `--threshold 0` overrides a saved positive threshold, and `--json=false` overrides saved JSON mode.
+Change settings only when requested. Read tokens from an authorized local source through stdin, never conversation text or command arguments. The file is plaintext mode 0600. Writes preserve other values but not comments or formatting. Symlink config files are refused; invalid TOML needs manual repair.
 
-Change settings only when requested. Read tokens from an authorized local source through stdin, not conversation text or command arguments. The file is plaintext with mode 0600, not encrypted storage. Writes preserve other values but not comments or formatting. Symlink config files are refused; invalid TOML needs manual repair.
-
-## Install, remove, or diagnose
+## Maintain the executable
 
 For initial installation, run from the plugin root:
 
@@ -62,12 +72,12 @@ cd scripts
 go run . install
 ```
 
-Go 1.23 or newer is required for this source bootstrap. After a source update, use `go run . install --force` in that directory. Use `--dir <directory>` for another location. No shell wrapper is needed, and plugin installation alone does not put the executable on PATH.
+After a source update, use `go run . install --force`. Use `--dir <directory>` for another location. Plugin installation alone does not put the executable on PATH.
 
-Use `jev install [--force]`, `jev uninstall`, or `jev doctor` for requested maintenance. All accept `--dir <directory>`; the default target is `~/.local/bin/jev`. An explicit directory must not be empty.
+Run `jev install [--force]`, `jev uninstall`, or `jev doctor` only for requested maintenance or a reported setup problem. All accept `--dir`; the default target is `~/.local/bin/jev`.
 
-- `install` copies the running binary without downloading or building a newer version. Identical installations succeed unchanged. Replacing a different regular file requires `--force`; symlinks and non-regular targets are refused.
-- `uninstall` removes only an identifiable Jev binary. A missing target succeeds. Config, tokens, the installation directory, other files, and shell settings remain. Restore the executable with `go run . install` from the source directory.
-- `doctor` reads installation identity, PATH resolution, config validity and owner-only permissions, and token presence. It makes no API call or repairs; a configured token does not establish valid authentication.
+- `install` copies the running binary. Replacing a different regular file requires `--force`; symlinks and non-regular targets are refused.
+- `uninstall` removes only an identifiable Jev binary; a missing target succeeds. It preserves config, tokens, directories, adjacent files, and shell settings.
+- `doctor` reads binary identity, PATH resolution, general config validity and permissions, and token presence. It neither calls the API nor repairs state.
 
-Maintenance is offline and never edits shell configuration. Success uses a short stdout report and exit `0`; failure uses empty stdout, stderr, and exit `1`. Doctor groups its checks in one report. Run it for requested diagnosis or a reported setup problem, not automatically after installation or before inference.
+Maintenance uses exit `0` with a short stdout result or exit `1` with stderr. Do not run doctor automatically after installation or before evaluation.

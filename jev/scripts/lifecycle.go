@@ -28,10 +28,10 @@ func parseLifecycle(command string, args []string) (lifecycleOptions, error) {
 		if errors.Is(err, flag.ErrHelp) {
 			return o, flag.ErrHelp
 		}
-		return o, errors.New("invalid maintenance options; see jev --help")
+		return o, errors.New("invalid maintenance options; see jev " + command + " --help")
 	}
 	if f.NArg() != 0 {
-		return o, errors.New("use --dir for an installation directory; see jev --help")
+		return o, errors.New("use --dir for an installation directory; see jev " + command + " --help")
 	}
 	dirSet := false
 	f.Visit(func(v *flag.Flag) {
@@ -40,7 +40,7 @@ func parseLifecycle(command string, args []string) (lifecycleOptions, error) {
 		}
 	})
 	if dirSet && directory == "" {
-		return o, errors.New("--dir must not be empty")
+		return o, errors.New("--dir must not be empty; see jev " + command + " --help")
 	}
 	if directory == "" {
 		home, err := os.UserHomeDir()
@@ -57,7 +57,7 @@ func parseLifecycle(command string, args []string) (lifecycleOptions, error) {
 func (a application) maintain(command string, args []string) error {
 	o, err := parseLifecycle(command, args)
 	if errors.Is(err, flag.ErrHelp) {
-		_, err = io.WriteString(a.out, usage)
+		_, err = io.WriteString(a.out, usageFor(command))
 		return err
 	}
 	if err != nil {

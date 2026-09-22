@@ -142,7 +142,7 @@ func TestMaintenanceOptionsAndHelp(t *testing.T) {
 	for _, command := range []string{"install", "uninstall", "doctor"} {
 		a, out, errOut := harness(t)
 		a.path = t.TempDir() // Help does not load config.
-		if code := a.run(context.Background(), []string{command, "--help"}); code != 0 || !strings.Contains(out.String(), "Usage:") {
+		if code := a.run(context.Background(), []string{command, "--help"}); code != 0 || !strings.Contains(out.String(), "Usage:\n  jev "+command) {
 			t.Fatalf("help %s: %d %s", command, code, errOut)
 		}
 		for _, extra := range [][]string{{"--unknown"}, {"unexpected"}, {"--dir"}} {

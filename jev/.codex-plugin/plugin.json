@@ -1,23 +1,23 @@
 {
   "name": "jev",
-  "version": "0.1.0",
-  "description": "Use hosted Jev Choice evaluation through a Go CLI with local configuration, focused output, and install/uninstall/doctor commands.",
+  "version": "0.2.0",
+  "description": "Use hosted Jev Noul, Choice, and Score evaluation through a Go CLI with local configuration and maintenance commands.",
   "author": {
     "name": "opnay"
   },
   "license": "UNLICENSED",
-  "keywords": ["jev", "typesafe", "cli", "choice", "classification"],
+  "keywords": ["jev", "typesafe", "cli", "noul", "choice", "score", "classification"],
   "skills": "./skills/",
   "interface": {
     "displayName": "Jev",
-    "shortDescription": "Ask a question, choose an answer, control the output.",
-    "longDescription": "Provides a Go CLI and one usage skill for hosted Jev Choice evaluation, thresholds, JSON field selection, TOML configuration, installation, removal, and offline diagnosis. The binary and token are configured separately from plugin installation.",
+    "shortDescription": "Evaluate yes/no, discrete choices, or ordered levels.",
+    "longDescription": "Provides a Go CLI and one usage skill for hosted Jev Noul, Choice, and Score evaluation, result criteria, JSON field selection, TOML configuration, installation, removal, and offline diagnosis. The binary and token are configured separately from plugin installation.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": ["Read", "Analyze", "Write"],
     "defaultPrompt": [
-      "Use $jev:jev to evaluate my question against a supplied set of choices.",
-      "Use $jev:jev to configure Jev defaults or explain its CLI output and threshold behavior.",
+      "Use $jev:jev to select Noul, Choice, or Score for my question and evaluate it with the Jev CLI.",
+      "Use $jev:jev to configure Jev defaults or explain primitive-specific output and result criteria.",
       "Use $jev:jev to install, uninstall, or diagnose the Jev CLI without changing shell settings."
     ]
   }
