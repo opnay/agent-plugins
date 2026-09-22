@@ -10,6 +10,8 @@
 - 최초 설치와 소스 갱신은 별도 셸 래퍼 없이 `go run . install`로 수행한다. (사용자 승인)
 - "이거 내가 noul choice score 구분을 안했구나. 이것들 구분해서 추가하기 위해 커맨드를 넣어둘까 하는데, 어때?"
 - "옵션들 snake_case 적도록 강제하는건? json에서 지원한다해도 golang이었나 거기서 문제있던걸로 기억하거든."
+- "시나리오 테스팅 넣기전에, jev에 batch 옵션 넣어버릴까? jsonl 파일 넣으면 일괄로 요청하는방식. status 같은게 유지되면 캐시히트율도 올라갈테니 괜찮은 방법이라 생각되는데"
+- "ㅇㅋ 만들어두자."
 
 ---
 
@@ -17,24 +19,25 @@
 
 ## 플러그인 목적
 
-TypeSafe의 hosted Jev 모델을 Go CLI에서 호출하고, 에이전트가 Noul·Choice·Score 질문을 명시적으로 구분해 사용할 수 있게 한다.
+TypeSafe의 hosted Jev 모델을 Go CLI에서 호출하고, 에이전트가 Noul·Choice·Score 단건·batch 판단을 명시적으로 구분해 사용할 수 있게 한다.
 
 ## 플러그인 경계와 비목표
 
-- 포함: Noul·Choice·Score API 호출, 결과 기준 필터, 출력 필드 선택, 로컬 설정 관리, CLI 설치·제거·진단, 사용 스킬.
-- 제외: 로컬 모델, 문서 자동 순회, 일괄 평가, 특정 검증 업무 자동화, 다른 플러그인 자동 연동, MCP 서버.
+- 포함: Noul·Choice·Score 단건·batch API 호출, 결과 기준 필터, 출력 필드 선택, 로컬 설정 관리, CLI 설치·제거·진단, 사용 스킬.
+- 제외: 로컬 모델, 문서 자동 순회, 서로 다른 state의 자동 grouping, 특정 검증 업무 자동화, 다른 플러그인 자동 연동, MCP 서버.
 - 질문·선택지는 외부 API로 전송한다. 플러그인 설치는 토큰 설정이나 실행 파일의 PATH 설치를 대신하지 않는다.
 
 ## 처리하려는 작업 형태
 
 - 질문과 필요한 문맥을 `--if`에 함께 전달하고, 판단 형태에 맞는 primitive를 고른다.
 - Noul은 참일 확률, Choice는 선택된 조건, Score는 순서형 기준의 가중 점수를 받는다.
+- `jev batch`는 하나의 공통 state와 JSONL 질문을 한 SystemOne 요청으로 평가한다.
 - `jev config`로 기본값과 API 인증을 관리한다.
 - `jev install`, `jev uninstall`, `jev doctor`로 요청된 CLI 유지보수를 수행한다.
 
 ## 대표 표면
 
-- CLI: [cli.md](cli.md), `jev/scripts/`의 독립 Go 모듈. 대표 명령은 `jev noul`, `jev choice`, `jev score`다.
+- CLI: [cli.md](cli.md), `jev/scripts/`의 독립 Go 모듈. 대표 명령은 `jev noul`, `jev choice`, `jev score`, `jev batch`다.
 - 스킬: `$jev:jev`, [skills/jev.md](skills/jev.md).
 - 사용 안내: `jev/README.md`, manifest의 설명과 `defaultPrompt`.
 - 설치: `jev install`, 제거: `jev uninstall`, 오프라인 진단: `jev doctor`. 기본 대상은 `~/.local/bin/jev`다.
@@ -42,7 +45,7 @@ TypeSafe의 hosted Jev 모델을 Go CLI에서 호출하고, 에이전트가 Noul
 
 ## 내장 skill 체계
 
-- `jev`: primitive 선택, CLI 입력 구성, 타입별 결과 사용을 소유한다. 추론 실행·설정 저장·종료 코드는 CLI가 소유한다.
+- `jev`: primitive 선택, 단건·batch CLI 입력 구성, 타입별 결과 사용을 소유한다. 추론 실행·설정 저장·종료 코드는 CLI가 소유한다.
 - 특정 업무의 판단 정책이나 전체 검토 절차를 이 스킬에 흡수하지 않는다.
 
 ## SDD 운영 원칙

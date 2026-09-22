@@ -7,6 +7,7 @@ Evaluation:
   jev choice --if <question and context> --conditions <a,b,...> [options]
   jev score --if <question and context> --level <description>... [options]
   jev --if <question and context> --conditions <a,b,...> [options]
+  jev batch --state-file <path> --input <path> [options]
 
 Configuration:
   jev config
@@ -46,6 +47,7 @@ Output:
   Noul:   answer, model
   Choice: answer, probabilities, confidence, model
   Score:  answer, legend, probabilities, confidence, model
+  Batch:  one full result object per input row as JSONL
 
 Exit codes:
   0  Success
@@ -66,6 +68,8 @@ func usageFor(command string) string {
 		return choiceUsage
 	case "score":
 		return scoreUsage
+	case "batch":
+		return batchUsage
 	case "config":
 		return configUsage
 	case "install":

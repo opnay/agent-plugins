@@ -9,6 +9,8 @@
 - 최초 설치와 소스 갱신은 별도 셸 래퍼 없이 `go run . install`로 수행한다. (사용자 승인)
 - "이거 내가 noul choice score 구분을 안했구나. 이것들 구분해서 추가하기 위해 커맨드를 넣어둘까 하는데, 어때?"
 - "옵션들 snake_case 적도록 강제하는건? json에서 지원한다해도 golang이었나 거기서 문제있던걸로 기억하거든."
+- "시나리오 테스팅 넣기전에, jev에 batch 옵션 넣어버릴까? jsonl 파일 넣으면 일괄로 요청하는방식. status 같은게 유지되면 캐시히트율도 올라갈테니 괜찮은 방법이라 생각되는데"
+- "ㅇㅋ 만들어두자."
 
 ---
 
@@ -16,16 +18,16 @@
 
 ## 목적
 
-사용자가 지정한 질문을 적절한 Noul·Choice·Score 명령에 전달하고, 타입별 출력·실패를 원래 작업에 맞게 사용한다.
+사용자가 지정한 질문을 적절한 Noul·Choice·Score 단건 또는 batch 명령에 전달하고, 타입별 출력·실패를 원래 작업에 맞게 사용한다.
 
 ## 경계
 
-- 포함: primitive 선택, 필요한 문맥과 기준 구성, 옵션 선택, CLI 결과 해석, 요청된 설정·설치·제거·진단.
+- 포함: primitive 선택, 필요한 문맥과 기준 구성, 단건·batch 선택, 옵션 선택, CLI 결과 해석, 요청된 설정·설치·제거·진단.
 - 제외: CLI 기계적 동작 재구현, 모든 문서를 자동 검증하는 정책, 맥락이 필요한 판단의 무조건적인 파일별 분할, 로컬 모델이라는 설명.
 
 ## 처리하려는 작업 형태
 
-- Jev 또는 TypeSafe를 사용한 명제 확률·선택지 판정·순서형 평가, `config`, `install`, `uninstall`, `doctor` 사용 요청.
+- Jev 또는 TypeSafe를 사용한 명제 확률·선택지 판정·순서형 평가, 공통 state에 대한 다중 질문, `config`, `install`, `uninstall`, `doctor` 사용 요청.
 - 일반 질문이나 코드 검토 전체를 자동으로 외부 API에 넘기는 trigger는 아니다.
 
 ## 엔트리포인트 / 대표 표면
@@ -43,6 +45,9 @@
 - threshold는 Choice에서 선택된 라벨의 확률, Noul에서 참일 확률의 하한이다. Score는 별도 `min_score` 기준을 사용한다. confidence는 어느 기준에도 대신 쓰지 않는다.
 - CLI·설정·JSON의 소유 key는 `snake_case`를 사용한다. Choice 라벨은 자유 문자열이며 기계적 후속 처리에 쓸 때 `snake_case`를 권장한다. Score 단계는 자연어 설명을 유지한다.
 - 기존 `jev --if ... --conditions ...`는 Choice 호환 형식이다.
+- 공통 state에 대해 둘 이상의 독립 질문을 평가하면 `jev batch --state-file <path> --input <path>`를 사용한다. JSONL row는 `id`, `type`, `question`과 primitive별 `conditions` 또는 `levels`를 가진다.
+- Batch는 전체 파일을 먼저 검증하고 한 요청으로 전송하며 입력 순서의 전체 JSONL 결과만 출력한다. 자동 chunk·retry·resume·부분 성공은 제공하지 않는다.
+- Batch에는 threshold·min_score·json·pick을 적용하지 않는다. 입력·파일·API·응답 오류는 stdout 없이 exit 1이며 exit 2는 없다.
 - CLI 성공 결과로 작업을 진행한다. 별도 API 재호출이나 연결 검사로 같은 결과를 중복 검증하지 않는다.
 - 종료 코드 2는 임계값 미달이며 stdout 결과가 아니다. 기준을 조용히 낮춰 재시도하지 않는다. 종료 코드 1은 실행 오류로 보고한다.
 - config 경로·기본값·우선순위·토큰 stdin 저장과 마스킹을 설명한다. 실제 토큰을 대화나 명령 인자에 요청하지 않는다.
@@ -55,6 +60,7 @@
 ## 검토 질문
 
 - 질문에 맞는 primitive와 필요한 문맥·기준을 사용했는가?
+- 여러 질문이 같은 state를 공유할 때 batch를 사용하고, 서로 다른 state를 억지로 한 batch에 합치지 않았는가?
 - 참일 확률, 선택 확률, 가중 점수, confidence와 실행 실패를 구분하는가?
 - 설정·설치·외부 전송 권한을 요청 범위 안에 유지하는가?
 

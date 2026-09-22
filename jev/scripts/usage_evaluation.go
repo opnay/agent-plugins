@@ -84,3 +84,46 @@ Example:
     --min-score 1.5
 
 ` + evaluationExitCodes
+
+const batchUsage = `Usage:
+  jev batch --state-file <path> --input <path> [options]
+
+Evaluates JSONL questions against one shared state in one API request.
+
+Batch options:
+  --state-file <path>  UTF-8 shared state; non-whitespace and sent unchanged
+  --input <path>       JSONL questions; blank lines ignored, one row required
+  --model <name>       Model (default: jev-latest)
+  --timeout <duration> Request timeout (default: 30s)
+  --help               Show this help
+
+Each nonblank JSONL row is one object with exact lowercase keys:
+  Noul:   {"id":"...","type":"noul","question":"..."}
+  Choice: {"id":"...","type":"choice","question":"...","conditions":["a","b"]}
+  Score:  {"id":"...","type":"score","question":"...","levels":["low","high"]}
+
+IDs and questions must be nonempty strings; IDs must be unique. Choice
+requires 2–255 distinct, nonempty condition strings.
+Score requires 2–10 distinct, nonempty level strings in ascending order.
+IDs, conditions, and levels cannot have surrounding whitespace.
+Noul forbids conditions and levels; Choice forbids levels; Score
+forbids conditions. Unknown or differently cased keys are rejected. The
+complete state and input are validated before the single API request.
+
+Output:
+  One result object per input row as JSONL, preserving input order:
+    Noul:   id, type, answer, model
+    Choice: id, type, answer, probabilities, confidence, model
+    Score:  id, type, answer, legend, probabilities, confidence, model
+  Batch does not apply threshold, min_score, json, or pick settings.
+
+Exit codes:
+  0  Complete batch success
+  1  Input, file, configuration, API, response, or output error
+
+Questions, criteria, and shared state are sent to the hosted TypeSafe API.
+Batch does not chunk, retry, resume, or return partial results.
+Complete results are encoded before stdout is written. Input, state/input file,
+configuration, API, and response failures leave stdout empty. An output-device
+partial write cannot be rolled back.
+`

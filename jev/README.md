@@ -1,9 +1,9 @@
 # Jev
 
-TypeSafe의 hosted Jev 모델을 Noul·Choice·Score로 호출하는 Go CLI와 사용 스킬입니다. 질문 하나와 필요한 문맥을 보내고 타입에 맞는 구조화 결과를 받습니다.
+TypeSafe의 hosted Jev 모델을 Noul·Choice·Score 단건 또는 batch로 호출하는 Go CLI와 사용 스킬입니다.
 
-- `$jev:jev`: primitive 선택, 입력 구성, 결과 사용, 요청된 설정·설치·제거·진단.
-- `jev`: `noul`, `choice`, `score`, 결과 기준, 출력 제어, `config`, `install`, `uninstall`, `doctor`.
+- `$jev:jev`: primitive·단건·batch 선택, 입력 구성, 결과 사용, 요청된 설정·설치·제거·진단.
+- `jev`: `noul`, `choice`, `score`, `batch`, 결과 기준, 출력 제어, `config`, `install`, `uninstall`, `doctor`.
 - 질문·문맥·기준은 TypeSafe API로 전송됩니다.
 
 ## 설치
@@ -83,6 +83,22 @@ jev score --if "이 장애의 심각도는? ..." \
 
 기존 `jev --if ... --conditions ...`는 `jev choice`와 동일하게 동작합니다.
 
+## Batch
+
+같은 state에 여러 질문을 할 때 한 SystemOne 요청으로 묶습니다.
+
+```sh
+jev batch --state-file target.md --input questions.jsonl
+```
+
+```jsonl
+{"id":"S001","type":"choice","question":"Which action applies?","conditions":["proceed","block","unexpected_action"]}
+{"id":"S002","type":"noul","question":"Is this behavior explicitly authorized?"}
+{"id":"S003","type":"score","question":"How severe is the risk?","levels":["none","recoverable","destructive"]}
+```
+
+state와 모든 JSONL row를 먼저 검증한 뒤 한 번 호출합니다. 성공하면 입력 순서대로 전체 결과 JSONL을 출력합니다. 자동 chunk·retry·resume·부분 성공은 제공하지 않습니다. Batch에는 threshold, min_score, json, pick 옵션이나 저장값을 적용하지 않습니다. stdout 쓰기 전 실패는 빈 stdout과 종료 코드 1이며, 출력 장치의 부분 쓰기는 되돌릴 수 없습니다.
+
 ## 출력과 결과 기준
 
 - Noul JSON: `answer`, `model`.
@@ -98,11 +114,11 @@ jev choice --if "..." --conditions a,b,c --threshold 0.8
 jev score --if "..." --level low --level medium --level high --min-score 1.5
 ```
 
-종료 코드 `0`은 성공, `2`는 결과 기준 미달, `1`은 입력·설정·인증·API·응답·출력 오류입니다. 실패는 stdout을 비우고 stderr로 보고합니다. CLI는 자동 재시도하거나 HTTP redirect를 따라가지 않습니다.
+종료 코드 `0`은 성공, `2`는 결과 기준 미달, `1`은 입력·설정·인증·API·응답·출력 오류입니다. stdout 쓰기 전 실패는 빈 stdout과 stderr로 보고하며, 출력 장치의 부분 쓰기는 되돌릴 수 없습니다. CLI는 자동 재시도하거나 HTTP redirect를 따라가지 않습니다.
 
 ## 범위와 의존성
 
-현재는 호출당 질문 하나를 처리합니다. 복수 질문, 구조화 criteria, 문서 탐색, 업무별 정책, 다른 플러그인 자동 연동은 제공하지 않습니다. 연관된 문서를 개별 호출로 나누면 전체 관계를 검증한 결과가 되지 않습니다.
+단건 명령은 호출당 질문 하나를 처리하며, batch는 하나의 공통 state와 여러 질문을 한 요청으로 처리합니다. 서로 다른 state의 자동 grouping, 문서 탐색, 업무별 정책, 다른 플러그인 자동 연동은 CLI가 제공하지 않습니다. 연관된 문서를 단순히 개별 호출로 나누는 것만으로는 전체 관계를 검증한 결과가 되지 않습니다.
 
 Go HTTP·JSON·flags와 MIT 라이선스의 `github.com/pelletier/go-toml/v2`를 사용합니다. 제3자 라이선스는 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)에 있습니다.
 

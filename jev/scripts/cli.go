@@ -54,6 +54,18 @@ func (a application) execute(ctx context.Context, args []string) (int, error) {
 		err := a.maintain(args[0], args[1:])
 		return exitCode(err), err
 	}
+	if args[0] == "batch" {
+		o, err := parseBatch(args[1:])
+		if errors.Is(err, flag.ErrHelp) {
+			_, err = io.WriteString(a.out, batchUsage)
+			return exitCode(err), err
+		}
+		if err != nil {
+			return 1, err
+		}
+		err = a.executeBatch(ctx, o)
+		return exitCode(err), err
+	}
 	o, err := parseEvaluation(args)
 	if errors.Is(err, flag.ErrHelp) {
 		_, err = io.WriteString(a.out, usageFor(string(o.primitive)))

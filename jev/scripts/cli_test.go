@@ -249,6 +249,11 @@ func TestHelpDoesNotReadConfig(t *testing.T) {
 			[]string{"Noul options:", "Choice options:"},
 		},
 		{
+			"batch",
+			[]string{"Usage:\n  jev batch", "Batch options:", "--state-file <path>", "sent unchanged", "--input <path>", "blank lines ignored", `"type":"noul"`, `"type":"choice"`, `"type":"score"`, "2–255 distinct", "2–10 distinct", "forbids conditions", "Unknown or differently cased keys", "one API request", "Noul:   id, type, answer, model", "Choice: id, type, answer, probabilities, confidence, model", "Score:  id, type, answer, legend, probabilities, confidence, model", "does not apply threshold", "does not chunk, retry, resume, or return partial results", "encoded before stdout", "leave stdout empty", "partial write cannot be rolled back", "Exit codes:"},
+			[]string{"Noul options:", "Choice options:", "Score options:", "--pick"},
+		},
+		{
 			"config",
 			[]string{"Usage:\n  jev config", "Commands:", "Options:", "Keys:", "api_key", "threshold", "min_score", "model        jev-latest", "timeout      30s", "json         false", "TYPESAFE_API_KEY takes precedence", "Flags override file values"},
 			[]string{"Evaluation:", "Maintenance:"},
@@ -310,6 +315,10 @@ func TestOptionErrorsPointToSubcommandHelp(t *testing.T) {
 		{[]string{"score", "--unknown"}, "jev score --help"},
 		{[]string{"score", "--if", "q", "--level", "one"}, "jev score --help"},
 		{scoreArgs("--min-score", "3"), "jev score --help"},
+		{[]string{"batch", "--state-file", "state"}, "jev batch --help"},
+		{[]string{"batch", "--input", "input"}, "jev batch --help"},
+		{[]string{"batch", "--state-file", "state", "--input", "input", "--json"}, "jev batch --help"},
+		{[]string{"batch", "--state-file", "state", "--input", "input", "extra"}, "jev batch --help"},
 		{[]string{"config", "unknown"}, "jev config --help"},
 		{[]string{"config", "set", "threshold", "bad"}, "jev config --help"},
 		{[]string{"config", "set", "unknown", "value"}, "jev config --help"},

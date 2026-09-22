@@ -72,7 +72,7 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 `jev`는 TypeSafe의 hosted Jev Noul·Choice·Score 모델을 호출하는 Go CLI와 사용 스킬입니다.
 
 - 플러그인: `jev/`, 개발 문서: `src/jev-dev/`
-- 주요 실행 표면: `$jev:jev`, `noul`, `choice`, `score`, `config`, `install`, `uninstall`, `doctor`
+- 주요 실행 표면: `$jev:jev`, `noul`, `choice`, `score`, `batch`, `config`, `install`, `uninstall`, `doctor`
 - 설정: `~/.agents/jev.toml`. 플러그인 설치와 바이너리·토큰 설정은 별개입니다.
 
 ## 저장소 구조

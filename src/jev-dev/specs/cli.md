@@ -15,10 +15,29 @@ jev score --if <question and context> --level <description> --level <description
 - 기존 `jev --if ... --conditions ...`는 `jev choice`와 같은 호환 형식이다.
 - 다른 primitive의 입력 옵션, 알 수 없는 옵션, 추가 positional argument는 API 호출 전에 오류다.
 
+## Batch 명령
+
+```text
+jev batch --state-file <path> --input <path> [--model <id>] [--timeout <duration>]
+```
+
+- `--state-file`은 모든 질문이 공유할 UTF-8 state 원문이다. 공백뿐인 파일은 오류이며 내용은 trim하지 않고 전송한다.
+- `--input`은 한 줄에 질문 하나를 둔 JSONL 파일이다. 공백 줄은 무시하며 질문이 하나 이상이어야 한다.
+- 각 줄은 고유하고 비어 있지 않은 `id`, `type`, 비어 있지 않은 `question`을 포함한다. Key는 정확한 snake_case만 허용하고 알 수 없거나 대소문자가 다른 field는 오류다.
+- `id`, `conditions`, `levels` 값의 앞뒤 공백은 자동 정리하지 않고 오류로 처리한다. 검증된 원문을 request와 output에 유지한다.
+- `type`은 `noul`, `choice`, `score` 중 하나다.
+- Choice는 `conditions` 문자열 배열에 2~255개의 고유하고 비어 있지 않은 label을 둔다. JSON 문자열이므로 쉼표를 허용한다.
+- Score는 `levels` 문자열 배열에 2~10개의 고유하고 비어 있지 않은 설명을 낮은 단계부터 둔다.
+- Noul에는 `conditions`·`levels`, Choice에는 `levels`, Score에는 `conditions`를 허용하지 않는다.
+- 전체 state와 JSONL을 API 호출 전에 검증한다. 한 줄이라도 잘못되면 요청하지 않는다.
+- 모든 질문은 하나의 SystemOne 요청으로 전송한다. 자동 chunk, retry, resume, 부분 성공은 제공하지 않는다.
+- `model`과 `timeout`은 batch 전체에 공통 적용한다. threshold, min_score, json, pick은 batch 입력·옵션이 아니며 저장값도 batch에 적용하지 않는다.
+
 ## Usage 도움말
 
 - `jev --help`는 전체 탐색용이다. `Evaluation`, `Configuration`, `Maintenance`, `Common evaluation options`, `Primitive options`, `Config keys`, `Output`, `Exit codes`로 구분한다.
 - `jev noul --help`, `jev choice --help`, `jev score --help`는 해당 primitive의 형식, 전용·공통 옵션, 기본·JSON 출력, 결과 기준, 종료 코드를 설명한다.
+- `jev batch --help`는 state·JSONL schema, 공통 옵션, 원자적 실패, JSONL 출력, 종료 코드를 설명한다.
 - `jev config --help`는 config 호출 형식, 지원 key·기본값·적용 범위, 인증 우선순위를 설명한다.
 - `jev install --help`, `jev uninstall --help`, `jev doctor --help`는 해당 유지보수 명령의 옵션, 대상, 동작·보존 범위를 설명한다.
 - 모든 help는 설정파일·토큰을 읽거나 API를 호출하지 않고 종료 코드 0으로 stdout에 출력한다.
@@ -31,6 +50,8 @@ jev score --if <question and context> --level <description> --level <description
 - Noul question은 type `noul`, instruction `Answer whether the proposition or question in state is true.`이며 criteria를 보내지 않는다.
 - Choice question은 type `choice`, instruction `Select the option that best answers the question in state.`이며 선택지 이름을 key, `null`을 값으로 한 criteria를 보낸다.
 - Score question은 type `score`, instruction `Rate the state against the ordered criteria.`이며 `--level` 순서의 문자열 배열을 criteria로 보낸다.
+- Batch는 `--state-file` 원문을 공통 `state`로 보내고 각 row의 `id`를 question id, `question`을 instructions로 사용한다. primitive별 criteria는 row의 `conditions` 또는 `levels`에서 만든다.
+- Batch의 모든 row는 하나의 `questions` map에 들어가며 API 요청은 한 번이다.
 - 임의 endpoint 옵션, 자동 재시도, API 오류 본문 출력은 제공하지 않는다. HTTP redirect는 따라가지 않는다.
 - timeout·취소·HTTP 오류·잘못된 응답은 실행 실패다.
 
@@ -49,6 +70,8 @@ jev score --if <question and context> --level <description> --level <description
 - `--pick <fields>`는 JSON 최상위 필드만 선택한다. 한 필드도 객체로 출력한다. `--pick ''`는 필드 제한을 해제한다.
 - pick은 최종 JSON 모드에서만 허용한다. primitive가 제공하지 않는 필드, 알 수 없는 필드, 빈 항목, 중복 항목은 API 호출 전에 오류다.
 - CLI·설정·JSON이 소유하는 key는 `snake_case`다. Choice 라벨은 자유 문자열이며 기계적 후속 처리에는 `snake_case`를 권장한다. Score 단계는 자연어 설명을 유지한다.
+- Batch 성공 출력은 입력 row마다 JSON object 하나인 JSONL이다. 입력 순서와 `id`, `type`을 유지하고 primitive별 전체 결과 field를 포함한다.
+- Batch 응답은 model과 모든 question id·type·결과를 검증한다. 누락·추가 answer, 잘못된 type·범위·criteria 결과는 전체 오류다.
 
 ## 결과 기준과 종료 코드
 
@@ -59,12 +82,14 @@ jev score --if <question and context> --level <description> --level <description
 - 종료 코드 `2`: 결과 기준 미달, stdout 없음·stderr에 결과와 기준.
 - 종료 코드 `1`: 입력·설정·인증·통신·응답·출력 오류, stderr에 이유.
 - JSON 여부나 pick은 실패 시 stdout을 비우는 계약을 바꾸지 않는다. 출력 장치의 부분 쓰기 실패는 되돌릴 수 없다.
+- Batch는 전체 JSONL을 먼저 encode한 뒤 stdout에 쓰고 성공 시 종료 코드 0을 반환한다. 쓰기 전 입력·파일·설정·API·응답 오류는 stdout 없이 종료 코드 1이며 종료 코드 2를 사용하지 않는다. 출력 장치의 부분 쓰기 실패는 되돌릴 수 없다.
 
 ## 설정
 
 - 경로: 사용자 홈의 `.agents/jev.toml`.
 - 우선순위: 명시적 CLI 옵션 > 파일 > 내장 기본값. 인증은 비어 있지 않은 `TYPESAFE_API_KEY` > 파일 `api_key`.
 - 공통 CLI flag: `--model`, `--timeout`, `--json`, `--pick`. Choice·Noul은 `--threshold`, Score는 `--min-score`를 추가한다. 토큰 CLI flag는 없다.
+- Batch는 `--model`, `--timeout`만 사용한다. 저장된 `api_key`, `model`, `timeout`은 적용하고 threshold, min_score, json, pick은 무시한다.
 - `threshold`: 유한한 0~1 실수, 기본 미적용. 명시적 0은 저장된 양수 기준을 덮어쓴다.
 - `min_score`: 유한한 0 이상 실수, 기본 미적용. Score 실행 시 현재 단계 범위도 검사한다.
 - `model`: 비어 있지 않은 문자열, 기본 `jev-latest`.
@@ -107,6 +132,7 @@ jev score --if <question and context> --level <description> --level <description
 - 플러그인 설치는 바이너리 설치나 PATH 편집을 수행하지 않는다. 빌드 실패는 기존 바이너리를 보존한다.
 - 자동 테스트는 임시 설정 경로와 가짜 HTTP transport를 사용한다. 실제 토큰·사용자 설정·유료 API를 사용하지 않는다.
 - 검증 대상: primitive 라우팅·입력, 요청 schema, 응답 타입·범위, 타입별 출력·pick, 결과 기준 경계, 기존 Choice 호환성, 설정 우선순위, 유지보수 회귀.
+- Batch 검증 대상: JSONL schema·중복 id·primitive criteria, 전체 선검증, 단일 요청, 공통 state·model, 응답 완전성, 입력 순서 JSONL, 원자적 실패, batch 비적용 설정.
 - 최상위 usage 카테고리, subcommand별 help 내용·라우팅, 설정 독립성을 검증한다.
 - 실제 API smoke test는 사용 가능한 토큰과 해당 호출 권한이 있을 때 별도로 수행한다.
 

@@ -1,22 +1,23 @@
 {
   "name": "jev",
   "version": "0.2.0",
-  "description": "Use hosted Jev Noul, Choice, and Score evaluation through a Go CLI with local configuration and maintenance commands.",
+  "description": "Use hosted Jev Noul, Choice, Score, and JSONL batch evaluation through a Go CLI with local configuration and maintenance commands.",
   "author": {
     "name": "opnay"
   },
   "license": "UNLICENSED",
-  "keywords": ["jev", "typesafe", "cli", "noul", "choice", "score", "classification"],
+  "keywords": ["jev", "typesafe", "cli", "noul", "choice", "score", "batch", "jsonl", "classification"],
   "skills": "./skills/",
   "interface": {
     "displayName": "Jev",
-    "shortDescription": "Evaluate yes/no, discrete choices, or ordered levels.",
-    "longDescription": "Provides a Go CLI and one usage skill for hosted Jev Noul, Choice, and Score evaluation, result criteria, JSON field selection, TOML configuration, installation, removal, and offline diagnosis. The binary and token are configured separately from plugin installation.",
+    "shortDescription": "Evaluate one or many structured judgments.",
+    "longDescription": "Provides a Go CLI and one usage skill for hosted Jev Noul, Choice, Score, and JSONL batch evaluation, result criteria, JSON field selection, TOML configuration, installation, removal, and offline diagnosis. The binary and token are configured separately from plugin installation.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": ["Read", "Analyze", "Write"],
     "defaultPrompt": [
       "Use $jev:jev to select Noul, Choice, or Score for my question and evaluate it with the Jev CLI.",
+      "Use $jev:jev to batch multiple questions that share one state from JSONL into one Jev request.",
       "Use $jev:jev to configure Jev defaults or explain primitive-specific output and result criteria.",
       "Use $jev:jev to install, uninstall, or diagnose the Jev CLI without changing shell settings."
     ]

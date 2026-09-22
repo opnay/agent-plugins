@@ -6,6 +6,7 @@
 - `$jev:jev`: [specs/skills/jev.md](specs/skills/jev.md)
 - 최초 버전: [changes/v0.1.0.md](changes/v0.1.0.md)
 - primitive 확장: [changes/v0.2.0.md](changes/v0.2.0.md)
+- JSONL batch: [changes/004-jsonl-batch.md](changes/004-jsonl-batch.md)
 
 Go 코드는 `jev/scripts/`의 독립 모듈입니다. 명령 라우팅, primitive, 옵션, 설정 파일 I/O, HTTP API, 응답 검증, 결과 출력, 설치·제거·진단을 책임별 파일로 유지합니다. 별도 SDK나 범용 CLI 프레임워크는 사용하지 않습니다.
 

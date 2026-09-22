@@ -23,17 +23,21 @@ func parseResponse(envelope evaluationEnvelope, o evaluationOptions) (result, er
 	if !ok || strings.TrimSpace(envelope.Model) == "" {
 		return result{}, errors.New("API response is missing a valid model or result")
 	}
+	return parseAnswer(raw, envelope.Model, o)
+}
+
+func parseAnswer(raw json.RawMessage, model string, o evaluationOptions) (result, error) {
 	var answer apiAnswer
 	if err := json.Unmarshal(raw, &answer); err != nil || answer.Type != o.primitive {
 		return result{}, errors.New("API response type does not match the requested primitive")
 	}
 	switch o.primitive {
 	case primitiveNoul:
-		return parseNoul(answer, envelope.Model)
+		return parseNoul(answer, model)
 	case primitiveChoice:
-		return parseChoice(answer, envelope.Model, o.choices)
+		return parseChoice(answer, model, o.choices)
 	case primitiveScore:
-		return parseScore(answer, envelope.Model, o.levels)
+		return parseScore(answer, model, o.levels)
 	default:
 		return result{}, errors.New("unknown response primitive")
 	}
