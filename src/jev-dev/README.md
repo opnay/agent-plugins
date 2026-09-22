@@ -4,9 +4,11 @@
 - 플러그인 경계: [specs/plugin.md](specs/plugin.md)
 - CLI·설정·출력: [specs/cli.md](specs/cli.md)
 - `$jev:jev`: [specs/skills/jev.md](specs/skills/jev.md)
+- `$jev:scenario-testing`: [specs/skills/scenario-testing.md](specs/skills/scenario-testing.md)
 - 최초 버전: [changes/v0.1.0.md](changes/v0.1.0.md)
 - primitive 확장: [changes/v0.2.0.md](changes/v0.2.0.md)
 - JSONL batch: [changes/004-jsonl-batch.md](changes/004-jsonl-batch.md)
+- scenario testing 이전: [changes/005-scenario-testing-migration.md](changes/005-scenario-testing-migration.md)
 
 Go 코드는 `jev/scripts/`의 독립 모듈입니다. 명령 라우팅, primitive, 옵션, 설정 파일 I/O, HTTP API, 응답 검증, 결과 출력, 설치·제거·진단을 책임별 파일로 유지합니다. 별도 SDK나 범용 CLI 프레임워크는 사용하지 않습니다.
 
@@ -23,4 +25,4 @@ go build -o /tmp/jev .
 
 CLI 테스트·빌드는 모델 판단 정확성이나 실제 API 인증을 증명하지 않습니다. 실제 API smoke test, 사용자 홈 설치, 플러그인 설치, 커밋·푸시는 각각 별도 실행 상태로 보고합니다.
 
-플러그인 구조 검증과 skill frontmatter 검증에 더해, 스킬 spec과 runtime은 clean-context read-only 검증으로 대조합니다. 작성용 spec을 설치된 스킬의 필수 runtime 의존성으로 만들지 않습니다.
+플러그인 구조 검증과 skill frontmatter 검증에 더해, 스킬 spec과 runtime은 clean-context read-only 검증으로 대조합니다. 작성용 spec을 설치된 스킬의 필수 runtime 의존성으로 만들지 않습니다. `scenario-testing`은 prediction·fresh executor·comparison을 조율하고, `jev batch`는 선택적 prediction 전송만 소유합니다.

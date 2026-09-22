@@ -32,10 +32,10 @@ codex plugin marketplace upgrade
 ### Advance Codex
 
 `advance-codex`는 Codex 활용 체계를 더 깊게 관리하기 위한 플러그인입니다.
-skill 작성, plugin 작성, skill scenario testing, session 관리, commit workflow, subagent 정의 같은 메타 작업을 다룹니다.
+skill 작성, plugin 작성, session 관리, commit workflow, subagent 정의 같은 메타 작업을 다룹니다.
 
 - 경로: `advance-codex/`
-- 주요 실행 표면: `plugin-creator`, `skill-creator`, `skill-scenario-testing`, `agents-sessions`, `git-committer`, `tool-use-guide`, `subagent-gate`, `subagent-creator`
+- 주요 실행 표면: `plugin-creator`, `skill-creator`, `agents-sessions`, `git-committer`, `tool-use-guide`, `subagent-gate`, `subagent-creator`
 
 ### Judgment Kit
 
@@ -69,10 +69,10 @@ skill 작성, plugin 작성, skill scenario testing, session 관리, commit work
 
 ### Jev
 
-`jev`는 TypeSafe의 hosted Jev Noul·Choice·Score 모델을 호출하는 Go CLI와 사용 스킬입니다.
+`jev`는 TypeSafe의 hosted Jev Noul·Choice·Score 모델을 호출하는 Go CLI와 reusable instruction scenario evaluation을 제공합니다.
 
 - 플러그인: `jev/`, 개발 문서: `src/jev-dev/`
-- 주요 실행 표면: `$jev:jev`, `noul`, `choice`, `score`, `batch`, `config`, `install`, `uninstall`, `doctor`
+- 주요 실행 표면: `$jev:jev`, `$jev:scenario-testing`, `noul`, `choice`, `score`, `batch`, `config`, `install`, `uninstall`, `doctor`
 - 설정: `~/.agents/jev.toml`. 플러그인 설치와 바이너리·토큰 설정은 별개입니다.
 
 ## 저장소 구조
