@@ -1,8 +1,9 @@
 # Jev
 
-TypeSafe의 hosted Jev 모델을 Noul·Choice·Score 단건 또는 batch로 호출하는 Go CLI와 reusable instruction의 행동을 평가하는 스킬입니다.
+TypeSafe의 hosted Jev 모델을 Noul·Choice·Score 단건 또는 batch로 호출하는 Go CLI와 작업 판단·reusable instruction 평가 스킬입니다.
 
-- `$jev:jev`: primitive·단건·batch 선택, 입력 구성, 결과 사용, 요청된 설정·설치·제거·진단.
+- `$jev:jev`: Jev·primitive·CLI 정보, 단건·batch 입력과 결과, 요청된 설정·설치·제거·진단.
+- `$jev:jev-use`: 간단한 선택과 사용자 질문, 불확실한 근거를 보조 판단하고, 범위가 미정인 작업의 직접 수행·위임, 허용된 subagent 모델·reasoning effort를 선택합니다.
 - `$jev:scenario-testing`: 고정 scenario에서 expected behavior, 선택적 Jev prediction, fresh executor의 actual behavior를 비교하고 evidence를 기록.
 - `jev`: `noul`, `choice`, `score`, `batch`, 결과 기준, 출력 제어, `config`, `install`, `uninstall`, `doctor`.
 - 질문·문맥·기준은 TypeSafe API로 전송됩니다.
@@ -84,6 +85,17 @@ jev score --if "이 장애의 심각도는? ..." \
 
 기존 `jev --if ... --conditions ...`는 `jev choice`와 동일하게 동작합니다.
 
+## 작업 중 Jev 사용
+
+`$jev:jev-use`는 Jev를 지정하지 않은 일반 작업에서도 작은 선택이 실제 다음 행동을 바꿀 때 적용합니다. 먼저 요청·규칙·확인 가능한 증거를 봅니다. 답이 이미 정해졌거나 사용자의 취향·승인·권한이 필요하면 Jev가 이를 대신 결정하지 않습니다.
+
+- 사용자의 A/B 질문: 목표·제약을 담아 `option_a`, `option_b`, `need_user_input` 중 평가하고, 근거를 확인해 추천합니다.
+- 사용자에게 되묻기 전: `proceed_with_known_default`, `inspect_more`, `ask_user` 중 필요한 행동을 평가합니다.
+- 근거가 불확실할 때: 동일한 출처·발췌를 공유하는 여러 넓은 질문(전체 관계·대안 해석)과 좁은 질문(개별 주장·반례)을 batch로 평가합니다. CLI에는 고정 질문 개수 한도가 없습니다. [현재 모델 문서](https://docs.typesafe.ai/models)의 요청 전체 64k 토큰, state와 가장 긴 질문 합계 32k 토큰 한도 안에서 필요한 만큼 묻습니다. 상충하는 답은 원문을 다시 조사하며, 반복 질문을 다수결 증거로 쓰지 않습니다.
+- 범위가 미정인 작업: 최소 범위·조사량·실행 노동력·실패 영향을 확인한 뒤 직접 수행·위임·추가 조사·사용자 확인을 평가합니다. 위임이 허용되면 현재 사용 가능한 모델과 선택한 모델의 reasoning effort를 별도 질문으로 고릅니다.
+
+Jev 결과는 권고입니다. 현재 지시와 실행 권한을 확인한 뒤 행동하며, CLI·인증·API 실패나 결과 기준 미달 시 설정을 자동 변경하거나 같은 호출을 반복하지 않습니다. 실제 Jev 응답과 자체 판단으로 진행한 경우를 구분해 보고합니다.
+
 ## Batch
 
 같은 state에 여러 질문을 할 때 한 SystemOne 요청으로 묶습니다.
@@ -127,7 +139,7 @@ jev score --if "..." --level low --level medium --level high --min-score 1.5
 
 ## 범위와 의존성
 
-단건 명령은 호출당 질문 하나를 처리하며, batch는 하나의 공통 state와 여러 질문을 한 요청으로 처리합니다. 서로 다른 state의 자동 grouping, 문서 탐색, 업무별 정책, 다른 플러그인 자동 연동은 CLI가 제공하지 않습니다. `$jev:scenario-testing`은 batch prediction과 executor 실행을 조율합니다. 연관된 문서를 단순히 개별 호출로 나누는 것만으로는 전체 관계를 검증한 결과가 되지 않습니다.
+단건 명령은 호출당 질문 하나를 처리하며, batch는 하나의 공통 state와 여러 질문을 한 요청으로 처리합니다. 서로 다른 state의 자동 grouping, 문서 탐색, 업무별 정책, 다른 플러그인 자동 연동은 CLI가 제공하지 않습니다. `$jev:jev-use`는 제한된 작업 판단의 사용 시점과 행동 연결을 맡고, `$jev:scenario-testing`은 batch prediction과 executor 실행을 조율합니다. 연관된 문서를 단순히 개별 호출로 나누는 것만으로는 전체 관계를 검증한 결과가 되지 않습니다.
 
 Go HTTP·JSON·flags와 MIT 라이선스의 `github.com/pelletier/go-toml/v2`를 사용합니다. 제3자 라이선스는 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)에 있습니다.
 
