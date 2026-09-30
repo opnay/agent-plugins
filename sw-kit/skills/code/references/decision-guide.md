@@ -40,7 +40,7 @@ Use an existing utility only after checking implementation, tests, usages, side 
 
 ## Framework API or Wrapper
 
-Use the framework API directly when its contract matches and the repository does not already centralize the concern. Create or use a wrapper only for policy, error model, observability, testing, domain meaning, API volatility, or platform separation.
+Use the framework API directly when its contract matches and the repository does not already centralize the concern. Create or use a wrapper only for policy, error model, observability, a meaningful dependency or lifecycle boundary, domain meaning, API volatility, or platform separation. Testing convenience alone does not justify it.
 
 ## New Dependency or Direct Implementation
 

@@ -80,4 +80,4 @@ Are unrelated renames, moves, formatting changes, broad refactors, or metadata c
 
 ### Test Quality
 
-Do tests verify observable behavior and important risks? Are they over-coupled to implementation details? Is a bug fix protected by a regression test when practical?
+Apply the [test criteria in SKILL.md](../SKILL.md#test-value). Does each changed test protect a distinct contract or credible failure? For a bug regression, was the intended pre-fix failure demonstrated? Report missing proof as unverified. Existing suspects need investigation before deletion; read `test-audit.md` only for a deletion or consolidation audit.

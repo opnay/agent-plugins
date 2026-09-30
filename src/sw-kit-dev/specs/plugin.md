@@ -24,8 +24,10 @@
 
 - `spec`: 사용자·제품 요구를 구현 가능한 행동 계약으로 정리한다.
 - `engineering`: 데이터 모델, 구조, 기술, integration, migration, 운영 방향을 선택한다.
-- `code`: 선택된 방향 안에서 코드를 구현·수정·리뷰한다.
-- `maintenance`: dependency, deprecation, dead code, drift, debt를 관리한다.
+- `code`: 선택된 방향 안에서 코드를 구현·수정·테스트·리뷰한다. 테스트 작성 gate와 집중 감사·subsystem campaign 계약을 소유한다.
+- `maintenance`: dependency, deprecation, dead code, drift, debt와 테스트 부채를 조사하고 정리 방향을 제시한다. 테스트 기준은 `code`의 bundled resource를 사용하며 수정은 요청된 source-level 작업으로 구분한다.
+
+테스트 작성·수정·리뷰는 `code` 본문의 기준을 사용한다. 집중 삭제·통합 감사는 `code/references/test-audit.md`, 전체 subsystem 정리는 `code/references/test-campaign.md`를 읽는다. 일반 코드·maintenance 작업이 감사를 자동 실행하지 않는다.
 
 ## 사용 표면
 
@@ -37,4 +39,4 @@
 
 - 새 skill은 네 책임 중 어느 것도 자연스럽게 소유하지 못하는 반복 작업일 때만 추가한다.
 - product planning, Git, design, quality management의 책임을 중복하지 않는다.
-- sibling은 명확한 산출물을 입력으로 받을 수 있으나 독립적으로도 실행 가능해야 한다.
+- sibling은 명확한 산출물을 입력으로 받을 수 있으나 선행 실행을 요구하지 않는다. bundled resource 공유는 소유 skill을 명시하고 skill spec에서 허용 범위·이유를 설명한다.

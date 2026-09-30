@@ -76,7 +76,7 @@ Create a wrapper only for real responsibility:
 - isolating external API volatility
 - unifying an error model
 - adding logging or observability
-- providing meaningful test seams
+- isolating meaningful dependency, platform, or lifecycle boundaries that also support testing
 - expressing domain meaning
 - separating platform-specific implementations
 

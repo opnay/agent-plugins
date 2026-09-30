@@ -1,34 +1,85 @@
 ---
 name: code
-description: Implement, modify, refactor, test, and review production code for correctness, clarity, maintainability, and safe change. Use for source-level work after a technical direction is known; surface material architecture decisions instead of making them implicitly.
+description: Implement, refactor, test, and review production code and tests for correctness, clarity, and maintainability. Use for source-level work, test authoring, or focused test audits and subsystem campaigns; surface material architecture choices. test authoring, test review, test audit, test consolidation
 ---
 
 # Code
 
-Implement the requested behavior with clear, maintainable code within the chosen technical direction.
+Implement requested behavior within the chosen technical direction. Own source-level changes and test quality; keep material architecture choices with `$sw-kit:engineering` and Git workflow with its owner.
 
 ## Work
 
-Read the relevant code, callers, tests, contracts, and repository conventions. Follow an existing engineering direction. Surface material system, data, or technology choices for `$sw-kit:engineering` when the direction is still open.
+Read relevant code, callers, tests, contracts, and repository conventions. Follow an existing technical direction; surface unresolved system, data, or technology choices before implementing them.
 
-Make the smallest coherent change. Keep control flow, ownership, side effects, errors, and boundary conditions understandable. Reuse code only when its meaning, contract, ownership, and lifecycle fit. Avoid speculative abstractions and unrelated cleanup.
+Make the smallest coherent change. Keep control flow, ownership, side effects, errors, and boundary conditions understandable. Reuse only when meaning, contract, ownership, and lifecycle fit. Avoid speculative abstractions and unrelated cleanup.
 
-Use blank lines to group a function by purpose and reading effort. Treat an entry guard at the start of a function as the first reading unit; leave a blank line after it before the main flow. Keep consecutive one-line `if` checks together when they serve one checking step. Keep preparation and immediate checks together unless a dense multiline declaration or expression needs its own reading space.
+Group a function with blank lines by purpose and reading effort. Separate its entry guard from the main flow. Keep consecutive one-line `if` checks together when they form one checking step. Keep preparation and immediate validation together unless a dense multiline declaration or expression needs its own reading space.
 
 Name the result of a meaningful call before passing it to another call when nesting hides a step. Direct nesting is fine when the flow stays clear.
 
-Preserve public contracts unless their change is approved. Check existing framework, system, standard-library, and installed dependency capabilities before adding a new implementation or dependency.
+Preserve public contracts unless their change is approved. Check repository, framework, system, standard-library, and installed dependency capabilities before adding an implementation or dependency.
+
+## Test value
+
+Apply the following criteria when writing, changing, or reviewing tests. Tests earn their maintenance cost by protecting observable behavior, a credible regression, or an independent contract. Optimize for confidence, not deletion count. Ordinary code work does not trigger a test audit or campaign.
+
+### Authoring gate
+
+Before adding or changing a test, answer four questions. A missing answer means the test is not ready to write.
+
+1. What observable behavior, invariant, or independent contract does it protect?
+2. What credible regression makes it fail, and for what reason?
+3. Why does existing coverage not catch that failure? Give each contract a primary test owner at its strongest boundary. Another layer needs a distinct risk the owner cannot reach, such as transport or lifecycle failure. Keep distinct inputs and failure cases; prefer extending an existing table or fixture, and consolidate duplicated setup in the same change.
+4. Does it require an export, flag, wrapper, or injection hook that no production caller needs? Move the test to the real boundary. Distinguish test-only convenience from meaningful dependency, platform, and lifecycle boundaries.
+
+Check every junk pattern below. A match fails the gate unless the retention bar names the independent contract it protects. Rewrite new tests that break under behavior-preserving refactoring at the owning boundary; existing ones are investigation candidates, not automatic deletions.
+
+Bug regressions must fail on pre-fix code for the intended reason and pass after the owner repair. If that failure was not demonstrated, report the regression proof as unverified. Do not replay the same bug at every layer it crosses; additional tests need a distinct risk the owner cannot reach.
+
+### Junk patterns
+
+- Assertion-free coverage probes.
+- Self-comparisons.
+- Identity copiers.
+- Copied fixtures, inventories, manifests, or export lists.
+- Exact source, import, or string greps.
+- Private predicate or call-shape checks duplicated at real boundaries.
+- Duplicate invocations of the same contract.
+- Provider-local replays of shared helpers.
+- Tests that only preserve test-only exports, globals, or wrappers.
+- Dead production code called only by tests.
+- Expected values generated by the helper or renderer under test.
+- Mocks implementing the asserted behavior, or one identical mock replacing different APIs.
+- Fixtures supplying receipt, admission, or callback ordering the owner should produce; persistence asserted against a store the path never writes.
+- Capability flags checked instead of exercising their promised delivery or acknowledgement.
+- Negative controls passing for an unrelated guard or a rejection the production path never reaches.
+- Names or fixtures claiming more behavior than their inputs and assertions exercise.
+
+### Retention bar
+
+Keep independent guards for public API, plugin SDK, protocol, config, migration, storage, security, platform, default, prompt-byte, generated cross-language, package, release, and architecture contracts. Also keep:
+
+- Call ordering when order is observable behavior.
+- Regressions with credible failure modes.
+- Source inspection as the cheapest independent guard when a user-facing key, byte, or path change makes it fail while an identifier-only refactor does not.
+- Retained tests failing on the baseline: reproduce the possible product bug and repair its owner.
+
+Static or slow is not a deletion reason. A check resembling implementation may be the independent contract; prove otherwise before removing it.
 
 ## Verify and review
 
-Run checks proportionate to the change and its risks. Re-read the diff for behavior, failure paths, compatibility, data integrity, security, concurrency, and unnecessary complexity.
+Run checks proportionate to the change and its risks. Re-read the diff for behavior, failure paths, compatibility, data integrity, security, concurrency, and unnecessary complexity. Separate passed, failed, unrun, and unverified proof.
 
-For review-only work, report actionable findings by severity, location, failure mode, and a useful fix direction. Do not edit code or present style preferences as defects.
+Review-only requests remain read-only. Report actionable findings by severity, location, failure mode, and useful fix direction; do not present style preferences as defects.
 
-## References
+## Conditional references
 
-- Read `references/principles.md` for quality tradeoffs.
-- Read `references/reuse-and-dependencies.md` before a reuse or dependency decision.
-- Read `references/decision-guide.md` for a local structure or abstraction tradeoff.
-- Read `references/review-rubric.md` for review severity and coverage.
-- Read `references/examples.md` when a concrete comparison helps.
+The test criteria above are sufficient for ordinary authoring and review. Read procedural references only for the relevant task:
+
+- `references/test-audit.md`: focused discovery, deletion, or consolidation of existing tests. Discovery stays read-only and reports evidence before edits.
+- `references/test-campaign.md`: an explicitly requested cleanup of a subsystem's whole test surface. Use its stage completion criteria and the audit procedure.
+- `references/principles.md`: quality tradeoffs.
+- `references/reuse-and-dependencies.md`: reuse or dependency decisions.
+- `references/decision-guide.md`: local structure or abstraction tradeoffs.
+- `references/review-rubric.md`: review severity and coverage.
+- `references/examples.md`: concrete comparisons when useful.

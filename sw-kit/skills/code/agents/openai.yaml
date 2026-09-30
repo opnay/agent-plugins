@@ -1,7 +1,7 @@
 interface:
   display_name: "Code"
-  short_description: "Implement and review production code"
-  default_prompt: "Use $sw-kit:code to implement, refactor, test, or review production code."
+  short_description: "Implement and review code and test quality"
+  default_prompt: "Use $sw-kit:code to implement or review code and tests, or audit test quality."
 
 policy:
   allow_implicit_invocation: true

@@ -36,7 +36,7 @@ Distinguish expected failures from programming errors. Add context that helps di
 
 ## Testability
 
-Test observable behavior, not private implementation shape. Prioritize important success paths, boundary values, failure paths, and regression risk. Do not contort production design only to make a trivial test easier.
+Keep meaningful dependency and side-effect boundaries testable without distorting production design for test-only convenience. The [test criteria in SKILL.md](../SKILL.md#test-value) own authoring, junk patterns, retention, and regression proof.
 
 ## Performance
 

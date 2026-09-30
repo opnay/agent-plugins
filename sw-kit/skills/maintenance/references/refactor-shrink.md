@@ -11,7 +11,7 @@ Refactor only after the behavior contract is known. Shrink concepts, not evidenc
 - duplicate branches with the same effect
 - wrapper functions that only rename another call
 - config with one real value and no near-term owner
-- interfaces with one implementation and no test seam value
+- interfaces with one implementation and no independent dependency or lifecycle boundary
 - factories that never select between implementations
 - hooks or callbacks that only forward values
 - custom loops replaceable by clear library primitives
