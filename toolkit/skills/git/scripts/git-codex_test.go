@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -67,13 +68,24 @@ func aliasEnv(t *testing.T) ([]string, string) {
 	home := t.TempDir()
 	config := filepath.Join(home, "gitconfig")
 	writeFixture(t, config, "", 0600)
+	gitPath, err := exec.LookPath("git")
+	if err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(home, "path")
+	if err := os.Mkdir(path, 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(gitPath, filepath.Join(path, "git")); err != nil {
+		t.Fatal(err)
+	}
 	var env []string
 	for _, entry := range testEnv() {
-		if !strings.HasPrefix(entry, "HOME=") && !strings.HasPrefix(entry, "GIT_CONFIG_GLOBAL=") {
+		if !strings.HasPrefix(entry, "HOME=") && !strings.HasPrefix(entry, "PATH=") && !strings.HasPrefix(entry, "GIT_CONFIG_GLOBAL=") {
 			env = append(env, entry)
 		}
 	}
-	return append(env, "HOME="+home, "GIT_CONFIG_GLOBAL="+config), home
+	return append(env, "HOME="+home, "PATH="+path, "GIT_CONFIG_GLOBAL="+config), home
 }
 
 func git(t *testing.T, dir string, args ...string) string {
@@ -339,12 +351,25 @@ func TestUnsafeMessagePaths(t *testing.T) {
 	other := repository(t)
 	_, otherPath := create(t, other, "docs: other repository\n")
 	for _, path := range []string{outside, symlink, public, otherPath, wrongName} {
+		before, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		beforeInfo, err := os.Lstat(path)
+		if err != nil {
+			t.Fatal(err)
+		}
 		_, stderr, code := execute(t, repo, "", testBinary, "message", "validate", path)
 		if code == 0 {
 			t.Fatalf("accepted unsafe path %s: %s", path, stderr)
 		}
-		if _, err := os.Lstat(path); err != nil {
-			t.Fatalf("validation changed input %s: %v", path, err)
+		after, err := os.ReadFile(path)
+		if err != nil || !bytes.Equal(before, after) {
+			t.Fatalf("validation changed contents %s: %v", path, err)
+		}
+		afterInfo, err := os.Lstat(path)
+		if err != nil || afterInfo.Mode() != beforeInfo.Mode() || !os.SameFile(beforeInfo, afterInfo) {
+			t.Fatalf("validation changed input identity or permissions %s: %v", path, err)
 		}
 	}
 }
@@ -366,8 +391,14 @@ func TestCommitMessageLifecycle(t *testing.T) {
 				if code != 1 || !strings.Contains(stderr, "reason=commit_failed attempted=true") {
 					t.Fatalf("rejected commit: %d %q %q", code, out, stderr)
 				}
-				if _, err := os.Stat(path); err != nil {
-					t.Fatalf("failed commit lost message: %v", err)
+				if content, err := os.ReadFile(path); err != nil || string(content) != message {
+					t.Fatalf("failed commit changed message: %v", err)
+				}
+				if info, err := os.Stat(path); err != nil || info.Mode().Perm() != 0600 {
+					t.Fatalf("failed commit changed message permissions: %v", err)
+				}
+				if _, _, code := execute(t, repo, "", "git", "rev-parse", "--verify", "HEAD"); code == 0 {
+					t.Fatal("rejected commit created HEAD")
 				}
 				return
 			}
@@ -414,33 +445,62 @@ func TestLinkedWorktreeCommitFromNestedDirectory(t *testing.T) {
 func TestAliasCodexMaintenance(t *testing.T) {
 	env, home := aliasEnv(t)
 	dir := t.TempDir()
+	manifestData, err := os.ReadFile("../../../.codex-plugin/plugin.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	var manifest struct {
+		Version string `json:"version"`
+	}
+	if err := json.Unmarshal(manifestData, &manifest); err != nil || manifest.Version == "" {
+		t.Fatalf("invalid plugin version: %v", err)
+	}
 
 	out, stderr, code := executeEnv(t, dir, "", env, testBinary, "install")
 	if code != 0 || stderr != "" || !strings.Contains(out, "installed=") {
 		t.Fatalf("install: status=%d stdout=%q stderr=%q", code, out, stderr)
 	}
-	if _, err := os.Stat(filepath.Join(home, ".local", "bin", "git-codex")); err != nil {
-		t.Fatalf("installed binary: %v", err)
+	installed := filepath.Join(home, ".local", "bin", "git-codex")
+	before, err := os.ReadFile(installed)
+	if err != nil {
+		t.Fatal(err)
 	}
-	value := gitWithEnv(t, dir, env, "config", "--global", "--get-all", aliasKey)
-	if value != aliasValue {
-		t.Fatalf("alias value: %q", value)
+	beforeInfo, err := os.Stat(installed)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if value := gitWithEnv(t, dir, env, "config", "--global", "--get-all", "alias.codex"); value == "" {
+		t.Fatal("installed alias is empty")
 	}
 	dispatchVersion, stderr, code := executeEnv(t, dir, "", env, "git", "codex", "--version")
-	if code != 0 || stderr != "" || dispatchVersion != "toolkit-git-codex "+version+"\n" {
+	if code != 0 || stderr != "" || dispatchVersion != "toolkit-git-codex "+manifest.Version+"\n" {
 		t.Fatalf("dispatch: status=%d stdout=%q stderr=%q", code, dispatchVersion, stderr)
+	}
+	message := "docs: alias dispatch\n\n- preserve spaced path arguments\n"
+	repo := repository(t)
+	id, stderr, code := executeEnv(t, repo, message, env, "git", "codex", "message", "create", "--stdin")
+	if code != 0 || stderr != "" {
+		t.Fatalf("alias create: status=%d stdout=%q stderr=%q", code, id, stderr)
+	}
+	path := filepath.Join(repo, ".git", strings.TrimSpace(id))
+	if content, err := os.ReadFile(path); err != nil || string(content) != message {
+		t.Fatalf("alias did not deliver message: %v", err)
+	}
+	_, stderr, code = executeEnv(t, repo, "", env, "git", "codex", "message", "validate", path)
+	if code != 0 || stderr != "" {
+		t.Fatalf("alias did not preserve spaced argument: status=%d stderr=%q", code, stderr)
 	}
 
 	_, stderr, code = executeEnv(t, dir, "", env, testBinary, "doctor")
 	if code != 0 || stderr != "" {
 		t.Fatalf("doctor: status=%d stderr=%q", code, stderr)
 	}
-	gitWithEnv(t, dir, env, "config", "--global", "--replace-all", aliasKey, "!echo foreign")
+	gitWithEnv(t, dir, env, "config", "--global", "--replace-all", "alias.codex", "!echo foreign")
 	_, stderr, code = executeEnv(t, dir, "", env, testBinary, "install")
 	if code != 1 || !strings.Contains(stderr, "existing alias is preserved") {
 		t.Fatalf("preserve alias: status=%d stderr=%q", code, stderr)
 	}
-	if value := gitWithEnv(t, dir, env, "config", "--global", "--get-all", aliasKey); value != "!echo foreign" {
+	if value := gitWithEnv(t, dir, env, "config", "--global", "--get-all", "alias.codex"); value != "!echo foreign" {
 		t.Fatalf("preserved alias: %q", value)
 	}
 	_, stderr, code = executeEnv(t, dir, "", env, testBinary, "install", "--force")
@@ -451,7 +511,13 @@ func TestAliasCodexMaintenance(t *testing.T) {
 	if code != 0 || stderr != "" {
 		t.Fatalf("uninstall: status=%d stderr=%q", code, stderr)
 	}
-	_, _, code = executeEnv(t, dir, "", env, "git", "config", "--global", "--get-all", aliasKey)
+	if content, err := os.ReadFile(installed); err != nil || !bytes.Equal(before, content) {
+		t.Fatalf("normal uninstall changed binary: %v", err)
+	}
+	if info, err := os.Stat(installed); err != nil || info.Mode() != beforeInfo.Mode() {
+		t.Fatalf("normal uninstall changed binary permissions: %v", err)
+	}
+	_, _, code = executeEnv(t, dir, "", env, "git", "config", "--global", "--get-all", "alias.codex")
 	if code != 1 {
 		t.Fatalf("alias remains after uninstall: %d", code)
 	}
@@ -459,20 +525,29 @@ func TestAliasCodexMaintenance(t *testing.T) {
 	if code != 0 || stderr != "" {
 		t.Fatalf("reinstall: status=%d stderr=%q", code, stderr)
 	}
-	gitWithEnv(t, dir, env, "config", "--global", "--replace-all", aliasKey, "!echo foreign")
+	gitWithEnv(t, dir, env, "config", "--global", "--replace-all", "alias.codex", "!echo foreign")
 	_, stderr, code = executeEnv(t, dir, "", env, testBinary, "uninstall")
 	if code != 1 || !strings.Contains(stderr, "existing alias is preserved") {
 		t.Fatalf("preserve on uninstall: status=%d stderr=%q", code, stderr)
 	}
-	if value := gitWithEnv(t, dir, env, "config", "--global", "--get-all", aliasKey); value != "!echo foreign" {
+	if value := gitWithEnv(t, dir, env, "config", "--global", "--get-all", "alias.codex"); value != "!echo foreign" {
 		t.Fatalf("preserved uninstall alias: %q", value)
 	}
 	_, stderr, code = executeEnv(t, dir, "", env, testBinary, "uninstall", "--force")
 	if code != 0 || stderr != "" {
 		t.Fatalf("force uninstall: status=%d stderr=%q", code, stderr)
 	}
-	if _, err := os.Stat(filepath.Join(home, ".local", "bin", "git-codex")); err != nil {
-		t.Fatalf("uninstall removed binary: %v", err)
+	_, _, code = executeEnv(t, dir, "", env, "git", "config", "--global", "--get-all", "alias.codex")
+	if code != 1 {
+		t.Fatalf("alias remains after force uninstall: %d", code)
+	}
+	after, err := os.ReadFile(installed)
+	if err != nil || !bytes.Equal(before, after) {
+		t.Fatalf("uninstall changed binary: %v", err)
+	}
+	afterInfo, err := os.Stat(installed)
+	if err != nil || afterInfo.Mode() != beforeInfo.Mode() {
+		t.Fatalf("uninstall changed binary permissions: %v", err)
 	}
 }
 
