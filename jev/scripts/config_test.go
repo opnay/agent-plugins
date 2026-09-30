@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"net/http"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -32,7 +34,8 @@ func TestConfigRoundTrip(t *testing.T) {
 	}
 	c, err := readConfig(a.path)
 	if err != nil || c.APIKey != "secret-for-test" || c.Threshold == nil || *c.Threshold != .8 ||
-		c.MinScore == nil || *c.MinScore != 1.5 || c.JSON == nil || *c.JSON {
+		c.MinScore == nil || *c.MinScore != 1.5 || c.JSON == nil || *c.JSON ||
+		c.Pick == nil || !slices.Equal(*c.Pick, []string{"answer", "model"}) {
 		t.Fatalf("config did not preserve stored settings: %v", err)
 	}
 	info, err := os.Stat(a.path)
@@ -43,7 +46,8 @@ func TestConfigRoundTrip(t *testing.T) {
 		t.Fatalf("unsafe display: code=%d stdout=%q stderr=%q", code, out, errOut)
 	}
 	var shown settings
-	if err := toml.Unmarshal(out.Bytes(), &shown); err != nil || shown.APIKey != "********" || shown.Model != "chosen-model" || shown.Timeout != "45s" {
+	if err := toml.Unmarshal(out.Bytes(), &shown); err != nil || shown.APIKey != "********" || shown.Model != "chosen-model" || shown.Timeout != "45s" ||
+		!slices.Equal(shown.Pick, []string{"answer", "model"}) {
 		t.Fatalf("display did not reflect settings: %v", err)
 	}
 	for _, key := range []string{"threshold", "min_score", "model", "timeout", "json", "pick", "api_key"} {
@@ -136,7 +140,19 @@ func TestPrimitiveConfigCriteriaScope(t *testing.T) {
 
 func TestConfigFailuresDoNotLeakOrReplace(t *testing.T) {
 	a, out, errOut := harness(t)
-	if err := writeConfig(a.path, config{APIKey: "retained-secret"}); err != nil {
+	threshold, minScore, jsonOutput := .8, 1.5, true
+	model, timeout := "retained-model", "45s"
+	pick := []string{"answer", "model"}
+	if err := writeConfig(a.path, config{APIKey: "retained-secret", Threshold: &threshold, MinScore: &minScore,
+		JSON: &jsonOutput, Model: &model, Timeout: &timeout, Pick: &pick}); err != nil {
+		t.Fatal(err)
+	}
+	before, err := os.ReadFile(a.path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	beforeInfo, err := os.Stat(a.path)
+	if err != nil {
 		t.Fatal(err)
 	}
 	for _, args := range [][]string{
@@ -150,9 +166,13 @@ func TestConfigFailuresDoNotLeakOrReplace(t *testing.T) {
 		if code := a.run(context.Background(), args); code != 1 || out.Len() != 0 || strings.Contains(errOut.String(), "secret") {
 			t.Fatalf("unsafe failure: code=%d stdout=%q stderr=%q", code, out, errOut)
 		}
-		c, err := readConfig(a.path)
-		if err != nil || c.APIKey != "retained-secret" || c.Threshold != nil {
+		after, err := os.ReadFile(a.path)
+		if err != nil || !bytes.Equal(before, after) {
 			t.Fatal("failed write changed config")
+		}
+		afterInfo, err := os.Stat(a.path)
+		if err != nil || afterInfo.Mode() != beforeInfo.Mode() {
+			t.Fatal("failed write changed config permissions")
 		}
 	}
 	for _, raw := range []string{`api_key = "source-secret`, `threshold = "source-secret"`, `unknown = "source-secret"`} {

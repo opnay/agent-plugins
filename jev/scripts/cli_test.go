@@ -108,15 +108,19 @@ func TestPrimitiveOutputAndCriteria(t *testing.T) {
 
 func TestPrimitiveJSONFields(t *testing.T) {
 	tests := []struct {
-		name    string
-		args    []string
-		fixture string
-		fields  []string
+		name       string
+		args       []string
+		fixture    string
+		fields     []string
+		confidence string
 	}{
-		{"noul", noulArgs("--json"), noulFixture, []string{"answer", "model"}},
-		{"noul pick", noulArgs("--json", "--pick", "answer"), noulFixture, []string{"answer"}},
-		{"score", scoreArgs("--json"), scoreFixture, []string{"answer", "legend", "probabilities", "confidence", "model"}},
-		{"score pick", scoreArgs("--json", "--pick", "answer,legend"), scoreFixture, []string{"answer", "legend"}},
+		{"legacy choice empty pick", evaluationArgs("--json", "--pick", ""), choiceFixture, []string{"answer", "probabilities", "confidence", "model"}, "0.12"},
+		{"legacy choice pick", evaluationArgs("--json", "--pick", "answer,probabilities"), choiceFixture, []string{"answer", "probabilities"}, ""},
+		{"legacy choice confidence pick", evaluationArgs("--json", "--pick", "confidence,model"), choiceFixture, []string{"confidence", "model"}, "0.12"},
+		{"noul", noulArgs("--json"), noulFixture, []string{"answer", "model"}, ""},
+		{"noul pick", noulArgs("--json", "--pick", "answer"), noulFixture, []string{"answer"}, ""},
+		{"score", scoreArgs("--json"), scoreFixture, []string{"answer", "legend", "probabilities", "confidence", "model"}, ""},
+		{"score pick", scoreArgs("--json", "--pick", "answer,legend"), scoreFixture, []string{"answer", "legend"}, ""},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -134,34 +138,7 @@ func TestPrimitiveJSONFields(t *testing.T) {
 					t.Fatalf("missing %s", field)
 				}
 			}
-		})
-	}
-}
-
-func TestJSONFields(t *testing.T) {
-	for _, pick := range []string{"", "answer,probabilities", "confidence,model"} {
-		t.Run(pick, func(t *testing.T) {
-			a, out, errOut := harness(t)
-			if code := a.run(context.Background(), evaluationArgs("--json", "--pick", pick)); code != 0 {
-				t.Fatalf("code=%d stderr=%s", code, errOut)
-			}
-			var fields map[string]json.RawMessage
-			if err := json.Unmarshal(out.Bytes(), &fields); err != nil {
-				t.Fatal(err)
-			}
-			expected := []string{"answer", "probabilities", "confidence", "model"}
-			if pick != "" {
-				expected = splitList(pick)
-			}
-			if len(fields) != len(expected) {
-				t.Fatalf("fields=%s", out)
-			}
-			for _, key := range expected {
-				if _, ok := fields[key]; !ok {
-					t.Fatalf("missing %s", key)
-				}
-			}
-			if raw, ok := fields["confidence"]; ok && string(raw) != "0.12" {
+			if tc.confidence != "" && string(fields["confidence"]) != tc.confidence {
 				t.Fatal("confidence was not preserved")
 			}
 		})

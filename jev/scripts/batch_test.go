@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -50,15 +51,19 @@ func TestBatchRequestAndOrderedOutput(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		var request evaluationRequest
+		var request any
 		if err := json.Unmarshal(data, &request); err != nil {
 			t.Fatal(err)
 		}
-		choice := request.Questions["C01"]
-		criteria, ok := choice.Criteria.(map[string]any)
-		if request.State != state || request.Model != "chosen" || len(request.Questions) != 3 ||
-			choice.Type != primitiveChoice || choice.Instructions != "Choose one" || !ok || len(criteria) != 2 ||
-			request.Questions["N01"].Type != primitiveNoul || request.Questions["S01"].Type != primitiveScore {
+		want := map[string]any{
+			"state": state, "model": "chosen",
+			"questions": map[string]any{
+				"C01": map[string]any{"type": "choice", "instructions": "Choose one", "criteria": map[string]any{"a,b": nil, "other": nil}},
+				"N01": map[string]any{"type": "noul", "instructions": "Is it true?"},
+				"S01": map[string]any{"type": "score", "instructions": "How high?", "criteria": []any{"low", "high"}},
+			},
+		}
+		if !reflect.DeepEqual(request, want) {
 			t.Fatalf("wrong batch request: %s", data)
 		}
 		return response(200, batchFixture), nil

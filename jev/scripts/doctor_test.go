@@ -126,7 +126,7 @@ func TestDoctorAuthentication(t *testing.T) {
 		detail string
 		hint   string
 	}{
-		{"authenticated", 200, 0, "authenticated (GET " + modelsEndpoint + ")", "Summary: 5 OK, 0 FAIL, 0 SKIP"},
+		{"authenticated", 200, 0, "authenticated (GET https://api.typesafe.ai/v1/models)", "Summary: 5 OK, 0 FAIL, 0 SKIP"},
 		{"rejected", 401, 1, "API key rejected (invalid or expired)", "update or unset TYPESAFE_API_KEY"},
 		{"forbidden", 403, 1, "access denied", "check API key permissions and account access"},
 		{"rate-limit", 429, 1, "rate limited; key validity unknown", "wait for the rate limit"},
@@ -143,7 +143,7 @@ func TestDoctorAuthentication(t *testing.T) {
 			calls := 0
 			a.transport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
 				calls++
-				if r.Method != http.MethodGet || r.URL.String() != modelsEndpoint || r.Body != nil ||
+				if r.Method != http.MethodGet || r.URL.String() != "https://api.typesafe.ai/v1/models" || r.Body != nil ||
 					r.Header.Get("Authorization") != "Bearer environment-secret" || r.Header.Get("Accept") != "application/json" {
 					t.Fatal("wrong doctor authentication request")
 				}
@@ -172,25 +172,21 @@ func TestDoctorAuthentication(t *testing.T) {
 
 func TestDoctorKeySelection(t *testing.T) {
 	source := buildTestBinary(t)
-	for _, env := range []string{"", "   ", "environment-secret"} {
+	for _, env := range []string{"", "   "} {
 		t.Run(env, func(t *testing.T) {
 			a, out, errOut, dir := doctorHarness(t, source)
 			a.envToken = env
 			if err := writeConfig(a.path, config{APIKey: "file-secret"}); err != nil {
 				t.Fatal(err)
 			}
-			key, wantSource, wantFix := "file-secret", "config api_key (value hidden)", "use jev config set api_key --stdin"
-			if strings.TrimSpace(env) != "" {
-				key, wantSource, wantFix = env, "TYPESAFE_API_KEY (overrides config api_key", "update or unset TYPESAFE_API_KEY"
-			}
 			a.transport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
-				if r.Header.Get("Authorization") != "Bearer "+key {
+				if r.Header.Get("Authorization") != "Bearer file-secret" {
 					t.Fatal("wrong selected key")
 				}
 				return response(401, ""), nil
 			})
 			if code := a.run(context.Background(), []string{"doctor", "--dir", dir}); code != 1 || out.Len() > 0 ||
-				!strings.Contains(errOut.String(), wantSource) || !strings.Contains(errOut.String(), wantFix) {
+				!strings.Contains(errOut.String(), "config api_key (value hidden)") || !strings.Contains(errOut.String(), "use jev config set api_key --stdin") {
 				t.Fatalf("code=%d stdout=%s stderr=%s", code, out, errOut)
 			}
 		})

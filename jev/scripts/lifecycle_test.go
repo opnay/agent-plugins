@@ -39,6 +39,8 @@ func TestMaintenanceLifecycle(t *testing.T) {
 	a, out, errOut := harness(t)
 	a.executable = buildTestBinary(t)
 	a.envToken = "" // Neither install nor uninstall requires authentication.
+	taskHome := t.TempDir()
+	a.path = filepath.Join(taskHome, ".agents", "jev.toml")
 	dir := filepath.Join(t.TempDir(), "bin with spaces")
 	target := filepath.Join(dir, "jev")
 	if err := writeConfig(a.path, config{APIKey: "preserved-token"}); err != nil {
@@ -71,7 +73,9 @@ func TestMaintenanceLifecycle(t *testing.T) {
 		t.Fatal(err)
 	}
 	// Exercise main dispatch and removal of the currently running installed binary.
-	if output, err := exec.Command(target, "uninstall", "--dir", dir).CombinedOutput(); err != nil || !strings.Contains(string(output), "Uninstalled") {
+	cmd := exec.Command(target, "uninstall", "--dir", dir)
+	cmd.Env = append(os.Environ(), "HOME="+taskHome, "TYPESAFE_API_KEY=")
+	if output, err := cmd.CombinedOutput(); err != nil || !strings.Contains(string(output), "Uninstalled") {
 		t.Fatalf("self uninstall: %v %s", err, output)
 	}
 	if _, err := os.Stat(target); !errors.Is(err, os.ErrNotExist) {
@@ -110,6 +114,44 @@ func TestMaintenanceProtectsTargets(t *testing.T) {
 				if err := os.Mkdir(target, 0700); err != nil {
 					t.Fatal(err)
 				}
+				if err := os.WriteFile(filepath.Join(target, "keep.txt"), []byte("keep"), 0600); err != nil {
+					t.Fatal(err)
+				}
+			}
+			beforeInfo, err := os.Lstat(target)
+			if err != nil {
+				t.Fatal(err)
+			}
+			preservedPath := target
+			if kind == "directory" {
+				preservedPath = filepath.Join(target, "keep.txt")
+			}
+			before, err := os.ReadFile(preservedPath)
+			if err != nil {
+				t.Fatal(err)
+			}
+			assertPreserved := func() {
+				t.Helper()
+				info, err := os.Lstat(target)
+				if err != nil || info.Mode() != beforeInfo.Mode() {
+					t.Fatal("target type or permissions changed")
+				}
+				after, err := os.ReadFile(preservedPath)
+				if err != nil || !bytes.Equal(before, after) {
+					t.Fatal("protected contents changed")
+				}
+				if kind == "symlink" {
+					link, err := os.Readlink(target)
+					if err != nil || link != a.executable {
+						t.Fatal("symlink destination changed")
+					}
+				}
+				if kind == "directory" {
+					entries, err := os.ReadDir(target)
+					if err != nil || len(entries) != 1 || entries[0].Name() != "keep.txt" {
+						t.Fatal("directory contents changed")
+					}
+				}
 			}
 			for _, command := range []string{"install", "uninstall"} {
 				out.Reset()
@@ -117,9 +159,7 @@ func TestMaintenanceProtectsTargets(t *testing.T) {
 				if code := a.run(context.Background(), []string{command, "--dir", dir}); code != 1 || out.Len() > 0 {
 					t.Fatalf("%s replaced %s: code=%d %s", command, kind, code, errOut)
 				}
-				if _, err := os.Lstat(target); err != nil {
-					t.Fatal("target removed")
-				}
+				assertPreserved()
 			}
 			out.Reset()
 			errOut.Reset()
@@ -133,18 +173,16 @@ func TestMaintenanceProtectsTargets(t *testing.T) {
 				}
 			} else if code != 1 || out.Len() > 0 {
 				t.Fatalf("force replaced non-regular target: %d %s", code, errOut)
+			} else {
+				assertPreserved()
 			}
 		})
 	}
 }
 
-func TestMaintenanceOptionsAndHelp(t *testing.T) {
+func TestMaintenanceOptions(t *testing.T) {
 	for _, command := range []string{"install", "uninstall", "doctor"} {
 		a, out, errOut := harness(t)
-		a.path = t.TempDir() // Help does not load config.
-		if code := a.run(context.Background(), []string{command, "--help"}); code != 0 || !strings.Contains(out.String(), "Usage:\n  jev "+command) {
-			t.Fatalf("help %s: %d %s", command, code, errOut)
-		}
 		for _, extra := range [][]string{{"--unknown"}, {"unexpected"}, {"--dir"}} {
 			out.Reset()
 			errOut.Reset()

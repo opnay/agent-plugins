@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -16,19 +17,14 @@ func TestAPIRequestContract(t *testing.T) {
 		name        string
 		args        []string
 		fixture     string
-		kind        primitive
+		state       string
+		kind        string
 		instruction string
-		criteria    func(any) bool
+		criteria    any
 	}{
-		{"noul", noulArgs(), noulFixture, primitiveNoul, "Answer whether the proposition or question in state is true.", func(v any) bool { return v == nil }},
-		{"choice", choiceArgs(), choiceCommandFixture, primitiveChoice, "Select the option that best answers the question in state.", func(v any) bool {
-			m, ok := v.(map[string]any)
-			return ok && len(m) == 2 && m["supported"] == nil && m["conflicting"] == nil
-		}},
-		{"score", scoreArgs(), scoreFixture, primitiveScore, "Rate the state against the ordered criteria.", func(v any) bool {
-			levels, ok := v.([]any)
-			return ok && len(levels) == 3 && levels[0] == "low, minor" && levels[2] == "high"
-		}},
+		{"noul", noulArgs(), noulFixture, "Is this statement true?", "noul", "Answer whether the proposition or question in state is true.", nil},
+		{"choice", choiceArgs(), choiceCommandFixture, "Which relation applies?", "choice", "Select the option that best answers the question in state.", map[string]any{"supported": nil, "conflicting": nil}},
+		{"score", scoreArgs(), scoreFixture, "How severe is this?", "score", "Rate the state against the ordered criteria.", []any{"low, minor", "medium", "high"}},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -36,24 +32,24 @@ func TestAPIRequestContract(t *testing.T) {
 			calls := 0
 			a.transport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
 				calls++
-				if r.Method != "POST" || r.URL.String() != endpoint || r.Header.Get("Authorization") != "Bearer test-token" || r.Header.Get("Content-Type") != "application/json" {
+				if r.Method != "POST" || r.URL.String() != "https://api.typesafe.ai/v1/systemone" || r.Header.Get("Authorization") != "Bearer test-token" || r.Header.Get("Content-Type") != "application/json" {
 					t.Fatal("wrong endpoint or headers")
 				}
 				data, err := io.ReadAll(r.Body)
 				if err != nil {
 					t.Fatal(err)
 				}
-				var request evaluationRequest
+				var request any
 				if err := json.Unmarshal(data, &request); err != nil {
 					t.Fatal(err)
 				}
-				q := request.Questions["result"]
-				if request.State == "" || request.Model != "chosen" || len(request.Questions) != 1 || q.Type != tc.kind ||
-					q.Instructions != tc.instruction || !tc.criteria(q.Criteria) {
-					t.Fatalf("wrong request: %s", data)
+				question := map[string]any{"type": tc.kind, "instructions": tc.instruction}
+				if tc.criteria != nil {
+					question["criteria"] = tc.criteria
 				}
-				if strings.Contains(string(data), "threshold") || strings.Contains(string(data), "min_score") || strings.Contains(string(data), "test-token") {
-					t.Fatal("CLI options or token in body")
+				want := map[string]any{"state": tc.state, "model": "chosen", "questions": map[string]any{"result": question}}
+				if !reflect.DeepEqual(request, want) {
+					t.Fatalf("wrong request: %s", data)
 				}
 				return response(200, tc.fixture), nil
 			})
