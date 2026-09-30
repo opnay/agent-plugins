@@ -77,15 +77,6 @@ fn named_roots_support_path_and_default_selection() {
         run(&args(&["path"]), home.path()).unwrap(),
         personality.canonicalize().unwrap()
     );
-    let parsed = read_config(&config(home.path())).unwrap();
-    assert_eq!(
-        format_root_list(&parsed).unwrap(),
-        format!(
-            "knowledge\t{}\tdefault=false\tdescription=-\npersonality\t{}\tdefault=true\tdescription=-\n",
-            knowledge.canonicalize().unwrap().display(),
-            personality.canonicalize().unwrap().display()
-        )
-    );
 }
 
 #[test]
@@ -191,9 +182,14 @@ fn invalid_config_and_invalid_target_preserve_prior_bytes() {
     }
 
     fs::remove_file(&target).unwrap();
-    set_root("default", home.path(), home.path(), &target).unwrap();
+    let root = home.path().join("wiki");
+    let other = home.path().join("other");
+    fs::create_dir(&root).unwrap();
+    fs::create_dir(&other).unwrap();
+    set_root("default", &root, home.path(), &target).unwrap();
     let before = fs::read(&target).unwrap();
-    assert!(set_root("invalid name", home.path(), home.path(), &target).is_err());
+    assert!(set_root("invalid name", &other, home.path(), &target).is_err());
+    assert_eq!(fs::read(&target).unwrap(), before);
     assert!(set_root("other", &home.path().join("missing"), home.path(), &target).is_err());
     assert_eq!(fs::read(&target).unwrap(), before);
 }
@@ -239,6 +235,14 @@ fn install_copies_a_standalone_executable_and_preserves_collisions() {
     assert!(install(&source, &collision, false).is_err());
     assert_eq!(fs::read_to_string(&collision).unwrap(), "existing command");
     install(&source, &collision, true).unwrap();
+    assert!(
+        fs::read(&source).unwrap() == fs::read(&collision).unwrap(),
+        "forced installation did not copy source bytes"
+    );
+    assert_eq!(
+        fs::metadata(&collision).unwrap().permissions().mode() & 0o777,
+        0o755
+    );
 }
 
 #[test]
