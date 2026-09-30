@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"debug/buildinfo"
 	"errors"
 	"flag"
@@ -54,7 +55,7 @@ func parseLifecycle(command string, args []string) (lifecycleOptions, error) {
 	return o, err
 }
 
-func (a application) maintain(command string, args []string) error {
+func (a application) maintain(ctx context.Context, command string, args []string) error {
 	o, err := parseLifecycle(command, args)
 	if errors.Is(err, flag.ErrHelp) {
 		_, err = io.WriteString(a.out, usageFor(command))
@@ -64,7 +65,7 @@ func (a application) maintain(command string, args []string) error {
 		return err
 	}
 	if command == "doctor" {
-		return a.doctor(o.target)
+		return a.doctor(ctx, o.target)
 	}
 	var message string
 	if command == "install" {

@@ -96,7 +96,7 @@ jev batch --state-file <path> --input <path> [--model <id>] [--timeout <duration
 - `timeout`: 양수 Go duration 문자열, 기본 `30s`.
 - `json`: boolean, 기본 false. 명시적 `--json=false`가 파일보다 우선한다.
 - `pick`: 문자열 배열, 기본 제한 없음. 빈 배열은 제한 없음이다.
-- `api_key`: 문자열, 기본 없음. 판정 호출에만 비어 있지 않은 인증이 필요하다.
+- `api_key`: 문자열, 기본 없음. 판정 호출과 doctor의 인증 조회에 비어 있지 않은 인증이 필요하다.
 - 파일 부재는 오류가 아니다. 조회·판정은 파일을 생성하지 않는다.
 - TOML 구문·타입·미지원 key 오류를 조용히 무시하지 않는다. 오류에 설정 원문을 포함하지 않는다.
 - 저장된 threshold는 Choice·Noul에만 적용하고 저장된 min_score는 Score에만 적용한다.
@@ -118,10 +118,14 @@ jev batch --state-file <path> --input <path> [--model <id>] [--timeout <duration
 
 - 공통 형식: `jev install [--force] [--dir <directory>]`, `jev uninstall [--dir <directory>]`, `jev doctor [--dir <directory>]`.
 - 기본 디렉터리는 `~/.local/bin`, 정확한 대상은 그 디렉터리의 `jev`다. `--dir`는 비어 있지 않은 디렉터리이며 상대 경로도 허용한다.
-- 유지보수 명령은 API를 호출하지 않는다. install/uninstall은 설정파일이나 토큰 없이 동작한다.
+- install/uninstall은 API 호출·설정파일·토큰 없이 동작한다.
 - install은 실행 중인 바이너리를 대상에 원자적으로 복사하고 0755 권한을 부여한다. 같은 바이너리는 성공하고 다른 일반 파일은 `--force` 없이는 보존한다. symlink·비정규 파일은 거부한다.
 - uninstall은 Go build info의 main package path가 `opnay/jev`인 일반 파일만 제거한다. 대상이 없으면 성공이며 설정·토큰·설치 디렉터리·다른 파일·셸 설정은 유지한다.
-- doctor는 대상 identity, PATH 선택, 일반 설정 유효성·권한, 토큰 유무를 읽는다. primitive별 pick·범위 적합성이나 API 인증은 판정하지 않는다.
+- doctor는 대상 identity, PATH 선택, 일반 설정 유효성·권한, 키 유무·출처를 점검한다. 비어 있지 않은 `TYPESAFE_API_KEY`가 파일의 `api_key`보다 우선하며 원문은 출력하지 않는다.
+- 기본 doctor는 설정이 유효하고 키가 있을 때 `GET https://api.typesafe.ai/v1/models`를 Bearer 인증으로 한 번 호출한다. 저장된 timeout을 적용하며 redirect·retry·추론 요청은 하지 않는다. 설치·PATH 오류는 독립적인 API 점검을 막지 않는다.
+- HTTP 200은 인증·조회 접근 성공이다. 401은 잘못되거나 만료된 키, 403은 접근 거부로 안내한다. 429·서버 오류·redirect·네트워크 오류·timeout·취소는 인증 성공이나 키 오류로 단정하지 않는다. 서버 body·원문 transport 오류는 출력하지 않는다.
+- 설정 오류·키 누락은 API 점검을 SKIP하며 로컬 문제는 실패다. 별도 offline 진단은 제공하지 않는다.
+- 결과는 로컬 설정·인증 섹션, `OK / FAIL / SKIP` 상태, 항목별 상세·해결 안내, 상태별 개수 요약을 포함한다. primitive별 pick·범위 적합성·모델 정확성·추론 가능 여부는 판정하지 않는다.
 - doctor는 읽기 전용이며 일반 판정·설치 뒤에 자동 호출하지 않는다.
 - 유지보수 성공은 stdout과 종료 코드 0, 실패는 빈 stdout·stderr와 종료 코드 1이다. 코드 2는 판정 기준 미달 전용이다.
 
@@ -140,3 +144,5 @@ jev batch --state-file <path> --input <path> [--model <id>] [--timeout <duration
 
 2026-09-22 확인: [API](https://docs.typesafe.ai/api), [Noul](https://docs.typesafe.ai/primitives/noul), [Choice](https://docs.typesafe.ai/primitives/choice), [Score](https://docs.typesafe.ai/primitives/score).
 Noul의 참일 확률, Choice의 최고 확률 option, Score의 확률 가중 값과 각 타입의 confidence 차이를 적용한다. 실제 모델의 판단 정확성은 로컬 테스트가 증명하지 않는다.
+
+- Doctor 인증 조회 근거: [TypeSafe OpenAPI](https://api.typesafe.ai/openapi.json)의 `/v1/models` GET, HTTPBearer security (2026-09-30 확인).

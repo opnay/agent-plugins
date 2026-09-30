@@ -270,7 +270,7 @@ func TestHelpDoesNotReadConfig(t *testing.T) {
 		},
 		{
 			"doctor",
-			[]string{"Usage:\n  jev doctor", "Options:", "--dir <directory>", "PATH selection", "read-only and offline", "does not authenticate", "or repair state"},
+			[]string{"Usage:\n  jev doctor", "Options:", "--dir <directory>", "PATH selection", "GET https://api.typesafe.ai/v1/models", "No inference", "OK / FAIL / SKIP"},
 			[]string{"--force", "Removes <directory>/jev"},
 		},
 	}

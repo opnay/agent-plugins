@@ -13,6 +13,10 @@
 - "ㅇㅋ 만들어두자."
 - "jev는 jev에 대한 정보와 함께 cli 지원을 위한 스킬로 범위를 잡고 하는거지."
 
+- "jev doctor 개선좀하자. api 키 문제가 있었는데, 그걸 doctor 과정에서 볼 수 없으니 불편하네. 이참에 아에 doctor 결과도 보기 좋게 정리좀하자."
+
+- "offline doctor는 제거하자. jev 자체가 api 땡겨다 쓰는건데, 굳이?"
+
 ---
 
 # jev 스킬 스펙
@@ -55,7 +59,7 @@ Jev의 판단 형태와 CLI 계약을 설명하고, 사용자가 지정한 질�
 - 유지보수 요청에는 `install [--force] [--dir <directory>]`, `uninstall [--dir <directory>]`, `doctor [--dir <directory>]`를 사용한다. 기본 대상은 `~/.local/bin/jev`다.
 - install은 실행 중인 바이너리를 복사하며, 최신 소스를 빌드하거나 다운로드하지 않는다. 최초 설치는 플러그인의 `scripts/`에서 `go run . install`, 소스 갱신은 `go run . install --force`를 사용한다. 다른 설치 위치는 `--dir <directory>`로 지정한다.
 - uninstall은 Jev로 식별되는 일반 파일만 제거하며 설정·토큰·설치 디렉터리·셸 설정을 보존한다. 없는 대상은 성공이다.
-- doctor는 설치·PATH·설정·토큰 유무만 읽는다. API 인증 유효성이나 모델 정확성을 확인하지 않으며, 자동 수정을 하지 않는다. 문제는 stderr와 종료 코드 1로 보고한다.
+- doctor는 설치·PATH·설정·키 유무·출처와 API 인증을 점검한다. 기본은 설정·키가 유효할 때 인증된 models 조회를 한 번 수행하며 추론·redirect·retry·자동 수정은 없다. `OK / FAIL / SKIP`, 원인·해결 안내·요약을 읽고 인증 실패와 네트워크·서버 문제를 구분한다. 키 원문을 출력하지 않으며 모델 정확성·추론 가능 여부를 증명하지 않는다. 정상은 stdout·exit 0, 문제는 빈 stdout·stderr·exit 1이다.
 - 질문과 선택지가 TypeSafe 외부 API로 전송됨을 밝힌다. 승인 범위 밖의 파일이나 비밀정보를 입력으로 수집하지 않는다.
 
 ## 검토 질문

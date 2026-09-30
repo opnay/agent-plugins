@@ -11,7 +11,7 @@
   "interface": {
     "displayName": "Jev",
     "shortDescription": "Use Jev CLI judgments in tasks and test instruction behavior.",
-    "longDescription": "Provides a Go CLI for hosted Jev Noul, Choice, Score, and shared-state JSONL batch evaluation. The jev skill explains CLI operations; jev-use applies bounded judgments to user questions, uncertain evidence, task scope, and allowed subagent model and effort routing; scenario-testing compares expected, predicted, and observed instruction behavior. The binary and token are configured separately from plugin installation.",
+    "longDescription": "Provides a Go CLI for hosted Jev Noul, Choice, Score, and shared-state JSONL batch evaluation. The jev skill explains CLI operations and diagnoses setup and API authentication; jev-use applies bounded judgments to user questions, uncertain evidence, task scope, and allowed subagent model and effort routing; scenario-testing compares expected, predicted, and observed instruction behavior. The binary and token are configured separately from plugin installation.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": ["Read", "Analyze", "Write"],
@@ -19,7 +19,7 @@
       "Use $jev:jev to select Noul, Choice, or Score for my question and evaluate it with the Jev CLI.",
       "Use $jev:jev to batch multiple questions that share one state from JSONL into one Jev request.",
       "Use $jev:jev to configure Jev defaults or explain primitive-specific output and result criteria.",
-      "Use $jev:jev to install, uninstall, or diagnose the Jev CLI without changing shell settings.",
+      "Use $jev:jev to install, uninstall, or diagnose Jev setup and API authentication.",
       "Use $jev:jev-use for a bounded choice in my question or task, or to assess an underspecified task and choose delegation, an allowed subagent model, and reasoning effort through Jev.",
       "Use $jev:jev-use to assess uncertain evidence with independent broad and narrow questions over one shared state, then inspect conflicts against the source.",
       "Use $jev:scenario-testing to compare scenario-specific expected behavior, optional Jev prediction, and fresh-executor actual behavior and preserve the evaluation evidence."

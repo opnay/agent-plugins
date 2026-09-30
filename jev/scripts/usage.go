@@ -57,7 +57,8 @@ Exit codes:
 Config path: ~/.agents/jev.toml; flags > file > defaults.
 Auth: TYPESAFE_API_KEY > config api_key. Token input is stdin only.
 Questions and criteria are sent to the hosted TypeSafe API.
-Maintenance is offline. Default install directory: ~/.local/bin.
+Install/uninstall are offline. Doctor checks API authentication.
+Default install directory: ~/.local/bin.
 `
 
 func usageFor(command string) string {

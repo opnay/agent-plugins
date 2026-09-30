@@ -36,7 +36,11 @@ func (a application) configPath() (string, error) {
 func (a application) run(ctx context.Context, args []string) int {
 	code, err := a.execute(ctx, args)
 	if err != nil {
-		fmt.Fprintln(a.errOut, "jev:", err)
+		if _, report := err.(doctorReport); report {
+			fmt.Fprintln(a.errOut, err)
+		} else {
+			fmt.Fprintln(a.errOut, "jev:", err)
+		}
 	}
 	return code
 }
@@ -51,7 +55,7 @@ func (a application) execute(ctx context.Context, args []string) (int, error) {
 		return exitCode(err), err
 	}
 	if args[0] == "install" || args[0] == "uninstall" || args[0] == "doctor" {
-		err := a.maintain(args[0], args[1:])
+		err := a.maintain(ctx, args[0], args[1:])
 		return exitCode(err), err
 	}
 	if args[0] == "batch" {

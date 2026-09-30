@@ -18,6 +18,10 @@
 - "jev-use 스킬 만들어두는거어때? jev는 jev에 대한 정보와 함께 cli 지원을 위한 스킬로 범위를 잡고 하는거지."
 - "ㅇㅋ 작업시작해보자. 하는김에 그 사용법도 실제로 적용해서 해보자."
 
+- "jev doctor 개선좀하자. api 키 문제가 있었는데, 그걸 doctor 과정에서 볼 수 없으니 불편하네. 이참에 아에 doctor 결과도 보기 좋게 정리좀하자."
+
+- "offline doctor는 제거하자. jev 자체가 api 땡겨다 쓰는건데, 굳이?"
+
 ---
 
 # Jev 플러그인 스펙
@@ -38,7 +42,7 @@ TypeSafe의 hosted Jev 모델을 Go CLI에서 호출하고, 에이전트가 CLI 
 - Noul은 참일 확률, Choice는 선택된 조건, Score는 순서형 기준의 가중 점수를 받는다.
 - `jev batch`는 하나의 공통 state와 JSONL 질문을 한 SystemOne 요청으로 평가한다.
 - `jev config`로 기본값과 API 인증을 관리한다.
-- `jev install`, `jev uninstall`, `jev doctor`로 요청된 CLI 유지보수를 수행한다.
+- `jev install`, `jev uninstall`, `jev doctor`로 요청된 CLI 유지보수를 수행한다. doctor는 인증된 models 조회와 키 출처·문제별 해결 안내를 제공한다.
 - 간단한 선택이나 사용자 질문에 필요한 판단을 제한된 문맥으로 평가합니다. 불확실한 근거는 공통 state에 대한 넓은 질문과 좁은 질문으로 평가하며, 범위가 불명확한 작업은 기본 범위·조사량·실행량을 확인한 뒤 직접 수행 또는 허용된 subagent 모델·effort로 라우팅합니다.
 - reusable instruction의 scenario-specific expected behavior, 선택적 Jev prediction, fresh executor actual behavior를 비교하고 evidence를 보존한다.
 
@@ -47,7 +51,7 @@ TypeSafe의 hosted Jev 모델을 Go CLI에서 호출하고, 에이전트가 CLI 
 - CLI: [cli.md](cli.md), `jev/scripts/`의 독립 Go 모듈. 대표 명령은 `jev noul`, `jev choice`, `jev score`, `jev batch`다.
 - 스킬: `$jev:jev`, [skills/jev.md](skills/jev.md), `$jev:jev-use`, [skills/jev-use.md](skills/jev-use.md), `$jev:scenario-testing`, [skills/scenario-testing.md](skills/scenario-testing.md).
 - 사용 안내: `jev/README.md`, manifest의 설명과 `defaultPrompt`.
-- 설치: `jev install`, 제거: `jev uninstall`, 오프라인 진단: `jev doctor`. 기본 대상은 `~/.local/bin/jev`다.
+- 설치: `jev install`, 제거: `jev uninstall`, 로컬·API 인증 진단: `jev doctor`. 기본 대상은 `~/.local/bin/jev`다.
 - 최초 설치는 `jev/scripts/`에서 `go run . install`로 수행한다. 소스 갱신은 `go run . install --force`를 사용한다. 셸 설정·토큰은 설치나 제거 대상이 아니다.
 
 ## 내장 skill 체계

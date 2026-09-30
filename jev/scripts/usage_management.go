@@ -60,7 +60,12 @@ Options:
   --dir <directory>   Installation directory (default: ~/.local/bin)
   --help              Show this help
 
-Checks the Jev binary, PATH selection, general config validity and permissions,
-and token presence. Doctor is read-only and offline; it does not authenticate
-the token, call the API, validate a model judgment, or repair state.
+Checks the Jev binary, PATH selection, config validity and permissions, and
+API key presence and source. With valid config and a key, sends one authenticated
+GET https://api.typesafe.ai/v1/models using the configured timeout. No inference,
+redirect, retry, or automatic repair.
+
+Reports OK / FAIL / SKIP, problem-specific fixes, and a summary. Key values and
+API response bodies are hidden. Success: stdout and exit 0; problems: stderr
+and exit 1. This checks API access, not model accuracy or inference availability.
 `

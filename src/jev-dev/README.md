@@ -11,10 +11,11 @@
 - JSONL batch: [changes/004-jsonl-batch.md](changes/004-jsonl-batch.md)
 - scenario testing 이전: [changes/005-scenario-testing-migration.md](changes/005-scenario-testing-migration.md)
 - 작업 중 Jev 사용: [changes/006-jev-use.md](changes/006-jev-use.md)
+- doctor 인증·출력: [changes/007-doctor-auth.md](changes/007-doctor-auth.md)
 
 Go 코드는 `jev/scripts/`의 독립 모듈입니다. 명령 라우팅, primitive, 옵션, 설정 파일 I/O, HTTP API, 응답 검증, 결과 출력, 설치·제거·진단을 책임별 파일로 유지합니다. 별도 SDK나 범용 CLI 프레임워크는 사용하지 않습니다.
 
-설치 동작은 Go의 `install`이 소유합니다. 최초 설치는 `jev/scripts/`에서 `go run . install`, 소스 갱신은 `go run . install --force`로 수행합니다. `uninstall`은 build info의 main package identity로 삭제 대상을 제한하고, `doctor`는 로컬 설치·PATH·설정·토큰 유무만 읽습니다.
+설치 동작은 Go의 `install`이 소유합니다. 최초 설치는 `jev/scripts/`에서 `go run . install`, 소스 갱신은 `go run . install --force`로 수행합니다. `uninstall`은 build info의 main package identity로 삭제 대상을 제한하고, `doctor`는 로컬 설치·PATH·설정·키 유무·출처와 인증된 models 조회를 점검합니다. 조회는 저장된 timeout으로 한 번만 호출하며 추론·redirect·retry·자동 수정은 없습니다.
 
 ```sh
 cd jev/scripts
