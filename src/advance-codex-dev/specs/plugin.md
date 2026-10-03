@@ -1,9 +1,15 @@
+## 사용자 스펙 의도
+
+- ASD-STE100의 작성·검토 원칙을 skill로 사용하며 영어 단어 관련 내용은 references에서 다루고 싶습니다.
+
+---
+
 # Advance Codex 플러그인 스펙
 
 ## 플러그인 목적
 
 `advance-codex`는 Codex 활용 방식을 더 명시적이고 재사용 가능하게 설계하는 플러그인입니다.
-핵심 책임은 skill, plugin bundle, agent token optimization 같은 Codex 활용 산출물을 각각의 좁은 skill 표면으로 제공하는 것입니다.
+핵심 책임은 skill, plugin bundle, agent token optimization, 명확한 기술 지시 작성 같은 Codex 활용 산출물을 각각의 좁은 skill 표면으로 제공하는 것입니다.
 `.agents/sessions/{YYYYMMDD}` session folder convention은 호출 가능한 skill이 아니라 문서 수준의 참고 규칙으로만 유지합니다.
 
 ## 플러그인 경계와 비목표
@@ -12,6 +18,7 @@
   - skill 설계와 개편을 위한 creator-oriented guidance
   - installable plugin boundary와 bundled skill coherence 설계
   - 응답, 진행·상태 문구, reasoning·decision wording, 저장 문서에 정확성, 의미, 검증, 승인, 안전을 보존하는 token-efficient style 적용
+  - Codex 지침·skill·기술 문서·운영 절차에 ASD-STE100 기반 작성·검토 원칙 적용
 - 제외:
   - 일반 제품 구현 workflow
   - 특정 도메인 기능 구현 가이드
@@ -21,6 +28,7 @@
 
 - 새 skill이나 plugin을 만들거나 기존 것을 재설계하는 작업
 - agent-authored language 전반에 token-efficient style을 적용하되 판단 논리, workflow, 검증 범위는 바꾸지 않는 작업
+- 기술 지시의 대상·행동·조건·순서를 명확히 하고 영어 어휘·용법을 별도 reference로 검토하는 작업
 
 ## 대표 표면
 
@@ -36,6 +44,14 @@
   - spec: `src/advance-codex-dev/specs/skills/plugin-creator.md`
 - `optimize-token`: 응답, 진행·상태 문구, reasoning·decision wording, 저장 문서에 token-efficient style과 제한된 symbol grammar를 적용하되 판단 논리, workflow, 검증, 승인, exact literal, 안전 계약을 보존한다.
   - spec: `src/advance-codex-dev/specs/skills/optimize-token/spec.md`
+- `asd-ste100`: 기술 지시와 agent instruction의 명확성을 개선하고, 영어 어휘·용법은 references에서 다룹니다. 일반 원칙 적용과 공식 규격 준수 검토를 구분합니다.
+  - spec: `src/advance-codex-dev/specs/skills/asd-ste100.md`
+
+## 문체 Skill 선택 기준
+
+- `$advance-codex:optimize-token`: 의미와 계약을 보존하면서 표현 길이·반복을 줄일 때 사용합니다.
+- `$advance-codex:asd-ste100`: 기술 지시·skill 본문·운영 절차의 대상·행동·조건·순서를 명확히 하거나 STE 작성·검토를 요청할 때 사용합니다.
+- 함께 적용할 수 있으며 명확성·의미·필수 조건을 표현 압축보다 우선합니다. 영어 전용 규칙은 영어 산문에만 적용합니다.
 
 ## SDD 운영 원칙
 
