@@ -1,101 +1,47 @@
 # Model and Task Routing
 
-Use this reference only when parallel research streams justify delegation.
+Read this before delegating research. Define responsibilities before selecting available models; preserve task permissions and environment constraints.
 
-## Route by Role
+## Roles
 
-Define the responsibility before selecting an available model.
-
-| Role | Suitable work | Required traits | Current family example |
+| Role | Work | Required traits | Family example |
 | --- | --- | --- | --- |
-| Research lead and synthesizer | Scope, conflict resolution, sensitive inference, final report | Strongest reasoning and long-context synthesis | Sol |
-| Source-stream researcher | Retrieve, inspect, and summarize primary sources for one subquestion | Balanced reasoning, tool use, reading throughput | Terra |
-| Structured extractor | Repeat fixed-field extraction across many documents | Fast processing and strict schema adherence | Luna |
+| Research lead and synthesizer | Scope, conflict resolution, sensitive inference, final report | Strongest available reasoning and synthesis | Sol |
+| Researcher | Inspect primary sources for a subquestion or alternative approach | Reasoning, tool use, source reading | Terra |
+| Structured extractor | Fixed-field extraction across many documents | Throughput and schema adherence | Luna |
 
-Treat model names as examples. Check which models and capabilities are available, then preserve the role contract with the closest valid substitute.
+Names are examples, not required models. Use available, permitted models that meet the role contract and applicable user defaults. Extractors flag ambiguity with source passages; they do not own causality, legal interpretation, confidence, or final conclusions. Stop and escalate sample-validation failures.
 
-## Delegation Gate
+## Two Delegation Shapes
 
-Delegate only when all conditions hold:
+Both shapes require read-only work, fixed questions and scope, dates and output contracts, greater research benefit than coordination cost, and lead verification of material claims and citations. Do not delegate simple lookups, short investigations, external writes, or decisions by worker majority.
 
-- at least three non-overlapping read-only research streams exist;
-- each stream can start without another stream's result;
-- question, scope, as-of date, preferred source types, and output schema are fixed;
-- time or coverage benefit exceeds coordination and synthesis cost;
-- the research lead can recheck material claims and citations.
-
-Do not delegate:
-
-- one- or two-lookup questions;
-- subquestions that depend strongly on a shared definition or evidence base;
-- work requiring external writes, messages, purchases, or change authority;
-- decisions that would be resolved by worker majority.
+- **Subquestion coverage:** At least three non-overlapping streams that can start independently. Fix shared definitions before dispatch; do not delegate subquestions whose prerequisites remain unresolved.
+- **Alternative exploration:** Two fresh researchers by default examine the same question through different hypotheses, methods, or discovery paths. They share goals, constraints, criteria, per-candidate allowance, and an overall round limit. Do not require three disjoint subquestions. Shared verified evidence is allowed; previous worker narratives and preferred answers are not.
 
 ## Research Packet
 
-Provide each researcher only:
+Provide only what the task needs:
 
-- one independent subquestion;
-- research purpose and decision context;
-- included and excluded scope;
-- as-of date, region, and key definitions;
-- preferred source types;
-- a read-only boundary;
-- completion conditions;
-- the output schema below.
+- bounded question and research purpose;
+- included and excluded scope, as-of date, region, definitions, and preferred source types;
+- original sources or a verified evidence ledger where relevant;
+- assigned approach for alternative exploration, without a conclusion to defend;
+- read-only authority, criteria, exploration allowance, completion and stop conditions;
+- the result contract below.
 
-Do not pass another researcher's conclusion, the lead's suspicion, a preferred answer, or other narrative that could bias discovery.
+Start alternative exploration without inherited conversation. Do not pass prior worker outputs, the lead's suspicion, a preferred answer, or private reasoning.
 
 ## Researcher Result
 
-Require:
+Require a provisional answer; material findings; exact source URLs and recoverable locations; publication or as-of and access dates; supporting passages; counterevidence and alternative explanations; scope and method limits; confidence and uncertainty; unanswered items and reasons. Mark inaccessible originals and incomplete checks. Snippets or unsupported claim lists are incomplete results.
 
-1. provisional answer to the subquestion;
-2. material findings;
-3. exact primary-source URLs and recoverable locations;
-4. publication or as-of dates and access dates;
-5. evidence that directly supports each claim;
-6. counterevidence or alternative explanations;
-7. scope and methodological limitations;
-8. confidence and remaining uncertainty;
-9. unanswered items and reasons.
+## Lead Verification and Continuation
 
-A claim list without URLs or a summary of search results is incomplete.
+The lead owns definitions, acceptance criteria, overlap, evidence gaps, and synthesis. Reopen material sources and verify citations before accepting evidence. Never average worker conclusions.
 
-## Role Limits
+For alternative exploration, compare evidence directness, applicability, independence, freshness, uncertainty reduction, and further investigation cost. Choose the next direction, preserving all verified findings and counterevidence from unselected approaches. If no candidate improves the baseline, keep it. If evidence cannot support a choice, defer it and identify the useful next check.
 
-### Research lead and synthesizer
+Continue in a new agent without inherited conversation. Its handoff contains goal, constraints, authority, completion criteria; preserved sources and ledger with verification status; selected direction and verified rationale; conflicts and unknowns; remaining allowance and next action. Keep original source material available; do not substitute old worker conclusions for evidence. The lead still owns the final report.
 
-- Own definitions and success criteria.
-- Manage overlap and evidence gaps across streams.
-- Do not average worker conclusions.
-- Reopen material sources and citations.
-- Own conflict resolution, language strength, and final uncertainty.
-
-### Source-stream researcher
-
-- Focus on one bounded subquestion and source family.
-- Open primary sources instead of relying on snippets.
-- Return findings and counterevidence in the required schema.
-- Do not synthesize other streams or produce the final recommendation.
-
-### Structured extractor
-
-- Accept only tasks with fixed fields and missing-value rules.
-- Flag ambiguous text with its source passage for review.
-- Do not own legal interpretation, causality, conflict resolution, or final confidence.
-- Stop and escalate when sample validation fails.
-
-## Execution Order
-
-1. The research lead fixes the research map and shared definitions.
-2. Assign independent streams to source researchers.
-3. Use structured extraction only for repetitive work inside a stream.
-4. Validate each result's URL, dates, scope, and counterevidence.
-5. Reopen material sources and merge accepted evidence into the ledger.
-6. Run only the follow-up research needed to resolve conflicts or gaps.
-7. Complete synthesis and the citation audit.
-
-## Sequential Fallback
-
-If delegation is unavailable or fails the gate, one model must execute the same stages sequentially. Keep stream notes separate until synthesis to preserve role separation.
+Fork again only with a new research question and remaining allowance. If delegation or fresh execution is unavailable, run the evidence workflow sequentially and disclose the limitation. Do not claim parallel execution or context reset.

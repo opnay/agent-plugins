@@ -1,6 +1,7 @@
 ## 사용자 스펙 의도
 
 - 서브에이전트 관련 심화된 방법을 소유하는 플러그인으로 봅니다.
+- 같은 연구 질문의 다른 가설·방법을 병렬 탐색하고, 판단 모델로 다음 조사 방향을 선택한 뒤 보존 자료와 새 맥락으로 이어갑니다.
 
 ---
 
@@ -48,6 +49,7 @@
 
 - `deep-research`:
   - 조사 범위 설정부터 원문 확보, 증거 대조, 인용·불확실성 감사, 최종 보고서까지의 실행 워크플로를 소유합니다.
+  - 같은 질문의 병렬 가설 탐색·조사 방향 선택·새 맥락 재개를 내부 전략으로 소유하며, 선택하지 않은 방향의 검증된 반대 근거도 보존합니다.
   - spec: `specs/skills/deep-research.md`
 - `orchestrate-workstreams`:
   - 목표 고정부터 위임 판정, 실행, 결과 정규화, 검증·통합, 최종 응답까지의 cohesive lifecycle을 소유합니다.
@@ -56,6 +58,7 @@
 ## Plugin Usage 계약
 
 - 조사 자체가 산출물이고 출처·증거·인용 계약이 필요하면 `deep-research`를 선택합니다.
+- 같은 질문의 조사 방향을 비교할 때도 `deep-research`를 사용합니다. 판단 모델은 선택적 보조 수단이며 별도 스킬이나 외부 서비스 의존을 요구하지 않습니다.
 - software-engineering 또는 cross-domain 요청에서 독립 workstream이 둘 이상 명백하면 `orchestrate-workstreams`의 dispatch gate를 적용합니다.
 - 명시 호출은 각 skill의 gate와 제외 조건을 우회하지 않습니다.
 - 두 skill은 각자의 trigger, routing, 산출물 계약을 소유합니다.

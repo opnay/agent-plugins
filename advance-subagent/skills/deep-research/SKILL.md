@@ -1,135 +1,90 @@
 ---
 name: deep-research
-description: Conduct evidence-traceable, multi-source research for consequential questions. Use for market, literature, technical, policy, competitive, due-diligence, or fact-checking work that requires primary-source retrieval, independent corroboration, counterevidence, freshness checks, explicit uncertainty, and a cited report. Do not use for simple lookups, single-source summaries, unsupported brainstorming, implementation, external writes, or ongoing monitoring.
+description: Conduct evidence-traceable, multi-source research for consequential questions, including parallel exploration of alternative hypotheses and fresh-context continuation when valuable. Use for market, literature, technical, policy, competitive, due-diligence, or fact-checking reports requiring primary sources, corroboration, counterevidence, freshness, and explicit uncertainty. Do not use for simple lookups, single-source summaries, unsupported brainstorming, implementation, external writes, or monitoring.
 ---
 
 # Deep Research
 
-Investigate consequential questions across multiple sources and produce a report that traces each important claim to evidence, counterevidence, and uncertainty. Prioritize reproducibility and calibrated language over confidence.
+Answer consequential research questions with an auditable report connecting claims, sources, counterevidence, and uncertainty. This is a general research workflow, not OpenAI's proprietary Deep Research product mode.
 
-This skill is a general research workflow. Do not claim that it reproduces OpenAI's proprietary `Deep Research` product mode.
+Follow this flow:
 
-Maintain this data flow:
+`question → scope and success criteria → research map → source plan → source inspection → claim-evidence ledger → conflict and freshness checks → synthesis → citation audit → report`
 
-`question and context → scope and success criteria → research map → source plan → discovery → primary-source review → claim-evidence ledger → conflict and freshness checks → synthesis → citation and uncertainty audit → report`
+When competing approaches merit exploration, add:
 
-Use each stage's output as the next stage's input. Do not jump from search results directly to prose.
+`preserved evidence → fresh parallel approaches → source verification → next-direction selection → minimal handoff → fresh continuation`
 
-## 1. Lock the Question
+## 1. Frame the Research
 
-Establish:
+Fix the decision purpose, audience, included and excluded scope, definitions, as-of date and freshness needs, region and population, comparators, evaluation axes, depth, and output format. Define both the knowledge needed to answer and the evidence needed to trust the answer. Ask only about missing information that could materially change the result; otherwise disclose reasonable assumptions.
 
-- the decision or use case the research supports;
-- included and excluded scope and key definitions;
-- the as-of date and required freshness;
-- region, population, comparators, and evaluation axes;
-- audience, depth, and output format.
+Map independently answerable subquestions, conclusion-sensitive assumptions, alternative explanations, expected evidence gaps, and suitable source types. Seek enough direct, independent, current evidence for material claims, not an arbitrary source count.
 
-Ask only when missing information could materially change the conclusion. Otherwise state a reasonable assumption and proceed. Define success as both the knowledge required to answer and the evidence required to trust that answer.
+Single lookups, one-document summaries, unsupported ideation, implementation, external changes, and monitoring are outside this skill. For medical, legal, financial, or safety questions, use it when independent evidence review is needed. In mixed research-and-implementation requests, finish the research deliverable before separately authorized implementation.
 
-Do not use this workflow for a single lookup, a summary of one user-provided document, unsupported ideation, implementation, external changes, or monitoring. For high-stakes medical, legal, financial, or safety questions, apply the workflow when independent evidence review is required.
+## 2. Inspect Sources and Preserve Evidence
 
-If a request mixes research with implementation, finish the research deliverable first. Treat implementation as separate work governed by its own permissions and instructions.
+Read [Source and Evidence Policy](references/source-policy.md) before collection.
 
-## 2. Build the Research Map
+- Use snippets and search results for discovery. Open the exact source before citing it; never imply access to unavailable material.
+- Prefer applicable primary evidence: official documents, original papers, data, standards, filings, or regulations. Distinguish self-report from independent corroboration and disclose reliance on secondary evidence.
+- Record exact URLs, recoverable citation locations, authoring bodies, publication or as-of dates, actual access dates, versions where relevant, and scope. Use current retrieval when freshness matters; disclose tool and access limits.
+- Maintain a claim-evidence ledger containing each falsifiable claim; fact, interpretation, inference, or recommendation type; supporting evidence; counterevidence or alternative explanation; source and dates; region, period, population, sample, and definition; evidence-family independence; corroboration status and impact; confidence with reasons; and remaining uncertainty.
+- Seek counterevidence and independently corroborate important claims. Repeated reports of one release or dataset count as one evidence family. Explain missing corroboration and its effect.
+- Resolve conflicts through definitions, samples, methods, periods, regions, interests, or revisions. Separate observed facts, source interpretations, your inferences, and recommendations. Weight directness, applicability, sound methods, independence, and freshness rather than source or worker majority.
 
-Split the question into non-overlapping subquestions. Record:
+## 3. Choose a Research Execution Shape
 
-- required facts, definitions, comparisons, causal claims, or forecasts;
-- assumptions that could reverse the conclusion;
-- plausible counter-explanations and expected evidence gaps;
-- the best source types for each subquestion.
+Read [Model and Task Routing](references/model-routing.md) before delegation. All researchers are read-only. Fix their questions, scope, dates, expected outputs, and completion conditions; delegate only when research benefit exceeds coordination cost and the lead can recheck material sources.
 
-Do not target an arbitrary source count. Gather enough direct, independent, and current evidence to support the material claims.
+- **Divide subquestions:** Delegate when at least three non-overlapping research streams can start independently.
+- **Explore alternatives:** For the same question, use two fresh researchers by default when distinct hypotheses, methods, or discovery paths are worth comparing. The three-stream rule does not apply to this mode. Give the same goal, constraints, and comparison criteria, with different approaches to investigate rather than conclusions to defend.
 
-Read and apply [Source and Evidence Policy](references/source-policy.md) before collecting evidence.
+Do not delegate simple lookups or short investigations. If delegation is unavailable or not worthwhile, perform the same evidence workflow sequentially and disclose any material limitation. Sequential work or a summary inside the current session is not a fresh-context parallel run.
 
-## 3. Retrieve and Inspect Primary Sources
+## 4. Explore, Select, and Continue
 
-- Use search results and snippets only to discover candidates.
-- Open the exact webpage, document, paper, dataset, or PDF before citing it.
-- Verify material claims in primary sources such as official documents, original papers, original data, standards, filings, or regulations when possible.
-- Distinguish a primary source's self-report from independent corroboration.
-- Record publication or as-of date, access date, authoring body, scope, and a recoverable citation location.
-- Never imply access to a source that could not be opened or inspected.
+Use Fork-and-Flush as an internal research strategy when alternative approaches can materially reduce uncertainty.
 
-Use current browsing or retrieval tools when freshness matters. If tools or sources are unavailable, disclose the access limit and its effect instead of filling the gap from memory.
+1. Preserve existing sources, artifacts, and the ledger. Fix the goal, user constraints, authority, completion criteria, common comparison axes, per-candidate exploration allowance, and overall round limit.
+2. Start fresh researchers without inherited conversation. Supply the question, necessary original sources and verified evidence, constraints, criteria, and output contract. Do not supply prior worker outputs, the lead's preferred answer, speculative conclusions as facts, or private reasoning. Each approach must be able to challenge its starting hypothesis.
+3. Reopen material sources and verify claims. Compare approaches by evidence directness, applicability, independence, freshness, unresolved uncertainty, and cost of further investigation. Choose where to spend the next research effort, not which account must be true.
+4. Retain verified evidence and counterevidence from every approach in the shared ledger, including unselected approaches. Never discard inconvenient findings or decide truth by votes, model confidence, or candidate ranking.
+5. Give a fresh continuation researcher a minimal handoff: goal, constraints, authority, completion criteria; preserved sources and ledger locations with verification status; chosen direction and verified rationale; conflicts and unknowns; remaining allowance and next action. They inspect the preserved material and continue the selected investigation. The lead retains responsibility for source checks, synthesis, and the report.
+6. Preserve the baseline if no approach offers a better direction. If all fail or decisive evidence is missing, defer selection and identify the next useful check or unresolved limit. Fork again only with a new research question and remaining allowance.
 
-## 4. Maintain a Claim-Evidence Ledger
+Use new agents without conversation inheritance for exploration and continuation. Reusing or interrupting an old worker is not a context reset. Do not delete the current conversation or workspace. If fresh execution is unavailable, continue sequentially within scope and report that fresh-context continuation was not performed.
 
-Track at least:
+## 5. Ask Action-Changing Decision Questions
 
-| Field | Required content |
-| --- | --- |
-| Claim | One falsifiable statement |
-| Type | Fact / interpretation / inference / recommendation |
-| Supporting evidence | What the source directly supports |
-| Counterevidence | Contradiction, exception, or alternative explanation |
-| Source | Exact URL and recoverable location |
-| Dates | Publication or as-of date and access date |
-| Scope | Region, period, population, sample, and definition |
-| Independence | Whether it is materially independent of other evidence |
-| Corroboration | Complete / unavailable / insufficient, plus impact |
-| Confidence | High / medium / low, with reason |
-| Remaining uncertainty | What remains unverified |
+Use a decision model such as Jev when a bounded, uncertain judgment changes the next research action. Check deterministic facts such as source access, dates, artifact existence, and remaining allowance directly. Ask only the questions needed now:
 
-Repeated reporting of the same press release or dataset is one evidence family, not independent corroboration.
+| Decision | Question | Example choices |
+| --- | --- | --- |
+| Start exploration | Is continuing the current investigation or exploring alternative approaches more valuable for reducing uncertainty? | `continue_current`, `fork`, `inspect_more` |
+| Allocate effort | Which approach warrants the next research effort given verified evidence, gaps, and cost? | Actual candidate IDs, `keep_baseline`, `insufficient_evidence` |
+| Resolve uncertainty | What affordable check could change the choice? | Concrete research actions, `explore_alternative`, `ask_user` |
+| Next round | Should we deepen the selected direction, fork again, or end research given current evidence and remaining allowance? | `continue_selected`, `fork_again`, `end_research` |
 
-## 5. Challenge the Evidence
+Supply the goal, constraints, authority, completion criteria, verified evidence, conflicts, gaps, and remaining allowance. Request the action, a short evidence-linked rationale, and unknowns that could change it. Do not send the full conversation or a preferred answer.
 
-For every material conclusion:
+Treat the response as advice. It cannot invent facts, determine truth, supply user preferences, grant permission, or waive stopping criteria. The lead checks evidence, authority, and completion before acting. Ask dependent questions sequentially; batch only independent questions sharing the same state.
 
-- seek counterevidence or a simpler explanation;
-- corroborate important claims with an independent source;
-- record why corroboration is unavailable and how that affects the conclusion;
-- explain conflicting numbers through definitions, samples, periods, regions, methods, incentives, or revision dates;
-- separate source facts, source interpretations, your inferences, and recommendations.
+No service or CLI is required. Send only authorized, necessary information to an external model. If unavailable or unsuccessful, apply the same criteria locally and disclose the fallback rather than installing tools or changing settings.
 
-Do not decide by source majority. Give more weight to evidence that is more direct, applicable, methodologically sound, independent, and current, and explain the weighting.
+## 6. Synthesize, Audit, and Report
 
-## 6. Delegate Only When Valuable
+Read [Report Contracts](references/report-contracts.md) before drafting. Answer directly in the opening paragraph, scale length to the requested depth, and place exact citations close to material claims. Make counterevidence and conflicts visible alongside conclusions.
 
-Delegate only when there are at least three non-overlapping, independently startable, read-only research streams with fixed questions, scopes, and output schemas. Do not delegate simple lookups or short investigations.
+The report must expose each material claim's type, evidence, counterevidence or limitation, scope, corroboration status and impact, confidence with reason, exact source URL, publication or as-of date, access date, recoverable location, and remaining uncertainty. A compact table or equivalent judgment sections may expose these fields; the full working ledger can remain internal unless requested.
 
-Before delegating, read [Model and Task Routing](references/model-routing.md). Route by responsibility and verification needs, not model name alone. The lead researcher must reopen the important sources and verify material claims and citations.
+Before reporting completion, confirm that:
 
-If delegation tools are unavailable or the streams are not independent, execute the same contract sequentially.
+- every material subquestion is answered or has an explicit reason it cannot be answered;
+- every important claim has inspected primary evidence or a disclosed limitation;
+- counterevidence, conflicts, freshness, and independent corroboration have been checked;
+- further sources add repetition rather than decision-changing information;
+- citations support the claims, language strength matches evidence strength, and the report serves the user's decision.
 
-## 7. Synthesize and Report
-
-Read [Report Contracts](references/report-contracts.md) before drafting.
-
-- Answer the question in the opening paragraph.
-- Place evidence and exact citations close to each material claim.
-- Present counterevidence and conflicts with the conclusion, not as an afterthought.
-- Match claim strength to evidence strength.
-- State what remains unknown and what evidence could change the conclusion.
-- Scale report length to the requested depth.
-
-The full working ledger may remain internal. The report must still expose, for every material claim, its type, evidence, counterevidence or limitation, scope, corroboration status, confidence, exact URL, publication or as-of date, access date, citation location, and remaining uncertainty. Provide the full ledger as an appendix when requested.
-
-## Stop Conditions
-
-Stop when all of the following hold:
-
-- each material subquestion is answered or has an explicit reason it cannot be answered;
-- every important claim has primary evidence or a disclosed limitation;
-- new sources add repetition rather than decision-changing information;
-- counterevidence, conflicts, and freshness risks have been checked;
-- citations support the claims and language strength matches the evidence.
-
-If time, access, or tooling forces an earlier stop, report the inspected scope, unresolved areas, and the highest-value next research step.
-
-## Final Audit
-
-Before responding, confirm:
-
-- every cited source was opened and inspected;
-- each material claim has a source, date, and scope;
-- no search snippet, memory, or secondary repetition is presented as direct evidence;
-- counterevidence and conflicting values are visible;
-- facts, interpretations, inferences, and recommendations remain distinguishable;
-- uncertainty and conclusion-changing conditions are explicit;
-- the report directly serves the question and decision purpose.
-
-Revise any claim or conclusion that fails this audit.
+An `end_research` recommendation does not establish completion. If allowance, time, source access, or tools force an earlier stop, report partial scope, unresolved questions, their impact, and the highest-value next research step. Distinguish source facts, interpretations, inferences, and recommendations, and state what could change the conclusion.
