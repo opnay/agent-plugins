@@ -24,8 +24,10 @@ Never infer an agent ID or begin integration with incomplete dispatch state.
 
 ```yaml
 role: EXPLORE_READ | IMPLEMENT_OWNED | REVIEW_LENS | PROCESS_STRUCTURED | FRONTIER_JUDGMENT
-model: gpt-5.6-terra | gpt-5.6-sol
-reasoning_effort: xhigh
+model_profile: fast | default | high
+profile_reason: <task need or applicable instruction>
+model: <configured profile model; omit for default>
+reasoning_effort: <configured profile effort; omit for default>
 objective: <exact question or action>
 scope:
   included: <exact surfaces>
@@ -46,6 +48,8 @@ validation: <deterministic or review checks>
 completion_conditions: <observable success>
 stop_conditions: <blocked, inconclusive, retry, time, or evidence limit>
 ```
+
+For `default`, omit both model and reasoning effort from actual spawn arguments and record inheritance. For `fast` or `high`, resolve the complete pair from applicable instructions and preserve it exactly. Do not pass placeholder text or the combined shorthand as a model ID. Record any substitution and its permission basis.
 
 ## Result Envelope
 

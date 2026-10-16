@@ -31,7 +31,8 @@
     "defaultPrompt": [
       "근거 추적 조사 보고서와 같은 질문의 병렬 가설 탐색·방향 선택·새 맥락 재개에는 $advance-subagent:deep-research를 사용하세요.",
       "독립적인 engineering·조사·실행 흐름의 위임에는 $advance-subagent:orchestrate-workstreams를 사용하세요.",
-      "각 skill의 trigger·routing·검증 계약을 따르세요. 단순 조회에는 deep-research를, 독립 workstream이 없는 요청에는 orchestrate-workstreams를 자동 적용하지 마세요."
+      "각 skill의 trigger·routing·검증 계약을 따르세요. 단순 조회에는 deep-research를, 독립 workstream이 없는 요청에는 orchestrate-workstreams를 자동 적용하지 마세요.",
+      "모델은 현재 지침의 fast·default(상속)·high 프로필에서 선택하고, 명시 프로필의 모델명과 effort 쌍을 섞거나 다른 조합을 만들지 마세요."
     ]
   }
 }

@@ -8,6 +8,9 @@
 - subagent 결과를 evidence로 취급하고, lifecycle당 narrow follow-up을 한 번만 허용합니다.
 - software-engineering-only와 cross-domain workstream을 같은 gate와 lifecycle로 처리합니다.
 
+- 빠른모델, 기본모델(상속), 고성능모델로 정리하자. 이 모델들은 상황이나, 지침에 따라서 다르게 적용되도록 하는게 맞을거 같아.
+- 그리고 이것들 모델이름+effortlevel로 잡아서 그 외의 조합은 사실상 사용하지 않도록 하는게 맞는거 같아. 지침에 업데이트해뒀으니 그거 참고해줘.
+
 ---
 
 # orchestrate-workstreams 스킬 스펙
@@ -76,7 +79,7 @@
 - unfinished result를 prerequisite로 요구하는 node는 동시에 시작하지 않습니다.
 - shared contract와 integration point는 메인 에이전트가 먼저 고정합니다.
 - 독립 lane 수보다 agent 수를 늘리지 않습니다.
-- Terra xhigh의 비용을 고려해 적은 agent, 큰 coherent batch, strict schema, deterministic check, bounded retry, explicit stop condition을 사용합니다.
+- 선택한 프로필의 비용을 고려해 적은 agent, 큰 coherent batch, strict schema, deterministic check, bounded retry, explicit stop condition을 사용합니다.
 
 ## Shared-State Safety
 
@@ -91,7 +94,7 @@
 
 모든 task packet은 다음을 포함합니다.
 
-- role과 model/effort
+- role과 선택 프로필, 명시 model/effort 쌍 또는 상속 여부, 선택 이유
 - objective
 - included·excluded scope
 - access mode
@@ -106,24 +109,25 @@ packet이 완전하고 session capacity가 확인된 뒤 최소 agent만 spawn�
 
 ## Model·Role Routing
 
-기본 worker는 `gpt-5.6-terra`, `xhigh`입니다.
+모델 선택은 `fast`(빠른 모델), `default`(기본 모델·상속), `high`(고성능 모델) 세 프로필로 제한합니다. 프로필은 역할·권한과 분리된 실행 설정입니다.
+
+- `fast`와 `high`의 구체 모델·effort 쌍은 현재 적용되는 사용자·프로젝트 지침이 소유합니다. plugin은 모델명·세대·고정 effort나 별도 기본 조합을 소유하지 않습니다.
+- `default`는 spawn의 model·effort를 모두 생략하여 실행 환경에서 상속합니다. 한쪽만 지정하거나 이름을 추정해 상속을 대체하지 않습니다.
+- 지침이 역할·작업별 프로필 또는 기본값을 지정하면 우선 따릅니다. 그 외에는 요구 능력·불확실성·검증 가능성·비용을 보고 고릅니다. 좁고 반복적이며 직접 검증 가능한 작업에는 `fast`, 복잡한 추론·상충 판단·높은 오류 비용에는 `high`, 별도 조정 근거가 없으면 `default`가 적합합니다. 긴 작업이나 많은 파일만으로 `high`를 선택하지 않습니다.
+- 모델과 effort를 독립적으로 최적화하거나 프로필 간 설정을 섞지 않습니다. 판단 모델에 묻더라도 선택지는 현재 정의돼 있고 사용 가능한 프로필뿐입니다. 새 조합은 적용 지침의 명시적 재정의가 필요합니다.
+- 지침이 모델명과 effort를 합친 축약 표기를 쓰면 도구가 지원하는 모델 ID와 effort에 맞춰 쌍을 해석합니다. 축약 문자열 전체를 model ID로 보내거나 모호한 값을 임의 분해하지 않습니다.
+- spawn 전에 선택 프로필의 쌍이 현재 도구에서 지원되는지 확인합니다. 정의·가용성·지원 effort가 불충분하면 조합을 바꾸지 않고, 역할을 충족하며 지침이 허용하는 다른 프로필 또는 `default`·직접 수행으로 전환합니다. 안전한 대안이 없으면 필요한 정의·조건을 보고합니다. 사용자 지정 프로필이 필수이면 임의 대체하지 않습니다.
+- packet과 실행 기록에는 선택 프로필·선택 이유, 명시 쌍 또는 상속 여부를 남깁니다. 상속된 실제 값이 도구에서 공개되지 않으면 추정하지 않습니다. 대체·미실행·검증 한계를 구분합니다.
+
+역할은 다음 책임을 구분하며 특정 프로필과 일대일로 고정하지 않습니다.
 
 - `EXPLORE_READ`: research, discovery, logs, source·dependency mapping
 - `IMPLEMENT_OWNED`: disjoint owned surface 안의 implementation·action
 - `REVIEW_LENS`: correctness, security, performance, quality, counterevidence review
-- `PROCESS_STRUCTURED`: schema-bound extraction, transformation, classification, test generation, repetitive mechanical work
+- `PROCESS_STRUCTURED`: schema-bound extraction, transformation, classification, repetitive mechanical work
+- `FRONTIER_JUDGMENT`: 모호한 목표·공유 계약·architecture, 강한 근거 상충, 결정적 검증이 없는 높은 오류 비용, 독립 최종 감사처럼 별도 판단 책임이 필요한 작업
 
-`gpt-5.6-sol`, `xhigh`의 `FRONTIER_JUDGMENT`는 다음 중 하나 이상일 때만 허용합니다.
-
-- ambiguous goal framing이 필요합니다.
-- shared contract 또는 architecture를 설계해야 합니다.
-- 강한 evidence가 충돌합니다.
-- error cost가 높고 deterministic verification이 없습니다.
-- 독립 final frontier-level audit가 정당화됩니다.
-
-작업이 길다는 이유로 Sol을 사용하지 않습니다. Luna route는 두지 않습니다. 명시 선택 모델을 사용할 수 없으면 가능한 모델로 role contract를 보존하거나 `DIRECT`로 수행하고 제한을 공개합니다.
-
-Sol worker도 dispatch gate의 예외가 아닙니다. 이미 gate를 통과한 lifecycle에서 strong-evidence conflict 같은 조건부 dependent audit node로 graph에 포함하고, prerequisite가 완료된 뒤에만 spawn할 수 있습니다. 독립 workstream이 하나뿐인 새 lifecycle에서 Sol audit 한 명만 spawn하지 않고 `DIRECT`로 판단합니다.
+`high`나 `FRONTIER_JUDGMENT`도 dispatch gate의 예외가 아닙니다. 별도 판단 감사는 이미 gate를 통과한 lifecycle의 dependent node로 두고 prerequisite가 완료된 뒤 시작합니다. 독립 workstream이 하나뿐인 새 lifecycle에서 감사 한 명만 spawn하지 않고 `DIRECT`로 판단합니다.
 
 ## Terminal Result·Integration
 
@@ -161,7 +165,7 @@ Sol worker도 dispatch gate의 예외가 아닙니다. 이미 gate를 통과한 
 - graph에서 독립 node와 dependency가 구분되는가?
 - shared contract, ownership, mutable state가 통제되는가?
 - 모든 packet이 role·model·scope·evidence·stop contract를 갖는가?
-- Sol route가 허용 조건을 충족하고 Luna route가 없는가?
+- 프로필 선택이 적용 지침과 역할 요구에 맞고, 정의된 쌍 또는 상속만 사용하는가?
 - 모든 terminal result와 ownership을 메인 에이전트가 확인했는가?
 - conflict와 whole-result verification이 해결되거나 risk로 공개됐는가?
 - pure evidence-report research의 자동 trigger 경계를 침범하지 않는가?

@@ -14,62 +14,62 @@ description: >
 
 # Orchestrate Workstreams
 
-Coordinate delegation, verification, and integration across independent software-engineering, investigation, or action workstreams. The main agent owns shared contracts, dispatch state, integration, conflict resolution, whole-result verification, and the final response.
+Coordinate independent software-engineering, investigation, or action workstreams. The main agent owns the goal, shared contracts, dispatch state, integration, conflict resolution, whole-result verification, and final response.
 
 The explicit invocation is `$advance-subagent:orchestrate-workstreams`.
 
-Maintain this data flow:
+Follow this flow:
 
-`goal and success criteria → DIRECT or DISPATCH → workstream/dependency graph → shared-state safety → bounded task packets → model/role routing → spawn → terminal result normalization → evidence and ownership checks → conflict resolution → whole-result verification → final response`
+`goal and success criteria → DIRECT or DISPATCH → dependency graph → shared-state safety → task packets → profile and role selection → spawn → terminal results → evidence and ownership checks → integration → whole-result verification → final response`
 
-## 1. Lock the Goal and Route
+## 1. Fix the Goal and Route
 
-Fix the verifiable goal, included and excluded scope, success criteria, permissions, and source of truth. Ask only for information that could materially change the route; state other assumptions.
+Establish the verifiable goal, included and excluded scope, success criteria, permissions, and source of truth. Ask only about information that can materially change the route; disclose other assumptions.
 
-Choose `DISPATCH` only when every condition holds:
+Choose `DISPATCH` only when all conditions hold:
 
 - at least two meaningful workstreams can start independently;
-- each workstream has distinct scope, deliverable, evidence, and completion criteria;
+- each has distinct scope, deliverable, evidence, and completion criteria;
 - parallel benefit exceeds coordination and recheck cost;
-- file, data, runtime, and external-state conflicts are controlled;
+- conflicts over files, data, runtime, and external state are controlled;
 - the main agent can independently verify and integrate every result.
 
-If any condition fails, choose `DIRECT`. An explicit subagent request enters the gate but does not bypass it. Software-engineering work may qualify for implicit dispatch when independent lanes are evident; implementation, review, testing, debugging, complexity, or file count alone are insufficient.
+Otherwise use `DIRECT`. Explicit requests enter this gate without bypassing it. Complexity, file count, implementation, review, testing, debugging, and duration alone do not qualify. Do not automatically own pure evidence-report research. Read [Boundary Examples](references/boundary-examples.md) when selection is ambiguous.
 
-Do not automatically own pure evidence-report research. Read [Boundary Examples](references/boundary-examples.md) when selection is ambiguous.
+For `DIRECT`, use the applicable task workflow without imposing orchestration reporting.
 
-## 2. Design the Graph and Shared State
+## 2. Define Dependencies and Safe Ownership
 
-Assign every node an objective, prerequisites, output, consumer, and evidence path. Do not start a node whose prerequisite is unfinished. The main agent must fix shared contracts and integration points first.
+Give every node an objective, prerequisites, output, consumer, and evidence path. Fix shared contracts and integration points before dispatch. Wait for prerequisites before starting dependent work.
 
-Default to read-only parallel work. Permit parallel writes only when the shared contract is fixed and writable ownership is fully disjoint. Never let concurrent workers mutate the same schema, config, lockfile, generated output, mutable fixture, port, database, build output, temporary directory, emulator, or external account. Downgrade to read-only or `DIRECT` when separation is unclear.
+Default to read-only parallel work. Allow parallel writes only with a fixed shared contract and completely disjoint ownership. Assign one writer per artifact. Never concurrently mutate the same schema, config, lockfile, generated output, mutable fixture, port, database, build output, temporary directory, emulator, or external account. Use read-only work or `DIRECT` when separation is unclear.
 
-Read [Delegation Safety](references/delegation-safety.md) when the gate, graph, worker count, or shared-state decision is nontrivial.
+Read [Delegation Safety](references/delegation-safety.md) when the gate, graph, worker count, or ownership requires more analysis.
 
-## 3. Define Packets, Route, and Spawn
+## 3. Select Profiles and Dispatch Packets
 
-Before spawning, read [Task and Result Contracts](references/task-result-contracts.md) and [Model and Role Routing](references/model-routing.md).
+Read [Task and Result Contracts](references/task-result-contracts.md) and [Model Profiles and Role Routing](references/model-routing.md) before spawning.
 
-- Use the minimum number of workers and group Terra xhigh work into large coherent batches.
-- Put role, model and effort, objective, included and excluded scope, access mode, ownership, source of truth, no sub-subagents, no scope expansion, deliverable, result schema, evidence, validation, completion conditions, and stop conditions in every packet.
-- Record read-only ownership as `none`; assign one writer per file or artifact.
-- Record the returned agent ID and exact packet in dispatch state. Never infer successful spawn without tool evidence.
-- If the selected model is unavailable, preserve the role contract with an available model or use `DIRECT`, then disclose the limitation.
+Choose only `fast`, `default`, or `high`. Applicable instructions define the exact model-and-effort pairs for `fast` and `high`. For `default`, omit both spawn settings to inherit. Follow explicit task and repository profile choices first; otherwise use the role's demands, uncertainty, verification, and cost. Profiles do not change roles, permissions, or the dispatch gate.
 
-## 4. Verify Terminal Results
+Treat each explicit pair as indivisible. Do not mix profiles, tune effort separately, or introduce another combination. Resolve combined shorthand against supported model IDs and efforts; do not pass the shorthand as a model ID. Check the chosen pair against the current tool. If undefined or unsupported, use another permitted profile, inheritance, or `DIRECT` only when the role can still be met. Do not substitute a mandatory profile without authority. Report when no valid route exists.
 
-Wait until every required worker reaches a terminal state. Normalize each result as `completed`, `blocked`, or `inconclusive`. Treat results as evidence, not final truth.
+- Use the minimum workers and coherent batches; do not add workers for mechanical volume.
+- Include role, selected profile and reason, explicit model/effort pair or inheritance, objective, included and excluded scope, access, ownership, source of truth, no nested delegation, no scope expansion, deliverable, result schema, evidence, validation, completion, and stop conditions in each packet.
+- Record read-only ownership as `none`. Confirm capacity before spawn.
+- Record the returned agent ID and exact packet in dispatch state; do not infer spawn success.
+- Record undisclosed inherited values as inherited, not guessed IDs. Disclose substitutions and omitted work.
 
-- Compare the original packet with claims, evidence, inspected and changed surfaces, validation, risks, and recommended action.
-- Reject unsupported claims and ownership violations.
-- Do not convert a read finding into write authority. Apply the gate again for new write scope.
-- Allow one narrow follow-up to an existing worker only when critical assigned scope is missing and `follow_up_used` is `false`; set it to `true` immediately.
-- Verify unresolved scope directly or disclose it as residual risk.
+## 4. Verify Required Results
+
+Wait for every required worker to reach a terminal state: `completed`, `blocked`, or `inconclusive`. Treat results as evidence rather than final truth.
+
+Compare the assigned packet with claims, inspected and changed surfaces, ownership, evidence, checks, risks, and recommended integration. Reject unsupported claims and ownership violations. Read findings do not grant write authority; apply the gate again to new write scope.
+
+Allow one narrow follow-up across the lifecycle only when critical assigned scope is missing and `follow_up_used` is false. Set it true immediately. Verify remaining scope directly or disclose it as residual risk.
 
 ## 5. Integrate and Finish
 
-Merge duplicate claims. Resolve conflicts using source material, artifacts, code, tests, logs, or direct execution. When no deterministic check exists and `FRONTIER_JUDGMENT` qualifies, consider a Sol worker only as a dependent audit node in a lifecycle that already passed the gate. Do not create a new dispatch for one Sol auditor.
+Merge duplicate claims. Resolve conflicts using original sources, artifacts, code, tests, logs, or direct execution. When deterministic verification is insufficient and `FRONTIER_JUDGMENT` is justified, a separate judgment audit may be a dependent node in a lifecycle that already passed the gate. Select its profile under the same policy. Do not create a new dispatch for one auditor.
 
-Integrate accepted results and run the shared success criteria and whole-result verification. Disclose skipped or failed checks and limitations. Do not report success without evidence of whole-result completion.
-
-Report the outcome, changed or inspected surfaces, verification, unresolved scope, and residual risk. Do not impose orchestration reporting on `DIRECT` work.
+Integrate accepted results and check common success criteria and the whole result. Report outcome, changed or inspected surfaces, checks, unresolved scope, and residual risk. Disclose skipped or failed checks and do not claim completion without whole-result evidence.

@@ -48,5 +48,5 @@ If separation is impossible, downgrade to read-only investigation or use `DIRECT
 
 - Do not exceed the number of independent lanes or available session capacity.
 - Start with two workers; add another only for a lane with a distinct contract.
-- Handle mechanical Terra xhigh volume through large coherent batches, strict schemas, and deterministic checks instead of more workers.
+- Handle mechanical volume through large coherent batches, strict schemas, and deterministic checks instead of more workers.
 - Retry only within the packet's bounded stop condition.

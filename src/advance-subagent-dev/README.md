@@ -50,6 +50,8 @@ $advance-subagent:orchestrate-workstreams 시장 조사를 수행하고 독립�
 - `deep-research`는 조사 범위, 출처 정책, 증거 원장, 반증, 보고서 계약을 독립적으로 소유합니다.
 - `orchestrate-workstreams`는 `DIRECT`·`DISPATCH`, graph, task/result contract, shared-state, terminal result, whole-result verification을 독립적으로 소유합니다.
 - 각 skill의 역할·모델 routing은 해당 skill 계약을 따릅니다. 한 skill의 route를 다른 skill에 자동 적용하지 않습니다.
+- 모델은 `fast`(빠른 모델), `default`(기본 모델·상속), `high`(고성능 모델) 세 프로필 중에서 선택합니다. `fast`·`high`의 모델명과 effort 쌍은 현재 적용 지침에서 읽고 그대로 사용합니다. `default`는 두 설정을 모두 생략합니다.
+- 역할·작업 조건과 명시 지침에 따라 프로필을 선택합니다. 프로필 간 설정을 섞거나 별도 조합을 만들지 않으며, 정의·도구 지원이 없으면 허용된 대안 또는 직접 수행을 판단하고 한계를 알립니다.
 - 두 skill 모두 별도 MCP, app, hook, executable runtime dependency를 요구하지 않습니다.
 
 ## 공개 호출
