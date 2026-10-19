@@ -16,6 +16,7 @@ import (
 )
 
 const endpoint = "https://api.typesafe.ai/v1/systemone"
+const maxRequestBodyBytes = 32 * 1024 * 1024
 
 type Adapter struct {
 	apiKey    string
@@ -73,6 +74,9 @@ func (a *Adapter) requestEvaluation(ctx context.Context, payload evaluationReque
 	if err != nil {
 		return evaluationEnvelope{}, errors.New("could not encode API request")
 	}
+	if len(body) > maxRequestBodyBytes {
+		return evaluationEnvelope{}, errors.New("API request body exceeds 32 MiB; reduce state or questions")
+	}
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, endpoint, bytes.NewReader(body))
 	if err != nil {
 		return evaluationEnvelope{}, errors.New("could not create API request")
@@ -96,7 +100,7 @@ func (a *Adapter) requestEvaluation(ctx context.Context, payload evaluationReque
 	}
 	defer response.Body.Close()
 	if response.StatusCode != http.StatusOK {
-		return evaluationEnvelope{}, fmt.Errorf("API returned HTTP %d (%s)", response.StatusCode, http.StatusText(response.StatusCode))
+		return evaluationEnvelope{}, evaluationHTTPError(response, a.apiKey)
 	}
 	data, err := io.ReadAll(response.Body)
 	if err != nil {

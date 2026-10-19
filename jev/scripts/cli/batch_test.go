@@ -156,6 +156,16 @@ func TestBatchResponseFailureIsAtomic(t *testing.T) {
 			t.Fatalf("code=%d stdout=%q stderr=%q", code, out, errOut)
 		}
 	}
+	a, out, errOut := harness(t)
+	calls := 0
+	a.transport = roundTripFunc(func(*http.Request) (*http.Response, error) {
+		calls++
+		return response(422, `{"detail":[{"loc":["body","questions","test-token","criteria"],"type":"missing","input":"test-token"}]}`), nil
+	})
+	if code := a.Run(context.Background(), batchArgs(statePath, inputPath)); code != 1 || out.Len() != 0 || calls != 1 || !strings.Contains(errOut.String(), "body.questions.<question>.criteria: required field missing") || strings.Contains(errOut.String(), "test-token") {
+		t.Fatalf("batch error: code=%d calls=%d stdout=%q stderr=%q", code, calls, out, errOut)
+	}
+
 }
 
 func TestBatchIgnoresSingleEvaluationSettings(t *testing.T) {

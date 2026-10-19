@@ -62,18 +62,57 @@ func TestAPIRequestContract(t *testing.T) {
 }
 
 func TestAPIErrorsAreSafeAndNotRetried(t *testing.T) {
-	for _, status := range []int{301, 401, 422, 429, 500, 529} {
-		t.Run(fmt.Sprint(status), func(t *testing.T) {
+	generic := func(status int) string {
+		return fmt.Sprintf("API returned HTTP %d (%s)", status, http.StatusText(status))
+	}
+	for _, tc := range []struct {
+		name       string
+		status     int
+		body, want string
+	}{
+		{"redirect", 301, `{"detail":"test-token"}`, generic(301)},
+		{"unauthorized", 401, `{"detail":"test-token"}`, generic(401)},
+		{"validation", 422, `{"detail":[{"loc":["body","questions","test-token","criteria",1,"test-token"],"type":"string_type","msg":"test-token","input":"test-token","ctx":{"secret":"test-token"}}]}`, "body.questions.<question>.criteria[1].<field>: expected a string"},
+
+		{"discriminated union location", 422, `{"detail":[{"loc":["body","questions","test-token","score","criteria",0],"type":"string_type"}]}`, "body.questions.<question>.score.criteria[0]: expected a string"},
+		{"malformed location", 422, `{"detail":[{"loc":["body","state",null],"type":"missing"}]}`, generic(422)},
+		{"bounded errors", 422, `{"detail":[` + strings.Repeat(`{"loc":["body","state"],"type":"missing"},`, 5) + `{"loc":["body","model"],"type":"missing"}]}`, "body.state: required field missing"},
+		{"missing", 422, `{"detail":[{"loc":["body","state"],"type":"missing"}]}`, "body.state: required field missing"},
+		{"unknown validation type", 422, `{"detail":[{"loc":["body","state"],"type":"test-token","msg":"test-token"}]}`, generic(422)},
+		{"unknown location", 422, `{"detail":[{"loc":["test-token"],"type":"missing"}]}`, generic(422)},
+		{"context root", 400, `{"code":"max_tokens_exceeded","input":"test-token"}`, "context limit exceeded"},
+		{"context detail object", 400, `{"detail":{"type":"max_tokens_exceeded","msg":"test-token"}}`, "context limit exceeded"},
+		{"context error object", 400, `{"error":{"code":"max_tokens_exceeded"}}`, "context limit exceeded"},
+		{"context detail code", 400, `{"detail":"max_tokens_exceeded"}`, "context limit exceeded"},
+		{"context substring is not code", 400, `{"detail":"test-token max_tokens_exceeded"}`, generic(400)},
+		{"unrelated metadata is not code", 400, `{"metadata":{"code":"max_tokens_exceeded"}}`, generic(400)},
+		{"too large", 413, `{"detail":"test-token"}`, "request body exceeds 32 MiB"},
+		{"rate limited", 429, `{"detail":"test-token"}`, "rate limit exceeded; try again later"},
+		{"overloaded", 529, `{"detail":"test-token"}`, "TypeSafe temporarily overloaded; try again later"},
+		{"unknown status", 500, `{"detail":"test-token"}`, generic(500)},
+		{"malformed", 422, `{"detail":"test-token`, generic(422)},
+		{"HTML", 429, "<html>test-token</html>", generic(429)},
+		{"trailing JSON", 400, `{"code":"max_tokens_exceeded"} {}`, generic(400)},
+		{"nonobject JSON", 422, `["test-token"]`, generic(422)},
+		{"oversized body", 422, `{"detail":[{"loc":["body","state"],"type":"missing","input":"` + strings.Repeat("x", 65536) + `test-token"}]}`, generic(422)},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
 			a, out, errOut := harness(t)
 			calls := 0
 			a.transport = roundTripFunc(func(*http.Request) (*http.Response, error) {
 				calls++
-				r := response(status, "sensitive echoed body: test-token")
+				r := response(tc.status, tc.body)
 				r.Header.Set("Location", "https://elsewhere.invalid")
 				return r, nil
 			})
-			if code := a.Run(context.Background(), evaluationArgs("--json")); code != 1 || out.Len() != 0 || calls != 1 || strings.Contains(errOut.String(), "test-token") {
+			if code := a.Run(context.Background(), evaluationArgs("--json")); code != 1 || out.Len() != 0 || calls != 1 || strings.Contains(errOut.String(), "test-token") || !strings.Contains(errOut.String(), tc.want) {
 				t.Fatalf("code=%d calls=%d stdout=%q stderr=%q", code, calls, out, errOut)
+			}
+			if tc.name == "bounded errors" && (strings.Count(errOut.String(), "required field missing") != 5 || strings.Contains(errOut.String(), "body.model")) {
+				t.Fatalf("unbounded validation details: %s", errOut)
+			}
+			if tc.want == generic(tc.status) && strings.TrimSpace(errOut.String()) != "jev: "+tc.want {
+				t.Fatalf("unsafe or unexpected fallback: %q", errOut)
 			}
 		})
 	}

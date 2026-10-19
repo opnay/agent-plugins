@@ -66,6 +66,11 @@ jev batch --state-file <path> --input <path> [--model <id>] [--timeout <duration
 - Batch의 모든 row는 하나의 `questions` map에 들어가며 API 요청은 한 번이다.
 - 임의 endpoint 옵션, 자동 재시도, API 오류 본문 출력은 제공하지 않는다. HTTP redirect는 따라가지 않는다.
 - timeout·취소·HTTP 오류·잘못된 응답은 실행 실패다.
+- Jev 어댑터는 직렬화한 UTF-8 JSON 본문 전체를 기준으로 32 MiB 이하만 전송합니다. 정확히 한도인 요청은 허용하며 초과는 HTTP 호출 전에 종료 코드 1로 실패합니다. 단건·batch에 같은 검사를 적용합니다.
+- Jev 평가의 비정상 HTTP 응답은 상태를 유지하며, 최대 64 KiB의 단일 JSON 오류 body만 해석합니다. 초과·잘림·읽기 실패·알 수 없는 형식은 HTTP 상태 안내로 돌아갑니다.
+- 422의 detail 배열에서 알려진 검증 type을 고정 설명으로 바꾸고 schema상 위치만 표시합니다. 질문 id·선택지명·중첩 사용자 key는 placeholder로 바꾸며 msg·input·ctx·서버 원문은 출력하지 않습니다. 최대 5개 오류와 최대 16개 위치 요소만 다룹니다.
+- HTTP 400의 명시적인 max_tokens_exceeded 코드만 context 초과로 안내합니다. 임의 오류 문자열 안의 부분 일치로 추론하지 않습니다. JSON 최상위 또는 detail/error object의 code/type과 정확히 일치하는 detail/error 문자열을 인식합니다.
+- 구조화된 오류 body가 있는 413·429·529는 각각 크기 제한·rate limit·일시 과부하 안내를 제공합니다. 실제 재시도·지연·redirect·요청 변경은 수행하지 않습니다. 알려진 type·schema field와 API 키가 같아도 토큰은 마스킹합니다.
 
 ## 결과와 출력
 

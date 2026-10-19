@@ -15,6 +15,7 @@
 - provider 설정·초기 템플릿: [changes/011-provider-config.md](changes/011-provider-config.md)
 - provider 어댑터: [changes/010-provider-adapter.md](changes/010-provider-adapter.md)
 - 구조화 입력·장문 모드: [changes/009-structured-input.md](changes/009-structured-input.md)
+- 기존 API 제한·오류 처리: [changes/014-api-contract.md](changes/014-api-contract.md)
 - provider별 doctor 진단: [changes/013-provider-doctor.md](changes/013-provider-doctor.md)
 - doctor 인증·출력: [changes/007-doctor-auth.md](changes/007-doctor-auth.md)
 
@@ -56,3 +57,5 @@ CLI 테스트·빌드는 모델 판단 정확성이나 실제 API 인증을 증�
 Provider 경계: `scripts/providers/provider.go`의 `Adapter`가 `decision.Request`를 받아 question id별 정규화 `decision.Result`를 반환합니다. `scripts/providers/jev/`의 client·response·authentication이 TypeSafe 전용 코드입니다. `scripts/cli/provider.go`는 현재 Jev 구현을 선택하는 조립 지점이며 단건·batch·doctor가 이를 공유합니다. 공통 JSON 값 처리는 `decision/content.go`에 둡니다. 새 provider는 자체 wire 요청·응답을 어댑터 안에서 변환해야 합니다.
 
 설정 schema는 defaults와 providers.<name>으로 구분합니다. `config/template.toml`은 go:embed로 포함하며 config init·최초 set의 생성 기준입니다. 기존 flat 설정은 수동 이동을 요구하며 사용자 홈 migration은 구현 검증에서 수행하지 않습니다.
+
+Jev 어댑터의 요청 크기는 직렬화 후 32 MiB로 제한합니다. 실패 HTTP body는 최대 64 KiB로 제한하고, 검증 위치·기계 오류 type은 고정 문구와 placeholder로 변환합니다. `msg`·`input`·`ctx`·알 수 없는 서버 원문은 출력하지 않습니다. Choice·Score 최소 개수는 공식 schema·설명 불일치로 기존 2개를 유지합니다.

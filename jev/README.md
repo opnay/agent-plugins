@@ -219,6 +219,12 @@ Go HTTP·JSON·flags와 MIT 라이선스의 `github.com/pelletier/go-toml/v2`를
 
 루트 `jev --help`는 명령별 한 줄 설명과 공통 판단 옵션의 적용 범위를 표시합니다. 상세 사용법과 옵션은 `jev <command> --help`에서 확인합니다.
 
+## 요청 제한과 오류
+
+단건·batch 모두 직렬화된 JSON 본문은 최대 32 MiB입니다. 초과하면 전송 전에 실패합니다. HTTP 오류는 상태를 유지하며, 인식 가능한 오류 body에서는 검증 위치·종류, context 초과, 크기 제한, rate limit·일시 과부하 안내를 제공합니다. 자동 재시도는 없습니다.
+
+422 위치의 질문 id·선택지명·중첩 사용자 key는 placeholder로 표시합니다. 서버 메시지·입력값·API 키는 출력하지 않습니다. 오류 body가 64 KiB를 넘거나 읽기·형식 검증에 실패하면 HTTP 상태만 안내합니다. API 문서의 최소 개수 설명이 일치하지 않아 Choice·Score는 기존 최소 2개 제한을 유지합니다.
+
 ## CLI 내부 구조
 
 `jev/scripts/decision`은 공통 판단 타입과 JSON 값 처리를, `providers`는 `Adapter`·인증 진단 계약을 소유합니다. `providers/jev`가 TypeSafe HTTP 호출·응답 검증·API 인증 진단을 처리합니다. `cli`는 라우팅·provider 조립·오류 보고·종료 코드를 소유하며 `cli/evaluation`은 단건·batch, `cli/configcmd`는 설정 명령, `cli/maintenance`는 설치·제거·진단을 처리합니다. `config`는 설정·우선순위·파일 저장·내장 `template.toml`, `installation`은 바이너리 설치·제거·식별을 담당합니다. 루트 `main.go`와 `go run . install` 진입점은 유지합니다.
