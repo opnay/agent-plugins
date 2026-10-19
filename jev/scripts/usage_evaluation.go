@@ -1,6 +1,32 @@
 package main
 
+const structuredInputHelp = `Structured input:
+  jev <primitive> --input <path> [options]
+  UTF-8 JSON object with state, optional instructions, and criteria:
+    state:        nonempty text, object, or array
+    instructions: text, object, array, or null (default: null)
+    Choice criteria: object of 2–255 labels mapped to text/object/array/null
+    Score criteria: 2–10 distinct ordered text/object/array levels
+    Noul criteria: optional object with true/false descriptions, or null
+  Noul JSON example: {"state":{"message":"Notice"},"instructions":{"question":"Urgent?"},"criteria":{"true":"Time-sensitive","false":"Routine"}}
+  --input cannot be combined with --if, --conditions, or --level.
+  Unknown keys, invalid UTF-8/JSON, scalar state/instructions, non-finite or
+  out-of-range numbers, and nesting beyond 64 levels are rejected before sending.
+  Score JSON legend preserves the structured levels.
+
+`
+
+const longContextHelp = `Long context:
+  --long-context enables TypeSafe-Danger-Zone-Long-Context: true for this call.
+  Default: off (64k tokens per request, 32k state + one question).
+  Enabled: 262k tokens for each limit; may be slower and less accurate.
+  Not saved in config; never enabled automatically.
+
+`
+
 const evaluationCommonOptions = `Common options:
+  --input <path>      JSON state, instructions, and criteria file
+  --long-context[=false] Enable expanded context for this request
   --model <name>       Model (default: jev-latest)
   --timeout <duration> Request timeout (default: 30s)
   --json[=false]       Output JSON (default: false)
@@ -33,7 +59,7 @@ Output:
 Example:
   jev noul --if "Is this setting mandatory? Context: ..." --threshold 0.8
 
-` + evaluationExitCodes
+` + structuredInputHelp + longContextHelp + evaluationExitCodes
 
 const choiceUsage = `Usage:
   jev choice --if <question and context> --conditions <a,b,...> [options]
@@ -57,7 +83,7 @@ Example:
   jev choice --if "How does the evidence relate to the claim? Context: ..." \
     --conditions supported,conflicting,undetermined
 
-` + evaluationExitCodes
+` + structuredInputHelp + longContextHelp + evaluationExitCodes
 
 const scoreUsage = `Usage:
   jev score --if <question and context> --level <description>... [options]
@@ -83,7 +109,7 @@ Example:
     --level "Blocked, no workaround" \
     --min-score 1.5
 
-` + evaluationExitCodes
+` + structuredInputHelp + longContextHelp + evaluationExitCodes
 
 const batchUsage = `Usage:
   jev batch --state-file <path> --input <path> [options]
@@ -93,6 +119,8 @@ Evaluates JSONL questions against one shared state in one API request.
 Batch options:
   --state-file <path>  UTF-8 shared state; non-whitespace and sent unchanged
   --input <path>       JSONL questions; blank lines ignored, one row required
+  --state-format <text|json> Shared state format (default: text)
+  --long-context[=false] Enable expanded context for this request
   --model <name>       Model (default: jev-latest)
   --timeout <duration> Request timeout (default: 30s)
   --help               Show this help
@@ -102,13 +130,25 @@ Each nonblank JSONL row is one object with exact lowercase keys:
   Choice: {"id":"...","type":"choice","question":"...","conditions":["a","b"]}
   Score:  {"id":"...","type":"score","question":"...","levels":["low","high"]}
 
-IDs and questions must be nonempty strings; IDs must be unique. Choice
+IDs and legacy questions must be nonempty strings; IDs must be unique. Choice
 requires 2–255 distinct, nonempty condition strings.
 Score requires 2–10 distinct, nonempty level strings in ascending order.
 IDs, conditions, and levels cannot have surrounding whitespace.
 Noul forbids conditions and levels; Choice forbids levels; Score
 forbids conditions. Unknown or differently cased keys are rejected. The
 complete state and input are validated before the single API request.
+
+Structured batch input:
+  Use instructions (text/object/array/null) instead of question, and criteria
+  instead of conditions or levels. question and instructions are mutually exclusive;
+  criteria cannot be mixed with conditions or levels. A legacy question can use criteria.
+  Choice criteria maps 2–255 labels to text/object/array/null descriptions.
+  Score criteria contains 2–10 distinct ordered text/object/array levels.
+  Noul criteria is an optional object of true/false descriptions (or null).
+  JSON values are limited to 64 nested levels and finite, in-range numbers.
+  Example: {"id":"N01","type":"noul","instructions":{"question":"Urgent?"},"criteria":{"true":"Time-sensitive","false":"Routine"}}
+  --state-format json decodes state as a JSON string/object/array, preserving
+  its structure and numbers. text sends the file unchanged; no auto-detection.
 
 Output:
   One result object per input row as JSONL, preserving input order:
@@ -117,7 +157,7 @@ Output:
     Score:  id, type, answer, legend, probabilities, confidence, model
   Batch does not apply threshold, min_score, json, or pick settings.
 
-Exit codes:
+` + longContextHelp + `Exit codes:
   0  Complete batch success
   1  Input, file, configuration, API, response, or output error
 

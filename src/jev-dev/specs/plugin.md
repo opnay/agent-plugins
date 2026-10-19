@@ -24,6 +24,9 @@
 
 - Jev를 사용하는 기본 패턴과 대표 유즈케이스는 `jev` 스킬에 내장하며, 모델 선택 예시가 오케스트레이션 책임을 소유하지 않습니다.
 
+- "그냥 jev cli에 최신 jev api들 반영하고 싶단 소리였어."
+- CLI에서 장문 모드, 구조화 state·instructions·판정 기준을 단건·batch로 사용합니다.
+
 ---
 
 # Jev 플러그인 스펙
@@ -34,7 +37,7 @@ TypeSafe의 hosted Jev 모델을 Go CLI에서 호출하고, 에이전트가 CLI 
 
 ## 플러그인 경계와 비목표
 
-- 포함: Noul·Choice·Score 단건·batch API 호출, 결과 기준 필터, 출력 필드 선택, 로컬 설정 관리, CLI 설치·제거·진단, CLI 안내, Jev 기본 사용 패턴과 작은 선택·불확실한 근거 평가·모델 선택 예시, reusable instruction scenario evaluation.
+- 포함: Noul·Choice·Score 단건·batch API 호출, 구조화 state·instructions·criteria, 명시적 장문 모드, 결과 기준 필터, 출력 필드 선택, 로컬 설정 관리, CLI 설치·제거·진단, CLI 안내, Jev 기본 사용 패턴과 작은 선택·불확실한 근거 평가·모델 선택 예시, reusable instruction scenario evaluation.
 - 제외: 로컬 모델, 문서 자동 순회, 서로 다른 state의 자동 grouping, 모든 질문의 자동 외부 전송, 사용자 취향·권한의 대리 결정, Jev와 무관한 generic test framework, target instruction 직접 수정, 일반 implementation debugging, 다른 플러그인 자동 연동, `jev` 스킬의 업무별 작업 분해·subagent 실행·결과 통합·모델 정책 소유, MCP 서버.
 - Jev CLI로 전달한 질문·선택지는 외부 API로 전송한다. `scenario-testing`은 전송 권한이 없으면 prediction을 건너뛴다. 플러그인 설치는 토큰 설정이나 실행 파일의 PATH 설치를 대신하지 않는다.
 

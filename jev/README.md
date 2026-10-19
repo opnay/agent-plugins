@@ -1,6 +1,6 @@
 # Jev
 
-TypeSafe의 hosted Jev 모델을 Noul·Choice·Score 단건 또는 batch로 호출하는 Go CLI와 작업 판단·reusable instruction 평가 스킬입니다.
+TypeSafe의 hosted Jev 모델을 Noul·Choice·Score 단건 또는 batch로 호출하고 구조화 입력·장문 모드를 지원하는 Go CLI와 작업 판단·reusable instruction 평가 스킬입니다.
 
 - `$jev:jev`: Jev·CLI 사용과 관리, 질문 구성·batch·결과 해석의 기본 패턴, 작은 선택·되묻기·불확실한 근거 평가·모델 선택의 내장 유즈케이스.
 - `$jev:scenario-testing`: 고정 scenario에서 expected behavior, 선택적 Jev prediction, fresh executor의 actual behavior를 비교하고 evidence를 기록.
@@ -86,6 +86,44 @@ jev score --if "이 장애의 심각도는? ..." \
 
 기존 `jev --if ... --conditions ...`는 `jev choice`와 동일하게 동작합니다.
 
+## 구조화 입력
+
+단건에서는 `--input`으로 JSON 파일을 전달합니다. 기존 `--if`, `--conditions`, `--level`과 함께 쓰지 않습니다. 출력·threshold·min-score 옵션은 그대로 사용할 수 있습니다.
+
+```sh
+jev choice --input request.json --json
+```
+
+```json
+{
+  "state": {"message": "결제 내역이 중복되었습니다.", "account": {"plan": "team"}},
+  "instructions": {"question": "어느 팀이 처리해야 하나요?", "focus": "message의 주된 요청"},
+  "criteria": {
+    "billing": {"description": "결제·청구·환불", "examples": ["중복 청구"]},
+    "support": {"description": "제품 사용·기술 지원"}
+  }
+}
+```
+
+- `state`: 필수 문자열·객체·배열입니다. JSON 구조와 숫자 표기를 보존합니다.
+- `instructions`: 선택 문자열·객체·배열·null이며 생략하면 null입니다.
+- Choice `criteria`: 2~255개 label과 각 label의 설명 문자열·객체·배열·null입니다.
+- Score `criteria`: 낮은 단계부터 2~10개 고유한 문자열·객체·배열입니다. 예: `[{"impact":"영향 없음"},{"impact":"우회 가능"},{"impact":"작업 불가"}]`. 결과 JSON의 `legend`에도 해당 구조가 유지됩니다.
+- Noul `criteria`: 선택 `true`/`false` 설명 object 또는 null입니다. 예: `{"true":{"meaning":"명시적으로 의무화함"},"false":{"meaning":"권고하거나 언급하지 않음"}}`.
+
+빈 문자열·잘못된 타입·미지원 key·UTF-8/JSON 오류, 비유한 수·float64 범위 밖의 수, state·instructions·criteria 각각 64단계를 넘는 중첩은 호출 전에 거부합니다. 입력 원문은 오류 메시지에 넣지 않습니다.
+
+## 장문 모드
+
+```sh
+jev choice --input request.json --long-context
+jev batch --state-file state.json --state-format json --input questions.jsonl --long-context
+```
+
+`--long-context`는 해당 요청에만 `TypeSafe-Danger-Zone-Long-Context: true`를 전달합니다. 기본값은 off이며 `--long-context=false`도 사용할 수 있습니다. 설정파일에 저장하거나 자동 활성화하지 않습니다.
+
+[공식 모델 문서](https://docs.typesafe.ai/models.md#long-context)의 기본 한도는 요청 전체 64k, state와 질문 하나의 합계 32k 토큰입니다. 장문 모드는 두 한도를 각각 262k로 확장하지만 속도가 느려지고 정확도가 낮아질 수 있습니다. 토큰당 가격은 동일하며 입력이 늘면 총비용도 늘어납니다. 한도 정보는 2026-10-19 확인 기준입니다.
+
 ## 작업 중 Jev 사용
 
 `$jev:jev`는 CLI 안내와 함께 Jev를 사용하는 기본 패턴을 제공합니다. 작은 선택이 실제 다음 행동을 바꿀 때 일반 작업에서도 적용할 수 있습니다. [내장 유즈케이스](skills/jev/references/use-cases.md)는 공통 패턴의 적용 예시입니다. 먼저 요청·규칙·확인 가능한 증거를 봅니다. 답이 이미 정해졌거나 사용자의 취향·승인·권한이 필요하면 Jev가 이를 대신 결정하지 않습니다.
@@ -110,6 +148,15 @@ jev batch --state-file target.md --input questions.jsonl
 {"id":"S002","type":"noul","question":"Is this behavior explicitly authorized?"}
 {"id":"S003","type":"score","question":"How severe is the risk?","levels":["none","recoverable","destructive"]}
 ```
+
+기존 `question` 대신 `instructions` 문자열·객체·배열·null을 사용할 수 있습니다. `criteria`는 단건과 같은 형태이며 기존 `conditions`·`levels` 대신 사용합니다. `question`과 `instructions`, `criteria`와 `conditions`/`levels`는 함께 사용할 수 없습니다. 기존 `question`과 새 `criteria`의 조합도 지원합니다.
+
+```jsonl
+{"id":"S004","type":"choice","instructions":{"question":"어느 팀이 처리해야 하나요?"},"criteria":{"billing":{"description":"결제·환불"},"support":{"description":"기술 지원"}}}
+{"id":"S005","type":"noul","instructions":["state에서 긴급성이 드러나나요?"],"criteria":{"true":"즉시 대응 필요","false":"일반 문의"}}
+```
+
+공통 state 파일은 기본 `--state-format text`일 때 원문 문자열로 전송합니다. 객체·배열 등 JSON 구조를 전달하려면 `--state-format json`을 명시합니다. JSON처럼 보이는 text도 자동 변환하지 않습니다.
 
 state와 모든 JSONL row를 먼저 검증한 뒤 한 번 호출합니다. 성공하면 입력 순서대로 전체 결과 JSONL을 출력합니다. 자동 chunk·retry·resume·부분 성공은 제공하지 않습니다. Batch에는 threshold, min_score, json, pick 옵션이나 저장값을 적용하지 않습니다. stdout 쓰기 전 실패는 빈 stdout과 종료 코드 1이며, 출력 장치의 부분 쓰기는 되돌릴 수 없습니다.
 

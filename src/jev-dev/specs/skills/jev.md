@@ -26,6 +26,8 @@
 - Jev 사용의 기본 패턴을 설명하고, 모델 선택은 대표 유즈케이스로 안내합니다.
 - 기본 사용 패턴과 유즈케이스는 `jev` 스킬 안에서 제공합니다.
 
+- 최신 Jev API의 장문 모드, 구조화 state·instructions·criteria를 CLI 단건·batch에서 사용합니다.
+
 ---
 
 # jev 스킬 스펙
@@ -54,13 +56,16 @@ Jev 정보·CLI 사용과 작업에 적용하는 기본 패턴을 제공합니�
 
 - 예/아니오 명제는 `jev noul`, 이산 선택은 `jev choice`, 정도나 단계 평가는 `jev score`를 사용한다.
 - `--if`에 질문과 판정에 필요한 문맥을 함께 담는다. Choice는 `--conditions`에 고유 선택지를 전달하며 선택지 내부 쉼표는 지원하지 않는다. Score는 순서대로 반복한 `--level`에 고유한 자연어 기준을 전달한다.
+- 구조화 단건은 `jev <primitive> --input <path>`의 JSON object로 state·instructions·criteria를 전달합니다. 기존 `--if`·`--conditions`·`--level`과 혼용하지 않습니다. state는 문자열·객체·배열, instructions는 문자열·객체·배열·null입니다. Choice criteria는 label별 설명 object, Score는 순서 있는 문자열·객체·배열 단계, Noul은 true/false 설명 object입니다. Score legend는 구조를 유지합니다. 실제 입력 예시는 CLI help를 확인합니다.
+- Batch는 기존 question·conditions·levels 또는 instructions·criteria를 사용합니다. question과 instructions, criteria와 conditions/levels는 각각 함께 사용하지 않습니다. `--state-format json`으로 공통 state의 JSON 구조를 유지하고 기본 text는 원문 문자열을 유지합니다.
+- 단건·batch의 `--long-context`는 해당 요청만 확장 컨텍스트를 활성화합니다. 기본 64k 요청·32k 질문 한도를 각각 262k로 확장하며 속도·정확도 저하 가능성을 알립니다. 자동 활성화나 설정 저장은 하지 않습니다. JSON 오류·타입·한도는 호출 전에 검증하고 원문을 오류에 출력하지 않습니다.
 - 입력이 여러 문서의 관계에 의존하면 문맥을 함께 보존한다. 입력에 없는 사실을 보충한 판정으로 보고하지 않는다.
 - 결과 하나만 필요하면 기본 출력, 부가 필드가 필요하면 JSON과 해당 primitive가 제공하는 pick 필드를 사용한다.
 - Noul의 answer는 참일 확률, Choice의 answer는 선택된 라벨, Score의 answer는 단계별 확률을 가중한 점수다. Score는 단계 수에 따라 범위가 달라지고 단계 사이 값이 가능하다.
 - threshold는 Choice에서 선택된 라벨의 확률, Noul에서 참일 확률의 하한이다. Score는 별도 `min_score` 기준을 사용한다. confidence는 어느 기준에도 대신 쓰지 않는다.
 - CLI·설정·JSON의 소유 key는 `snake_case`를 사용한다. Choice 라벨은 자유 문자열이며 기계적 후속 처리에 쓸 때 `snake_case`를 권장한다. Score 단계는 자연어 설명을 유지한다.
 - 기존 `jev --if ... --conditions ...`는 Choice 호환 형식이다.
-- 공통 state에 대해 둘 이상의 독립 질문을 평가하면 `jev batch --state-file <path> --input <path>`를 사용한다. JSONL row는 `id`, `type`, `question`과 primitive별 `conditions` 또는 `levels`를 가진다.
+- 공통 state에 대해 둘 이상의 독립 질문을 평가하면 `jev batch --state-file <path> --input <path>`를 사용한다. JSONL row는 `id`, `type`, question/instructions와 primitive별 기존 기준 또는 criteria를 가집니다.
 - Batch는 전체 파일을 먼저 검증하고 한 요청으로 전송하며 입력 순서의 전체 JSONL 결과만 출력한다. 자동 chunk·retry·resume·부분 성공은 제공하지 않는다.
 - Batch에는 threshold·min_score·json·pick을 적용하지 않는다. 입력·파일·API·응답 오류는 stdout 없이 exit 1이며 exit 2는 없다.
 - CLI 성공 결과로 작업을 진행한다. 별도 API 재호출이나 연결 검사로 같은 결과를 중복 검증하지 않는다.

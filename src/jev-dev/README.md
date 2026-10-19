@@ -11,6 +11,7 @@
 - scenario testing 이전: [changes/005-scenario-testing-migration.md](changes/005-scenario-testing-migration.md)
 - 작업 중 Jev 사용: [changes/006-jev-use.md](changes/006-jev-use.md)
 - 기본 패턴 통합·호출 마이그레이션: [changes/008-jev-use-integration.md](changes/008-jev-use-integration.md)
+- 구조화 입력·장문 모드: [changes/009-structured-input.md](changes/009-structured-input.md)
 - doctor 인증·출력: [changes/007-doctor-auth.md](changes/007-doctor-auth.md)
 
 Go 코드는 `jev/scripts/`의 독립 모듈입니다. 명령 라우팅, primitive, 옵션, 설정 파일 I/O, HTTP API, 응답 검증, 결과 출력, 설치·제거·진단을 책임별 파일로 유지합니다. 별도 SDK나 범용 CLI 프레임워크는 사용하지 않습니다.
@@ -29,3 +30,5 @@ go build -o /tmp/jev .
 CLI 테스트·빌드는 모델 판단 정확성이나 실제 API 인증을 증명하지 않습니다. 실제 API smoke test, 사용자 홈 설치, 플러그인 설치, 커밋·푸시는 각각 별도 실행 상태로 보고합니다.
 
 플러그인 구조 검증과 skill frontmatter 검증에 더해, 스킬 spec과 runtime은 clean-context read-only 검증으로 대조합니다. 작성용 spec을 설치된 스킬의 필수 runtime 의존성으로 만들지 않습니다. `jev`는 CLI와 기본 사용 패턴·내장 유즈케이스를 안내하고, `scenario-testing`은 prediction·fresh executor·comparison을 조율하고, `jev batch`는 공통 state 질문 전송만 소유합니다.
+
+단건 구조화 입력은 `jev <primitive> --input request.json`, batch JSON state는 `--state-format json`, 요청별 장문 모드는 `--long-context`로 사용합니다. 신규 기준과 Score legend의 JSON 구조는 CLI가 보존합니다. 기존 명령·JSONL은 유지하며 이미지·Box·usage는 이번 확장에 포함하지 않습니다.

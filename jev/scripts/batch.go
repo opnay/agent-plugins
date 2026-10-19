@@ -16,32 +16,33 @@ import (
 )
 
 type batchOptions struct {
-	statePath string
-	inputPath string
-	flags     config
+	statePath   string
+	inputPath   string
+	flags       config
+	stateFormat string
+	longContext bool
 }
 
 type batchInputLine struct {
-	ID         string          `json:"id"`
-	Type       primitive       `json:"type"`
-	Question   string          `json:"question"`
-	Conditions json.RawMessage `json:"conditions"`
-	Levels     json.RawMessage `json:"levels"`
+	ID           string          `json:"id"`
+	Type         primitive       `json:"type"`
+	Question     string          `json:"question"`
+	Instructions json.RawMessage `json:"instructions"`
+	Criteria     json.RawMessage `json:"criteria"`
+	Conditions   json.RawMessage `json:"conditions"`
+	Levels       json.RawMessage `json:"levels"`
 }
 
 type batchItem struct {
-	id         string
-	primitive  primitive
-	question   string
-	conditions []string
-	levels     []string
+	id      string
+	options evaluationOptions
 }
 
 type batchOutput struct {
 	ID            string             `json:"id"`
 	Type          primitive          `json:"type"`
 	Answer        any                `json:"answer"`
-	Legend        map[string]string  `json:"legend,omitempty"`
+	Legend        map[string]any     `json:"legend,omitempty"`
 	Probabilities map[string]float64 `json:"probabilities,omitempty"`
 	Confidence    *float64           `json:"confidence,omitempty"`
 	Model         string             `json:"model"`
@@ -54,6 +55,8 @@ func parseBatch(args []string) (batchOptions, error) {
 	f.SetOutput(io.Discard)
 	f.StringVar(&o.statePath, "state-file", "", "shared state file")
 	f.StringVar(&o.inputPath, "input", "", "JSONL question file")
+	f.StringVar(&o.stateFormat, "state-format", "text", "shared state format: text or json")
+	f.BoolVar(&o.longContext, "long-context", false, "enable expanded context for this request")
 	f.StringVar(&model, "model", "jev-latest", "model")
 	f.StringVar(&timeout, "timeout", "30s", "timeout")
 	if err := f.Parse(args); err != nil {
@@ -70,6 +73,9 @@ func parseBatch(args []string) (batchOptions, error) {
 	}
 	if strings.TrimSpace(o.inputPath) == "" {
 		return o, errors.New("--input requires a path; see jev batch --help")
+	}
+	if o.stateFormat != "text" && o.stateFormat != "json" {
+		return o, errors.New("--state-format must be text or json; see jev batch --help")
 	}
 	f.Visit(func(v *flag.Flag) {
 		switch v.Name {
@@ -106,7 +112,7 @@ func (a application) executeBatch(ctx context.Context, o batchOptions) error {
 	if s.APIKey == "" {
 		return errors.New("API key missing; set TYPESAFE_API_KEY or use jev config set api_key --stdin")
 	}
-	state, err := readBatchState(o.statePath)
+	state, err := readBatchState(o.statePath, o.stateFormat)
 	if err != nil {
 		return err
 	}
@@ -114,14 +120,14 @@ func (a application) executeBatch(ctx context.Context, o batchOptions) error {
 	if err != nil {
 		return err
 	}
-	results, err := evaluateBatch(ctx, state, items, s, a.transport)
+	results, err := evaluateBatch(ctx, state, items, s, a.transport, o.longContext)
 	if err != nil {
 		return err
 	}
 	return writeBatchResults(a.out, items, results)
 }
 
-func readBatchState(path string) (string, error) {
+func readBatchState(path, format string) (any, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return "", fmt.Errorf("read state file: %w", err)
@@ -132,6 +138,16 @@ func readBatchState(path string) (string, error) {
 	state := string(data)
 	if strings.TrimSpace(state) == "" {
 		return "", errors.New("state file must not be empty")
+	}
+	if format == "json" {
+		value, err := decodeJSON(data)
+		if err != nil {
+			return nil, fmt.Errorf("state: %w", err)
+		}
+		if err := validateEntry(value, false); err != nil {
+			return nil, fmt.Errorf("state: %w", err)
+		}
+		return value, nil
 	}
 	return state, nil
 }
@@ -191,40 +207,76 @@ func decodeBatchItem(data []byte) (batchItem, error) {
 		return batchItem{}, errors.New("line must contain exactly one JSON object")
 	}
 
-	item := batchItem{id: input.ID, primitive: input.Type, question: input.Question}
+	item := batchItem{id: input.ID, options: evaluationOptions{primitive: input.Type}}
 	if strings.TrimSpace(item.id) == "" {
 		return batchItem{}, errors.New("id must not be empty")
 	}
 	if item.id != strings.TrimSpace(item.id) {
 		return batchItem{}, errors.New("id must not have surrounding whitespace")
 	}
-	if strings.TrimSpace(item.question) == "" {
+	var fields map[string]json.RawMessage
+	_ = json.Unmarshal(data, &fields)
+	_, hasQuestion := fields["question"]
+	hasInstructions := len(input.Instructions) > 0
+	if hasQuestion == hasInstructions {
+		return batchItem{}, errors.New("use exactly one of question or instructions")
+	}
+	var instructions any = input.Question
+	if hasInstructions {
+		value, err := decodeJSON(input.Instructions)
+		if err != nil {
+			return batchItem{}, fmt.Errorf("instructions: %w", err)
+		}
+		instructions = value
+	} else if strings.TrimSpace(input.Question) == "" {
 		return batchItem{}, errors.New("question must not be empty")
 	}
-
 	hasConditions := len(input.Conditions) > 0
 	hasLevels := len(input.Levels) > 0
-	switch item.primitive {
-	case primitiveNoul:
+	if len(input.Criteria) > 0 {
 		if hasConditions || hasLevels {
-			return batchItem{}, errors.New("noul does not accept conditions or levels")
+			return batchItem{}, errors.New("criteria cannot be combined with conditions or levels")
 		}
-	case primitiveChoice:
-		if !hasConditions || hasLevels {
-			return batchItem{}, errors.New("choice requires conditions and does not accept levels")
+		criteria, err := decodeJSON(input.Criteria)
+		if err != nil {
+			return batchItem{}, fmt.Errorf("criteria: %w", err)
 		}
-		if err := decodeBatchList(input.Conditions, &item.conditions, 2, 255, "conditions"); err != nil {
+		if err := item.options.setStructuredQuestion(instructions, criteria); err != nil {
 			return batchItem{}, err
 		}
-	case primitiveScore:
-		if !hasLevels || hasConditions {
-			return batchItem{}, errors.New("score requires levels and does not accept conditions")
+	} else {
+		switch input.Type {
+		case primitiveNoul:
+			if hasConditions || hasLevels {
+				return batchItem{}, errors.New("noul does not accept conditions or levels")
+			}
+		case primitiveChoice:
+			if !hasConditions || hasLevels {
+				return batchItem{}, errors.New("choice requires conditions and does not accept levels")
+			}
+			if err := decodeBatchList(input.Conditions, &item.options.choices, 2, 255, "conditions"); err != nil {
+				return batchItem{}, err
+			}
+		case primitiveScore:
+			if !hasLevels || hasConditions {
+				return batchItem{}, errors.New("score requires levels and does not accept conditions")
+			}
+			var levels []string
+			if err := decodeBatchList(input.Levels, &levels, 2, 10, "levels"); err != nil {
+				return batchItem{}, err
+			}
+			for _, level := range levels {
+				item.options.levels = append(item.options.levels, level)
+			}
+		default:
+			return batchItem{}, errors.New("type must be noul, choice, or score")
 		}
-		if err := decodeBatchList(input.Levels, &item.levels, 2, 10, "levels"); err != nil {
-			return batchItem{}, err
+		if err := validateEntry(instructions, true); err != nil {
+			return batchItem{}, fmt.Errorf("instructions: %w", err)
 		}
-	default:
-		return batchItem{}, errors.New("type must be noul, choice, or score")
+		payload := item.options.questionPayload()
+		payload.Instructions = instructions
+		item.options.payload = &payload
 	}
 	return item, nil
 }
@@ -234,7 +286,7 @@ func validateBatchKeys(data []byte) error {
 	if err := json.Unmarshal(data, &fields); err != nil || fields == nil {
 		return errors.New("invalid JSON object or field type")
 	}
-	allowed := map[string]bool{"id": true, "type": true, "question": true, "conditions": true, "levels": true}
+	allowed := map[string]bool{"id": true, "type": true, "question": true, "conditions": true, "levels": true, "instructions": true, "criteria": true}
 	for key := range fields {
 		if !allowed[key] {
 			return fmt.Errorf("unknown field %q", key)
@@ -264,22 +316,12 @@ func decodeBatchList(raw json.RawMessage, target *[]string, min, max int, name s
 	return nil
 }
 
-func (i batchItem) evaluationOptions() evaluationOptions {
-	return evaluationOptions{primitive: i.primitive, choices: i.conditions, levels: i.levels}
-}
-
-func (i batchItem) questionPayload() evaluationQuestion {
-	payload := i.evaluationOptions().questionPayload()
-	payload.Instructions = i.question
-	return payload
-}
-
-func evaluateBatch(ctx context.Context, state string, items []batchItem, s settings, transport http.RoundTripper) ([]result, error) {
+func evaluateBatch(ctx context.Context, state any, items []batchItem, s settings, transport http.RoundTripper, longContext bool) ([]result, error) {
 	questions := make(map[string]evaluationQuestion, len(items))
 	for _, item := range items {
-		questions[item.id] = item.questionPayload()
+		questions[item.id] = item.options.questionPayload()
 	}
-	envelope, err := requestEvaluation(ctx, evaluationRequest{State: state, Model: s.Model, Questions: questions}, s, transport)
+	envelope, err := requestEvaluation(ctx, evaluationRequest{State: state, Model: s.Model, Questions: questions, LongContext: longContext}, s, transport)
 	if err != nil {
 		return nil, err
 	}
@@ -292,7 +334,7 @@ func evaluateBatch(ctx context.Context, state string, items []batchItem, s setti
 		if !ok {
 			return nil, fmt.Errorf("API response is missing batch answer %q", item.id)
 		}
-		parsed, err := parseAnswer(raw, envelope.Model, item.evaluationOptions())
+		parsed, err := parseAnswer(raw, envelope.Model, item.options)
 		if err != nil {
 			return nil, fmt.Errorf("API response for %q: %w", item.id, err)
 		}
@@ -306,7 +348,7 @@ func writeBatchResults(out io.Writer, items []batchItem, results []result) error
 	encoder := json.NewEncoder(&buffer)
 	for index, item := range items {
 		result := results[index]
-		value := batchOutput{ID: item.id, Type: item.primitive, Answer: result.Answer, Legend: result.Legend,
+		value := batchOutput{ID: item.id, Type: item.options.primitive, Answer: result.Answer, Legend: result.Legend,
 			Probabilities: result.Probabilities, Confidence: result.Confidence, Model: result.Model}
 		if err := encoder.Encode(value); err != nil {
 			return errors.New("could not encode batch result")

@@ -15,20 +15,32 @@ jev score --if <question and context> --level <description> --level <description
 - 기존 `jev --if ... --conditions ...`는 `jev choice`와 같은 호환 형식이다.
 - 다른 primitive의 입력 옵션, 알 수 없는 옵션, 추가 positional argument는 API 호출 전에 오류다.
 
+## 구조화 단건 입력과 장문 모드
+
+- `jev <noul|choice|score> --input <path>`는 UTF-8 JSON object 하나를 읽습니다. 허용 key는 `state`, `instructions`, `criteria`입니다. 알 수 없는 key와 여러 JSON 값은 오류입니다.
+- `state`는 필수 문자열·객체·배열입니다. 문자열은 공백뿐이면 오류입니다. `instructions`는 선택 문자열·객체·배열·null이며 생략 시 null입니다. 객체·배열 내부 JSON 값과 숫자 표기를 보존합니다.
+- `--input`과 `--if`, `--conditions`, `--level`은 함께 사용하지 않습니다. 기존 간단한 입력·출력·기준 옵션은 유지합니다.
+- Choice `criteria`는 2~255개 고유한 비어 있지 않은 label의 object입니다. label 앞뒤 공백은 오류이며 값은 설명 문자열·객체·배열·null입니다.
+- Score `criteria`는 낮은 단계부터 2~10개 고유한 문자열·객체·배열입니다. 공백뿐인 문자열과 null 단계는 오류입니다. 반환 `legend`는 각 단계의 원래 JSON 구조를 유지하며 요청 기준과 의미적으로 일치해야 합니다.
+- Noul `criteria`는 선택 object 또는 null입니다. 허용 key는 `true`, `false`이며 값은 문자열·객체·배열·null입니다.
+- JSON은 UTF-8이어야 하며 state·instructions·criteria의 중첩은 각각 최대 64단계입니다. 비유한 수와 float64 범위를 초과하는 수는 요청 전에 거부합니다. 오류에는 입력 원문을 출력하지 않습니다.
+- `--long-context[=false]`는 단건·batch 호출 전용 boolean이며 기본 false입니다. true일 때만 `TypeSafe-Danger-Zone-Long-Context: true` 헤더를 보냅니다. 설정 저장·doctor에는 적용하지 않습니다.
+- 기본 한도는 요청 전체 64k·state와 질문 하나 32k 토큰입니다. 장문 모드는 두 한도를 각각 262k로 확장하며, 속도·정확도 저하 가능성을 안내합니다. 자동 활성화·분할·재시도는 없습니다.
+
 ## Batch 명령
 
 ```text
-jev batch --state-file <path> --input <path> [--model <id>] [--timeout <duration>]
+jev batch --state-file <path> --input <path> [--model <id>] [--timeout <duration>] [--state-format text|json] [--long-context]
 ```
 
-- `--state-file`은 모든 질문이 공유할 UTF-8 state 원문이다. 공백뿐인 파일은 오류이며 내용은 trim하지 않고 전송한다.
+- `--state-file`은 공통 UTF-8 state 파일입니다. `--state-format text`가 기본이며 비어 있지 않은 원문을 trim하지 않고 전송합니다. `--state-format json`은 문자열·객체·배열 JSON 하나를 원형대로 전달하며 구조화 단건과 동일하게 검증합니다. 자동 형식 추론은 없습니다.
 - `--input`은 한 줄에 질문 하나를 둔 JSONL 파일이다. 공백 줄은 무시하며 질문이 하나 이상이어야 한다.
-- 각 줄은 고유하고 비어 있지 않은 `id`, `type`, 비어 있지 않은 `question`을 포함한다. Key는 정확한 snake_case만 허용하고 알 수 없거나 대소문자가 다른 field는 오류다.
+- 각 줄은 고유하고 비어 있지 않은 `id`, `type`과 `question` 또는 `instructions` 중 정확히 하나를 포함합니다. `question`은 기존 비어 있지 않은 문자열이며 `instructions`는 문자열·객체·배열·null입니다. Key는 정확한 snake_case만 허용하고 알 수 없거나 대소문자가 다른 field는 오류다.
 - `id`, `conditions`, `levels` 값의 앞뒤 공백은 자동 정리하지 않고 오류로 처리한다. 검증된 원문을 request와 output에 유지한다.
 - `type`은 `noul`, `choice`, `score` 중 하나다.
 - Choice는 `conditions` 문자열 배열에 2~255개의 고유하고 비어 있지 않은 label을 둔다. JSON 문자열이므로 쉼표를 허용한다.
 - Score는 `levels` 문자열 배열에 2~10개의 고유하고 비어 있지 않은 설명을 낮은 단계부터 둔다.
-- Noul에는 `conditions`·`levels`, Choice에는 `levels`, Score에는 `conditions`를 허용하지 않는다.
+- 각 row는 기존 `conditions`·`levels` 대신 구조화 단건과 동일한 `criteria`를 사용할 수 있습니다. `criteria`와 기존 기준 field는 함께 사용하지 않습니다. Noul에는 `conditions`·`levels`, Choice에는 `levels`, Score에는 `conditions`를 허용하지 않습니다.
 - 전체 state와 JSONL을 API 호출 전에 검증한다. 한 줄이라도 잘못되면 요청하지 않는다.
 - 모든 질문은 하나의 SystemOne 요청으로 전송한다. 자동 chunk, retry, resume, 부분 성공은 제공하지 않는다.
 - `model`과 `timeout`은 batch 전체에 공통 적용한다. threshold, min_score, json, pick은 batch 입력·옵션이 아니며 저장값도 batch에 적용하지 않는다.
@@ -46,11 +58,11 @@ jev batch --state-file <path> --input <path> [--model <id>] [--timeout <duration
 ## 요청 계약
 
 - 질문 하나를 `POST https://api.typesafe.ai/v1/systemone`으로 보낸다.
-- `state`는 `--if` 원문이고, question id는 `result`, model은 실효 설정값이다.
-- Noul question은 type `noul`, instruction `Answer whether the proposition or question in state is true.`이며 criteria를 보내지 않는다.
-- Choice question은 type `choice`, instruction `Select the option that best answers the question in state.`이며 선택지 이름을 key, `null`을 값으로 한 criteria를 보낸다.
-- Score question은 type `score`, instruction `Rate the state against the ordered criteria.`이며 `--level` 순서의 문자열 배열을 criteria로 보낸다.
-- Batch는 `--state-file` 원문을 공통 `state`로 보내고 각 row의 `id`를 question id, `question`을 instructions로 사용한다. primitive별 criteria는 row의 `conditions` 또는 `levels`에서 만든다.
+- 간단한 단건의 `state`는 `--if` 원문이고, 구조화 단건은 파일의 state·instructions·criteria를 사용합니다. question id는 `result`, model은 실효 설정값입니다.
+- 간단한 Noul question은 type `noul`, instruction `Answer whether the proposition or question in state is true.`이며 criteria를 보내지 않는다.
+- 간단한 Choice question은 type `choice`, instruction `Select the option that best answers the question in state.`이며 선택지 이름을 key, `null`을 값으로 한 criteria를 보낸다.
+- 간단한 Score question은 type `score`, instruction `Rate the state against the ordered criteria.`이며 `--level` 순서의 문자열 배열을 criteria로 보낸다.
+- Batch는 선택한 형식의 공통 state와 각 row의 id·question/instructions·criteria를 사용합니다. 기존 conditions·levels는 이전 criteria 형태로 변환합니다.
 - Batch의 모든 row는 하나의 `questions` map에 들어가며 API 요청은 한 번이다.
 - 임의 endpoint 옵션, 자동 재시도, API 오류 본문 출력은 제공하지 않는다. HTTP redirect는 따라가지 않는다.
 - timeout·취소·HTTP 오류·잘못된 응답은 실행 실패다.
@@ -88,8 +100,8 @@ jev batch --state-file <path> --input <path> [--model <id>] [--timeout <duration
 
 - 경로: 사용자 홈의 `.agents/jev.toml`.
 - 우선순위: 명시적 CLI 옵션 > 파일 > 내장 기본값. 인증은 비어 있지 않은 `TYPESAFE_API_KEY` > 파일 `api_key`.
-- 공통 CLI flag: `--model`, `--timeout`, `--json`, `--pick`. Choice·Noul은 `--threshold`, Score는 `--min-score`를 추가한다. 토큰 CLI flag는 없다.
-- Batch는 `--model`, `--timeout`만 사용한다. 저장된 `api_key`, `model`, `timeout`은 적용하고 threshold, min_score, json, pick은 무시한다.
+- 공통 CLI flag: `--input`, `--long-context`, `--model`, `--timeout`, `--json`, `--pick`. Choice·Noul은 `--threshold`, Score는 `--min-score`를 추가한다. 토큰 CLI flag는 없다.
+- Batch는 공통 설정 중 `--model`, `--timeout`만 사용하며 호출 전용 `--state-file`, `--input`, `--state-format`, `--long-context`를 제공합니다. 저장된 `api_key`, `model`, `timeout`은 적용하고 threshold, min_score, json, pick은 무시한다.
 - `threshold`: 유한한 0~1 실수, 기본 미적용. 명시적 0은 저장된 양수 기준을 덮어쓴다.
 - `min_score`: 유한한 0 이상 실수, 기본 미적용. Score 실행 시 현재 단계 범위도 검사한다.
 - `model`: 비어 있지 않은 문자열, 기본 `jev-latest`.
@@ -146,3 +158,5 @@ jev batch --state-file <path> --input <path> [--model <id>] [--timeout <duration
 Noul의 참일 확률, Choice의 최고 확률 option, Score의 확률 가중 값과 각 타입의 confidence 차이를 적용한다. 실제 모델의 판단 정확성은 로컬 테스트가 증명하지 않는다.
 
 - Doctor 인증 조회 근거: [TypeSafe OpenAPI](https://api.typesafe.ai/openapi.json)의 `/v1/models` GET, HTTPBearer security (2026-09-30 확인).
+
+- 구조화 입력·Score legend 근거: [공개 OpenAPI](https://api.typesafe.ai/openapi.json), [구조화 입력](https://docs.typesafe.ai/primitives/advanced.md), [장문 모드](https://docs.typesafe.ai/models.md#long-context), 2026-10-19 확인. 이미지·Box·usage 확장은 포함하지 않습니다.

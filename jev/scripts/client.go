@@ -15,14 +15,15 @@ const endpoint = "https://api.typesafe.ai/v1/systemone"
 
 type evaluationQuestion struct {
 	Type         primitive `json:"type"`
-	Instructions string    `json:"instructions"`
+	Instructions any       `json:"instructions"`
 	Criteria     any       `json:"criteria,omitempty"`
 }
 
 type evaluationRequest struct {
-	State     string                        `json:"state"`
-	Model     string                        `json:"model"`
-	Questions map[string]evaluationQuestion `json:"questions"`
+	State       any                           `json:"state"`
+	Model       string                        `json:"model"`
+	Questions   map[string]evaluationQuestion `json:"questions"`
+	LongContext bool                          `json:"-"`
 }
 
 type evaluationEnvelope struct {
@@ -31,7 +32,7 @@ type evaluationEnvelope struct {
 }
 
 func evaluate(ctx context.Context, o evaluationOptions, s settings, transport http.RoundTripper) (result, error) {
-	payload := evaluationRequest{State: o.question, Model: s.Model,
+	payload := evaluationRequest{State: o.state, Model: s.Model, LongContext: o.longContext,
 		Questions: map[string]evaluationQuestion{"result": o.questionPayload()}}
 	envelope, err := requestEvaluation(ctx, payload, s, transport)
 	if err != nil {
@@ -51,6 +52,9 @@ func requestEvaluation(ctx context.Context, payload evaluationRequest, s setting
 	}
 	req.Header.Set("Authorization", "Bearer "+s.APIKey)
 	req.Header.Set("Content-Type", "application/json")
+	if payload.LongContext {
+		req.Header.Set("TypeSafe-Danger-Zone-Long-Context", "true")
+	}
 	timeout, _ := time.ParseDuration(s.Timeout)
 	client := &http.Client{Transport: transport, Timeout: timeout,
 		CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}
@@ -80,6 +84,9 @@ func requestEvaluation(ctx context.Context, payload evaluationRequest, s setting
 }
 
 func (o evaluationOptions) questionPayload() evaluationQuestion {
+	if o.payload != nil {
+		return *o.payload
+	}
 	switch o.primitive {
 	case primitiveNoul:
 		return evaluationQuestion{Type: o.primitive, Instructions: "Answer whether the proposition or question in state is true."}

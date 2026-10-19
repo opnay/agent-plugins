@@ -7,6 +7,7 @@ Evaluation:
   jev choice --if <question and context> --conditions <a,b,...> [options]
   jev score --if <question and context> --level <description>... [options]
   jev --if <question and context> --conditions <a,b,...> [options]
+  jev <noul|choice|score> --input <path> [options]
   jev batch --state-file <path> --input <path> [options]
 
 Configuration:
@@ -22,6 +23,8 @@ Maintenance:
   jev doctor [--dir <directory>]
 
 Common evaluation options:
+  --input <path>      Single JSON state, instructions, and criteria file
+  --long-context[=false] Expanded context for this request (default: off)
   --model <name>       Model (default: jev-latest)
   --timeout <duration> Request timeout (default: 30s)
   --json[=false]       Output JSON (default: false)
@@ -48,6 +51,9 @@ Output:
   Choice: answer, probabilities, confidence, model
   Score:  answer, legend, probabilities, confidence, model
   Batch:  one full result object per input row as JSONL
+
+Batch state: --state-format text|json (default: text).
+See primitive/batch --help for structured inputs and long-context limits.
 
 Exit codes:
   0  Success

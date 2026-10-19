@@ -10,7 +10,7 @@ import (
 type result struct {
 	Primitive     primitive          `json:"-"`
 	Answer        any                `json:"answer"`
-	Legend        map[string]string  `json:"legend,omitempty"`
+	Legend        map[string]any     `json:"legend,omitempty"`
 	Probabilities map[string]float64 `json:"probabilities,omitempty"`
 	Confidence    *float64           `json:"confidence,omitempty"`
 	Model         string             `json:"model"`

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"math"
@@ -13,7 +14,7 @@ type apiAnswer struct {
 	Noul          *float64            `json:"noul"`
 	Choice        string              `json:"choice"`
 	Score         *float64            `json:"score"`
-	Legend        map[string]string   `json:"legend"`
+	Legend        map[string]any      `json:"legend"`
 	Probabilities map[string]*float64 `json:"probabilities"`
 	Confidence    *float64            `json:"confidence"`
 }
@@ -28,7 +29,9 @@ func parseResponse(envelope evaluationEnvelope, o evaluationOptions) (result, er
 
 func parseAnswer(raw json.RawMessage, model string, o evaluationOptions) (result, error) {
 	var answer apiAnswer
-	if err := json.Unmarshal(raw, &answer); err != nil || answer.Type != o.primitive {
+	decoder := json.NewDecoder(bytes.NewReader(raw))
+	decoder.UseNumber()
+	if err := decoder.Decode(&answer); err != nil || answer.Type != o.primitive {
 		return result{}, errors.New("API response type does not match the requested primitive")
 	}
 	switch o.primitive {
@@ -81,21 +84,24 @@ func parseChoice(answer apiAnswer, model string, choices []string) (result, erro
 		Confidence: &confidence, Model: model}, nil
 }
 
-func parseScore(answer apiAnswer, model string, levels []string) (result, error) {
+func parseScore(answer apiAnswer, model string, levels []any) (result, error) {
+	if err := validateJSONContent(answer.Legend, 0); err != nil {
+		return result{}, errors.New("API Score legend contains invalid JSON values")
+	}
 	max := float64(len(levels) - 1)
 	if answer.Score == nil || !finite(*answer.Score) || *answer.Score < 0 || *answer.Score > max ||
 		answer.Confidence == nil || !probability(*answer.Confidence) ||
 		len(answer.Legend) != len(levels) || len(answer.Probabilities) != len(levels) {
 		return result{}, errors.New("API response is missing valid Score fields")
 	}
-	legend := make(map[string]string, len(levels))
+	legend := make(map[string]any, len(levels))
 	probabilities := make(map[string]float64, len(levels))
 	weighted := 0.0
 	total := 0.0
 	for i, level := range levels {
 		key := strconv.Itoa(i)
 		p := answer.Probabilities[key]
-		if answer.Legend[key] != level || p == nil || !probability(*p) {
+		if !jsonValuesEqual(answer.Legend[key], level) || p == nil || !probability(*p) {
 			return result{}, errors.New("API Score legend or probabilities do not match requested levels")
 		}
 		legend[key] = level
