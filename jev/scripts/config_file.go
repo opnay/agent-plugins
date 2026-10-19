@@ -2,14 +2,21 @@ package main
 
 import (
 	"bytes"
+	_ "embed"
 	"errors"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/pelletier/go-toml/v2"
 )
+
+//go:embed config.template.toml
+var configTemplate string
+
+func templateConfig() (config, error) { return decodeConfig([]byte(configTemplate)) }
 
 func configFileStatus(path string) (bool, error) {
 	info, err := os.Lstat(path)
@@ -43,23 +50,106 @@ func readConfig(path string) (config, error) {
 	if len(data) > 1024*1024 {
 		return c, errors.New("config exceeds 1 MiB")
 	}
+	return decodeConfig(data)
+}
+
+func decodeConfig(data []byte) (config, error) {
+	var fields map[string]any
+	if err := toml.Unmarshal(data, &fields); err != nil {
+		return config{}, errors.New("invalid TOML; edit the config file to repair it")
+	}
+	for key := range fields {
+		if key != "defaults" && key != "providers" {
+			return config{}, errors.New("unsupported config layout; move common keys to [defaults] and model/api_key to [providers.jev]; do not mix old and new layouts")
+		}
+	}
+	var c config
 	if err := toml.NewDecoder(bytes.NewReader(data)).DisallowUnknownFields().Decode(&c); err != nil {
-		// TOML decoder diagnostics can contain the secret-bearing source line.
 		return config{}, errors.New("invalid TOML, field type, or unknown key in config; edit the file to repair it")
+	}
+	if err := c.validate(); err != nil {
+		return config{}, err
 	}
 	return c, nil
 }
 
-func writeConfig(path string, c config) error {
-	if err := c.resolve("").validate(); err != nil {
-		return err
-	}
-	if _, err := configFileStatus(path); err != nil {
-		return err
-	}
+func encodeInitialConfig(c config) ([]byte, error) {
 	data, err := toml.Marshal(c)
 	if err != nil {
+		return nil, errors.New("could not encode config")
+	}
+	// Keep template comments with their table so optional settings remain usable.
+	comments := make(map[string][]string)
+	section := ""
+	for _, line := range strings.Split(configTemplate, "\n") {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "[") {
+			section = trimmed
+		}
+		if strings.HasPrefix(trimmed, "#") {
+			comments[section] = append(comments[section], line)
+		}
+	}
+	var lines []string
+	section = ""
+	for _, line := range strings.Split(string(data), "\n") {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "[") {
+			lines = append(lines, comments[section]...)
+			delete(comments, section)
+			section = trimmed
+		}
+		lines = append(lines, line)
+	}
+	lines = append(lines, comments[section]...)
+	return []byte(strings.Join(lines, "\n") + "\n"), nil
+}
+
+func initConfig(path string) error {
+	if _, err := templateConfig(); err != nil {
+		return err
+	}
+	return storeConfig(path, []byte(configTemplate), true)
+}
+
+func createConfig(path string, c config) error {
+	if err := c.validate(); err != nil {
+		return err
+	}
+	data, err := encodeInitialConfig(c)
+	if err != nil {
+		return err
+	}
+	return storeConfig(path, data, true)
+}
+
+func writeConfig(path string, c config) error {
+	if err := c.validate(); err != nil {
+		return err
+	}
+	exists, err := configFileStatus(path)
+	if err != nil {
+		return err
+	}
+	var data []byte
+	if !exists {
+		data, err = encodeInitialConfig(c)
+	} else {
+		data, err = toml.Marshal(c)
+	}
+	if err != nil {
 		return errors.New("could not encode config")
+	}
+	return storeConfig(path, data, !exists)
+}
+
+func storeConfig(path string, data []byte, createOnly bool) error {
+	exists, err := configFileStatus(path)
+	if err != nil {
+		return err
+	}
+	if createOnly && exists {
+		return errors.New("config already exists; leaving it unchanged")
 	}
 	dir := filepath.Dir(path)
 	if err := os.MkdirAll(dir, 0700); err != nil {
@@ -83,6 +173,13 @@ func writeConfig(path string, c config) error {
 	}
 	if _, err := configFileStatus(path); err != nil {
 		return err
+	}
+	if createOnly {
+		// Linking a fully written temp file publishes it atomically without replacing a race winner.
+		if err := os.Link(f.Name(), path); err != nil {
+			return errors.New("could not create config without replacing an existing file")
+		}
+		return nil
 	}
 	if err := os.Rename(f.Name(), path); err != nil {
 		return fmt.Errorf("replace config: %w", err)

@@ -28,6 +28,9 @@
 
 - 최신 Jev API의 장문 모드, 구조화 state·instructions·criteria를 CLI 단건·batch에서 사용합니다.
 
+- 기본 설정 섹션은 `[defaults]`이며 provider의 내장 기본값은 jev입니다.
+- 설정 파일 최초 생성에는 편집 가능한 기본 템플릿을 제공합니다.
+
 ---
 
 # jev 스킬 스펙
@@ -70,8 +73,10 @@ Jev 정보·CLI 사용과 작업에 적용하는 기본 패턴을 제공합니�
 - Batch에는 threshold·min_score·json·pick을 적용하지 않는다. 입력·파일·API·응답 오류는 stdout 없이 exit 1이며 exit 2는 없다.
 - CLI 성공 결과로 작업을 진행한다. 별도 API 재호출이나 연결 검사로 같은 결과를 중복 검증하지 않는다.
 - 종료 코드 2는 임계값 미달이며 stdout 결과가 아니다. 기준을 조용히 낮춰 재시도하지 않는다. 종료 코드 1은 실행 오류로 보고한다.
+- config는 `[defaults]`의 provider·공통값과 `[providers.<name>]`의 model·api_key를 사용합니다. provider는 flag > defaults.provider > 내장 jev, model은 flag > 해당 provider 설정 > 해당 provider 기본값입니다. 인증 환경변수는 jev의 TYPESAFE_API_KEY, openrouter의 OPENROUTER_API_KEY, openai의 OPENAI_API_KEY이며 다른 provider 키를 재사용하지 않습니다. 현재 실행은 Jev만 지원하고 나머지는 설정 저장만 가능합니다.
+- `config init`은 내장 템플릿으로 0600 파일을 만들며 기존 파일을 덮어쓰지 않습니다. 최초 `config set`도 같은 템플릿을 사용합니다. config 조회·평가·doctor는 파일을 만들지 않습니다. set/unset은 defaults.<key> 또는 providers.<name>.model/api_key를 사용하며 token은 stdin 전용입니다. 구형 flat 설정은 자동 변환하지 않고 이동할 섹션을 안내합니다. 모든 provider 토큰을 마스킹합니다.
 - config 경로·기본값·우선순위·토큰 stdin 저장과 마스킹을 설명한다. 실제 토큰을 대화나 명령 인자에 요청하지 않는다.
-- 유지보수 요청에는 `install [--force] [--dir <directory>]`, `uninstall [--dir <directory>]`, `doctor [--dir <directory>]`를 사용한다. 기본 대상은 `~/.local/bin/jev`다.
+- 유지보수 요청에는 `install [--force] [--dir <directory>]`, `uninstall [--dir <directory>]`, `doctor [--dir <directory>] [--provider <name>]`를 사용한다. 기본 대상은 `~/.local/bin/jev`다.
 - install은 실행 중인 바이너리를 복사하며, 최신 소스를 빌드하거나 다운로드하지 않는다. 최초 설치는 플러그인의 `scripts/`에서 `go run . install`, 소스 갱신은 `go run . install --force`를 사용한다. 다른 설치 위치는 `--dir <directory>`로 지정한다.
 - uninstall은 Jev로 식별되는 일반 파일만 제거하며 설정·토큰·설치 디렉터리·셸 설정을 보존한다. 없는 대상은 성공이다.
 - doctor는 설치·PATH·설정·키 유무·출처와 API 인증을 점검한다. 기본은 설정·키가 유효할 때 인증된 models 조회를 한 번 수행하며 추론·redirect·retry·자동 수정은 없다. `OK / FAIL / SKIP`, 원인·해결 안내·요약을 읽고 인증 실패와 네트워크·서버 문제를 구분한다. 키 원문을 출력하지 않으며 모델 정확성·추론 가능 여부를 증명하지 않는다. 정상은 stdout·exit 0, 문제는 빈 stdout·stderr·exit 1이다.

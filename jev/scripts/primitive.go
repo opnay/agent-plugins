@@ -5,9 +5,9 @@ import "fmt"
 type primitive string
 
 const (
-	primitiveNoul   primitive = "noul"
-	primitiveChoice primitive = "choice"
-	primitiveScore  primitive = "score"
+	primitiveNoul   = "noul"
+	primitiveChoice = "choice"
+	primitiveScore  = "score"
 )
 
 func (p primitive) fields() map[string]bool {

@@ -13,19 +13,21 @@ Evaluation:
 Configuration:
   jev config
   jev config path
-  jev config set <key> <value>
-  jev config set api_key --stdin
-  jev config unset <key>
+  jev config init
+  jev config set <dotted-key> <value>
+  jev config set providers.<name>.api_key --stdin
+  jev config unset <dotted-key>
 
 Maintenance:
   jev install [--force] [--dir <directory>]
   jev uninstall [--dir <directory>]
-  jev doctor [--dir <directory>]
+  jev doctor [--dir <directory>] [--provider <name>]
 
 Common evaluation options:
   --input <path>      Single JSON state, instructions, and criteria file
   --long-context[=false] Expanded context for this request (default: off)
-  --model <name>       Model (default: jev-latest)
+  --provider <name>    Decision provider (defaults.provider; built-in: jev)
+  --model <name>       Model (selected provider default; Jev: jev-latest)
   --timeout <duration> Request timeout (default: 30s)
   --json[=false]       Output JSON (default: false)
   --pick <fields>      JSON fields available for the selected primitive
@@ -44,7 +46,8 @@ Primitive options:
     --min-score <number>     Minimum weighted score
 
 Config keys:
-  api_key, threshold, min_score, model, timeout, json, pick
+  defaults.provider/threshold/min_score/timeout/json/pick
+  providers.<jev|openrouter|openai>.model/api_key
 
 Output:
   Noul:   answer, model
@@ -61,7 +64,7 @@ Exit codes:
   2  Result criterion not met
 
 Config path: ~/.agents/jev.toml; flags > file > defaults.
-Auth: TYPESAFE_API_KEY > config api_key. Token input is stdin only.
+Auth: selected provider environment > providers.<name>.api_key. Token input is stdin only.
 Questions and criteria are sent to the hosted TypeSafe API.
 Install/uninstall are offline. Doctor checks API authentication.
 Default install directory: ~/.local/bin.

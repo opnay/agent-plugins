@@ -98,33 +98,27 @@ jev batch --state-file <path> --input <path> [--model <id>] [--timeout <duration
 
 ## 설정
 
-- 경로: 사용자 홈의 `.agents/jev.toml`.
-- 우선순위: 명시적 CLI 옵션 > 파일 > 내장 기본값. 인증은 비어 있지 않은 `TYPESAFE_API_KEY` > 파일 `api_key`.
-- 공통 CLI flag: `--input`, `--long-context`, `--model`, `--timeout`, `--json`, `--pick`. Choice·Noul은 `--threshold`, Score는 `--min-score`를 추가한다. 토큰 CLI flag는 없다.
-- Batch는 공통 설정 중 `--model`, `--timeout`만 사용하며 호출 전용 `--state-file`, `--input`, `--state-format`, `--long-context`를 제공합니다. 저장된 `api_key`, `model`, `timeout`은 적용하고 threshold, min_score, json, pick은 무시한다.
-- `threshold`: 유한한 0~1 실수, 기본 미적용. 명시적 0은 저장된 양수 기준을 덮어쓴다.
-- `min_score`: 유한한 0 이상 실수, 기본 미적용. Score 실행 시 현재 단계 범위도 검사한다.
-- `model`: 비어 있지 않은 문자열, 기본 `jev-latest`.
-- `timeout`: 양수 Go duration 문자열, 기본 `30s`.
-- `json`: boolean, 기본 false. 명시적 `--json=false`가 파일보다 우선한다.
-- `pick`: 문자열 배열, 기본 제한 없음. 빈 배열은 제한 없음이다.
-- `api_key`: 문자열, 기본 없음. 판정 호출과 doctor의 인증 조회에 비어 있지 않은 인증이 필요하다.
-- 파일 부재는 오류가 아니다. 조회·판정은 파일을 생성하지 않는다.
-- TOML 구문·타입·미지원 key 오류를 조용히 무시하지 않는다. 오류에 설정 원문을 포함하지 않는다.
-- 저장된 threshold는 Choice·Noul에만 적용하고 저장된 min_score는 Score에만 적용한다.
+- 경로: `~/.agents/jev.toml`. `[defaults]`는 provider·timeout·threshold·min_score·json·pick, `[providers.<name>]`은 model·api_key를 소유합니다.
+- 내장 기본값: provider `jev`, timeout `30s`, json false, pick 제한 없음, threshold·min_score 미적용. Jev 모델 기본값은 `jev-latest`이며 다른 provider에는 모델 기본값이 없습니다.
+- provider 선택: 명시적 `--provider` > defaults.provider > 내장 jev. model: `--model` > 선택 provider의 model > 해당 provider 내장값. 공통 옵션: 명시적 flag > defaults > 내장값.
+- 인증: 선택한 provider의 비어 있지 않은 환경변수 > 해당 provider의 api_key. jev는 TYPESAFE_API_KEY, openrouter는 OPENROUTER_API_KEY, openai는 OPENAI_API_KEY입니다. 다른 provider의 키·모델로 대체하지 않습니다.
+- 단건·batch·doctor는 `--provider`를 지원합니다. 현재 실행 구현은 Jev뿐이며 OpenRouter·OpenAI는 설정만 저장할 수 있습니다. 미구현 provider 선택은 네트워크 호출 없이 명확한 오류입니다.
+- 설정 전체의 TOML·지원 key·타입·값을 검증하되 미선택 provider의 model·api_key 부재는 허용합니다. threshold는 유한한 0~1, min_score는 유한한 0 이상, timeout은 양수 duration, model은 지정 시 비어 있지 않은 문자열입니다. pick은 지원 field의 고유 목록입니다. provider 이름은 jev·openrouter·openai만 허용합니다.
+- Batch는 defaults의 provider·timeout과 해당 provider의 model·인증만 사용하며 threshold·min_score·json·pick은 무시합니다. long_context는 요청 전용이며 저장하지 않습니다.
+- 구형 최상위 api_key·model·공통 key나 단수 default 섹션은 오류입니다. defaults와 providers.jev로 옮길 위치를 안내하며 자동 변환·저장하지 않습니다. 구형·신형 혼용도 추측하지 않습니다.
 
-## Config 커맨드
+## Config 커맨드와 최초 생성
 
-- `jev config`: 내장 기본값과 환경변수를 반영한 설정을 TOML로 출력한다. 토큰은 전체 마스킹하고 미설정 threshold·min_score는 생략한다.
-- `jev config path`: 설정 경로만 출력하며 파일 존재나 유효성에 의존하지 않는다.
-- `jev config set <key> <value>`: 저장값을 갱신한다. pick 값은 쉼표 목록이며 빈 문자열은 빈 배열이다.
-- `jev config set api_key --stdin`: stdin에서 토큰을 읽고 앞뒤 공백을 제거해 저장한다. 토큰은 이 방식만 지원한다.
-- `jev config unset <key>`: 저장값을 제거한다. 항목이 없으면 성공하며 새 파일을 만들지 않는다.
-- config 명령은 네트워크나 인증을 요구하지 않는다. set/unset 성공은 무출력이다.
-- 각 설정의 타입과 독립 범위는 저장 시 검사한다. pick과 primitive의 조합, min_score와 Score 단계 범위는 판정 실행 시 검사한다.
-- 갱신 시 나머지 지원 설정값을 보존한다. TOML 주석·서식 보존은 보장하지 않는다.
-- 파일은 일반 파일이어야 하며 symlink·디렉터리를 읽거나 덮어쓰지 않는다. 저장은 같은 디렉터리의 임시 파일을 rename하는 원자적 갱신이며 권한은 0600이다.
-- 토큰은 평문 저장이다. 원문을 조회·오류·로그에 출력하지 않는다. 잘못된 TOML은 사용자가 직접 수정한다.
+- `jev config`: defaults의 내장 기본값과 모든 설정된 provider를 TOML로 표시합니다. Jev 기본 모델도 표시합니다. 각 provider 환경변수를 반영하되 모든 key는 전체 마스킹합니다. 미구현 provider가 기본값이어도 오프라인 조회·편집은 가능합니다.
+- `jev config path`: 파일을 읽지 않고 경로만 출력합니다.
+- `jev config init`: go:embed 내장 `config.template.toml`로 파일을 생성합니다. 기존 파일은 유효성에 관계없이 덮어쓰지 않고 오류입니다. init·set 성공은 무출력입니다.
+- `jev config set defaults.<key> <value>`, `jev config set providers.<name>.model <value>`, `jev config set providers.<name>.api_key --stdin`을 사용합니다. key 원문 인자 입력은 금지하며 stdin 토큰은 앞뒤 공백을 제거하고 64KiB 이내여야 합니다.
+- `jev config unset <dotted-key>`는 저장값만 제거합니다. 항목이 없으면 성공이며 파일을 만들지 않습니다. default 값은 이후 코드의 내장값으로 해석합니다.
+- 파일이 없는 최초 set은 같은 내장 템플릿에 요청값을 반영합니다. 생성 파일에는 템플릿의 안내 주석과 변경한 값이 포함됩니다. 이후 변경은 TOML 주석·서식 보존을 보장하지 않습니다.
+- 템플릿에는 활성 defaults와 providers.jev.model, 선택 threshold·min_score와 미구현 provider의 주석 예시를 둡니다. token이나 활성 placeholder를 포함하지 않습니다. 내장 기본값과 템플릿의 일치 여부를 검증합니다.
+- 조회·평가·doctor는 파일이나 디렉터리를 자동 생성하지 않습니다. config는 네트워크·인증을 요구하지 않습니다.
+- 파일은 일반 파일이어야 하며 symlink·디렉터리는 거부합니다. 갱신은 같은 디렉터리의 임시 0600 파일로 원자적 교체합니다. 최초 생성은 원자적 no-replace로 기존 파일을 보존합니다.
+- 설정·key는 평문입니다. 표시·오류·doctor는 모든 provider의 token 원문을 숨깁니다. 잘못된 TOML 원문을 오류에 포함하지 않습니다.
 
 ## 설치·제거·진단
 
@@ -140,6 +134,14 @@ jev batch --state-file <path> --input <path> [--model <id>] [--timeout <duration
 - 결과는 로컬 설정·인증 섹션, `OK / FAIL / SKIP` 상태, 항목별 상세·해결 안내, 상태별 개수 요약을 포함한다. primitive별 pick·범위 적합성·모델 정확성·추론 가능 여부는 판정하지 않는다.
 - doctor는 읽기 전용이며 일반 판정·설치 뒤에 자동 호출하지 않는다.
 - 유지보수 성공은 stdout과 종료 코드 0, 실패는 빈 stdout·stderr와 종료 코드 1이다. 코드 2는 판정 기준 미달 전용이다.
+
+## Provider 어댑터 경계
+
+- `scripts/providers`는 provider 공통 Request·Question·Result와 Adapter 인터페이스를 소유합니다. CLI 옵션·설정·파일 경로·stdout·종료 코드는 공통 provider 계약에 포함하지 않습니다.
+- Adapter는 공통 요청을 평가해 question id별 정규화 결과를 반환하며, 별도 인증 진단 메서드를 제공합니다. 인증 결과는 key 거부 여부와 진단을 반환하며 환경변수·설정 파일에 따른 key 복구 안내는 CLI가 소유합니다. 응답 wire schema는 provider 밖으로 노출하지 않습니다.
+- `scripts/providers/jev`는 TypeSafe endpoint·인증 헤더·장문 헤더·HTTP 호출·Jev 응답 해석과 검증·models 인증 진단을 소유합니다. 키·timeout·transport는 생성 시 주입합니다.
+- 단건과 batch는 같은 어댑터를 호출합니다. 반환 전 model·id 완전성·primitive·선택지·확률·Score legend를 검증하며 오류면 CLI는 기존 실패 계약을 유지합니다.
+- 현재 연결 대상은 Jev 하나입니다. OpenRouter·OpenAI 구현·provider 선택 옵션·인증 설정 확장은 별도 작업입니다. 기존 CLI 입력·출력·기본값·인증·재시도 정책은 유지합니다.
 
 ## 배포와 검증
 

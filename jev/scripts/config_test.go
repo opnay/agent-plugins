@@ -16,26 +16,26 @@ import (
 
 func TestConfigRoundTrip(t *testing.T) {
 	a, out, errOut := harness(t)
-	a.envToken = ""
+	a.env["TYPESAFE_API_KEY"] = ""
 	a.in = strings.NewReader("  secret-for-test\n")
 	a.transport = roundTripFunc(func(*http.Request) (*http.Response, error) { t.Fatal("config called API"); return nil, nil })
 	for _, args := range [][]string{
-		{"config", "set", "api_key", "--stdin"},
-		{"config", "set", "threshold", "0.8"},
-		{"config", "set", "min_score", "1.5"},
-		{"config", "set", "json", "false"},
-		{"config", "set", "model", "chosen-model"},
-		{"config", "set", "timeout", "45s"},
-		{"config", "set", "pick", "answer,model"},
+		{"config", "set", "providers.jev.api_key", "--stdin"},
+		{"config", "set", "defaults.threshold", "0.8"},
+		{"config", "set", "defaults.min_score", "1.5"},
+		{"config", "set", "defaults.json", "false"},
+		{"config", "set", "providers.jev.model", "chosen-model"},
+		{"config", "set", "defaults.timeout", "45s"},
+		{"config", "set", "defaults.pick", "answer,model"},
 	} {
 		if code := a.run(context.Background(), args); code != 0 || out.Len() > 0 || errOut.Len() > 0 {
 			t.Fatalf("%v: code=%d stdout=%q stderr=%q", args, code, out, errOut)
 		}
 	}
 	c, err := readConfig(a.path)
-	if err != nil || c.APIKey != "secret-for-test" || c.Threshold == nil || *c.Threshold != .8 ||
-		c.MinScore == nil || *c.MinScore != 1.5 || c.JSON == nil || *c.JSON ||
-		c.Pick == nil || !slices.Equal(*c.Pick, []string{"answer", "model"}) {
+	if err != nil || c.Providers["jev"].APIKey != "secret-for-test" || c.Defaults.Threshold == nil || *c.Defaults.Threshold != .8 ||
+		c.Defaults.MinScore == nil || *c.Defaults.MinScore != 1.5 || c.Defaults.JSON == nil || *c.Defaults.JSON ||
+		c.Defaults.Pick == nil || !slices.Equal(*c.Defaults.Pick, []string{"answer", "model"}) {
 		t.Fatalf("config did not preserve stored settings: %v", err)
 	}
 	info, err := os.Stat(a.path)
@@ -45,12 +45,12 @@ func TestConfigRoundTrip(t *testing.T) {
 	if code := a.run(context.Background(), []string{"config"}); code != 0 || strings.Contains(out.String(), "secret-for-test") {
 		t.Fatalf("unsafe display: code=%d stdout=%q stderr=%q", code, out, errOut)
 	}
-	var shown settings
-	if err := toml.Unmarshal(out.Bytes(), &shown); err != nil || shown.APIKey != "********" || shown.Model != "chosen-model" || shown.Timeout != "45s" ||
-		!slices.Equal(shown.Pick, []string{"answer", "model"}) {
+	var shown config
+	if err := toml.Unmarshal(out.Bytes(), &shown); err != nil || shown.Providers["jev"].APIKey != "********" || *shown.Providers["jev"].Model != "chosen-model" || *shown.Defaults.Timeout != "45s" ||
+		!slices.Equal(*shown.Defaults.Pick, []string{"answer", "model"}) {
 		t.Fatalf("display did not reflect settings: %v", err)
 	}
-	for _, key := range []string{"threshold", "min_score", "model", "timeout", "json", "pick", "api_key"} {
+	for _, key := range []string{"defaults.threshold", "defaults.min_score", "providers.jev.model", "defaults.timeout", "defaults.json", "defaults.pick", "providers.jev.api_key"} {
 		out.Reset()
 		if code := a.run(context.Background(), []string{"config", "unset", key}); code != 0 || out.Len() != 0 {
 			t.Fatalf("unset %s: code=%d stderr=%s", key, code, errOut)
@@ -64,7 +64,7 @@ func TestConfigRoundTrip(t *testing.T) {
 }
 
 func TestConfigReadAndNoopDoNotCreateFile(t *testing.T) {
-	for _, args := range [][]string{{"config"}, {"config", "path"}, {"config", "unset", "threshold"}, evaluationArgs()} {
+	for _, args := range [][]string{{"config"}, {"config", "path"}, {"config", "unset", "defaults.threshold"}, evaluationArgs()} {
 		a, _, errOut := harness(t)
 		if code := a.run(context.Background(), args); code != 0 {
 			t.Fatalf("%v: %d %s", args, code, errOut)
@@ -77,9 +77,9 @@ func TestConfigReadAndNoopDoNotCreateFile(t *testing.T) {
 
 func TestConfigPrecedence(t *testing.T) {
 	a, out, errOut := harness(t)
-	a.envToken = "environment-token"
+	a.env["TYPESAFE_API_KEY"] = "environment-token"
 	threshold, jsonOutput, model, timeout := .99, true, "file-model", "12s"
-	c := config{APIKey: "file-token", Threshold: &threshold, JSON: &jsonOutput, Model: &model, Timeout: &timeout, Pick: &[]string{"answer"}}
+	c := config{Defaults: defaults{Threshold: &threshold, JSON: &jsonOutput, Timeout: &timeout, Pick: &[]string{"answer"}}, Providers: map[string]providerConfig{"jev": {APIKey: "file-token", Model: &model}}}
 	if err := writeConfig(a.path, c); err != nil {
 		t.Fatal(err)
 	}
@@ -117,12 +117,12 @@ func TestPrimitiveConfigCriteriaScope(t *testing.T) {
 		fixture string
 		code    int
 	}{
-		{"threshold applies to noul", config{Threshold: &threshold}, noulArgs(), noulFixture, 2},
-		{"threshold ignored by score", config{Threshold: &threshold}, scoreArgs(), scoreFixture, 0},
-		{"min_score applies to score", config{MinScore: &minScore}, scoreArgs(), scoreFixture, 2},
-		{"min_score ignored by choice", config{MinScore: &minScore}, evaluationArgs(), choiceFixture, 0},
-		{"noul flag overrides file", config{Threshold: &threshold}, noulArgs("--threshold", "0"), noulFixture, 0},
-		{"score flag overrides file", config{MinScore: &minScore}, scoreArgs("--min-score", "0"), scoreFixture, 0},
+		{"threshold applies to noul", config{Defaults: defaults{Threshold: &threshold}}, noulArgs(), noulFixture, 2},
+		{"threshold ignored by score", config{Defaults: defaults{Threshold: &threshold}}, scoreArgs(), scoreFixture, 0},
+		{"min_score applies to score", config{Defaults: defaults{MinScore: &minScore}}, scoreArgs(), scoreFixture, 2},
+		{"min_score ignored by choice", config{Defaults: defaults{MinScore: &minScore}}, evaluationArgs(), choiceFixture, 0},
+		{"noul flag overrides file", config{Defaults: defaults{Threshold: &threshold}}, noulArgs("--threshold", "0"), noulFixture, 0},
+		{"score flag overrides file", config{Defaults: defaults{MinScore: &minScore}}, scoreArgs("--min-score", "0"), scoreFixture, 0},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
@@ -143,8 +143,7 @@ func TestConfigFailuresDoNotLeakOrReplace(t *testing.T) {
 	threshold, minScore, jsonOutput := .8, 1.5, true
 	model, timeout := "retained-model", "45s"
 	pick := []string{"answer", "model"}
-	if err := writeConfig(a.path, config{APIKey: "retained-secret", Threshold: &threshold, MinScore: &minScore,
-		JSON: &jsonOutput, Model: &model, Timeout: &timeout, Pick: &pick}); err != nil {
+	if err := writeConfig(a.path, config{Defaults: defaults{Threshold: &threshold, MinScore: &minScore, JSON: &jsonOutput, Timeout: &timeout, Pick: &pick}, Providers: map[string]providerConfig{"jev": {APIKey: "retained-secret", Model: &model}}}); err != nil {
 		t.Fatal(err)
 	}
 	before, err := os.ReadFile(a.path)
@@ -156,10 +155,10 @@ func TestConfigFailuresDoNotLeakOrReplace(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, args := range [][]string{
-		{"config", "set", "api_key", "argument-secret"}, {"config", "set", "threshold", "NaN"},
-		{"config", "set", "min_score", "-1"}, {"config", "set", "min_score", "NaN"},
-		{"config", "set", "timeout", "0s"}, {"config", "set", "json", "maybe"},
-		{"config", "set", "pick", "unknown"}, {"config", "unset", "unknown"},
+		{"config", "set", "providers.jev.api_key", "argument-secret"}, {"config", "set", "defaults.threshold", "NaN"},
+		{"config", "set", "defaults.min_score", "-1"}, {"config", "set", "defaults.min_score", "NaN"},
+		{"config", "set", "defaults.timeout", "0s"}, {"config", "set", "defaults.json", "maybe"},
+		{"config", "set", "defaults.pick", "unknown"}, {"config", "unset", "unknown"},
 	} {
 		out.Reset()
 		errOut.Reset()
@@ -217,22 +216,22 @@ func TestConfigRefusesSymlinksAndDirectories(t *testing.T) {
 func TestConfigPreservesExplicitEmptyPick(t *testing.T) {
 	a, _, errOut := harness(t)
 	for _, args := range [][]string{
-		{"config", "set", "pick", ""},
-		{"config", "set", "threshold", "0"},
+		{"config", "set", "defaults.pick", ""},
+		{"config", "set", "defaults.threshold", "0"},
 	} {
 		if code := a.run(context.Background(), args); code != 0 {
 			t.Fatalf("%v: %d %s", args, code, errOut)
 		}
 		c, err := readConfig(a.path)
-		if err != nil || c.Pick == nil || len(*c.Pick) != 0 {
+		if err != nil || c.Defaults.Pick == nil || len(*c.Defaults.Pick) != 0 {
 			t.Fatalf("explicit empty pick not preserved: %v", err)
 		}
 	}
-	if code := a.run(context.Background(), []string{"config", "unset", "pick"}); code != 0 {
+	if code := a.run(context.Background(), []string{"config", "unset", "defaults.pick"}); code != 0 {
 		t.Fatalf("unset: %d %s", code, errOut)
 	}
 	c, err := readConfig(a.path)
-	if err != nil || c.Pick != nil {
+	if err != nil || c.Defaults.Pick != nil {
 		t.Fatal("unset did not remove pick")
 	}
 }

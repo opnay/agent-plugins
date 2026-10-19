@@ -11,6 +11,8 @@
 - scenario testing 이전: [changes/005-scenario-testing-migration.md](changes/005-scenario-testing-migration.md)
 - 작업 중 Jev 사용: [changes/006-jev-use.md](changes/006-jev-use.md)
 - 기본 패턴 통합·호출 마이그레이션: [changes/008-jev-use-integration.md](changes/008-jev-use-integration.md)
+- provider 설정·초기 템플릿: [changes/011-provider-config.md](changes/011-provider-config.md)
+- provider 어댑터: [changes/010-provider-adapter.md](changes/010-provider-adapter.md)
 - 구조화 입력·장문 모드: [changes/009-structured-input.md](changes/009-structured-input.md)
 - doctor 인증·출력: [changes/007-doctor-auth.md](changes/007-doctor-auth.md)
 
@@ -32,3 +34,7 @@ CLI 테스트·빌드는 모델 판단 정확성이나 실제 API 인증을 증�
 플러그인 구조 검증과 skill frontmatter 검증에 더해, 스킬 spec과 runtime은 clean-context read-only 검증으로 대조합니다. 작성용 spec을 설치된 스킬의 필수 runtime 의존성으로 만들지 않습니다. `jev`는 CLI와 기본 사용 패턴·내장 유즈케이스를 안내하고, `scenario-testing`은 prediction·fresh executor·comparison을 조율하고, `jev batch`는 공통 state 질문 전송만 소유합니다.
 
 단건 구조화 입력은 `jev <primitive> --input request.json`, batch JSON state는 `--state-format json`, 요청별 장문 모드는 `--long-context`로 사용합니다. 신규 기준과 Score legend의 JSON 구조는 CLI가 보존합니다. 기존 명령·JSONL은 유지하며 이미지·Box·usage는 이번 확장에 포함하지 않습니다.
+
+Provider 경계: `scripts/providers/provider.go`의 `Adapter`가 공통 `Request`를 받아 question id별 정규화 `Result`를 반환합니다. `scripts/providers/jev/`의 client·response·authentication이 TypeSafe 전용 코드입니다. `scripts/client.go`는 현재 Jev 구현을 선택하는 조립 지점이며 단건·batch·doctor가 이를 공유합니다. 공통 JSON 값 처리는 `providers/content.go`에 둡니다. 새 provider는 자체 wire 요청·응답을 어댑터 안에서 변환해야 합니다.
+
+설정 schema는 defaults와 providers.<name>으로 구분합니다. config.template.toml은 go:embed로 포함하며 config init·최초 set의 생성 기준입니다. 기존 flat 설정은 수동 이동을 요구하며 사용자 홈 migration은 구현 검증에서 수행하지 않습니다.

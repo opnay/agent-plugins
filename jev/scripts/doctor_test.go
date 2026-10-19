@@ -17,7 +17,7 @@ func TestDoctorLocalChecksAreReadOnly(t *testing.T) {
 	for _, scenario := range []string{"healthy", "no-config", "missing-binary", "missing-path", "shadowed-path", "no-token", "invalid-config", "public-config", "pick-without-json", "not-executable"} {
 		t.Run(scenario, func(t *testing.T) {
 			a, out, errOut := harness(t)
-			a.envToken = ""
+			a.env["TYPESAFE_API_KEY"] = ""
 			calls := 0
 			a.transport = roundTripFunc(func(*http.Request) (*http.Response, error) { calls++; return response(200, ""), nil })
 			target := filepath.Join(t.TempDir(), "jev")
@@ -25,7 +25,7 @@ func TestDoctorLocalChecksAreReadOnly(t *testing.T) {
 				t.Fatal(err)
 			}
 			a.lookupPath = func(string) (string, error) { return target, nil }
-			if err := writeConfig(a.path, config{APIKey: "never-print-this-token"}); err != nil {
+			if err := writeConfig(a.path, config{Providers: map[string]providerConfig{"jev": {APIKey: "never-print-this-token"}}}); err != nil {
 				t.Fatal(err)
 			}
 			switch scenario {
@@ -33,7 +33,7 @@ func TestDoctorLocalChecksAreReadOnly(t *testing.T) {
 				if err := os.Remove(a.path); err != nil {
 					t.Fatal(err)
 				}
-				a.envToken = "environment-secret"
+				a.env["TYPESAFE_API_KEY"] = "environment-secret"
 			case "missing-binary":
 				if err := os.Remove(target); err != nil {
 					t.Fatal(err)
@@ -59,7 +59,7 @@ func TestDoctorLocalChecksAreReadOnly(t *testing.T) {
 					t.Fatal(err)
 				}
 			case "pick-without-json":
-				if err := writeConfig(a.path, config{APIKey: "never-print-this-token", Pick: &[]string{"answer"}}); err != nil {
+				if err := writeConfig(a.path, config{Defaults: defaults{Pick: &[]string{"answer"}}, Providers: map[string]providerConfig{"jev": {APIKey: "never-print-this-token"}}}); err != nil {
 					t.Fatal(err)
 				}
 			case "not-executable":
@@ -136,10 +136,10 @@ func TestDoctorAuthentication(t *testing.T) {
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			a, out, errOut, dir := doctorHarness(t, source)
-			if err := writeConfig(a.path, config{APIKey: "file-secret"}); err != nil {
+			if err := writeConfig(a.path, config{Providers: map[string]providerConfig{"jev": {APIKey: "file-secret"}}}); err != nil {
 				t.Fatal(err)
 			}
-			a.envToken = "environment-secret"
+			a.env["TYPESAFE_API_KEY"] = "environment-secret"
 			calls := 0
 			a.transport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
 				calls++
@@ -175,8 +175,8 @@ func TestDoctorKeySelection(t *testing.T) {
 	for _, env := range []string{"", "   "} {
 		t.Run(env, func(t *testing.T) {
 			a, out, errOut, dir := doctorHarness(t, source)
-			a.envToken = env
-			if err := writeConfig(a.path, config{APIKey: "file-secret"}); err != nil {
+			a.env["TYPESAFE_API_KEY"] = env
+			if err := writeConfig(a.path, config{Providers: map[string]providerConfig{"jev": {APIKey: "file-secret"}}}); err != nil {
 				t.Fatal(err)
 			}
 			a.transport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
@@ -186,7 +186,7 @@ func TestDoctorKeySelection(t *testing.T) {
 				return response(401, ""), nil
 			})
 			if code := a.run(context.Background(), []string{"doctor", "--dir", dir}); code != 1 || out.Len() > 0 ||
-				!strings.Contains(errOut.String(), "config api_key (value hidden)") || !strings.Contains(errOut.String(), "use jev config set api_key --stdin") {
+				!strings.Contains(errOut.String(), "config api_key (value hidden)") || !strings.Contains(errOut.String(), "use jev config set providers.jev.api_key --stdin") {
 				t.Fatalf("code=%d stdout=%s stderr=%s", code, out, errOut)
 			}
 		})
@@ -203,7 +203,7 @@ func TestDoctorNetworkErrors(t *testing.T) {
 			want := "cannot reach TypeSafe API"
 			if scenario == "timeout" {
 				timeout := "1ms"
-				if err := writeConfig(a.path, config{Timeout: &timeout}); err != nil {
+				if err := writeConfig(a.path, config{Defaults: defaults{Timeout: &timeout}}); err != nil {
 					t.Fatal(err)
 				}
 				want = "authentication check timed out"

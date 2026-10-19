@@ -1,0 +1,19 @@
+[defaults]
+provider = "jev"
+timeout = "30s"
+json = false
+pick = []
+
+# threshold = 0.8
+# min_score = 1.5
+
+[providers.jev]
+model = "jev-latest"
+# Auth: TYPESAFE_API_KEY or jev config set providers.jev.api_key --stdin
+
+# Configure these after their adapters are implemented.
+# [providers.openrouter]
+# model = "<model-id>"
+
+# [providers.openai]
+# model = "<model-id>"

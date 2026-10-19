@@ -10,6 +10,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"opnay/jev/providers"
 )
 
 func inputFile(t *testing.T, content string) string {
@@ -44,12 +46,12 @@ func TestStructuredSingleRequestAndResult(t *testing.T) {
 				if err := json.Unmarshal(data, &request); err != nil {
 					t.Fatal(err)
 				}
-				input, err := decodeJSON([]byte(tc.input))
+				input, err := providers.DecodeJSON([]byte(tc.input))
 				if err != nil {
 					t.Fatal(err)
 				}
 				fields := input.(map[string]any)
-				state, err := decodeJSON(request["state"])
+				state, err := providers.DecodeJSON(request["state"])
 				if err != nil || !reflect.DeepEqual(state, fields["state"]) {
 					t.Fatalf("state was not preserved: %s", data)
 				}
@@ -57,7 +59,7 @@ func TestStructuredSingleRequestAndResult(t *testing.T) {
 				if err := json.Unmarshal(request["questions"], &questions); err != nil {
 					t.Fatal(err)
 				}
-				question, err := decodeJSON(questions["result"])
+				question, err := providers.DecodeJSON(questions["result"])
 				if err != nil {
 					t.Fatal(err)
 				}
@@ -81,12 +83,12 @@ func TestStructuredSingleRequestAndResult(t *testing.T) {
 				t.Fatalf("wrong answer: %s", out)
 			}
 			if tc.kind == "score" {
-				legend, err := decodeJSON(result["legend"])
+				legend, err := providers.DecodeJSON(result["legend"])
 				if err != nil {
 					t.Fatal(err)
 				}
-				want, _ := decodeJSON([]byte(`{"0":{"impact":"none","weight":1},"1":["blocked",{"weight":9007199254740993}]}`))
-				if !jsonValuesEqual(legend, want) {
+				want, _ := providers.DecodeJSON([]byte(`{"0":{"impact":"none","weight":1},"1":["blocked",{"weight":9007199254740993}]}`))
+				if !providers.JSONValuesEqual(legend, want) {
 					t.Fatalf("structured legend lost: %s", out)
 				}
 			}
@@ -185,21 +187,21 @@ func TestBatchStructuredQuestionsAndJSONState(t *testing.T) {
 			a.transport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
 				calls++
 				data, _ := io.ReadAll(r.Body)
-				request, err := decodeJSON(data)
+				request, err := providers.DecodeJSON(data)
 				if err != nil {
 					t.Fatal(err)
 				}
 				fields := request.(map[string]any)
 				var wantState any = state
 				if format == "json" {
-					wantState, _ = decodeJSON([]byte(state))
+					wantState, _ = providers.DecodeJSON([]byte(state))
 				}
 				if !reflect.DeepEqual(fields["state"], wantState) {
 					t.Fatalf("wrong state: %s", data)
 				}
 				questions := fields["questions"].(map[string]any)
 				for _, line := range strings.Split(input, "\n") {
-					row, _ := decodeJSON([]byte(line))
+					row, _ := providers.DecodeJSON([]byte(line))
 					q := row.(map[string]any)
 					instructions, exists := q["instructions"]
 					if !exists {

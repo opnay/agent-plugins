@@ -5,6 +5,8 @@ import (
 	"flag"
 	"io"
 	"strings"
+
+	"opnay/jev/providers"
 )
 
 type evaluationOptions struct {
@@ -12,11 +14,11 @@ type evaluationOptions struct {
 	question    string
 	inputPath   string
 	state       any
-	payload     *evaluationQuestion
+	payload     *providers.Question
 	longContext bool
 	choices     []string
 	levels      []any
-	flags       config
+	flags       configFlags
 }
 
 type repeatedStrings []string
@@ -36,7 +38,7 @@ func parseEvaluation(args []string) (evaluationOptions, error) {
 			args = args[1:]
 		}
 	}
-	var conditions, pick, model, timeout string
+	var conditions, pick, model, timeout, provider string
 	var levels repeatedStrings
 	var threshold, minScore float64
 	var jsonOutput bool
@@ -54,6 +56,7 @@ func parseEvaluation(args []string) (evaluationOptions, error) {
 	} else {
 		f.Float64Var(&threshold, "threshold", 0, "minimum result probability")
 	}
+	f.StringVar(&provider, "provider", "jev", "decision provider")
 	f.StringVar(&model, "model", "jev-latest", "model")
 	f.StringVar(&timeout, "timeout", "30s", "timeout")
 	f.BoolVar(&jsonOutput, "json", false, "JSON output")
@@ -95,6 +98,8 @@ func parseEvaluation(args []string) (evaluationOptions, error) {
 			o.flags.Threshold = &threshold
 		case "min-score":
 			o.flags.MinScore = &minScore
+		case "provider":
+			o.flags.Provider = &provider
 		case "model":
 			o.flags.Model = &model
 		case "timeout":

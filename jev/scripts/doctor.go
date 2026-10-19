@@ -14,7 +14,7 @@ type doctorReport string
 
 func (r doctorReport) Error() string { return string(r) }
 
-func (a application) doctor(ctx context.Context, target string) error {
+func (a application) doctor(ctx context.Context, target string, provider *string) error {
 	var report strings.Builder
 	ok, failed, skipped := 0, 0, 0
 	record := func(status, name, detail, hint string) {
@@ -69,7 +69,12 @@ func (a application) doctor(ctx context.Context, target string) error {
 		c, configErr = readConfig(path)
 	}
 	configReadErr := configErr
-	s := c.resolve(a.envToken)
+	if provider != nil {
+		c.override(configFlags{Provider: provider})
+	}
+	s := a.resolve(c)
+	envName := providerEnvironment(s.Provider)
+	envToken := a.env[envName]
 	if configErr == nil {
 		configErr = s.validate()
 	}
@@ -92,9 +97,9 @@ func (a application) doctor(ctx context.Context, target string) error {
 	check("Config", configDetail, configHint, configErr)
 
 	report.WriteString("\nAuthentication\n")
-	keyHint := "use jev config set api_key --stdin or set TYPESAFE_API_KEY"
-	if strings.TrimSpace(a.envToken) != "" {
-		keyHint = "update or unset TYPESAFE_API_KEY; it overrides the config file api_key"
+	keyHint := "use jev config set providers." + s.Provider + ".api_key --stdin or set " + envName
+	if strings.TrimSpace(envToken) != "" {
+		keyHint = "update or unset " + envName + "; it overrides the config file api_key"
 	}
 	switch {
 	case s.APIKey == "" && configReadErr != nil:
@@ -103,8 +108,8 @@ func (a application) doctor(ctx context.Context, target string) error {
 		record("FAIL", "API key", "missing", keyHint)
 	case strings.ContainsAny(s.APIKey, "\r\n"):
 		record("FAIL", "API key", "must be a single line", keyHint)
-	case strings.TrimSpace(a.envToken) != "":
-		record("OK", "API key", "TYPESAFE_API_KEY (overrides config api_key; value hidden)", "")
+	case strings.TrimSpace(envToken) != "":
+		record("OK", "API key", envName+" (overrides config api_key; value hidden)", "")
 	default:
 		record("OK", "API key", "config api_key (value hidden)", "")
 	}
@@ -114,15 +119,30 @@ func (a application) doctor(ctx context.Context, target string) error {
 	case s.APIKey == "":
 		record("SKIP", "API", "API key required; authentication not checked", "")
 	default:
-		detail, hint, err := checkDoctorAPI(ctx, s, a.transport, keyHint)
-		check("API", detail, hint, err)
+		authentication, err := newProvider(s, a.transport).CheckAuthentication(ctx)
+		hint := authentication.Hint
+		if authentication.KeyRejected {
+			hint = keyHint
+		}
+		check("API", authentication.Detail, hint, err)
 	}
 
 	fmt.Fprintf(&report, "\nSummary: %d OK, %d FAIL, %d SKIP\n", ok, failed, skipped)
 	report.WriteString("No local changes or inference requests were made.\n")
 	// Local paths and diagnostics can also contain the configured token.
 	output := report.String()
-	for _, token := range []string{c.APIKey, a.envToken, s.APIKey} {
+	for _, p := range c.Providers {
+		if p.APIKey != "" {
+			output = strings.ReplaceAll(output, p.APIKey, "[redacted]")
+		}
+	}
+	for _, token := range a.env {
+		token = strings.TrimSpace(token)
+		if token != "" {
+			output = strings.ReplaceAll(output, token, "[redacted]")
+		}
+	}
+	for _, token := range []string{strings.TrimSpace(envToken), s.APIKey} {
 		if token != "" {
 			output = strings.ReplaceAll(output, token, "[redacted]")
 		}

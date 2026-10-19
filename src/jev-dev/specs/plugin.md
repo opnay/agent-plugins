@@ -27,6 +27,9 @@
 - "그냥 jev cli에 최신 jev api들 반영하고 싶단 소리였어."
 - CLI에서 장문 모드, 구조화 state·instructions·판정 기준을 단건·batch로 사용합니다.
 
+- 기본 설정 섹션은 `[defaults]`이며 provider의 내장 기본값은 jev입니다.
+- 설정 파일 최초 생성에는 편집 가능한 기본 템플릿을 제공합니다.
+
 ---
 
 # Jev 플러그인 스펙
@@ -46,13 +49,14 @@ TypeSafe의 hosted Jev 모델을 Go CLI에서 호출하고, 에이전트가 CLI 
 - 질문과 필요한 문맥을 `--if`에 함께 전달하고, 판단 형태에 맞는 primitive를 고른다.
 - Noul은 참일 확률, Choice는 선택된 조건, Score는 순서형 기준의 가중 점수를 받는다.
 - `jev batch`는 하나의 공통 state와 JSONL 질문을 한 SystemOne 요청으로 평가한다.
-- `jev config`로 기본값과 API 인증을 관리한다.
+- `jev config`로 defaults·provider별 모델·인증을 관리하고 `config init` 또는 최초 set에서 내장 템플릿을 생성합니다. 실행 provider는 Jev이며 OpenRouter·OpenAI 설정도 보존합니다.
 - `jev install`, `jev uninstall`, `jev doctor`로 요청된 CLI 유지보수를 수행한다. doctor는 인증된 models 조회와 키 출처·문제별 해결 안내를 제공한다.
 - Jev 기본 패턴을 작은 선택·되묻기·불확실한 근거 평가·모델 선택에 적용합니다. 모델 선택은 현재 작업과 정책이 허용한 후보를 평가하는 예시이며 위임 실행이나 모델 정책을 소유하지 않습니다.
 - reusable instruction의 scenario-specific expected behavior, 선택적 Jev prediction, fresh executor actual behavior를 비교하고 evidence를 보존한다.
 
 ## 대표 표면
 
+- provider 구현은 `jev/scripts/providers/<provider>/`에 두며 공통 어댑터 계약으로 CLI에 연결합니다. 현재 Jev를 구현하며 후속 OpenRouter·OpenAI decision 모델이 같은 경계에 연결됩니다.
 - CLI: [cli.md](cli.md), `jev/scripts/`의 독립 Go 모듈. 대표 명령은 `jev noul`, `jev choice`, `jev score`, `jev batch`다.
 - 스킬: `$jev:jev`, [skills/jev.md](skills/jev.md), `$jev:scenario-testing`, [skills/scenario-testing.md](skills/scenario-testing.md).
 - 사용 안내: `jev/README.md`, manifest의 설명과 `defaultPrompt`.

@@ -12,16 +12,20 @@ import (
 )
 
 type lifecycleOptions struct {
-	target string
-	force  bool
+	target   string
+	force    bool
+	provider *string
 }
 
 func parseLifecycle(command string, args []string) (lifecycleOptions, error) {
 	var o lifecycleOptions
-	var directory string
+	var directory, provider string
 	f := flag.NewFlagSet(command, flag.ContinueOnError)
 	f.SetOutput(io.Discard)
 	f.StringVar(&directory, "dir", "", "installation directory (default: ~/.local/bin)")
+	if command == "doctor" {
+		f.StringVar(&provider, "provider", "jev", "decision provider")
+	}
 	if command == "install" {
 		f.BoolVar(&o.force, "force", false, "replace an existing regular file")
 	}
@@ -36,6 +40,9 @@ func parseLifecycle(command string, args []string) (lifecycleOptions, error) {
 	}
 	dirSet := false
 	f.Visit(func(v *flag.Flag) {
+		if v.Name == "provider" {
+			o.provider = &provider
+		}
 		if v.Name == "dir" {
 			dirSet = true
 		}
@@ -65,7 +72,7 @@ func (a application) maintain(ctx context.Context, command string, args []string
 		return err
 	}
 	if command == "doctor" {
-		return a.doctor(ctx, o.target)
+		return a.doctor(ctx, o.target, o.provider)
 	}
 	var message string
 	if command == "install" {

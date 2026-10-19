@@ -16,7 +16,7 @@ type application struct {
 	out        io.Writer
 	errOut     io.Writer
 	path       string // Tests supply a temporary path, never the user's config.
-	envToken   string
+	env        map[string]string
 	transport  http.RoundTripper
 	executable string // Optional test source; production uses os.Executable.
 	lookupPath func(string) (string, error)
@@ -90,7 +90,7 @@ func (a application) execute(ctx context.Context, args []string) (int, error) {
 		return 1, err
 	}
 	c.override(o.flags)
-	s := c.resolve(a.envToken)
+	s := a.resolve(c)
 	if err := s.validate(); err != nil {
 		return 1, evaluationHelpError(o.primitive, err)
 	}
@@ -104,7 +104,7 @@ func (a application) execute(ctx context.Context, args []string) (int, error) {
 		return 1, evaluationHelpError(o.primitive, fmt.Errorf("min_score must not exceed the highest Score level %d", len(o.levels)-1))
 	}
 	if s.APIKey == "" {
-		return 1, errors.New("API key missing; set TYPESAFE_API_KEY or use jev config set api_key --stdin")
+		return 1, errors.New("API key missing; set TYPESAFE_API_KEY or use jev config set providers.jev.api_key --stdin")
 	}
 	result, err := evaluate(ctx, o, s, a.transport)
 	if err != nil {
@@ -139,7 +139,7 @@ func evaluationHelpError(p primitive, err error) error {
 }
 
 func validateEvaluationFlags(o evaluationOptions) error {
-	if err := o.flags.resolve("").validate(); err != nil {
+	if err := o.flags.validate(); err != nil {
 		return err
 	}
 	if o.flags.Pick != nil {
@@ -154,4 +154,8 @@ func validateEvaluationFlags(o evaluationOptions) error {
 		return fmt.Errorf("min_score must not exceed the highest Score level %d", len(o.levels)-1)
 	}
 	return nil
+}
+
+func (a application) resolve(c config) settings {
+	return c.resolve(a.env[providerEnvironment(c.provider())])
 }

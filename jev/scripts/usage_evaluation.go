@@ -27,7 +27,8 @@ const longContextHelp = `Long context:
 const evaluationCommonOptions = `Common options:
   --input <path>      JSON state, instructions, and criteria file
   --long-context[=false] Enable expanded context for this request
-  --model <name>       Model (default: jev-latest)
+  --provider <name>    Decision provider (defaults.provider; built-in: jev)
+  --model <name>       Model (selected provider default; Jev: jev-latest)
   --timeout <duration> Request timeout (default: 30s)
   --json[=false]       Output JSON (default: false)
   --pick <fields>      Keep named JSON fields
@@ -121,7 +122,8 @@ Batch options:
   --input <path>       JSONL questions; blank lines ignored, one row required
   --state-format <text|json> Shared state format (default: text)
   --long-context[=false] Enable expanded context for this request
-  --model <name>       Model (default: jev-latest)
+  --provider <name>    Decision provider (defaults.provider; built-in: jev)
+  --model <name>       Model (selected provider default; Jev: jev-latest)
   --timeout <duration> Request timeout (default: 30s)
   --help               Show this help
 

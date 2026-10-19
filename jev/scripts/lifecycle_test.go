@@ -38,12 +38,12 @@ func TestGoRunBootstrap(t *testing.T) {
 func TestMaintenanceLifecycle(t *testing.T) {
 	a, out, errOut := harness(t)
 	a.executable = buildTestBinary(t)
-	a.envToken = "" // Neither install nor uninstall requires authentication.
+	a.env["TYPESAFE_API_KEY"] = "" // Neither install nor uninstall requires authentication.
 	taskHome := t.TempDir()
 	a.path = filepath.Join(taskHome, ".agents", "jev.toml")
 	dir := filepath.Join(t.TempDir(), "bin with spaces")
 	target := filepath.Join(dir, "jev")
-	if err := writeConfig(a.path, config{APIKey: "preserved-token"}); err != nil {
+	if err := writeConfig(a.path, config{Providers: map[string]providerConfig{"jev": {APIKey: "preserved-token"}}}); err != nil {
 		t.Fatal(err)
 	}
 	before, err := os.ReadFile(a.path)

@@ -22,45 +22,69 @@ go run . install
 jev install
 jev install --force --dir /absolute/bin
 jev uninstall
-jev doctor
+jev doctor [--provider jev]
 ```
 
 - `install`: 실행 중인 바이너리를 0755 권한으로 복사합니다. 다른 일반 파일 교체에는 `--force`가 필요합니다.
 - `uninstall`: Go build info로 Jev임을 식별한 일반 파일만 제거합니다. 설정·토큰·디렉터리·셸 설정은 유지합니다.
 - `doctor`: 설치 파일, PATH, 설정 유효성·권한, 키 유무·출처와 API 인증을 점검합니다. 유효한 설정·키가 있으면 인증된 `GET /v1/models`를 한 번 호출하며 추론 요청은 하지 않습니다.
-- 결과는 `OK / FAIL / SKIP`, 문제별 해결 안내, 전체 요약으로 표시합니다. 키 원문은 숨기며, 환경변수가 파일 키를 덮어쓰는지도 보여줍니다. 401·403과 네트워크·시간 초과·호출 제한·서버 오류를 구분합니다. API 조회 성공은 모델 정확성이나 추론 가능 여부를 증명하지 않습니다. 설정·설치·셸을 자동 수정하거나 요청을 재시도하지 않습니다.
+- 결과는 `OK / FAIL / SKIP`, 문제별 해결 안내, 전체 요약으로 표시합니다. 키 원문은 숨기며, 선택 provider의 환경변수가 파일 키를 덮어쓰는지도 보여줍니다. 401·403과 네트워크·시간 초과·호출 제한·서버 오류를 구분합니다. API 조회 성공은 모델 정확성이나 추론 가능 여부를 증명하지 않습니다. 설정·설치·셸을 자동 수정하거나 요청을 재시도하지 않습니다.
 - doctor 정상 결과는 stdout·종료 코드 0, 문제 결과는 빈 stdout·stderr·종료 코드 1입니다.
 
 ## 인증과 설정
 
-설정파일은 `~/.agents/jev.toml`입니다.
+설정파일은 `~/.agents/jev.toml`입니다. 파일이 없으면 내장 기본값으로 동작하며 조회·평가·doctor는 파일을 만들지 않습니다.
 
 ```sh
-jev config set api_key --stdin
+jev config init
 jev config
 jev config path
-jev config set threshold 0.8
-jev config set min_score 1.5
-jev config set model jev-latest
-jev config set timeout 45s
-jev config set json true
-jev config set pick answer,model
-jev config unset threshold
+jev config set defaults.provider jev
+jev config set defaults.threshold 0.8
+jev config set defaults.min_score 1.5
+jev config set defaults.timeout 45s
+jev config set defaults.json true
+jev config set defaults.pick answer,model
+jev config set providers.jev.model jev-latest
+jev config set providers.jev.api_key --stdin
+jev config unset defaults.threshold
 ```
 
-실제 토큰은 stdin으로 저장합니다. 파일에 저장하지 않으려면 `TYPESAFE_API_KEY`를 사용합니다. 비어 있지 않은 환경변수가 파일의 `api_key`보다 우선합니다. 설정파일은 0600 권한의 평문입니다.
+`config init`은 내장 템플릿을 0600 권한으로 생성합니다. 기존 파일은 유효성에 관계없이 덮어쓰지 않습니다. 최초 `config set`도 같은 템플릿에 요청값을 반영합니다. 미구현 provider 예시는 주석으로 제공하며 토큰·활성 placeholder는 포함하지 않습니다.
 
-| key | 내장 기본값 | 적용 |
-|---|---:|---|
-| `api_key` | 없음 | 판정·doctor 인증 |
-| `threshold` | 미적용 | Choice 선택 확률·Noul 참일 확률 |
-| `min_score` | 미적용 | Score 점수 |
-| `model` | `jev-latest` | 모든 primitive |
-| `timeout` | `30s` | 모든 primitive |
-| `json` | `false` | 출력 |
-| `pick` | 제한 없음 | primitive별 JSON field |
+```toml
+[defaults]
+provider = "jev"
+timeout = "30s"
+json = false
+pick = []
 
-명시적 CLI 옵션 > 파일 > 내장 기본값 순서로 적용합니다. `--threshold 0`, `--min-score 0`, `--json=false`, `--pick ''`도 저장값을 덮어씁니다. 조회와 판정은 설정파일을 만들지 않으며 `set`과 `unset`은 오프라인입니다.
+# threshold = 0.8
+# min_score = 1.5
+
+[providers.jev]
+model = "jev-latest"
+# 인증: TYPESAFE_API_KEY 또는 providers.jev.api_key
+```
+
+| 설정 | 내장 기본값 | 적용 |
+|---|---|---|
+| `defaults.provider` | `jev` | 단건·batch·doctor |
+| `defaults.timeout` | `30s` | 추론·인증 조회 |
+| `defaults.threshold` | 미적용 | Choice 선택 확률·Noul 참일 확률 |
+| `defaults.min_score` | 미적용 | Score 점수 |
+| `defaults.json` | `false` | 단건 출력 |
+| `defaults.pick` | 제한 없음 | 단건 JSON 필드 |
+| `providers.<name>.model` | Jev는 `jev-latest` | 해당 provider 모델 |
+| `providers.<name>.api_key` | 없음 | 해당 provider 인증 |
+
+Provider 선택은 `--provider` > defaults.provider > 내장 jev, 모델은 `--model` > 선택 provider의 model > 해당 provider 기본값입니다. 공통 설정은 명시적 flag > defaults > 내장값 순서입니다. 명시적 0·false·빈 pick도 저장값보다 우선합니다.
+
+인증은 선택 provider의 비어 있지 않은 환경변수가 파일 키보다 우선합니다. Jev는 `TYPESAFE_API_KEY`, OpenRouter는 `OPENROUTER_API_KEY`, OpenAI는 `OPENAI_API_KEY`를 사용합니다. 다른 provider의 키·모델로 대체하지 않습니다. 현재 실행은 Jev만 지원하며 OpenRouter·OpenAI 설정은 저장·조회만 가능합니다. 미구현 provider 실행은 API 호출 전에 오류로 끝납니다.
+
+모든 provider 키는 조회 시 전체 마스킹합니다. 토큰은 stdin으로만 저장하며 파일은 0600 평문입니다. set/unset은 오프라인이고 성공 시 무출력입니다. 알 수 없는 key·잘못된 타입과 symlink·디렉터리는 거부합니다.
+
+기존 최상위 공통 key는 `[defaults]`, `model`·`api_key`는 `[providers.jev]`로 옮겨야 합니다. 구형·신형 혼용이나 `[default]` 단수 섹션은 오류이며 자동 migration하지 않습니다. 기존 파일 편집 시 주석·서식 보존은 보장하지 않습니다.
 
 ## Primitive 선택
 
@@ -192,3 +216,13 @@ jev score --if "..." --level low --level medium --level high --min-score 1.5
 Go HTTP·JSON·flags와 MIT 라이선스의 `github.com/pelletier/go-toml/v2`를 사용합니다. 제3자 라이선스는 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)에 있습니다.
 
 외부 계약: [TypeSafe API](https://docs.typesafe.ai/api), [Noul](https://docs.typesafe.ai/primitives/noul), [Choice](https://docs.typesafe.ai/primitives/choice), [Score](https://docs.typesafe.ai/primitives/score).
+
+## CLI 내부 구조
+
+`jev/scripts/providers`는 공통 decision 요청·질문·결과와 `Adapter` 인터페이스를 제공합니다. `providers/jev`가 TypeSafe HTTP 호출, 응답 검증, API 인증 진단을 소유합니다. CLI는 입력·설정·파일·결과 기준·출력·종료 코드를 처리합니다.
+
+```text
+CLI 단건·batch·doctor > providers.Adapter > providers/jev > TypeSafe API
+```
+
+Jev 어댑터는 검증한 결과만 반환합니다. API·응답 오류는 기존 stderr·종료 코드 계약으로 전달합니다. 후속 OpenRouter·OpenAI decision 모델은 같은 어댑터 경계에 연결할 수 있으며, 현재 실행 가능한 provider는 Jev입니다.

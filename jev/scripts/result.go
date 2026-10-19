@@ -5,16 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
+
+	"opnay/jev/providers"
 )
 
-type result struct {
-	Primitive     primitive          `json:"-"`
-	Answer        any                `json:"answer"`
-	Legend        map[string]any     `json:"legend,omitempty"`
-	Probabilities map[string]float64 `json:"probabilities,omitempty"`
-	Confidence    *float64           `json:"confidence,omitempty"`
-	Model         string             `json:"model"`
-}
+type result = providers.Result
 
 func validatePick(fields []string) error {
 	seen := make(map[string]bool)
@@ -39,7 +34,7 @@ func writeResult(out io.Writer, r result, s settings) error {
 	}
 	var value any = r
 	if len(s.Pick) > 0 {
-		all := r.fields()
+		all := resultFields(r)
 		selected := make(map[string]any, len(s.Pick))
 		for _, key := range s.Pick {
 			selected[key] = all[key]
@@ -54,7 +49,7 @@ func writeResult(out io.Writer, r result, s settings) error {
 	return err
 }
 
-func (r result) fields() map[string]any {
+func resultFields(r result) map[string]any {
 	fields := map[string]any{"answer": r.Answer, "model": r.Model}
 	if r.Primitive == primitiveChoice || r.Primitive == primitiveScore {
 		fields["probabilities"] = r.Probabilities

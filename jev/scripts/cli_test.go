@@ -30,7 +30,7 @@ func harness(t *testing.T) (application, *bytes.Buffer, *bytes.Buffer) {
 	out, errOut := new(bytes.Buffer), new(bytes.Buffer)
 	return application{
 		in: strings.NewReader(""), out: out, errOut: errOut,
-		path: filepath.Join(t.TempDir(), ".agents", "jev.toml"), envToken: "test-token",
+		path: filepath.Join(t.TempDir(), ".agents", "jev.toml"), env: map[string]string{"TYPESAFE_API_KEY": "test-token"},
 		transport: roundTripFunc(func(*http.Request) (*http.Response, error) { return response(200, fixture), nil }),
 	}, out, errOut
 }
@@ -176,7 +176,7 @@ func TestInvalidOptionsDoNotCallAPI(t *testing.T) {
 
 func TestMissingAuth(t *testing.T) {
 	a, out, errOut := harness(t)
-	a.envToken = ""
+	a.env["TYPESAFE_API_KEY"] = ""
 	if code := a.run(context.Background(), evaluationArgs()); code != 1 || out.Len() != 0 || !strings.Contains(errOut.String(), "API key missing") {
 		t.Fatalf("code=%d stdout=%s stderr=%s", code, out, errOut)
 	}
@@ -190,7 +190,7 @@ func TestHelpDoesNotReadConfig(t *testing.T) {
 	for _, args := range [][]string{nil, {"--help"}} {
 		a, out, errOut := harness(t)
 		a.path = t.TempDir() // Not a config file.
-		a.envToken = ""
+		a.env["TYPESAFE_API_KEY"] = ""
 		a.transport = roundTripFunc(func(*http.Request) (*http.Response, error) {
 			t.Fatal("help called API")
 			return nil, nil
@@ -232,7 +232,7 @@ func TestHelpDoesNotReadConfig(t *testing.T) {
 		},
 		{
 			"config",
-			[]string{"Usage:\n  jev config", "Commands:", "Options:", "Keys:", "api_key", "threshold", "min_score", "model        jev-latest", "timeout      30s", "json         false", "TYPESAFE_API_KEY takes precedence", "Flags override file values"},
+			[]string{"Usage:\n  jev config", "Commands:", "Options:", "Keys:", "api_key", "threshold", "min_score", "jev-latest for Jev", "defaults.timeout    30s", "defaults.json       false", "selected provider environment wins", "flags override"},
 			[]string{"Evaluation:", "Maintenance:"},
 		},
 		{
@@ -255,7 +255,7 @@ func TestHelpDoesNotReadConfig(t *testing.T) {
 		t.Run(tc.command, func(t *testing.T) {
 			a, out, errOut := harness(t)
 			a.path = t.TempDir() // Not a config file.
-			a.envToken = ""
+			a.env["TYPESAFE_API_KEY"] = ""
 			a.transport = roundTripFunc(func(*http.Request) (*http.Response, error) {
 				t.Fatal("help called API")
 				return nil, nil
@@ -297,7 +297,7 @@ func TestOptionErrorsPointToSubcommandHelp(t *testing.T) {
 		{[]string{"batch", "--state-file", "state", "--input", "input", "--json"}, "jev batch --help"},
 		{[]string{"batch", "--state-file", "state", "--input", "input", "extra"}, "jev batch --help"},
 		{[]string{"config", "unknown"}, "jev config --help"},
-		{[]string{"config", "set", "threshold", "bad"}, "jev config --help"},
+		{[]string{"config", "set", "defaults.threshold", "bad"}, "jev config --help"},
 		{[]string{"config", "set", "unknown", "value"}, "jev config --help"},
 		{[]string{"config", "unset", "unknown"}, "jev config --help"},
 		{[]string{"install", "--unknown"}, "jev install --help"},
@@ -318,8 +318,8 @@ func TestOptionErrorsPointToSubcommandHelp(t *testing.T) {
 func TestConfigArgumentErrorsPrecedeConfigRead(t *testing.T) {
 	tests := [][]string{
 		{"config", "unknown"},
-		{"config", "set", "threshold"},
-		{"config", "set", "threshold", "bad"},
+		{"config", "set", "defaults.threshold"},
+		{"config", "set", "defaults.threshold", "bad"},
 		{"config", "set", "unknown", "value"},
 		{"config", "unset", "unknown"},
 	}

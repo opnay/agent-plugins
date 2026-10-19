@@ -162,11 +162,13 @@ func TestBatchIgnoresSingleEvaluationSettings(t *testing.T) {
 	threshold, minScore, jsonOutput := 1.0, 9.0, true
 	pick := []string{"legend"}
 	model, timeout := "saved-model", "2s"
-	if err := writeConfig(a.path, config{Threshold: &threshold, MinScore: &minScore, JSON: &jsonOutput, Pick: &pick, Model: &model, Timeout: &timeout}); err != nil {
+	if err := writeConfig(a.path, config{Defaults: defaults{Threshold: &threshold, MinScore: &minScore, JSON: &jsonOutput, Pick: &pick, Timeout: &timeout}, Providers: map[string]providerConfig{"jev": {Model: &model}}}); err != nil {
 		t.Fatal(err)
 	}
 	a.transport = roundTripFunc(func(r *http.Request) (*http.Response, error) {
-		var request evaluationRequest
+		var request struct {
+			Model string `json:"model"`
+		}
 		if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 			t.Fatal(err)
 		}
@@ -184,7 +186,10 @@ func TestBatchAcceptsValidResponseLargerThanRequest(t *testing.T) {
 	statePath, inputPath := batchFiles(t, "state", `{"id":"N01","type":"noul","question":"Is it true?"}`)
 	a, out, errOut := harness(t)
 	a.transport = roundTripFunc(func(*http.Request) (*http.Response, error) {
-		body, err := json.Marshal(evaluationEnvelope{
+		body, err := json.Marshal(struct {
+			Model   string                     `json:"model"`
+			Answers map[string]json.RawMessage `json:"answers"`
+		}{
 			Model: strings.Repeat("m", 5*1024*1024),
 			Answers: map[string]json.RawMessage{
 				"N01": json.RawMessage(`{"type":"noul","noul":0.75}`),

@@ -13,12 +13,14 @@ import (
 	"os"
 	"strings"
 	"unicode/utf8"
+
+	"opnay/jev/providers"
 )
 
 type batchOptions struct {
 	statePath   string
 	inputPath   string
-	flags       config
+	flags       configFlags
 	stateFormat string
 	longContext bool
 }
@@ -50,13 +52,14 @@ type batchOutput struct {
 
 func parseBatch(args []string) (batchOptions, error) {
 	var o batchOptions
-	var model, timeout string
+	var model, timeout, provider string
 	f := flag.NewFlagSet("jev batch", flag.ContinueOnError)
 	f.SetOutput(io.Discard)
 	f.StringVar(&o.statePath, "state-file", "", "shared state file")
 	f.StringVar(&o.inputPath, "input", "", "JSONL question file")
 	f.StringVar(&o.stateFormat, "state-format", "text", "shared state format: text or json")
 	f.BoolVar(&o.longContext, "long-context", false, "enable expanded context for this request")
+	f.StringVar(&provider, "provider", "jev", "decision provider")
 	f.StringVar(&model, "model", "jev-latest", "model")
 	f.StringVar(&timeout, "timeout", "30s", "timeout")
 	if err := f.Parse(args); err != nil {
@@ -79,13 +82,15 @@ func parseBatch(args []string) (batchOptions, error) {
 	}
 	f.Visit(func(v *flag.Flag) {
 		switch v.Name {
+		case "provider":
+			o.flags.Provider = &provider
 		case "model":
 			o.flags.Model = &model
 		case "timeout":
 			o.flags.Timeout = &timeout
 		}
 	})
-	if err := o.flags.resolve("").validate(); err != nil {
+	if err := o.flags.validate(); err != nil {
 		return o, fmt.Errorf("%w; see jev batch --help", err)
 	}
 	return o, nil
@@ -101,7 +106,7 @@ func (a application) executeBatch(ctx context.Context, o batchOptions) error {
 		return err
 	}
 	c.override(o.flags)
-	s := c.resolve(a.envToken)
+	s := a.resolve(c)
 	s.Threshold = nil
 	s.MinScore = nil
 	s.JSON = false
@@ -110,7 +115,7 @@ func (a application) executeBatch(ctx context.Context, o batchOptions) error {
 		return fmt.Errorf("%w; see jev batch --help", err)
 	}
 	if s.APIKey == "" {
-		return errors.New("API key missing; set TYPESAFE_API_KEY or use jev config set api_key --stdin")
+		return errors.New("API key missing; set TYPESAFE_API_KEY or use jev config set providers.jev.api_key --stdin")
 	}
 	state, err := readBatchState(o.statePath, o.stateFormat)
 	if err != nil {
@@ -140,11 +145,11 @@ func readBatchState(path, format string) (any, error) {
 		return "", errors.New("state file must not be empty")
 	}
 	if format == "json" {
-		value, err := decodeJSON(data)
+		value, err := providers.DecodeJSON(data)
 		if err != nil {
 			return nil, fmt.Errorf("state: %w", err)
 		}
-		if err := validateEntry(value, false); err != nil {
+		if err := providers.ValidateEntry(value, false); err != nil {
 			return nil, fmt.Errorf("state: %w", err)
 		}
 		return value, nil
@@ -223,7 +228,7 @@ func decodeBatchItem(data []byte) (batchItem, error) {
 	}
 	var instructions any = input.Question
 	if hasInstructions {
-		value, err := decodeJSON(input.Instructions)
+		value, err := providers.DecodeJSON(input.Instructions)
 		if err != nil {
 			return batchItem{}, fmt.Errorf("instructions: %w", err)
 		}
@@ -237,7 +242,7 @@ func decodeBatchItem(data []byte) (batchItem, error) {
 		if hasConditions || hasLevels {
 			return batchItem{}, errors.New("criteria cannot be combined with conditions or levels")
 		}
-		criteria, err := decodeJSON(input.Criteria)
+		criteria, err := providers.DecodeJSON(input.Criteria)
 		if err != nil {
 			return batchItem{}, fmt.Errorf("criteria: %w", err)
 		}
@@ -271,7 +276,7 @@ func decodeBatchItem(data []byte) (batchItem, error) {
 		default:
 			return batchItem{}, errors.New("type must be noul, choice, or score")
 		}
-		if err := validateEntry(instructions, true); err != nil {
+		if err := providers.ValidateEntry(instructions, true); err != nil {
 			return batchItem{}, fmt.Errorf("instructions: %w", err)
 		}
 		payload := item.options.questionPayload()
@@ -317,28 +322,17 @@ func decodeBatchList(raw json.RawMessage, target *[]string, min, max int, name s
 }
 
 func evaluateBatch(ctx context.Context, state any, items []batchItem, s settings, transport http.RoundTripper, longContext bool) ([]result, error) {
-	questions := make(map[string]evaluationQuestion, len(items))
+	questions := make(map[string]providers.Question, len(items))
 	for _, item := range items {
 		questions[item.id] = item.options.questionPayload()
 	}
-	envelope, err := requestEvaluation(ctx, evaluationRequest{State: state, Model: s.Model, Questions: questions, LongContext: longContext}, s, transport)
+	answers, err := newProvider(s, transport).Evaluate(ctx, providers.Request{State: state, Model: s.Model, Questions: questions, LongContext: longContext})
 	if err != nil {
 		return nil, err
 	}
-	if strings.TrimSpace(envelope.Model) == "" || len(envelope.Answers) != len(items) {
-		return nil, errors.New("API response is missing a valid model or complete batch answers")
-	}
 	results := make([]result, len(items))
-	for index, item := range items {
-		raw, ok := envelope.Answers[item.id]
-		if !ok {
-			return nil, fmt.Errorf("API response is missing batch answer %q", item.id)
-		}
-		parsed, err := parseAnswer(raw, envelope.Model, item.options)
-		if err != nil {
-			return nil, fmt.Errorf("API response for %q: %w", item.id, err)
-		}
-		results[index] = parsed
+	for i, item := range items {
+		results[i] = answers[item.id]
 	}
 	return results, nil
 }
