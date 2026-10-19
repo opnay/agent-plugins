@@ -57,7 +57,7 @@ TypeSafe의 hosted Jev 모델을 Go CLI에서 호출하고, 에이전트가 CLI 
 ## 대표 표면
 
 - provider 구현은 `jev/scripts/providers/<provider>/`에 두며 공통 어댑터 계약으로 CLI에 연결합니다. 현재 Jev를 구현하며 후속 OpenRouter·OpenAI decision 모델이 같은 경계에 연결됩니다.
-- CLI: [cli.md](cli.md), `jev/scripts/`의 독립 Go 모듈. 대표 명령은 `jev noul`, `jev choice`, `jev score`, `jev batch`다.
+- CLI: [cli.md](cli.md), `jev/scripts/`의 독립 Go 모듈이며 cli·config·decision·providers·installation 패키지로 구분합니다. cli 내부 명령은 evaluation·configcmd·maintenance가 소유합니다. 대표 명령은 `jev noul`, `jev choice`, `jev score`, `jev batch`다.
 - 스킬: `$jev:jev`, [skills/jev.md](skills/jev.md), `$jev:scenario-testing`, [skills/scenario-testing.md](skills/scenario-testing.md).
 - 사용 안내: `jev/README.md`, manifest의 설명과 `defaultPrompt`.
 - 설치: `jev install`, 제거: `jev uninstall`, 로컬·API 인증 진단: `jev doctor`. 기본 대상은 `~/.local/bin/jev`다.

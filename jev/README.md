@@ -217,9 +217,11 @@ Go HTTP·JSON·flags와 MIT 라이선스의 `github.com/pelletier/go-toml/v2`를
 
 외부 계약: [TypeSafe API](https://docs.typesafe.ai/api), [Noul](https://docs.typesafe.ai/primitives/noul), [Choice](https://docs.typesafe.ai/primitives/choice), [Score](https://docs.typesafe.ai/primitives/score).
 
+루트 `jev --help`는 명령별 한 줄 설명과 공통 판단 옵션의 적용 범위를 표시합니다. 상세 사용법과 옵션은 `jev <command> --help`에서 확인합니다.
+
 ## CLI 내부 구조
 
-`jev/scripts/providers`는 공통 decision 요청·질문·결과와 `Adapter` 인터페이스를 제공합니다. `providers/jev`가 TypeSafe HTTP 호출, 응답 검증, API 인증 진단을 소유합니다. CLI는 입력·설정·파일·결과 기준·출력·종료 코드를 처리합니다.
+`jev/scripts/decision`은 공통 판단 타입과 JSON 값 처리를, `providers`는 `Adapter`·인증 진단 계약을 소유합니다. `providers/jev`가 TypeSafe HTTP 호출·응답 검증·API 인증 진단을 처리합니다. `cli`는 라우팅·provider 조립·오류 보고·종료 코드를 소유하며 `cli/evaluation`은 단건·batch, `cli/configcmd`는 설정 명령, `cli/maintenance`는 설치·제거·진단을 처리합니다. `config`는 설정·우선순위·파일 저장·내장 `template.toml`, `installation`은 바이너리 설치·제거·식별을 담당합니다. 루트 `main.go`와 `go run . install` 진입점은 유지합니다.
 
 ```text
 CLI 단건·batch·doctor > providers.Adapter > providers/jev > TypeSafe API

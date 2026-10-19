@@ -47,7 +47,7 @@ jev batch --state-file <path> --input <path> [--model <id>] [--timeout <duration
 
 ## Usage 도움말
 
-- `jev --help`는 전체 탐색용이다. `Evaluation`, `Configuration`, `Maintenance`, `Common evaluation options`, `Primitive options`, `Config keys`, `Output`, `Exit codes`로 구분한다.
+- 인자 없는 `jev`와 `jev --help`는 명령 탐색용입니다. `noul`, `choice`, `score`, `batch`, `config`, `install`, `uninstall`, `doctor`를 각각 한 줄 설명과 함께 표시하고 `jev <command> --help`로 안내합니다. 공통 판단 옵션 `--provider`, `--model`, `--timeout`, `--long-context`는 짧은 설명과 적용 범위를 표시하며 `--provider`의 doctor 지원도 안내합니다. 모든 명령에 적용되는 전역 옵션으로 표현하지 않습니다. 명령 전용 옵션·입력 형식·설정 key·출력 필드·종료 코드 상세는 각 명령 도움말에 둡니다.
 - `jev noul --help`, `jev choice --help`, `jev score --help`는 해당 primitive의 형식, 전용·공통 옵션, 기본·JSON 출력, 결과 기준, 종료 코드를 설명한다.
 - `jev batch --help`는 state·JSONL schema, 공통 옵션, 원자적 실패, JSONL 출력, 종료 코드를 설명한다.
 - `jev config --help`는 config 호출 형식, 지원 key·기본값·적용 범위, 인증 우선순위를 설명한다.
@@ -111,7 +111,7 @@ jev batch --state-file <path> --input <path> [--model <id>] [--timeout <duration
 
 - `jev config`: defaults의 내장 기본값과 모든 설정된 provider를 TOML로 표시합니다. Jev 기본 모델도 표시합니다. 각 provider 환경변수를 반영하되 모든 key는 전체 마스킹합니다. 미구현 provider가 기본값이어도 오프라인 조회·편집은 가능합니다.
 - `jev config path`: 파일을 읽지 않고 경로만 출력합니다.
-- `jev config init`: go:embed 내장 `config.template.toml`로 파일을 생성합니다. 기존 파일은 유효성에 관계없이 덮어쓰지 않고 오류입니다. init·set 성공은 무출력입니다.
+- `jev config init`: go:embed 내장 `config/template.toml`로 파일을 생성합니다. 기존 파일은 유효성에 관계없이 덮어쓰지 않고 오류입니다. init·set 성공은 무출력입니다.
 - `jev config set defaults.<key> <value>`, `jev config set providers.<name>.model <value>`, `jev config set providers.<name>.api_key --stdin`을 사용합니다. key 원문 인자 입력은 금지하며 stdin 토큰은 앞뒤 공백을 제거하고 64KiB 이내여야 합니다.
 - `jev config unset <dotted-key>`는 저장값만 제거합니다. 항목이 없으면 성공이며 파일을 만들지 않습니다. default 값은 이후 코드의 내장값으로 해석합니다.
 - 파일이 없는 최초 set은 같은 내장 템플릿에 요청값을 반영합니다. 생성 파일에는 템플릿의 안내 주석과 변경한 값이 포함됩니다. 이후 변경은 TOML 주석·서식 보존을 보장하지 않습니다.
@@ -137,11 +137,26 @@ jev batch --state-file <path> --input <path> [--model <id>] [--timeout <duration
 
 ## Provider 어댑터 경계
 
-- `scripts/providers`는 provider 공통 Request·Question·Result와 Adapter 인터페이스를 소유합니다. CLI 옵션·설정·파일 경로·stdout·종료 코드는 공통 provider 계약에 포함하지 않습니다.
+- `scripts/decision`은 공통 Primitive·Request·Question·Result와 JSON 값 처리를 소유하며 `scripts/providers`는 Adapter·인증 진단 인터페이스를 소유합니다. CLI 옵션·설정·파일 경로·stdout·종료 코드는 공통 provider 계약에 포함하지 않습니다.
 - Adapter는 공통 요청을 평가해 question id별 정규화 결과를 반환하며, 별도 인증 진단 메서드를 제공합니다. 인증 결과는 key 거부 여부와 진단을 반환하며 환경변수·설정 파일에 따른 key 복구 안내는 CLI가 소유합니다. 응답 wire schema는 provider 밖으로 노출하지 않습니다.
 - `scripts/providers/jev`는 TypeSafe endpoint·인증 헤더·장문 헤더·HTTP 호출·Jev 응답 해석과 검증·models 인증 진단을 소유합니다. 키·timeout·transport는 생성 시 주입합니다.
 - 단건과 batch는 같은 어댑터를 호출합니다. 반환 전 model·id 완전성·primitive·선택지·확률·Score legend를 검증하며 오류면 CLI는 기존 실패 계약을 유지합니다.
-- 현재 연결 대상은 Jev 하나입니다. OpenRouter·OpenAI 구현·provider 선택 옵션·인증 설정 확장은 별도 작업입니다. 기존 CLI 입력·출력·기본값·인증·재시도 정책은 유지합니다.
+- 현재 연결 대상은 Jev 하나입니다. OpenRouter·OpenAI 설정 저장과 `--provider` 선택은 지원하며, 해당 provider의 실행 구현은 별도 작업입니다. 기존 CLI 입력·출력·기본값·인증·재시도 정책은 유지합니다.
+
+## 패키지 구조와 의존성
+
+- scripts 루트는 main.go·go.mod·go.sum을 유지합니다. main은 signal·환경변수·표준 입출력을 준비하고 cli.App.Run을 호출합니다. go run . install과 main package identity opnay/jev는 유지합니다.
+- cli: 최상위 명령 라우팅·오류 보고·종료 코드·provider 조립을 소유합니다. 하위 명령에 입출력·설정 경로 해석·설정 해석·어댑터 생성 함수를 전달합니다.
+- cli/evaluation: 단건·batch 명령, 공통 질문 검증·JSON/JSONL 입력·요청 구성·결과 기준·출력·명령 도움말을 소유합니다. 단건과 batch는 같은 질문 구성 코드를 사용합니다.
+- cli/configcmd: config 명령 조율·stdin·TOML 출력·명령 도움말을 소유하며 설정의 해석·편집·저장은 config에 위임합니다.
+- cli/maintenance: install·uninstall·doctor 명령과 옵션·도움말·진단 보고서를 소유합니다. 바이너리 조작은 installation에 위임합니다.
+- 하위 명령 패키지는 상위 cli나 sibling 명령 패키지를 import하지 않습니다. 공통 프레임워크나 명령 registry를 두지 않습니다.
+- config: 설정 타입·해석·검증·dotted-key 편집·마스킹·파일 저장·init·내장 template.toml을 소유합니다. CLI나 provider 구현을 import하지 않습니다.
+- decision: 공통 판단 타입·primitive·JSON 값 처리·결과 필드 검증을 소유합니다. 파일·환경·네트워크에 접근하지 않습니다.
+- providers/jev: Jev HTTP·응답·인증 진단을 소유합니다. 공통 계약은 decision과 providers를 사용하며 CLI·config에 의존하지 않습니다.
+- installation: 바이너리 설치·제거·identity·대상 파일 검사를 소유하며 CLI·설정·API를 사용하지 않습니다.
+- 데이터 흐름: main > cli > config·decision·providers/jev·installation. provider 오류는 cli의 기존 stderr·종료 코드로 전달되며 파일 생성·키 노출·재시도 동작을 늘리지 않습니다.
+- 테스트는 소유 패키지에 배치합니다. 명령 통합 회귀는 cli, 직접 옵션 파싱은 해당 하위 명령 패키지, 직접 파일 저장 검증은 config에 둡니다. 바이너리·go run bootstrap 검증은 모듈 루트에서 실행하며 임시 설치·설정 경로를 유지합니다.
 
 ## 배포와 검증
 

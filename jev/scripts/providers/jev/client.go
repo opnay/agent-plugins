@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"opnay/jev/decision"
 	"opnay/jev/providers"
 )
 
@@ -29,10 +30,10 @@ func New(apiKey string, timeout time.Duration, transport http.RoundTripper) *Ada
 }
 
 type evaluationRequest struct {
-	State       any                           `json:"state"`
-	Model       string                        `json:"model"`
-	Questions   map[string]providers.Question `json:"questions"`
-	LongContext bool                          `json:"-"`
+	State       any                          `json:"state"`
+	Model       string                       `json:"model"`
+	Questions   map[string]decision.Question `json:"questions"`
+	LongContext bool                         `json:"-"`
 }
 
 type evaluationEnvelope struct {
@@ -40,7 +41,7 @@ type evaluationEnvelope struct {
 	Answers map[string]json.RawMessage `json:"answers"`
 }
 
-func (a *Adapter) Evaluate(ctx context.Context, request providers.Request) (map[string]providers.Result, error) {
+func (a *Adapter) Evaluate(ctx context.Context, request decision.Request) (map[string]decision.Result, error) {
 	payload := evaluationRequest{
 		State: request.State, Model: request.Model,
 		Questions: request.Questions, LongContext: request.LongContext,
@@ -52,7 +53,7 @@ func (a *Adapter) Evaluate(ctx context.Context, request providers.Request) (map[
 	if strings.TrimSpace(envelope.Model) == "" || len(envelope.Answers) != len(request.Questions) {
 		return nil, errors.New("API response is missing a valid model or complete answers")
 	}
-	results := make(map[string]providers.Result, len(request.Questions))
+	results := make(map[string]decision.Result, len(request.Questions))
 	for id, question := range request.Questions {
 		raw, ok := envelope.Answers[id]
 		if !ok {
