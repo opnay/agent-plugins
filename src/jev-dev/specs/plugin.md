@@ -22,18 +22,20 @@
 
 - "offline doctor는 제거하자. jev 자체가 api 땡겨다 쓰는건데, 굳이?"
 
+- Jev를 사용하는 기본 패턴과 대표 유즈케이스는 `jev` 스킬에 내장하며, 모델 선택 예시가 오케스트레이션 책임을 소유하지 않습니다.
+
 ---
 
 # Jev 플러그인 스펙
 
 ## 플러그인 목적
 
-TypeSafe의 hosted Jev 모델을 Go CLI에서 호출하고, 에이전트가 CLI 사용, 작업 중 제한된 판단·위임 라우팅, reusable instruction scenario evaluation을 각 목적에 맞게 수행할 수 있게 한다.
+TypeSafe의 hosted Jev 모델을 Go CLI에서 호출하고, 에이전트가 CLI 사용, 기본 사용 패턴·내장 유즈케이스, reusable instruction scenario evaluation을 각 목적에 맞게 수행할 수 있게 한다.
 
 ## 플러그인 경계와 비목표
 
-- 포함: Noul·Choice·Score 단건·batch API 호출, 결과 기준 필터, 출력 필드 선택, 로컬 설정 관리, CLI 설치·제거·진단, CLI 안내, 제한된 작업 판단·불확실한 근거의 다각도 평가·subagent 모델·effort 라우팅, reusable instruction scenario evaluation.
-- 제외: 로컬 모델, 문서 자동 순회, 서로 다른 state의 자동 grouping, 모든 질문의 자동 외부 전송, 사용자 취향·권한의 대리 결정, Jev와 무관한 generic test framework, target instruction 직접 수정, 일반 implementation debugging, 다른 플러그인 자동 연동, MCP 서버.
+- 포함: Noul·Choice·Score 단건·batch API 호출, 결과 기준 필터, 출력 필드 선택, 로컬 설정 관리, CLI 설치·제거·진단, CLI 안내, Jev 기본 사용 패턴과 작은 선택·불확실한 근거 평가·모델 선택 예시, reusable instruction scenario evaluation.
+- 제외: 로컬 모델, 문서 자동 순회, 서로 다른 state의 자동 grouping, 모든 질문의 자동 외부 전송, 사용자 취향·권한의 대리 결정, Jev와 무관한 generic test framework, target instruction 직접 수정, 일반 implementation debugging, 다른 플러그인 자동 연동, `jev` 스킬의 업무별 작업 분해·subagent 실행·결과 통합·모델 정책 소유, MCP 서버.
 - Jev CLI로 전달한 질문·선택지는 외부 API로 전송한다. `scenario-testing`은 전송 권한이 없으면 prediction을 건너뛴다. 플러그인 설치는 토큰 설정이나 실행 파일의 PATH 설치를 대신하지 않는다.
 
 ## 처리하려는 작업 형태
@@ -43,23 +45,22 @@ TypeSafe의 hosted Jev 모델을 Go CLI에서 호출하고, 에이전트가 CLI 
 - `jev batch`는 하나의 공통 state와 JSONL 질문을 한 SystemOne 요청으로 평가한다.
 - `jev config`로 기본값과 API 인증을 관리한다.
 - `jev install`, `jev uninstall`, `jev doctor`로 요청된 CLI 유지보수를 수행한다. doctor는 인증된 models 조회와 키 출처·문제별 해결 안내를 제공한다.
-- 간단한 선택이나 사용자 질문에 필요한 판단을 제한된 문맥으로 평가합니다. 불확실한 근거는 공통 state에 대한 넓은 질문과 좁은 질문으로 평가하며, 범위가 불명확한 작업은 기본 범위·조사량·실행량을 확인한 뒤 직접 수행 또는 허용된 subagent 모델·effort로 라우팅합니다.
+- Jev 기본 패턴을 작은 선택·되묻기·불확실한 근거 평가·모델 선택에 적용합니다. 모델 선택은 현재 작업과 정책이 허용한 후보를 평가하는 예시이며 위임 실행이나 모델 정책을 소유하지 않습니다.
 - reusable instruction의 scenario-specific expected behavior, 선택적 Jev prediction, fresh executor actual behavior를 비교하고 evidence를 보존한다.
 
 ## 대표 표면
 
 - CLI: [cli.md](cli.md), `jev/scripts/`의 독립 Go 모듈. 대표 명령은 `jev noul`, `jev choice`, `jev score`, `jev batch`다.
-- 스킬: `$jev:jev`, [skills/jev.md](skills/jev.md), `$jev:jev-use`, [skills/jev-use.md](skills/jev-use.md), `$jev:scenario-testing`, [skills/scenario-testing.md](skills/scenario-testing.md).
+- 스킬: `$jev:jev`, [skills/jev.md](skills/jev.md), `$jev:scenario-testing`, [skills/scenario-testing.md](skills/scenario-testing.md).
 - 사용 안내: `jev/README.md`, manifest의 설명과 `defaultPrompt`.
 - 설치: `jev install`, 제거: `jev uninstall`, 로컬·API 인증 진단: `jev doctor`. 기본 대상은 `~/.local/bin/jev`다.
 - 최초 설치는 `jev/scripts/`에서 `go run . install`로 수행한다. 소스 갱신은 `go run . install --force`를 사용한다. 셸 설정·토큰은 설치나 제거 대상이 아니다.
 
 ## 내장 skill 체계
 
-- `jev`: Jev 정보, primitive 선택, 단건·batch CLI 입력 구성, 타입별 결과 사용, 요청된 CLI 관리를 소유한다. 추론 실행·설정 저장·종료 코드는 CLI가 소유한다.
-- `jev-use`: 작업 중 Jev를 쓸 가치가 있는 제한된 판단을 고르고, 사용자 질문·불확실한 근거 평가·범위 확인·subagent 모델과 effort 선택을 실제 행동에 연결합니다. 권한·사용자 취향·결정적 검증을 Jev 결과로 대체하지 않습니다.
+- `jev`: Jev 정보·CLI 사용·관리와 기본 사용 패턴을 소유합니다. 작은 선택·되묻기·불확실한 근거 평가·모델 선택은 내장 유즈케이스입니다. 추론 실행·설정 저장·종료 코드는 CLI가 소유합니다.
 - `scenario-testing`: reusable instruction의 고정 scenario, behavior Choice, 선택적 Jev prediction, fresh execution, expected·predicted·actual 비교, caller verdict, evidence 기록을 소유한다.
-- 업무별 판단 라우팅과 scenario 평가 정책을 `jev` CLI 스킬에 흡수하지 않는다. `scenario-testing`은 `$jev:jev`의 공개 Choice 계약만 사용하며 CLI 내부 구현에 의존하지 않는다.
+- 업무별 실행·모델 정책과 scenario 평가 정책은 `jev`의 기본 사용 패턴·예시와 구분합니다. `scenario-testing`은 `$jev:jev`의 공개 Choice 계약만 사용하며 CLI 내부 구현에 의존하지 않는다.
 
 ## SDD 운영 원칙
 
