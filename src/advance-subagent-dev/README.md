@@ -1,62 +1,67 @@
 # Advance Subagent
 
-서브에이전트를 활용한 근거 중심 조사와 독립 workstream 위임의 심화 실행 방법을 제공하는 instruction-only 플러그인입니다.
+요청 이해부터 검증·완료까지 반복하는 공통 fork-and-flush 루프와, 근거를 추적할 수 있는 조사 계약을 제공하는 instruction-only 플러그인입니다.
 
-## 목적
+## Skill과 책임
 
-`advance-subagent`는 다음 두 skill을 하나의 설치 단위로 제공합니다.
+| 호출 | 책임 |
+| --- | --- |
+| $advance-subagent:orchestrate-workstreams | 분기 설계·실행·검증·통합·완료 판단·새 맥락 인계 |
+| $advance-subagent:deep-research | 조사 질문·출처·근거·반대 근거·인용·보고서 계약과 공통 루프 연결 |
 
-- `deep-research`: 여러 출처를 수집·대조하고 근거·반대 근거·불확실성·인용을 추적하는 조사 보고서
-- `orchestrate-workstreams`: 독립적인 software-engineering·조사·실행 흐름의 bounded 위임, 검증, 통합
+공통 루프는 다음 순서로 진행합니다.
 
-두 skill은 각자의 역할, trigger, routing, 산출물 계약을 소유하며 서로의 숨은 맥락이나 실행을 요구하지 않습니다.
-Runtime instruction, reference, agent interface 문구는 영어로 제공하고 trigger fixture는 실제 선택 입력 언어를 유지합니다.
+**분기 설계 → fork·실행 → 검증·통합 → 완료 판단 → 미완료이면 보존·flush → 분기 설계**
 
-## Skill 선택
+요청 해석과 완료 조건 수립·갱신도 루프에서 수행합니다. 분담은 결과를 합치고, 대안 탐색은 같은 목표의 접근을 비교합니다. 한 작업이면 한 명으로 진행하고 의존 작업은 순차 실행합니다.
 
-### Deep Research
+## Orchestrate Workstreams
 
-같은 연구 질문의 가설·방법을 비교할 가치가 있으면 새 에이전트로 병렬 탐색하고, 확인된 근거로 다음 조사 방향을 선택합니다. 자료와 증거 원장을 보존한 최소 기록을 새 실행자에게 전달해 조사를 이어갑니다. 선택하지 않은 방향의 반대 근거도 유지하며, 판단 모델은 선택적으로 사용합니다.
+명시적인 오케스트레이션 요청, 의미 있는 독립 작업 분담, 대안 비교 또는 새 맥락 반복 실행에 사용합니다.
 
-다음과 같이 조사 자체가 산출물일 때 사용합니다.
+~~~text
+$advance-subagent:orchestrate-workstreams 검색 지연의 원인과 완료 기준을 조사하고, 해결 접근을 비교한 뒤 수정·검증해 주세요.
+~~~
 
-- 시장·경쟁·문헌·기술·정책·규제·기업 실사
-- 원문 또는 1차 자료 확인과 독립 출처 교차 검증
-- 반대 근거, 상충 수치, 최신성 위험, 불확실성을 포함한 인용 가능한 보고서
+- 메인은 첫 회차 설계, 권한·기록·작업자 배치, 결과 검증·통합, 사용자 확인과 최종 응답을 소유합니다.
+- Flush 후에는 보존 자료만 받은 새 읽기 전용 에이전트가 다음 회차를 설계하고, 메인이 확인한 뒤 새 작업자를 배치합니다.
+- Flush는 설계·작업 맥락 교체이며 메인 세션이나 자료 삭제가 아닙니다.
+- 원본 요청·권한과 현재 해석·가정·완료 조건을 구분합니다. 목표·범위·권한 변경이나 요구 완화는 사용자 확인 없이 적용하지 않습니다.
+- 병렬 수정은 작성 대상과 공유 상태를 분리할 수 있을 때만 허용합니다.
+- 직접 처리 여부는 skill 선택 단계에서 판단합니다. 선택된 루프에는 별도 DIRECT 모드나 최소 두 명 규칙이 없습니다.
+- 단순 조회, 한 자료 요약, 일반 구현 표현, 파일 수·복잡성만으로 자동 선택하지 않습니다.
 
-```text
-$advance-subagent:deep-research 한국의 2025년 생성형 AI 규제 변화를 조사해 기업 도입 판단 보고서로 정리해 주세요.
-```
+## Deep Research
 
-날씨·현재가 같은 단순 조회, 한 문서 요약, 근거 없는 아이디어 발산, 코드 구현, 외부 변경, 지속 모니터링에는 사용하지 않습니다.
+시장·문헌·기술·정책 조사, 팩트체크·실사처럼 여러 출처를 확인하고 근거·반대 근거·불확실성을 드러내는 보고서에 사용합니다.
 
-### Orchestrate Workstreams
+~~~text
+$advance-subagent:deep-research 한국 SaaS 기업의 EU 진출에 영향을 주는 AI 규제를 1차 자료와 독립 근거로 조사해 주세요.
+~~~
 
-다음과 같이 의미 있는 작업 흐름이 둘 이상이며 독립적으로 시작할 수 있을 때 사용합니다.
+- 주 실행자는 항상 공통 오케스트레이션 루프를 사용합니다. 질문이 불충분하면 조건 구체화부터 루프에 배정합니다.
+- 이미 루프가 활성화되어 있으면 조사 계약만 연결합니다. 배정된 조사 작업자는 읽기 전용으로 해당 질문만 수행하고 루프를 다시 시작하지 않습니다.
+- 원문 확인, 주장-근거 원장, 독립 교차 검증, 상충·최신성·인용 감사와 보고서 기준을 소유합니다.
+- 조사 전용 인원·모델 정책이나 별도 fork 전략을 두지 않습니다.
+- 단순 조회, 한 문서 요약, 근거 없는 발상, 구현·외부 변경 자체, 지속 모니터링은 조사 계약의 대상이 아닙니다.
+- 구현이 함께 요청되면 기존 권한 안의 별도 작업으로 배정하고 조사 결과에 대한 의존성을 지킵니다.
 
-- 별도 모듈·서비스·실행 경로의 software-engineering 조사 또는 구현
-- 조사와 prototype·문서·코드·변환이 섞인 cross-domain 작업
-- correctness·security·performance·quality 같은 독립 review lens
-- 분리된 ownership과 공통 성공 기준을 가진 병렬 작업
+## 실행·의존성
 
-```text
-$advance-subagent:orchestrate-workstreams 시장 조사를 수행하고 독립적인 프로토타입 두 개를 구현한 뒤 결과를 검증·통합해 주세요.
-```
+- 오케스트레이션은 sibling 없이 실행 가능합니다. Deep-research는 같은 plugin의 공통 루프에 명시적으로 의존합니다.
+- 다른 skill과 리소스는 설치 식별자로 참조합니다. Runtime에 개발 spec이나 설치 절대 경로를 요구하지 않습니다.
+- 모델 선택은 공통 루프가 소유합니다. fast·high는 현재 지침의 모델·effort 쌍을 그대로 사용하고 default는 두 설정을 생략해 상속합니다.
+- Jev 같은 판단 모델은 선택적 보조 수단입니다. 권한·사실·사용자 선호·완료 여부를 대신 결정하지 않습니다.
+- 실제 agent 생성·새 맥락 실행이 불가능하면 제한과 미완료 범위를 보고합니다.
+- 별도 MCP, app, hook 또는 executable runtime dependency를 요구하지 않습니다.
 
-명시 호출도 dispatch gate를 우회하지 않습니다. 독립 workstream, 별도 계약, 병렬 이점, shared-state 안전, 메인 에이전트의 검증·통합 가능성 중 하나라도 부족하면 `DIRECT`로 수행합니다.
+Runtime instruction, reference와 agent interface는 영어로 제공하며 trigger fixture의 사용자 입력 언어는 유지합니다.
 
-## 독립성과 모델 계약
+## 개발 안내
 
-- `deep-research`는 조사 범위, 출처 정책, 증거 원장, 반증, 보고서 계약을 독립적으로 소유합니다.
-- `orchestrate-workstreams`는 `DIRECT`·`DISPATCH`, graph, task/result contract, shared-state, terminal result, whole-result verification을 독립적으로 소유합니다.
-- 각 skill의 역할·모델 routing은 해당 skill 계약을 따릅니다. 한 skill의 route를 다른 skill에 자동 적용하지 않습니다.
-- 모델은 `fast`(빠른 모델), `default`(기본 모델·상속), `high`(고성능 모델) 세 프로필 중에서 선택합니다. `fast`·`high`의 모델명과 effort 쌍은 현재 적용 지침에서 읽고 그대로 사용합니다. `default`는 두 설정을 모두 생략합니다.
-- 역할·작업 조건과 명시 지침에 따라 프로필을 선택합니다. 프로필 간 설정을 섞거나 별도 조합을 만들지 않으며, 정의·도구 지원이 없으면 허용된 대안 또는 직접 수행을 판단하고 한계를 알립니다.
-- 두 skill 모두 별도 MCP, app, hook, executable runtime dependency를 요구하지 않습니다.
-
-## 공개 호출
-
-개발과 설치 모두 다음 식별자를 사용합니다.
-
-- `$advance-subagent:deep-research`
-- `$advance-subagent:orchestrate-workstreams`
+- 실제 편집 대상은 [저장소 루트의 플러그인](../../advance-subagent/README.md)입니다. 별도 복사본이나 복사 빌드를 두지 않습니다.
+- [플러그인 스펙](specs/plugin.md)과 [오케스트레이션 스펙](specs/skills/orchestrate-workstreams.md)·[조사 스펙](specs/skills/deep-research.md)을 먼저 확인하거나 갱신합니다.
+- Skill spec이 바뀌면 주 실행자가 현재 spec 기준으로 runtime을 처음부터 재작성합니다.
+- [SDD 규칙](../../docs/SDD.md)에 따라 관련 사용 표면과 [변경 기록](changes/v0.1.0.md)을 점검합니다.
+- Canonical skill validator, JSON·YAML·CSV·리소스 링크, clean-context 읽기 전용 검증과 격리된 실행 예시로 확인합니다.
+- 검증 결과와 실행 제한을 구분하며 commit·push·설치·릴리즈 권한은 별도로 유지합니다.

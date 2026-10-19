@@ -1,7 +1,7 @@
 {
   "name": "advance-subagent",
   "version": "0.1.0",
-  "description": "서브에이전트 기반 조사와 workstream 위임의 심화 실행 방법을 제공합니다.",
+  "description": "분기 설계부터 완료까지의 공통 fork-and-flush 루프와 근거 중심 조사 계약을 제공합니다.",
   "author": {
     "name": "opnay"
   },
@@ -14,13 +14,14 @@
     "workstream",
     "orchestration",
     "delegation",
-    "parallel"
+    "parallel",
+    "fork-and-flush"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Advance Subagent",
-    "shortDescription": "서브에이전트 조사·위임·검증 방법을 제공합니다.",
-    "longDescription": "여러 출처의 근거를 추적하고 필요할 때 병렬 가설 탐색·조사 방향 선택·새 맥락 재개를 수행하는 deep research와, 독립 workstream의 bounded 위임·검증·통합을 제공합니다.",
+    "shortDescription": "공통 오케스트레이션 루프와 조사 계약을 제공합니다.",
+    "longDescription": "요청 이해·조건 수립부터 분기 설계, 실행, 검증·통합, 완료 판단, 보존·flush를 반복하는 공통 루프와, 그 루프에서 사용하는 출처·근거·반대 근거·인용·보고서 계약을 제공합니다.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": [
@@ -29,10 +30,10 @@
       "Write"
     ],
     "defaultPrompt": [
-      "근거 추적 조사 보고서와 같은 질문의 병렬 가설 탐색·방향 선택·새 맥락 재개에는 $advance-subagent:deep-research를 사용하세요.",
-      "독립적인 engineering·조사·실행 흐름의 위임에는 $advance-subagent:orchestrate-workstreams를 사용하세요.",
-      "각 skill의 trigger·routing·검증 계약을 따르세요. 단순 조회에는 deep-research를, 독립 workstream이 없는 요청에는 orchestrate-workstreams를 자동 적용하지 마세요.",
-      "모델은 현재 지침의 fast·default(상속)·high 프로필에서 선택하고, 명시 프로필의 모델명과 effort 쌍을 섞거나 다른 조합을 만들지 마세요."
+      "실행 루프에는 $advance-subagent:orchestrate-workstreams를 사용하세요. 분기 설계부터 fork·실행, 검증·통합, 완료 판단, 보존·flush를 반복하며 요청 이해와 완료 조건 갱신도 루프에서 수행합니다.",
+      "근거 추적 조사 보고서에는 $advance-subagent:deep-research를 사용하세요. 주 실행자는 항상 공통 루프를 사용하고, 이미 배정된 조사 작업자는 조사 계약만 적용하며 중첩 위임하지 않습니다.",
+      "메인은 유지하며 flush 후에는 보존 자료만 받은 새 에이전트가 다음 회차를 설계합니다. 단일 분기는 한 명으로 계속하고 의존 작업은 순차 실행합니다.",
+      "단순 조회나 일반 구현 표현·파일 수·복잡성만으로 자동 오케스트레이션하지 마세요. 모델은 현재 지침의 fast·default(상속)·high 프로필을 따르고 모델·effort 쌍을 섞지 마세요."
     ]
   }
 }

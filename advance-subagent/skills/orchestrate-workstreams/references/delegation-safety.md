@@ -1,52 +1,48 @@
-# Delegation Safety
+# Execution Safety
 
-## Dispatch Gate
+## Per-Task Readiness
 
-Spawn only when every answer is `yes`:
+Before executing a task, verify:
 
-1. Are there at least two meaningful workstreams that can start independently?
-2. Does each workstream have distinct scope, deliverable, evidence, and completion criteria?
-3. Does the parallel benefit exceed coordination, merge, and recheck cost?
-4. Can file, artifact, data, runtime, and external-state conflicts be controlled?
-5. Can the main agent independently verify each result and integrate one outcome?
+- a bounded objective or question, output, source of truth, checks, and stop conditions;
+- required inputs and verified prerequisites;
+- authority and explicit access and ownership;
+- controlled file, data, runtime, and external-state conflicts;
+- main-agent ability to verify and integrate the result;
+- available capacity and a supported instruction-permitted profile.
 
-Explicit subagent requests use the same gate. Any `no` or `unknown` means `DIRECT`.
+The overall goal and completion criteria may still be provisional. The local task can establish them. One task is sufficient; readiness is not a two-worker gate.
 
-## Workstream Graph
+If a task is not ready, resolve its missing input, schedule an independent safe task, or report the dependency. Do not invent permissions or restore a separate direct-execution mode.
 
-Record each node as:
+## Dependencies and Parallel Benefit
 
-```yaml
-id: <stable id>
-objective: <independent question or deliverable>
-prerequisites: <required completed nodes or none>
-output: <bounded deliverable>
-consumer: <main agent or downstream node>
-evidence_path: <verification method>
-access_mode: read-only | write-enabled
-ownership: none | <exact files or artifacts>
-```
+Run independent tasks in parallel only when their benefit exceeds coordination and recheck cost. Use sequential scheduling inside the same loop for prerequisites, one remaining task, or shared state.
 
-Do not spawn a node before its prerequisites complete. The main agent must fix shared contracts, schemas, interfaces, and acceptance criteria.
+A round plan records objective, prerequisites, inputs, output, consumer, evidence, access mode, ownership, and domain contract for each node. Verify the prerequisite before starting a downstream node. Settle shared interfaces before writes that depend on them.
 
-## Shared-State Allowlist
+Use coherent batches for repetitive structured work instead of adding workers for volume alone.
 
-- Default: `read-only`
-- `write-enabled`: only when the shared contract is fixed and writable surfaces are fully disjoint
-- Writer count: one per file or artifact
-- Main-owned: shared contracts, integration files, final decisions, and whole-result verification
+## Shared-State Ownership
 
-Do not split work into concurrent tasks that mutate or consume the same:
+Default to read-only. Parallel writes require completely disjoint writable ownership and settled shared contracts. Use one writer per file or artifact.
 
-- schema, interface, config, lockfile, or generated output;
-- mutable fixture, database, port, emulator, or external account;
-- build output, shared temporary directory, live document, or shared data.
+The main agent owns execution records, shared contracts, integration surfaces, final decisions, and whole-result verification. A planner is read-only and cannot expand permissions.
 
-If separation is impossible, downgrade to read-only investigation or use `DIRECT`.
+Avoid concurrent mutation, or consumption of unstable state, across schemas, interfaces, configs, lockfiles, generated output, mutable fixtures, databases, ports, emulators, build output, shared temporary directories, live documents, and external accounts.
 
-## Worker Count and Cost
+Isolate alternative implementations and their mutable runtime resources. If isolation is unavailable, investigate read-only or schedule alternatives sequentially. Read results never promote a task to write access.
 
-- Do not exceed the number of independent lanes or available session capacity.
-- Start with two workers; add another only for a lane with a distinct contract.
-- Handle mechanical volume through large coherent batches, strict schemas, and deterministic checks instead of more workers.
-- Retry only within the packet's bounded stop condition.
+## Capacity and Ownership Transfer
+
+Count active agents before spawning, including planners. Use only necessary workers; do not exceed independent ready lanes or available capacity. Plan execution after the planner returns; it does not spawn workers.
+
+Record returned agent IDs. Use supported termination or cleanup operations when needed; do not assume an interrupted agent is gone or a completed agent's slot is reusable without checking the tool.
+
+Collect required terminal results, or explicitly stop outstanding work and confirm mutations have ceased, before a checkpoint or ownership transfer.
+
+## Execution Limits
+
+Preserve user and environment limits across rounds. A mandatory unavailable profile, forbidden delegation, missing tool, denied authority, or exhausted capacity is an execution limitation, not permission to simulate a successful fork.
+
+One lifecycle-wide narrow follow-up may recover critical missing assigned scope. Preserve its used state across flush. A new round must have a genuinely new justified task, not the same failed packet with a different name.

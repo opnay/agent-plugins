@@ -1,7 +1,7 @@
 interface:
   display_name: "Deep Research"
-  short_description: "Create auditable reports from multiple sources."
-  default_prompt: "Use $advance-subagent:deep-research to investigate a consequential question across primary and independent sources, compare alternative approaches in fresh contexts when valuable, and produce an evidence-traceable report."
+  short_description: "Research with evidence and the shared execution loop."
+  default_prompt: "Use $advance-subagent:deep-research as lead to run the shared orchestration loop with the research contract; as an assigned researcher, apply only the bounded research contract without starting a loop or delegating."
 
 policy:
   allow_implicit_invocation: true

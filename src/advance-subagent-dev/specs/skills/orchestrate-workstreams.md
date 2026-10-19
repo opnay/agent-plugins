@@ -11,173 +11,131 @@
 - 빠른모델, 기본모델(상속), 고성능모델로 정리하자. 이 모델들은 상황이나, 지침에 따라서 다르게 적용되도록 하는게 맞을거 같아.
 - 그리고 이것들 모델이름+effortlevel로 잡아서 그 외의 조합은 사실상 사용하지 않도록 하는게 맞는거 같아. 지침에 업데이트해뒀으니 그거 참고해줘.
 
+- 결국 fork-and-flush는 전략이라 research말고도 다른 방식으로도 사용할 수 있어서, 오케스트레이션의 기본 동작으로 할당하는게 나아보이는데 어때?
+- 직접 처리 - 사실상 오케스트레이션 사용할지 않할지 스킬 선택단계에 포함된 체계이니 제거하자.
+  - 독립 작업 병렬 분담 - 오케스트레이션 기본 핵심으로 보이는데, fork-and-flush로 대체해도 괜찮다고 보이네.
+  - 공통 실행에서 작업 분리부터 결과 검증까지 모두 fork-and-flush 하위로 배치해도 되지않나?
+- 사실 상 fork - flush 간의 루프를 설계한거나 마찬가지 같은데, fork 보다 앞단계인 분기 설계부터 루프가 시작되도록 하는게 맞지 않을까 싶네?
+- 요청과 완료 조건 고정이랬는데, 조사하면서 완료 조건이 변동되거나, 충분하지 않은 요청으로 인해 변동될 수 있지않아?
+- 요청과 완료 조건 고정 자체도 [분기 설계 - fork - 검증 통합 - 완료여부 - flush] 루프를 태우는게 맞지 않아?
+- 좋네, 분기 - flush까지는 메인 오케스트레이션 루프로 잡고, 나머지를 너가 말한대로 하면 되지 않을까싶네? 스킬 어떻게 정리할지 알려줘.
+- 상세한 계획 세워줘.
+  - flush 후 새 맥락으로 교체할 범위를 어디까지로 정할까요?
+    - 메인은 유지 (Recommended) [선택]. 메인은 권한·기록·실행을 관리하고, 다음 회차 분기는 보존 자료만 받은 새 에이전트가 설계합니다.
+  - 이번 정리에 시나리오 평가의 공통 오케스트레이션 연계도 포함할까요?
+    - 조사·오케스트레이션만 (Recommended) [선택]. advance-subagent의 두 스킬을 먼저 정리하고, Jev는 판단 도구로 유지합니다.
+  - deep-research를 호출했을 때 공통 오케스트레이션 루프를 어떻게 사용할까요?
+    - 항상 공통 루프 (Recommended) [선택]. deep-research는 조사 계약을 제공하고, 요청 이해부터 보고서 완료까지의 실행은 공통 루프가 맡습니다.
+  - 루프 안에서 독립적으로 나눌 작업이 하나만 남으면 어떻게 처리할까요?
+    - 한 분기로 계속 (Recommended) [선택]. 새 작업자 한 명으로 진행하고, 병렬화 가능한 회차만 여러 작업자를 사용합니다.
+
 ---
 
-# orchestrate-workstreams 스킬 스펙
+# Orchestrate Workstreams 스킬 스펙
 
-## 목적
+## 목적·경계
 
-`orchestrate-workstreams`는 software-engineering 또는 cross-domain investigation-and-action 요청을 검증 가능한 workstream으로 분해하고, 필요한 경우에만 bounded subagent를 생성해 메인 에이전트가 결과를 안전하게 검증·통합하도록 안내합니다.
+요청을 분기 설계 → fork·실행 → 검증·통합 → 완료 판단 → 보존·flush 루프로 완료까지 진행합니다. 요청 해석과 완료 조건 수립도 루프가 수행하는 작업입니다.
 
-## 경계
+- 포함: 분담·대안 탐색, 의존성, 권한·소유권, 모델 선택, 실행 기록, 검증, 조건 갱신과 새 맥락 인계
+- 제외: 도메인 고유 출처·코드·테스트 기준의 대체, 암묵적 권한 확대, 작업자의 중첩 위임
+- 메인 에이전트를 유지하며 사용자 확인과 최종 책임을 이전하지 않습니다.
 
-- 포함:
-  - 목표·성공 기준, `DIRECT`·`DISPATCH`, workstream·dependency graph
-  - shared-state 안전, task packet, model·role routing, 실제 spawn
-  - terminal result normalization, evidence·ownership 검사, conflict resolution
-  - whole-result verification과 final response
-- 제외:
-  - complexity, file count, 장시간 작업만을 근거로 한 dispatch
-  - 순수 조사 보고서의 출처 정책·인용 감사·evidence ledger 설계
-  - nested subagent, 범위 확장, 읽기 권한의 암묵적 write 승격
-  - 메인 에이전트 책임의 subagent 이전
+## 대표 표면과 선택
 
-## 처리하려는 작업 형태
+- 식별자: $advance-subagent:orchestrate-workstreams
+- 자동 선택: 의미 있는 독립 작업, 같은 목표의 대안 비교, 새 맥락에서 반복 실행할 필요가 분명한 요청
+- 명시 선택: 오케스트레이션·서브에이전트 요청, 또는 deep-research 주 실행자의 명시 연결
+- 자동 제외: 단순 조회, 한 자료 요약, 일반 구현 표현, 파일 수·복잡성만 있는 요청
+- 직접 처리 여부는 skill 선택 단계에 속합니다. 활성 루프는 DIRECT·DISPATCH로 다시 나누지 않습니다.
+- 단일 분기와 순차 의존 작업도 활성 루프에서 지원합니다. 분담 조사 세 명, 대안 두 명 같은 고정 인원은 요구하지 않습니다.
 
-- 조사와 prototype, 문서, 코드, 데이터 transformation 같은 action lane이 함께 있는 작업
-- 독립 모듈·서비스·실행 경로·테스트 묶음의 software-engineering 조사와 구현
-- 보안·정확성·성능·품질 같은 독립 review lens
-- independent source retrieval, schema-bound processing, disjoint implementation, review lens를 결합하는 작업
-- 각 lane의 산출물과 근거를 공통 성공 기준으로 검증·통합하는 작업
-- explicit subagent 요청 중 dispatch gate를 모두 충족하는 작업
+## 역할과 시작
 
-## 엔트리포인트 / 대표 표면
+- 메인: 원본·후속 요청, 권한, 전체 상태, 첫 회차 설계, 실제 spawn, 검증·통합, 사용자 확인, 최종 응답
+- 회차 설계자: 보존 자료에서 다음 회차 계획을 제안하는 새 읽기 전용 에이전트
+- 작업자: 배정된 범위의 조사·구현·변환·검증을 수행하는 새 에이전트
 
-- 대표 표면: `advance-subagent/skills/orchestrate-workstreams/SKILL.md`
-- 호출 방식: `$advance-subagent:orchestrate-workstreams` 또는 narrow implicit trigger
-- implicit policy: `allow_implicit_invocation: true`
-- runtime 언어: `SKILL.md`, reference Markdown, agent interface 문구는 영어
-- 자동 포함: software-engineering 또는 cross-domain 요청에서 의미 있고 독립적인 workstream 두 개 이상이 명백한 경우
-- 자동 제외: simple lookup, single-source summary, pure evidence-report research, sequential root cause, complexity·file count·일반 engineering 표현만 있는 요청
+입력은 원본 요청과 현재 알려진 지시·권한으로 충분합니다. 전체 목표·완료 조건이 불명확하면 잠정 또는 미확정으로 표시합니다. 개별 작업에는 이번에 확인할 질문·산출물·검증·종료 조건이 있어야 합니다.
 
-## 핵심 처리 계약
+## 분기 설계
 
-다음 data flow를 순서대로 유지합니다.
+- 현재 요청·근거·미해결 사항을 보고 이번 회차의 목적을 정합니다.
+- 분담은 서로 다른 산출물을 통합하며, 대안은 같은 목표의 접근을 비교·선택합니다. 두 형태를 혼합할 수 있습니다.
+- 각 작업의 objective, prerequisites, inputs, output, consumer, evidence, domain contract, access, ownership, completion·stop 조건을 정합니다.
+- 전체 완료 조건 수립·갱신, 사용자 의도 확인, 제약 발견도 작업으로 배정합니다.
+- 필요한 작업이 하나이면 한 작업자를 사용합니다. 독립성이나 병렬 이점이 없으면 같은 루프에서 순차 실행합니다.
+- 원인·공유 계약·앞선 판단이 필요한 작업은 prerequisite를 충족한 뒤 실행합니다.
+- Flush 후 새 설계자는 원본 요청·적용 지시·보존된 검증 자료만 읽습니다. 메인이 계획을 현재 권한·실행 용량과 대조하고 실행합니다.
 
-`goal and success criteria → DIRECT or DISPATCH → workstream/dependency graph → shared-state safety → bounded task packets → model/role routing → spawn → terminal result normalization → evidence and ownership checks → conflict resolution → whole-result verification → final response`
+## Fork·실행
 
-- 메인 에이전트는 goal, success criteria, shared contracts, dispatch state, main-owned surface, integration, conflict resolution, final verification, final response를 소유합니다.
-- 각 단계의 산출물을 다음 단계 입력으로 사용하고, 누락된 계약을 추정해 spawn하지 않습니다.
-- `DIRECT`이면 orchestration 형식을 사용자 응답에 강제하지 않고 메인 에이전트가 기존 도구·skill 계약으로 처리합니다.
-- `DISPATCH`이면 agent ID, task packet, ownership, required result, follow-up 상태, whole-result verification을 현재 context에 유지합니다.
+- 회차 설계자와 작업자는 이전 대화를 상속하지 않는 새 에이전트로 생성합니다.
+- 메인만 spawn합니다. 작업자는 다른 에이전트를 만들거나 scope를 확대하지 않습니다.
+- 실제 agent ID와 정확한 packet을 기록합니다. Spawn·새 맥락 실행 성공을 추정하지 않습니다.
+- 프로필은 fast·default·high이며 적용 지침의 명시 선택과 기본값을 우선합니다.
+- Fast·high의 모델·effort는 지침의 정확한 쌍으로 사용합니다. Default는 둘 다 생략합니다. 축약 문자열은 지원되는 모델과 effort로 확인해 해석하고 임의 혼합하지 않습니다.
+- 프로필이 미정의·미지원이면 역할과 지침을 충족하는 다른 프로필·상속만 사용합니다. 필수 프로필을 임의 대체하지 않고 실행 불가를 구분합니다.
+- 프로필·이유·정확한 쌍 또는 상속을 기록합니다. 도구가 공개하지 않은 상속 값은 추정하지 않습니다.
+- 역할은 PLAN_ROUND, EXPLORE_READ, IMPLEMENT_OWNED, REVIEW_LENS, PROCESS_STRUCTURED, FRONTIER_JUDGMENT를 책임에 따라 구분합니다. 역할을 모델과 고정 연결하지 않습니다.
+- 도구 용량과 독립 작업 수를 넘지 않는 최소 인원과 coherent batch를 사용합니다.
 
-## Dispatch Gate
+## 공유 상태와 권한
 
-다음을 모두 충족할 때만 spawn합니다.
+- 기본은 읽기 전용입니다. 병렬 write는 공유 계약이 명확하고 작성 대상이 완전히 분리된 경우만 허용합니다.
+- 한 artifact에 작성자는 한 명이며 공유 계약·통합 파일·실행 상태는 메인 소유입니다.
+- schema, config, lockfile, generated output, fixture, database, port, emulator, build output, temp directory, 외부 계정의 충돌을 통제합니다.
+- 대안 구현은 격리된 환경을 사용합니다. 분리할 수 없으면 읽기 전용으로 비교하거나 순차 실행합니다.
+- 읽기 결과는 write 권한을 주지 않습니다. 추가 수정은 원래 권한과 현재 조건을 확인한 새 packet으로 배정합니다.
+- 허용되지 않은 외부 변경·commit·push·PR·release를 위임으로 승인하지 않습니다.
 
-- 의미 있는 workstream이 두 개 이상이며 독립적으로 시작할 수 있습니다.
-- 각 workstream에 서로 구분되는 scope, deliverable, evidence, completion criteria가 있습니다.
-- 병렬 이점이 coordination과 재검사 비용보다 큽니다.
-- file, data, runtime, external-state conflict를 통제할 수 있습니다.
-- 메인 에이전트가 결과를 독립적으로 검증하고 통합할 수 있습니다.
+## 검증·통합
 
-하나라도 실패하면 `DIRECT`입니다. Complexity, 많은 파일, “깊게 작업” 요청은 근거가 아닙니다. explicit subagent 요청은 gate에 진입하지만 우회하지 않습니다.
+- 모든 필수 작업을 completed·blocked·inconclusive로 회수한 뒤 packet, 주장, source, 검사·변경 범위, ownership과 validation을 대조합니다.
+- 작업자 결론은 근거이며 사실 확정이 아닙니다. 메인은 중요한 원자료와 실제 산출물을 재확인합니다.
+- 중복은 합치고 상충은 원자료·코드·테스트·로그·직접 실행으로 해결합니다.
+- 분담은 검증된 결과를 통합하고 대안은 비교 기준에 따라 후속 방향을 선택합니다. 미선택 방향의 유효한 근거·반례도 보존합니다.
+- 근거가 부족하면 선택을 유보하거나 baseline을 유지합니다. 다수결·모델 확률·선호로 사실을 결정하지 않습니다.
+- Critical assigned scope가 누락되었을 때 실행 전체에서 기존 agent에 narrow follow-up 한 번만 허용합니다. follow_up_used는 flush 때도 보존합니다.
+- 추가로 필요한 다른 작업은 원본 권한 안에서 새 회차를 설계합니다. 같은 누락을 새 작업이라고 부르며 복구 한도를 우회하지 않습니다.
 
-## Workstream·Dependency Graph
+## 조건 갱신과 완료 판단
 
-- 각 node에 objective, prerequisites, output, consumer, evidence path를 둡니다.
-- unfinished result를 prerequisite로 요구하는 node는 동시에 시작하지 않습니다.
-- shared contract와 integration point는 메인 에이전트가 먼저 고정합니다.
-- 독립 lane 수보다 agent 수를 늘리지 않습니다.
-- 선택한 프로필의 비용을 고려해 적은 agent, 큰 coherent batch, strict schema, deterministic check, bounded retry, explicit stop condition을 사용합니다.
+- 원본 사용자 조건, 현재 해석·가정·목표·완료 조건, 미확정 사항을 구분합니다.
+- 구체화·필요한 검증 추가는 근거와 변경 이유를 남깁니다.
+- 목표·범위·권한 변경이나 요구 수준 완화는 사용자 확인이 필요합니다. 확인 전에는 그 변경에 의존하는 작업을 실행하지 않습니다.
+- 후속 요청은 기존 조건에 누적 적용하고 사용자가 바꾸거나 무효화한 부분만 대체합니다.
+- 전체 결과를 누적된 적용 조건과 대조합니다. 작업자 완료, decision 모델의 종료 권고, 한도 도달은 전체 완료가 아닙니다.
+- 완료이면 결과·검증·한계를 보고합니다.
+- 미완료이면 다음 결과를 바꿀 구체적 작업과 남은 allowance가 있을 때만 계속합니다.
+- 사용자 답변 필요, 도구·권한·용량 부족, 근거 부족, 한도 소진, 새 확인 없이 같은 실패만 반복하는 경우를 구분해 상태와 남은 작업을 보고합니다.
+- 질문 대기 중에는 답에 의존하지 않는 허용된 작업만 진행합니다. 임의로 요구를 완화하지 않습니다.
 
-## Shared-State Safety
+## 보존·Flush
 
-- 기본 execution mode는 read-only parallel입니다.
-- parallel write는 shared contract가 고정되고 writable ownership이 완전히 분리된 경우에만 허용합니다.
-- 한 파일·artifact에는 writer 한 명만 둡니다.
-- shared schema, config, lockfile, generated output, mutable fixture, port, database, build output, temp directory, emulator, external account를 동시에 변경하지 않습니다.
-- 안전 분리가 불명확하면 read-only 또는 `DIRECT`로 낮춥니다.
-- read result를 write authority로 암묵 승격하지 않습니다. 새 write scope는 메인 에이전트가 다시 gate에 적용합니다.
+- 필수 작업이 종료했거나 명시적으로 중단·정리되어 쓰기가 멈춘 것을 확인한 뒤 checkpoint를 작성합니다.
+- 보존: 원본·후속 요청, 적용 지시·권한, 현재 목표·가정·완료 조건·변경 이유·승인 상태, 검증 자료·산출물 위치와 확인 상태, 선택 이유·반대 근거, 미해결 사항, 한도·복구 상태.
+- 실행 감사 기록은 유지하되 다음 설계자의 입력과 분리합니다.
+- 새 설계자에게 이전 대화·worker output 전체·미검증 추측·메인의 선호를 넘기지 않습니다. 검증된 요약과 원자료는 제공합니다.
+- 새 설계자는 계획만 제안하고 작업자를 만들지 않습니다. 메인이 검토한 뒤 새 작업자를 배치합니다.
+- 메인 세션·원자료·코드·기록을 삭제하지 않습니다. 기존 agent 재사용·interrupt 또는 현재 맥락 요약만으로 fresh execution을 주장하지 않습니다.
+- 새 맥락 기능을 실행할 수 없으면 fork·flush 성공을 주장하지 않고 제한·미완료 범위를 밝힙니다. 원래 권한 안의 가능한 대체 산출물과 루프 수행 여부를 구분합니다.
 
-## Task Packet·Spawn
+## 상태·참조와 독립성
 
-모든 task packet은 다음을 포함합니다.
+- 전체 상태, 회차 계획, task packet, result envelope, 재개 기록은 runtime reference가 정의합니다.
+- 사용자 지정 기록 위치를 우선하고 없으면 적용 프로젝트의 작업별 임시 경로를 사용합니다. 그 규칙도 없으면 도구가 제공하는 임시 경로를 사용합니다.
+- 이 skill은 sibling 없이 실행 가능하며 도메인 계약은 작업에 필요할 때 명시적으로 연결합니다.
+- Deep-research는 이 실행 계약에 의존하지만 오케스트레이션은 조사 방법을 내장하지 않습니다.
+- 판단 모델은 분기·비교·다음 행동 선택의 선택적 조언만 제공합니다. 외부 전송 권한, 원자료 확인과 완료 검사를 대체하지 않습니다.
 
-- role과 선택 프로필, 명시 model/effort 쌍 또는 상속 여부, 선택 이유
-- objective
-- included·excluded scope
-- access mode
-- owned files/artifacts 또는 `none`
-- inputs와 source of truth
-- constraints: no sub-subagents, no scope expansion, ownership·shared-state 제한
-- deliverable과 result schema
-- evidence와 validation
-- completion과 stop conditions
+## 검토·검증
 
-packet이 완전하고 session capacity가 확인된 뒤 최소 agent만 spawn합니다. 반환된 agent ID와 exact packet을 기록하며 spawn 성공을 추정하지 않습니다.
+- 요청 이해와 완료 조건 수립·갱신을 실제 분기에 넣을 수 있습니까?
+- 단일 분기·분담·대안·순차 의존성이 하나의 루프에서 작동합니까?
+- 새 설계자가 필요한 원자료·검증 상태를 받으면서 이전 서사를 상속하지 않습니까?
+- 권한·사용자 확인·shared-state·모델·복구 한도가 flush 이후에도 유지됩니까?
+- 완료와 미완료·차단·사용자 대기를 근거로 구분합니까?
+- 실제 agent와 새 맥락의 실행 증거가 있습니까?
 
-## Model·Role Routing
-
-모델 선택은 `fast`(빠른 모델), `default`(기본 모델·상속), `high`(고성능 모델) 세 프로필로 제한합니다. 프로필은 역할·권한과 분리된 실행 설정입니다.
-
-- `fast`와 `high`의 구체 모델·effort 쌍은 현재 적용되는 사용자·프로젝트 지침이 소유합니다. plugin은 모델명·세대·고정 effort나 별도 기본 조합을 소유하지 않습니다.
-- `default`는 spawn의 model·effort를 모두 생략하여 실행 환경에서 상속합니다. 한쪽만 지정하거나 이름을 추정해 상속을 대체하지 않습니다.
-- 지침이 역할·작업별 프로필 또는 기본값을 지정하면 우선 따릅니다. 그 외에는 요구 능력·불확실성·검증 가능성·비용을 보고 고릅니다. 좁고 반복적이며 직접 검증 가능한 작업에는 `fast`, 복잡한 추론·상충 판단·높은 오류 비용에는 `high`, 별도 조정 근거가 없으면 `default`가 적합합니다. 긴 작업이나 많은 파일만으로 `high`를 선택하지 않습니다.
-- 모델과 effort를 독립적으로 최적화하거나 프로필 간 설정을 섞지 않습니다. 판단 모델에 묻더라도 선택지는 현재 정의돼 있고 사용 가능한 프로필뿐입니다. 새 조합은 적용 지침의 명시적 재정의가 필요합니다.
-- 지침이 모델명과 effort를 합친 축약 표기를 쓰면 도구가 지원하는 모델 ID와 effort에 맞춰 쌍을 해석합니다. 축약 문자열 전체를 model ID로 보내거나 모호한 값을 임의 분해하지 않습니다.
-- spawn 전에 선택 프로필의 쌍이 현재 도구에서 지원되는지 확인합니다. 정의·가용성·지원 effort가 불충분하면 조합을 바꾸지 않고, 역할을 충족하며 지침이 허용하는 다른 프로필 또는 `default`·직접 수행으로 전환합니다. 안전한 대안이 없으면 필요한 정의·조건을 보고합니다. 사용자 지정 프로필이 필수이면 임의 대체하지 않습니다.
-- packet과 실행 기록에는 선택 프로필·선택 이유, 명시 쌍 또는 상속 여부를 남깁니다. 상속된 실제 값이 도구에서 공개되지 않으면 추정하지 않습니다. 대체·미실행·검증 한계를 구분합니다.
-
-역할은 다음 책임을 구분하며 특정 프로필과 일대일로 고정하지 않습니다.
-
-- `EXPLORE_READ`: research, discovery, logs, source·dependency mapping
-- `IMPLEMENT_OWNED`: disjoint owned surface 안의 implementation·action
-- `REVIEW_LENS`: correctness, security, performance, quality, counterevidence review
-- `PROCESS_STRUCTURED`: schema-bound extraction, transformation, classification, repetitive mechanical work
-- `FRONTIER_JUDGMENT`: 모호한 목표·공유 계약·architecture, 강한 근거 상충, 결정적 검증이 없는 높은 오류 비용, 독립 최종 감사처럼 별도 판단 책임이 필요한 작업
-
-`high`나 `FRONTIER_JUDGMENT`도 dispatch gate의 예외가 아닙니다. 별도 판단 감사는 이미 gate를 통과한 lifecycle의 dependent node로 두고 prerequisite가 완료된 뒤 시작합니다. 독립 workstream이 하나뿐인 새 lifecycle에서 감사 한 명만 spawn하지 않고 `DIRECT`로 판단합니다.
-
-## Terminal Result·Integration
-
-모든 결과를 다음 필드로 정규화합니다.
-
-- `status`: `completed`, `blocked`, `inconclusive`
-- `summary and claims`
-- `evidence`
-- `inspected and changed surfaces`
-- `validation performed, skipped, or failed`
-- `risks and uncertainty`
-- `recommended integration action`
-
-- 결과를 final truth가 아닌 evidence로 취급합니다.
-- task packet, ownership, evidence, validation을 대조하고 unsupported claim과 ownership 위반을 거부합니다.
-- 중복 claim은 병합하고 conflict는 메인 에이전트가 source, code, test, log, direct execution으로 판정합니다.
-- critical assigned scope가 누락된 경우 lifecycle 전체에서 기존 agent에 narrow follow-up 한 번만 허용합니다.
-- follow-up 뒤에도 확인되지 않은 범위는 직접 검증하거나 residual risk로 공개합니다.
-- accepted result를 통합한 뒤 공통 성공 기준과 whole-result verification을 실행합니다.
-- 최종 응답은 통합 결론, 변경·검사 surface, 검증 결과, skipped·failed check, limitation, residual risk를 포함합니다.
-
-## Completion·Stop Conditions
-
-- `completed`: packet의 completion criteria와 evidence·validation 계약을 충족합니다.
-- `blocked`: 외부 의존성, 도구, 권한, 입력 부족으로 완료할 수 없습니다.
-- `inconclusive`: 허용 범위를 조사했지만 결론을 지지할 근거가 부족합니다.
-- agent는 scope 완료, 명시된 한계 도달, stop condition 발생 시 종료합니다.
-- bounded retry와 follow-up 한도를 넘기지 않습니다.
-- 전체 성공을 검증하지 못하면 완료로 보고하지 않습니다.
-
-## 검토 질문
-
-- goal과 success criteria가 검증 가능한가?
-- gate의 모든 조건에 근거가 있는가?
-- graph에서 독립 node와 dependency가 구분되는가?
-- shared contract, ownership, mutable state가 통제되는가?
-- 모든 packet이 role·model·scope·evidence·stop contract를 갖는가?
-- 프로필 선택이 적용 지침과 역할 요구에 맞고, 정의된 쌍 또는 상속만 사용하는가?
-- 모든 terminal result와 ownership을 메인 에이전트가 확인했는가?
-- conflict와 whole-result verification이 해결되거나 risk로 공개됐는가?
-- pure evidence-report research의 자동 trigger 경계를 침범하지 않는가?
-
-## 독립성 원칙
-
-- 이 skill은 sibling skill과 dev-only spec 없이 독립 실행 가능해야 합니다.
-- 설치된 delegation 도구와 범용 조사·구현 도구만 사용하며 별도 MCP, app, hook, script를 요구하지 않습니다.
-- pure research 전문 계약이 필요해도 sibling skill을 숨은 prerequisite로 취급하지 않습니다. 현재 요청이 이 skill의 경계 안에 있으면 설치된 도구와 사용자 지침으로 `DIRECT` 또는 제한된 명시 dispatch를 수행하고 한계를 공개합니다.
-
-## 확장 원칙
-
-- cohesive lifecycle을 유지하고 세부 계약은 one-level runtime reference로만 분리합니다.
-- role, result field, execution mode는 메인 에이전트의 routing·검증 판단을 실제로 바꿀 때만 추가합니다.
-- broad trigger보다 boundary example과 negative trigger를 우선 보강합니다.
+Runtime과 인접 도메인 계약은 독립 읽기 전용 검증으로 확인하며 메인이 전체 결과를 검증합니다.

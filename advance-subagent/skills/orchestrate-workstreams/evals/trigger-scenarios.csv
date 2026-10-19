@@ -1,10 +1,25 @@
-scenario,prompt,automatic_selection,route_or_role,expected_reason
-software_independent_paths,"로그인, 결제, 인벤토리 실행 경로의 간헐적 실패 원인을 각각 조사해 주세요.",yes,EXPLORE_READ,"별도 실행 경로와 evidence를 가진 독립 software 조사 lane"
-software_review_lenses,"현재 브랜치를 보안, 정확성, 성능 관점에서 독립적으로 검토해 주세요.",yes,REVIEW_LENS,"같은 코드라도 distinct review deliverable을 가진 read-only lane"
-mixed_research_action,"시장 조사와 독립 prototype 구현을 병렬로 진행하고 결과를 통합해 주세요.",yes,DISPATCH_IF_INDEPENDENT,"각 lane이 현재 입력으로 시작하고 distinct contract를 가지면 dispatch"
-structured_volume,"서로 독립된 네 데이터 묶음을 같은 schema로 추출·분류해 주세요.",yes,PROCESS_STRUCTURED,"독립 partition을 coherent batch로 처리"
-disjoint_implementation,"고정된 인터페이스를 기준으로 서로 다른 두 package를 구현해 주세요.",yes,IMPLEMENT_OWNED,"shared contract 고정과 disjoint ownership 필요"
-frontier_conflict,"두 독립 조사에서 나온 고품질 근거가 충돌하고 결정적 검증 수단이 없습니다. 판단을 감사해 주세요.",context-dependent,DIRECT_OR_DEPENDENT_FRONTIER_JUDGMENT,"단독 audit는 direct; 기존 gate-passed lifecycle에서만 허용 프로필의 dependent 판단 감사 선택 가능"
-sequential_root_cause,"하나의 장애 원인을 찾고 그 결과에 따라 순서대로 수정해 주세요.",no,DIRECT,"downstream work가 공통 원인에 의존"
-pure_research_report,"여러 출처를 대조하고 인용 가능한 시장 조사 보고서를 작성해 주세요.",no,OUTSIDE_AUTOMATIC_TRIGGER,"순수 evidence-report research 경계"
-ordinary_software_only,"이 서비스의 버그를 고치고 테스트해 주세요.",no,DIRECT,"독립 software workstream이 명백하지 않은 순차 구현·검증"
+id,should_trigger,prompt,reason,expected_behavior
+ow-001,true,"로그인, 결제, 인벤토리 실행 경로의 실패 원인을 각각 조사해 주세요.",Independent investigation tasks.,Partition bounded read-only tasks and verify their findings.
+ow-002,true,"현재 브랜치를 보안, 정확성, 성능 관점에서 독립적으로 검토해 주세요.",Independent review lenses.,Assign distinct read-only deliverables and integrate conflicting evidence.
+ow-003,true,시장 조사와 독립 프로토타입 구현을 병렬로 진행해 주세요.,Mixed domains can start independently.,Attach research and implementation contracts with separate authority and ownership.
+ow-004,true,서로 독립된 네 데이터 묶음을 같은 스키마로 추출·분류해 주세요.,Independent structured partitions.,Use coherent bounded batches and validate the common schema.
+ow-005,true,고정된 인터페이스를 기준으로 서로 다른 두 패키지를 구현해 주세요.,Disjoint implementation tasks.,Verify ownership and shared interfaces before parallel writes.
+ow-006,true,$advance-subagent:orchestrate-workstreams 남은 검증 한 가지를 수행해 주세요.,Explicit invocation with one task.,Use one fresh worker; do not require a second task or an internal direct route.
+ow-007,false,이 서비스의 버그를 고치고 테스트해 주세요.,Generic implementation alone is not a selection signal.,Do not automatically select orchestration without meaningful branches or an explicit request.
+ow-008,false,이 기사 한 편을 요약해 주세요.,Single-source summary.,Do not automatically select orchestration or deep research.
+ow-009,true,$advance-subagent:orchestrate-workstreams 검색이 느린데 개선해 주세요.,Explicit invocation with unresolved criteria.,Design request-understanding and evidence tasks without requiring a settled global goal.
+ow-010,true,같은 문제를 서로 다른 접근으로 탐색하고 새 맥락에서 이어가 주세요.,Alternative exploration and fresh continuation.,"Use the common loop; compare evidence, preserve counterevidence, and replan with a new read-only planner."
+ow-011,conditional,활성 루프에서 하나의 원인을 조사한 뒤 수정해야 합니다.,Dependent tasks inside an active loop.,Verify the cause before starting the dependent implementation; keep one-branch rounds valid.
+ow-012,conditional,조사 결과 기존 완료 기준에 새로운 정확성 검증이 필요합니다.,Evidence changes necessary checks.,Record the reason and add the check within existing scope.
+ow-013,conditional,목표를 달성하려면 검색 정확도를 낮춰야 합니다.,Weakening a user requirement needs confirmation.,"Hold dependent changes, ask the user, and preserve confirmation status."
+ow-014,conditional,작업자가 완료했지만 최종 성능 기준은 아직 충족하지 못했습니다.,Local success is not whole-request completion.,Continue with a concrete justified next task or report unfinished scope.
+ow-015,conditional,두 대안 중 하나를 선택했지만 다른 대안에서 유효한 반례를 찾았습니다.,Selection does not discard evidence.,Preserve and verify the counterexample before completion review.
+ow-016,conditional,두 구현 대안이 같은 설정 파일과 DB를 수정합니다.,Shared mutable state.,Isolate resources or schedule sequentially; do not assign concurrent conflicting writes.
+ow-017,conditional,Flush 후 다음 회차를 시작합니다.,Fresh replanning with main retained.,Persist a minimal handoff and spawn a new read-only planner without conversation inheritance.
+ow-018,conditional,이미 follow-up 한 번을 썼지만 flush 후 같은 누락을 다시 요청하고 싶습니다.,Recovery state spans the entire run.,Do not reset follow_up_used or disguise the same omission as a new task.
+ow-019,conditional,도구가 새 에이전트 생성을 지원하지 않습니다.,Actual execution capability is unavailable.,Disclose the limitation and distinguish any permitted fallback output from an executed loop.
+ow-020,conditional,더 확인할 새 근거 없이 같은 실패만 반복됩니다.,No useful next check.,Do not repeat unchanged work or claim completion; report the unresolved limit.
+ow-021,true,$advance-subagent:deep-research 여러 출처를 비교한 조사 보고서를 작성해 주세요.,Research lead explicitly uses the common loop.,Attach the research contract and use this loop from question framing through report checks.
+ow-022,false,현재 배정된 조사 작업자로서 deep-research 계약을 적용합니다.,Assigned worker context.,Perform only the bounded task without starting orchestration or spawning.
+ow-023,false,파일이 많으니 오래 걸릴 것 같습니다.,Volume and duration alone do not justify selection.,Do not automatically select orchestration.
+ow-024,conditional,활성 루프 중 사용자가 요청 조건 하나만 변경했습니다.,Follow-up updates accumulated conditions.,Replace only the changed condition and retain all other applicable requirements.

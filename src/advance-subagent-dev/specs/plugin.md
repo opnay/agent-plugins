@@ -4,85 +4,76 @@
 - 같은 연구 질문의 다른 가설·방법을 병렬 탐색하고, 판단 모델로 다음 조사 방향을 선택한 뒤 보존 자료와 새 맥락으로 이어갑니다.
 - 빠른 모델·기본 모델(상속)·고성능 모델의 세 프로필을 사용하며, 구체 모델·effort 쌍은 적용 지침이 소유합니다.
 
+- 결국 fork-and-flush는 전략이라 research말고도 다른 방식으로도 사용할 수 있어서, 오케스트레이션의 기본 동작으로 할당하는게 나아보이는데 어때?
+- 직접 처리 - 사실상 오케스트레이션 사용할지 않할지 스킬 선택단계에 포함된 체계이니 제거하자.
+  - 독립 작업 병렬 분담 - 오케스트레이션 기본 핵심으로 보이는데, fork-and-flush로 대체해도 괜찮다고 보이네.
+  - 공통 실행에서 작업 분리부터 결과 검증까지 모두 fork-and-flush 하위로 배치해도 되지않나?
+- 사실 상 fork - flush 간의 루프를 설계한거나 마찬가지 같은데, fork 보다 앞단계인 분기 설계부터 루프가 시작되도록 하는게 맞지 않을까 싶네?
+- 요청과 완료 조건 고정이랬는데, 조사하면서 완료 조건이 변동되거나, 충분하지 않은 요청으로 인해 변동될 수 있지않아?
+- 요청과 완료 조건 고정 자체도 [분기 설계 - fork - 검증 통합 - 완료여부 - flush] 루프를 태우는게 맞지 않아?
+- 좋네, 분기 - flush까지는 메인 오케스트레이션 루프로 잡고, 나머지를 너가 말한대로 하면 되지 않을까싶네? 스킬 어떻게 정리할지 알려줘.
+- 상세한 계획 세워줘.
+  - flush 후 새 맥락으로 교체할 범위를 어디까지로 정할까요?
+    - 메인은 유지 (Recommended) [선택]. 메인은 권한·기록·실행을 관리하고, 다음 회차 분기는 보존 자료만 받은 새 에이전트가 설계합니다.
+  - 이번 정리에 시나리오 평가의 공통 오케스트레이션 연계도 포함할까요?
+    - 조사·오케스트레이션만 (Recommended) [선택]. advance-subagent의 두 스킬을 먼저 정리하고, Jev는 판단 도구로 유지합니다.
+  - deep-research를 호출했을 때 공통 오케스트레이션 루프를 어떻게 사용할까요?
+    - 항상 공통 루프 (Recommended) [선택]. deep-research는 조사 계약을 제공하고, 요청 이해부터 보고서 완료까지의 실행은 공통 루프가 맡습니다.
+  - 루프 안에서 독립적으로 나눌 작업이 하나만 남으면 어떻게 처리할까요?
+    - 한 분기로 계속 (Recommended) [선택]. 새 작업자 한 명으로 진행하고, 병렬화 가능한 회차만 여러 작업자를 사용합니다.
+
 ---
 
 # Advance Subagent 플러그인 스펙
 
-## 플러그인 목적
+## 목적과 경계
 
-`advance-subagent`는 서브에이전트를 활용한 근거 중심 조사와 독립 workstream 위임·검증·통합의 심화 실행 방법을 제공하는 instruction-only 플러그인입니다.
+advance-subagent는 도메인 공통 fork-and-flush 실행 루프와 근거 중심 조사 계약을 제공하는 instruction-only 플러그인입니다.
 
-## 플러그인 경계와 비목표
+- 공통 루프는 요청 이해, 분기, 실행, 검증·통합, 완료 판단과 새 맥락 인계를 소유합니다.
+- 조사 계약은 출처, 주장·근거·반대 근거, 최신성, 불확실성과 보고서 품질을 소유합니다.
+- 포함 작업은 요청 해석, 조사, 설계 대안, 구현, 변환과 검증이며 각 작업의 권한·도메인 계약을 보존합니다.
+- 단순 조회나 일반 구현 표현, 파일 수·복잡성만으로 자동 오케스트레이션하지 않습니다.
+- 별도 MCP, app, hook, executable runtime dependency, 외부 변경 권한을 제공하지 않습니다.
 
-- 포함:
-  - 여러 출처의 원문, 근거, 반대 근거, 불확실성, 인용을 추적하는 독립 조사 보고서
-  - software-engineering 또는 cross-domain 목표의 독립 workstream 분해와 bounded 위임
-  - 역할·모델 routing, task/result contract, shared-state 안전, 결과 검증·통합
-- 제외:
-  - 모든 복잡한 작업의 자동 위임
-  - 단순 조회, 단일 문서 요약, 근거 없는 아이디어 발산
-  - sibling skill의 숨은 context나 실행을 요구하는 처리
-  - MCP, app, hook, script, executable runtime dependency
-  - 사용자가 요청하지 않은 외부 상태 변경, commit, push, PR, release
+## 대표 표면과 내장 skill
 
-## 처리하려는 작업 형태
+| 식별자 | 책임 | 상세 계약 |
+| --- | --- | --- |
+| $advance-subagent:orchestrate-workstreams | 분기 설계부터 완료 또는 다음 회차 인계까지의 공통 루프 | specs/skills/orchestrate-workstreams.md |
+| $advance-subagent:deep-research | 조사 계약과 공통 루프 연결 | specs/skills/deep-research.md |
 
-- 시장·경쟁·규제·기술·문헌·기업 사실을 여러 출처로 확인하는 조사 보고서
-- 근거와 반대 근거, 최신성, 불확실성, 인용을 감사할 수 있어야 하는 팩트체크와 실사
-- 조사와 prototype·문서·코드·데이터 변환이 섞인 cross-domain workstream
-- 독립 모듈·서비스·실행 경로·테스트 묶음의 software-engineering 조사와 구현
-- correctness·security·performance·quality 같은 독립 review lens
+설치 표면은 advance-subagent의 manifest, README, skills이며 개발 README와 소유 spec이 작성 계약을 제공합니다. Marketplace의 source.path는 ./advance-subagent입니다.
 
-## 대표 표면
+## 사용과 조합
 
-- 매니페스트: `advance-subagent/.codex-plugin/plugin.json`
-- 사용자 안내: `advance-subagent/README.md`, 개발 README
-- 플러그인 스펙: `specs/plugin.md`
-- skill 상세 스펙:
-  - `specs/skills/deep-research.md`
-  - `specs/skills/orchestrate-workstreams.md`
-- 공개 marketplace: `.agents/plugins/marketplace.json`의 `./advance-subagent`
-- 호출 식별자:
-  - `$advance-subagent:deep-research`
-  - `$advance-subagent:orchestrate-workstreams`
+- 명시 오케스트레이션 요청, 의미 있는 독립 작업, 대안 비교, 새 맥락 반복 실행에는 공통 루프를 사용합니다.
+- 조사 자체가 산출물이며 여러 출처의 근거·인용·불확실성 계약이 필요하면 deep-research를 선택합니다. 요청이 불충분해도 질문·조건 구체화를 루프에 배정할 수 있습니다.
+- Deep-research의 주 실행자는 공통 루프를 항상 사용합니다. 이미 루프가 활성화되어 있으면 조사 계약만 연결하고 루프를 중복 시작하지 않습니다.
+- 위임받은 작업자는 배정된 도메인 계약만 적용하며 다른 에이전트를 생성하지 않습니다.
+- 공통 루프는 deep-research 없이 실행할 수 있습니다. Deep-research의 실행은 같은 번들의 공통 루프에 명시적으로 의존합니다.
+- Cross-skill 참조는 설치 식별자를 사용합니다. 숨은 sibling context나 개발용 spec을 runtime 입력으로 요구하지 않습니다.
 
-## 내장 skill 체계
+## 루프와 책임
 
-- `deep-research`:
-  - 조사 범위 설정부터 원문 확보, 증거 대조, 인용·불확실성 감사, 최종 보고서까지의 실행 워크플로를 소유합니다.
-  - 같은 질문의 병렬 가설 탐색·조사 방향 선택·새 맥락 재개를 내부 전략으로 소유하며, 선택하지 않은 방향의 검증된 반대 근거도 보존합니다.
-  - spec: `specs/skills/deep-research.md`
-- `orchestrate-workstreams`:
-  - 목표 고정부터 위임 판정, 실행, 결과 정규화, 검증·통합, 최종 응답까지의 cohesive lifecycle을 소유합니다.
-  - spec: `specs/skills/orchestrate-workstreams.md`
+분기 설계 → fork·실행 → 검증·통합 → 완료 판단 → 미완료이면 보존·flush → 분기 설계를 따릅니다.
 
-## Plugin Usage 계약
+- 원본 요청·사용자 지시·권한은 메인이 보존하고, 현재 해석·가정·완료 조건과 구분합니다.
+- 메인은 첫 회차 설계, 실행 기록, 배치, 검증·통합, 사용자 확인과 최종 응답을 소유합니다.
+- Flush 후에는 보존 자료만 받은 새 읽기 전용 에이전트가 다음 회차를 설계합니다. 메인은 계획의 권한·의존성·실행 가능성을 확인합니다.
+- 작업 분담과 같은 목표의 대안 비교는 분기 형태입니다. 작업 하나이면 한 명을 사용하고 의존성이 있는 작업은 순차 배치합니다.
+- Flush는 작업·설계 맥락 교체입니다. 메인 세션 초기화나 자료 삭제를 의미하지 않습니다.
 
-- 조사 자체가 산출물이고 출처·증거·인용 계약이 필요하면 `deep-research`를 선택합니다.
-- 같은 질문의 조사 방향을 비교할 때도 `deep-research`를 사용합니다. 판단 모델은 선택적 보조 수단이며 별도 스킬이나 외부 서비스 의존을 요구하지 않습니다.
-- software-engineering 또는 cross-domain 요청에서 독립 workstream이 둘 이상 명백하면 `orchestrate-workstreams`의 dispatch gate를 적용합니다.
-- 명시 호출은 각 skill의 gate와 제외 조건을 우회하지 않습니다.
-- 두 skill은 각자의 trigger, routing, 산출물 계약을 소유합니다.
-- 각 skill은 sibling skill 없이 독립 실행 가능해야 합니다.
-- plugin manifest, README, plugin spec이 skill 선택 기준과 namespace를 소유합니다.
+## 공통 모델과 판단 보조
 
-## 모델 프로필 계약
+- 모델·effort 선택은 공통 오케스트레이션이 소유합니다. fast·default·high만 사용하며 fast·high의 정확한 쌍은 적용 지침에서 읽습니다. Default는 두 설정을 생략합니다.
+- 역할과 모델 프로필은 분리합니다. 구체 모델 목록, 임의 조합 또는 새로운 기본 effort를 plugin이 정의하지 않습니다.
+- Jev 같은 판단 모델은 불확실한 다음 행동의 선택적 보조 도구입니다. 사실·권한·사용자 선호·완료 여부를 대신 결정하지 않습니다.
+- 외부 전송은 허용된 최소 정보에 한정하며 특정 서비스·CLI를 요구하지 않습니다.
 
-- 두 skill은 `fast`·`default`·`high`만 선택합니다. 구체 모델·effort 조합은 현재 적용 지침이 정의합니다.
-- `default`는 model·effort를 모두 생략해 상속합니다. `fast`·`high`는 정의된 쌍을 함께 사용하고 임의 혼합·다른 조합을 만들지 않습니다.
-- 각 skill은 역할과 작업 조건에 맞춰 프로필을 선택합니다. 적용 지침의 명시 선택·기본값을 보존하며, 프로필은 권한·dispatch gate를 바꾸지 않습니다.
-- 프로필 정의나 도구 지원이 없으면 허용된 다른 프로필·상속·직접 수행을 판단하고 한계를 공개합니다. plugin이 모델 목록이나 새 조합을 관리하지 않습니다.
+## 확장과 검증
 
-## SDD 운영 원칙
-
-- plugin spec은 bundle 목적, 비목표, 사용 기준, skill composition을 소유합니다.
-- 개별 조사·위임·검증 계약은 각 skill spec이 소유합니다.
-- skill spec이 바뀌면 해당 runtime skill folder를 현재 spec 기준으로 처음부터 재작성합니다.
-- runtime `SKILL.md`, reference Markdown, agent interface 문구는 영어로 작성합니다. Trigger fixture는 실제 선택 입력 언어를 유지할 수 있습니다.
-
-## 확장 원칙
-
-- 새 skill은 서브에이전트 활용의 별도 사용자 산출물과 독립 처리 계약이 있을 때만 추가합니다.
-- 한 skill의 routing, result field, evidence contract를 sibling에 암묵적으로 적용하지 않습니다.
-- 새 모델 route는 모델명이 아니라 판단 책임과 검증 가능성으로 정의합니다.
-- 실제 제공되는 MCP, app, hook, script만 runtime surface로 선언합니다.
+- 새 skill은 별도 사용자 산출물과 도메인 계약이 있을 때만 검토합니다. 루프 단계마다 skill을 만들지 않습니다.
+- 공통 실행 계약과 도메인 계약은 한 소유 표면에서 관리합니다.
+- Runtime은 영어로 작성하고 개발 spec 없이 실행 가능해야 합니다.
+- Plugin·skill spec, runtime, README, manifest, agent metadata와 trigger fixture의 선택·의존성·종료 계약을 함께 검증합니다.

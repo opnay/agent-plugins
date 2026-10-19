@@ -55,7 +55,7 @@ skill 작성, plugin 작성, session 관리, commit workflow, subagent 정의 �
 
 ### Advance Subagent
 
-`advance-subagent`는 서브에이전트를 활용한 근거 중심 조사와 독립 workstream 위임·검증·통합의 심화 실행 방법을 제공합니다.
+`advance-subagent`는 분기 설계부터 검증·완료·새 맥락 인계까지의 공통 fork-and-flush 루프와 근거 중심 조사 계약을 제공합니다.
 
 - 경로: `advance-subagent/`
 - 주요 실행 표면: `deep-research`, `orchestrate-workstreams`

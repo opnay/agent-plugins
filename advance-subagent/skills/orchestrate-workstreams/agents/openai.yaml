@@ -1,7 +1,7 @@
 interface:
   display_name: "Orchestrate Workstreams"
-  short_description: "Delegate and verify independent workstreams."
-  default_prompt: "Use $advance-subagent:orchestrate-workstreams to coordinate independent engineering, investigation, and action workstreams safely."
+  short_description: "Run a shared fork-and-flush execution loop."
+  default_prompt: "Use $advance-subagent:orchestrate-workstreams to design branches, execute and verify results, review completion, and replan from a preserved handoff in a fresh context."
 
 policy:
   allow_implicit_invocation: true

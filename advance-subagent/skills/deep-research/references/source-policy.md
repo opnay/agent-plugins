@@ -29,7 +29,7 @@ Do not substitute popularity or search rank for evidence quality.
 ## Separate Discovery from Evidence
 
 - Treat search titles, snippets, AI summaries, and knowledge panels as discovery aids.
-- Cite only exact pages, documents, papers, or datasets that were opened and inspected.
+- Cite only exact pages, documents, papers, or datasets that were opened and inspected. For supplied local artifacts, retain the exact readable path and section or line location; do not invent a public URL.
 - Follow secondary citations to the original source when possible.
 - If the original source is unavailable, identify the evidence as secondary and disclose the verification limit.
 - Never imply inspection of content blocked by deletion, login, region, or paywall.

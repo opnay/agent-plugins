@@ -54,7 +54,7 @@ Every report must expose a compact ledger for its material judgments:
 
 | Claim | Type | Key evidence | Counterevidence or limit | Scope | Corroboration | Confidence | Source |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| One falsifiable statement | Fact / interpretation / inference / recommendation | What the evidence directly shows | Conflict or gap | Region, period, sample, definition | Complete / unavailable / insufficient, plus impact | High / medium / low, with reason | Exact URL, publication or as-of date, access date, location |
+| One falsifiable statement | Fact / interpretation / inference / recommendation | What the evidence directly shows | Conflict or gap | Region, period, sample, definition | Complete / unavailable / insufficient, plus impact | High / medium / low, with reason | Exact URL or supplied artifact path, publication or as-of date, access date, location |
 
 For a narrow report, place the same fields in each judgment section instead of a table. Omit routine notes, but never omit evidence that supports or could reverse the conclusion.
 

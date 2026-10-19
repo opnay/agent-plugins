@@ -1,79 +1,64 @@
 # Task and Result Contracts
 
-## Dispatch State
-
-Maintain:
-
-```yaml
-route: DISPATCH
-graph: <workstream and dependency nodes>
-assignments:
-  - agent_id: <spawn tool result>
-    task_packet: <complete packet>
-ownership:
-  agent_owned: <per-agent files or artifacts, or none>
-  main_owned: <shared contracts and integration surfaces>
-required_results: [<agent ids>]
-follow_up_used: false
-whole_result_verification: [<checks>]
-```
-
-Never infer an agent ID or begin integration with incomplete dispatch state.
+These are logical records, not a required serialization format. Use the same field meanings in Markdown, YAML, or an equivalent existing task system.
 
 ## Task Packet
 
-```yaml
-role: EXPLORE_READ | IMPLEMENT_OWNED | REVIEW_LENS | PROCESS_STRUCTURED | FRONTIER_JUDGMENT
+~~~yaml
+round_id: <current round>
+task_id: <stable task id>
+role: PLAN_ROUND | EXPLORE_READ | IMPLEMENT_OWNED | REVIEW_LENS | PROCESS_STRUCTURED | FRONTIER_JUDGMENT
 model_profile: fast | default | high
-profile_reason: <task need or applicable instruction>
-model: <configured profile model; omit for default>
-reasoning_effort: <configured profile effort; omit for default>
-objective: <exact question or action>
+profile_reason: <applicable instruction or task need>
+model: <resolved profile model; omit for default>
+reasoning_effort: <resolved effort; omit for default>
+objective: <bounded question, plan, or deliverable>
 scope:
-  included: <exact surfaces>
-  excluded: <explicit non-goals>
+  included: <assigned surfaces>
+  excluded: <non-goals>
+prerequisites: <verified inputs or none>
+inputs: <necessary original or verified material>
+source_of_truth: <authoritative sources and applicable instructions>
+domain_contract: <relevant installed contract or explicit task rules>
 access_mode: read-only | write-enabled
-owned_files_or_artifacts: none | <exact list>
-inputs: <artifacts and required context>
-source_of_truth: <authoritative source>
+owned_files_or_artifacts: none | <exact writable ownership>
 constraints:
-  - Do not spawn sub-subagents.
-  - Do not expand scope.
-  - Do not write outside ownership.
-  - Preserve explicit user permissions and shared-state limits.
-deliverable: <bounded, integrable output>
-result_schema: <required Result Envelope fields>
-evidence: <paths, URLs, symbols, commands, and key outputs>
-validation: <deterministic or review checks>
-completion_conditions: <observable success>
-stop_conditions: <blocked, inconclusive, retry, time, or evidence limit>
-```
+  - No nested orchestration or delegation.
+  - No scope or permission expansion.
+  - No writes outside ownership.
+deliverable: <integrable output>
+evidence: <recoverable sources and verification locations>
+validation: <observable checks>
+completion_conditions: <local task completion, even if global criteria are unresolved>
+stop_conditions: <dependencies, evidence, retry, allowance, or capability limits>
+~~~
 
-For `default`, omit both model and reasoning effort from actual spawn arguments and record inheritance. For `fast` or `high`, resolve the complete pair from applicable instructions and preserve it exactly. Do not pass placeholder text or the combined shorthand as a model ID. Record any substitution and its permission basis.
+For planners, require a proposed round plan and unresolved questions, set read-only ownership to none, and allow only the minimal handoff and its necessary source materials. Do not supply previous worker narratives or preferred answers.
+
+For researchers, attach $advance-subagent:deep-research as an assigned domain contract, not a request to launch another loop. Other domains supply their own applicable requirements.
+
+Record the actual spawn's returned agent ID and exact packet in the main-owned audit record. For default, omit model and effort from actual spawn arguments. Do not pass placeholder values.
 
 ## Result Envelope
 
-```yaml
+~~~yaml
 status: completed | blocked | inconclusive
 summary_and_claims:
-  - claim: <concise claim>
+  - claim: <bounded statement>
     basis: confirmed | inference
-evidence:
-  - <source, path, symbol, command, or summarized output>
-inspected_surfaces: [<files, artifacts, sources, or systems>]
-changed_surfaces: [<files or artifacts and reasons, or none>]
+evidence: <exact sources, paths, locations, commands, and key results>
+inspected_surfaces: <inspected files, sources, artifacts, or systems>
+changed_surfaces: <actual changes and reasons, or none>
 validation:
-  performed: [<check and result>]
-  skipped: [<check and reason>]
-  failed: [<check and failure>]
-risks_and_uncertainty: [<unknowns or none>]
-recommended_integration_action: <main-agent action>
-```
+  performed: <checks and outcomes>
+  skipped: <checks and reasons>
+  failed: <checks and failures>
+risks_and_uncertainty: <remaining limits>
+recommended_integration_action: <suggestion for the main agent>
+~~~
 
-## Status Rules
+A planner also returns the proposed round plan. A research result also supplies the source dates, supporting passages, counterevidence, and scope limits required by its domain contract.
 
-- `completed`: Meets completion criteria and the evidence and validation contract.
-- `blocked`: An external dependency, input, tool, or permission prevents completion.
-- `inconclusive`: The allowed scope was inspected but evidence remains insufficient.
+Completed means the local packet's evidence and validation conditions are met. Blocked means an external dependency, input, tool, authority, or allowance prevents completion. Inconclusive means permitted work was done but evidence does not settle the question.
 
-Missing validation is not success. A change outside ownership is a violation, not an accepted result.
+Missing validation is not success. Ownership violations are not accepted changes. The main agent verifies every required result and decides whole-request completion separately.
