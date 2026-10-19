@@ -27,7 +27,7 @@ jev doctor [--provider jev]
 
 - `install`: 실행 중인 바이너리를 0755 권한으로 복사합니다. 다른 일반 파일 교체에는 `--force`가 필요합니다.
 - `uninstall`: Go build info로 Jev임을 식별한 일반 파일만 제거합니다. 설정·토큰·디렉터리·셸 설정은 유지합니다.
-- `doctor`: 설치 파일, PATH, 설정 유효성·권한, 키 유무·출처와 API 인증을 점검합니다. 유효한 설정·키가 있으면 인증된 `GET /v1/models`를 한 번 호출하며 추론 요청은 하지 않습니다.
+- `doctor`: Local setup·Config·Provider·Authentication으로 설치·PATH, 설정·권한, 선택 provider·어댑터 지원·모델·timeout, 키 유무·출처·API 인증을 구분합니다. 미구현 provider는 정상 설정의 Config 실패로 표시하지 않습니다. 환경변수 키 형식 오류는 Authentication 실패로 표시하고 API 점검을 건너뜁니다. 구현된 provider의 설정·키가 유효하면 어댑터로 인증을 한 번 점검하며 Jev는 `GET /v1/models`를 호출합니다. 추론 요청은 하지 않습니다.
 - 결과는 `OK / FAIL / SKIP`, 문제별 해결 안내, 전체 요약으로 표시합니다. 키 원문은 숨기며, 선택 provider의 환경변수가 파일 키를 덮어쓰는지도 보여줍니다. 401·403과 네트워크·시간 초과·호출 제한·서버 오류를 구분합니다. API 조회 성공은 모델 정확성이나 추론 가능 여부를 증명하지 않습니다. 설정·설치·셸을 자동 수정하거나 요청을 재시도하지 않습니다.
 - doctor 정상 결과는 stdout·종료 코드 0, 문제 결과는 빈 stdout·stderr·종료 코드 1입니다.
 

@@ -122,16 +122,18 @@ jev batch --state-file <path> --input <path> [--model <id>] [--timeout <duration
 
 ## 설치·제거·진단
 
-- 공통 형식: `jev install [--force] [--dir <directory>]`, `jev uninstall [--dir <directory>]`, `jev doctor [--dir <directory>]`.
+- 공통 형식: `jev install [--force] [--dir <directory>]`, `jev uninstall [--dir <directory>]`, `jev doctor [--dir <directory>] [--provider <name>]`.
 - 기본 디렉터리는 `~/.local/bin`, 정확한 대상은 그 디렉터리의 `jev`다. `--dir`는 비어 있지 않은 디렉터리이며 상대 경로도 허용한다.
 - install/uninstall은 API 호출·설정파일·토큰 없이 동작한다.
 - install은 실행 중인 바이너리를 대상에 원자적으로 복사하고 0755 권한을 부여한다. 같은 바이너리는 성공하고 다른 일반 파일은 `--force` 없이는 보존한다. symlink·비정규 파일은 거부한다.
 - uninstall은 Go build info의 main package path가 `opnay/jev`인 일반 파일만 제거한다. 대상이 없으면 성공이며 설정·토큰·설치 디렉터리·다른 파일·셸 설정은 유지한다.
-- doctor는 대상 identity, PATH 선택, 일반 설정 유효성·권한, 키 유무·출처를 점검한다. 비어 있지 않은 `TYPESAFE_API_KEY`가 파일의 `api_key`보다 우선하며 원문은 출력하지 않는다.
-- 기본 doctor는 설정이 유효하고 키가 있을 때 `GET https://api.typesafe.ai/v1/models`를 Bearer 인증으로 한 번 호출한다. 저장된 timeout을 적용하며 redirect·retry·추론 요청은 하지 않는다. 설치·PATH 오류는 독립적인 API 점검을 막지 않는다.
+- doctor의 Local setup은 대상 identity·실행 권한·PATH를, Config는 저장된 schema·값·파일 권한을 점검합니다. Provider는 `--provider > defaults.provider > jev`로 선택한 provider·어댑터 지원 여부·해석된 모델·timeout을 표시합니다. Authentication은 선택 provider의 키 유무·형식·출처·인증 결과를 점검하며 원문은 숨깁니다.
+- 미구현 provider는 정상 설정을 Config 실패로 표시하지 않고 Provider의 어댑터 지원 실패로 표시합니다. 모델 미설정·내장값 부재는 SKIP으로 표시합니다. 알 수 없는 provider flag도 Provider 오류로 분류합니다. 환경변수 키는 기존 인증 우선순위 규칙대로 앞뒤 공백을 제거해 해석하며, 해석된 키에 남은 개행 등 형식 오류는 Authentication 실패이고 Config 실패가 아닙니다.
+- 설정을 읽을 수 없으면 Provider·Authentication은 설정을 알 수 없다고 SKIP합니다. 파일 권한 오류가 있어도 읽어 해석한 provider 정보는 표시합니다. 모델명·timeout 표시는 설정 해석 결과이며 원격 모델의 존재·정확성을 검증한 결과가 아닙니다.
+- doctor는 선택 provider가 구현되어 있고 설정·키가 유효할 때 해당 어댑터로 인증을 점검합니다. 현재 Jev 어댑터는 `GET https://api.typesafe.ai/v1/models`를 Bearer 인증으로 한 번 호출한다. 저장된 timeout을 적용하며 redirect·retry·추론 요청은 하지 않는다. 설치·PATH 오류는 독립적인 API 점검을 막지 않는다.
 - HTTP 200은 인증·조회 접근 성공이다. 401은 잘못되거나 만료된 키, 403은 접근 거부로 안내한다. 429·서버 오류·redirect·네트워크 오류·timeout·취소는 인증 성공이나 키 오류로 단정하지 않는다. 서버 body·원문 transport 오류는 출력하지 않는다.
-- 설정 오류·키 누락은 API 점검을 SKIP하며 로컬 문제는 실패다. 별도 offline 진단은 제공하지 않는다.
-- 결과는 로컬 설정·인증 섹션, `OK / FAIL / SKIP` 상태, 항목별 상세·해결 안내, 상태별 개수 요약을 포함한다. primitive별 pick·범위 적합성·모델 정확성·추론 가능 여부는 판정하지 않는다.
+- 설정 오류·미구현 또는 잘못된 provider·키 누락·키 형식 오류는 API 점검을 SKIP하며 해당 점검 항목은 실패입니다. 별도 offline 진단은 제공하지 않는다.
+- 결과는 Local setup·Config·Provider·Authentication 섹션, `OK / FAIL / SKIP` 상태, 항목별 상세·해결 안내, 상태별 개수 요약을 포함한다. primitive별 pick·범위 적합성·모델 정확성·추론 가능 여부는 판정하지 않는다.
 - doctor는 읽기 전용이며 일반 판정·설치 뒤에 자동 호출하지 않는다.
 - 유지보수 성공은 stdout과 종료 코드 0, 실패는 빈 stdout·stderr와 종료 코드 1이다. 코드 2는 판정 기준 미달 전용이다.
 

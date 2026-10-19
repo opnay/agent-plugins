@@ -33,8 +33,16 @@ Options:
   --provider <name>   Override defaults.provider (built-in: jev)
   --help              Show this help
 
-Checks the Jev binary, PATH selection, config validity and permissions, and
-selected provider API key presence and source. Only Jev is implemented.
+Sections:
+  Local setup     Jev binary identity, executable permissions, and PATH selection
+  Config          File schema, values, and permissions
+  Provider        Selected provider, adapter support, resolved model, and timeout
+  Authentication  Selected provider API key presence, source, and API access
+
+An unimplemented provider fails the Provider check, not a valid Config check.
+An invalid environment key fails Authentication and is never sent to the API.
+Only Jev is implemented. Model and timeout are resolved settings; the model's
+existence and inference availability are not verified.
 With valid Jev config and a key, sends one authenticated
 GET https://api.typesafe.ai/v1/models using the configured timeout. No inference,
 redirect, retry, or automatic repair.

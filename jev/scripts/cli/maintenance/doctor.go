@@ -66,23 +66,18 @@ func (a Command) doctor(ctx context.Context, target string, provider *string) er
 	}
 	check("PATH", resolved, "add the target directory to PATH before other Jev installations", pathErr)
 
+	report.WriteString("\nConfig\n")
 	path, configErr := a.ConfigPath()
 	var c cfg.Config
 	if configErr == nil {
 		c, configErr = cfg.Read(path)
 	}
 	configReadErr := configErr
-	if provider != nil {
-		c.Override(cfg.Flags{Provider: provider})
-	}
-	s := a.Resolve(c)
-	envName := cfg.ProviderEnvironment(s.Provider)
-	envToken := a.Env[envName]
 	if configErr == nil {
-		configErr = s.Validate()
-	}
-	if configErr == nil && len(s.Pick) > 0 && !s.JSON {
-		configErr = errors.New("pick requires JSON output")
+		stored := c.Resolve("")
+		if len(stored.Pick) > 0 && !stored.JSON {
+			configErr = errors.New("pick requires JSON output")
+		}
 	}
 	configDetail := path + " (built-in defaults; file absent)"
 	configHint := "check jev config and edit the config file to repair invalid values"
@@ -97,19 +92,60 @@ func (a Command) doctor(ctx context.Context, target string, provider *string) er
 			configErr = err
 		}
 	}
-	check("Config", configDetail, configHint, configErr)
+	check("File", configDetail, configHint, configErr)
+
+	report.WriteString("\nProvider\n")
+	selected := c
+	if provider != nil {
+		selected.Override(cfg.Flags{Provider: provider})
+	}
+	s := a.Resolve(selected)
+	envName := cfg.ProviderEnvironment(s.Provider)
+	envToken := a.Env[envName]
+	knownProvider := envName != ""
+	supported := knownProvider && s.Provider == "jev"
+	switch {
+	case configReadErr != nil:
+		record("SKIP", "Selected", "config could not be read; provider settings unknown", "")
+		record("SKIP", "Adapter", "provider settings unknown", "")
+		record("SKIP", "Model", "provider settings unknown", "")
+		record("SKIP", "Timeout", "provider settings unknown", "")
+	default:
+		if knownProvider {
+			record("OK", "Selected", s.Provider, "")
+		} else {
+			record("FAIL", "Selected", "unknown provider: "+s.Provider, "use --provider jev, openrouter, or openai")
+		}
+		switch {
+		case !knownProvider:
+			record("SKIP", "Adapter", "select a known provider first", "")
+		case !supported:
+			record("FAIL", "Adapter", "selected provider is not implemented; currently only jev can execute", "select jev to check API authentication")
+		default:
+			record("OK", "Adapter", "implemented", "")
+		}
+		if s.Model == "" {
+			record("SKIP", "Model", "not configured; no built-in default", "")
+		} else {
+			record("OK", "Model", s.Model, "")
+		}
+		record("OK", "Timeout", s.Timeout, "")
+	}
 
 	report.WriteString("\nAuthentication\n")
 	keyHint := "use jev config set providers." + s.Provider + ".api_key --stdin or set " + envName
 	if strings.TrimSpace(envToken) != "" {
 		keyHint = "update or unset " + envName + "; it overrides the config file api_key"
 	}
+	invalidKey := strings.ContainsAny(s.APIKey, "\r\n")
 	switch {
-	case s.APIKey == "" && configReadErr != nil:
+	case configReadErr != nil:
 		record("SKIP", "API key", "config could not be read; key presence is unknown", "")
+	case !knownProvider:
+		record("SKIP", "API key", "select a known provider first", "")
 	case s.APIKey == "":
 		record("FAIL", "API key", "missing", keyHint)
-	case strings.ContainsAny(s.APIKey, "\r\n"):
+	case invalidKey:
 		record("FAIL", "API key", "must be a single line", keyHint)
 	case strings.TrimSpace(envToken) != "":
 		record("OK", "API key", envName+" (overrides config api_key; value hidden)", "")
@@ -119,6 +155,10 @@ func (a Command) doctor(ctx context.Context, target string, provider *string) er
 	switch {
 	case configErr != nil:
 		record("SKIP", "API", "resolve the config problem before checking authentication", "")
+	case !knownProvider || !supported:
+		record("SKIP", "API", "resolve the provider problem before checking authentication", "")
+	case invalidKey:
+		record("SKIP", "API", "resolve the API key format problem before checking authentication", "")
 	case s.APIKey == "":
 		record("SKIP", "API", "API key required; authentication not checked", "")
 	default:
@@ -135,8 +175,10 @@ func (a Command) doctor(ctx context.Context, target string, provider *string) er
 	// Local paths and diagnostics can also contain the configured token.
 	output := report.String()
 	for _, p := range c.Providers {
-		if p.APIKey != "" {
-			output = strings.ReplaceAll(output, p.APIKey, "[redacted]")
+		for _, token := range []string{p.APIKey, strings.TrimSpace(p.APIKey)} {
+			if token != "" {
+				output = strings.ReplaceAll(output, token, "[redacted]")
+			}
 		}
 	}
 	for _, token := range a.Env {

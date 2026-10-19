@@ -15,6 +15,7 @@
 - provider 설정·초기 템플릿: [changes/011-provider-config.md](changes/011-provider-config.md)
 - provider 어댑터: [changes/010-provider-adapter.md](changes/010-provider-adapter.md)
 - 구조화 입력·장문 모드: [changes/009-structured-input.md](changes/009-structured-input.md)
+- provider별 doctor 진단: [changes/013-provider-doctor.md](changes/013-provider-doctor.md)
 - doctor 인증·출력: [changes/007-doctor-auth.md](changes/007-doctor-auth.md)
 
 Go 코드는 `jev/scripts/`의 독립 모듈입니다. 루트 `main.go`는 실행 환경과 signal context를 준비하고 `cli.App.Run`에 위임합니다. 별도 SDK나 범용 CLI 프레임워크는 사용하지 않습니다.
@@ -33,7 +34,7 @@ Go 코드는 `jev/scripts/`의 독립 모듈입니다. 루트 `main.go`는 실�
 
 최상위 라우팅과 provider 조립을 함께 검증하는 명령 통합 테스트는 `cli`, 설치 경로 파싱 테스트는 `cli/maintenance`, 직접 저장소 테스트는 `config`에 둡니다. 하위 명령 패키지는 상위 `cli`를 import하지 않으며 입출력·설정 경로·설정 해석·어댑터 생성 함수를 전달받습니다. 바이너리 build·bootstrap 테스트는 모듈 루트를 실행 대상으로 사용합니다.
 
-설치 동작은 Go의 `install`이 소유합니다. 최초 설치는 `jev/scripts/`에서 `go run . install`, 소스 갱신은 `go run . install --force`로 수행합니다. `uninstall`은 build info의 main package identity로 삭제 대상을 제한하고, `doctor`는 로컬 설치·PATH·설정·키 유무·출처와 인증된 models 조회를 점검합니다. 조회는 저장된 timeout으로 한 번만 호출하며 추론·redirect·retry·자동 수정은 없습니다.
+설치 동작은 Go의 `install`이 소유합니다. 최초 설치는 `jev/scripts/`에서 `go run . install`, 소스 갱신은 `go run . install --force`로 수행합니다. `uninstall`은 build info의 main package identity로 삭제 대상을 제한하고, `doctor`는 Local setup·Config·Provider·Authentication으로 로컬 설치·PATH, 설정·권한, 선택 provider·어댑터 지원·모델·timeout, 키 유무·출처·인증을 구분합니다. 미구현 provider와 환경변수 키 오류를 파일 설정 실패로 표시하지 않습니다. Jev 인증은 models 조회를 사용합니다. 조회는 저장된 timeout으로 한 번만 호출하며 추론·redirect·retry·자동 수정은 없습니다.
 
 ```sh
 cd jev/scripts
