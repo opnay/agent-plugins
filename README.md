@@ -67,14 +67,6 @@ skill 작성, plugin 작성, session 관리, commit workflow, subagent 정의 �
 - 경로: `sw-kit/`
 - 주요 실행 표면: `spec`, `engineering`, `code`, `maintenance`
 
-### Jev
-
-`jev`는 TypeSafe의 hosted Jev Noul·Choice·Score 모델을 호출하는 Go CLI와 reusable instruction scenario evaluation을 제공합니다.
-
-- 플러그인: `jev/`, 개발 문서: `src/jev-dev/`
-- 주요 실행 표면: `$jev:jev`, `$jev:scenario-testing`, `noul`, `choice`, `score`, `batch`, `config`, `install`, `uninstall`, `doctor`
-- 설정: `~/.agents/jev.toml`. 플러그인 설치와 바이너리·토큰 설정은 별개입니다.
-
 ## 저장소 구조
 
 ```text
@@ -87,7 +79,6 @@ skill 작성, plugin 작성, session 관리, commit workflow, subagent 정의 �
 ├── sw-kit/
 ├── design-kit/
 ├── judgment-kit/
-├── jev/
 ├── toolkit/
 ├── src/<plugin-name>-dev/  # 스펙·변경 기록·개발 README
 └── docs/
