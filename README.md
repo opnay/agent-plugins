@@ -1,25 +1,19 @@
 # OPNay Agent Plugins
 
-OPNay가 직접 관리하는 Codex 플러그인 마켓플레이스 저장소입니다.
-`.agents/plugins/marketplace.json`은 플러그인 목록의 단일 진실 공급원입니다.
+OPNay가 직접 관리하는 에이전트 플러그인 마켓플레이스 저장소입니다.
+`.agents/plugins/marketplace.json`은 플러그인 목록·순서의 단일 진실 공급원입니다.
 
 ## 마켓플레이스 등록
 
-공개 설치용 마켓플레이스는 GitHub source를 사용합니다.
+마켓 이름은 `opnay-plugins`입니다. 저장소 루트에서 로컬 마켓을 등록하고 필요한 플러그인을 선택합니다.
 
-```sh
-codex plugin marketplace add opnay/agent-plugins
-```
+| CLI | 마켓 등록 | 플러그인 설치·선택 |
+| --- | --- | --- |
+| Codex | `codex plugin marketplace add .` | `/plugins`에서 선택 |
+| Claude Code | `claude plugin marketplace add .` | `claude plugin install sw-kit@opnay-plugins` |
 
-Codex에서 `/plugins`를 열고 필요한 플러그인을 설치합니다.
-
-마켓플레이스를 최신 상태로 갱신하려면 다음 명령을 사용합니다.
-
-```sh
-codex plugin marketplace upgrade
-```
-
-현재 마켓플레이스 표시명은 `OPNay Plugins`이고, 내부 id는 `opnay-plugins`입니다.
+호출 표기는 Codex의 `$sw-kit:spec`, Claude Code의 `/sw-kit:spec`처럼 사용합니다.
+GitHub 등록·갱신과 매니페스트 형식은 [마켓플레이스](docs/marketplace.md)를 확인해 주세요.
 
 ## 로컬 개발
 
@@ -32,10 +26,10 @@ codex plugin marketplace upgrade
 ### Advance Codex
 
 `advance-codex`는 Codex 활용 체계를 더 깊게 관리하기 위한 플러그인입니다.
-skill 작성, plugin 작성, session 관리, commit workflow, subagent 정의 같은 메타 작업을 다룹니다.
+skill·plugin 작성과 토큰 효율적인 문체, 기술 지시의 명확성을 다룹니다.
 
 - 경로: `advance-codex/`
-- 주요 실행 표면: `plugin-creator`, `skill-creator`, `agents-sessions`, `git-committer`, `tool-use-guide`, `subagent-gate`, `subagent-creator`
+- 주요 실행 표면: `plugin-creator`, `skill-creator`, `optimize-token`, `asd-ste100`
 
 ### Judgment Kit
 
@@ -72,6 +66,7 @@ skill 작성, plugin 작성, session 관리, commit workflow, subagent 정의 �
 ```text
 .
 ├── .agents/plugins/marketplace.json
+├── .claude-plugin/marketplace.json
 ├── advance-codex/
 ├── advance-subagent/
 ├── agent-wiki/
@@ -89,6 +84,7 @@ skill 작성, plugin 작성, session 관리, commit workflow, subagent 정의 �
 ```text
 <plugin-name>/
   .codex-plugin/plugin.json
+  .claude-plugin/plugin.json
   README.md
   skills/
 
@@ -104,5 +100,6 @@ src/<plugin-name>-dev/
 - 플러그인 변경은 spec-driven으로 다룹니다.
 - plugin surface가 바뀌면 `src/<plugin-name>-dev/README.md`, `src/<plugin-name>-dev/specs/plugin.md`, 관련 skill spec, `plugin.json`, marketplace entry를 함께 점검합니다.
 - 플러그인별 release version은 각 `.codex-plugin/plugin.json`의 `version`이 소유합니다.
+- 매니페스트 간 `version`을 일치시키고 목록 이름·순서·경로도 공통 목록과 맞춥니다.
 - 새 skill을 추가할 때는 먼저 plugin boundary와 sibling skill 관계를 확인합니다.
 - 하네스나 평가 설계는 결정론적인 fixture, 고정 시나리오, 명시적인 pass/fail 기준을 우선합니다.

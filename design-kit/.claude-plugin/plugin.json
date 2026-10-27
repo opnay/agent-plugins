@@ -1,0 +1,22 @@
+{
+  "name": "design-kit",
+  "version": "0.1.0",
+  "description": "Design foundations, web and product design, visual content, art and creative direction, and project-specific design rules.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "design",
+    "design-foundations",
+    "web-design",
+    "product-design",
+    "visual-content",
+    "art-direction",
+    "creative-direction",
+    "design-patterns",
+    "repetition"
+  ],
+  "skills": "./skills/",
+  "displayName": "Design Kit"
+}

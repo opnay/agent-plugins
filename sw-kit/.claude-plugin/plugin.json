@@ -1,0 +1,18 @@
+{
+  "name": "sw-kit",
+  "version": "0.1.0",
+  "description": "Software behavior contracts, engineering direction, code and test quality, and codebase maintenance.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "software",
+    "specification",
+    "engineering",
+    "code-quality",
+    "maintenance"
+  ],
+  "skills": "./skills/",
+  "displayName": "SW Kit"
+}

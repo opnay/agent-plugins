@@ -1,0 +1,24 @@
+{
+  "name": "judgment-kit",
+  "version": "0.1.0",
+  "description": "Professional research, product planning, and quality management judgment for Codex.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "codex",
+    "judgment",
+    "research",
+    "evidence",
+    "planning",
+    "product",
+    "requirements",
+    "product-decomposition",
+    "design-system",
+    "quality",
+    "quality-management"
+  ],
+  "skills": "./skills/",
+  "displayName": "Judgment Kit"
+}

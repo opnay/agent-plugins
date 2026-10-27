@@ -1,0 +1,19 @@
+{
+  "name": "app-extensions",
+  "version": "0.1.0",
+  "description": "Companion workflow guidance that extends externally provided app plugins without copying or replacing upstream capabilities.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "apps",
+    "extensions",
+    "companion-plugin",
+    "figma",
+    "design-handoff",
+    "layout"
+  ],
+  "skills": "./skills/",
+  "displayName": "App Extensions"
+}

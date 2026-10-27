@@ -1,0 +1,49 @@
+{
+  "name": "opnay-plugins",
+  "description": "OPNay plugins sharing skills and resources with Codex.",
+  "owner": {
+    "name": "opnay"
+  },
+  "plugins": [
+    {
+      "name": "advance-codex",
+      "source": "./advance-codex",
+      "category": "Developer Tools"
+    },
+    {
+      "name": "judgment-kit",
+      "source": "./judgment-kit",
+      "category": "Developer Tools"
+    },
+    {
+      "name": "advance-subagent",
+      "source": "./advance-subagent",
+      "category": "Developer Tools"
+    },
+    {
+      "name": "sw-kit",
+      "source": "./sw-kit",
+      "category": "Developer Tools"
+    },
+    {
+      "name": "toolkit",
+      "source": "./toolkit",
+      "category": "Developer Tools"
+    },
+    {
+      "name": "app-extensions",
+      "source": "./app-extensions",
+      "category": "Developer Tools"
+    },
+    {
+      "name": "agent-wiki",
+      "source": "./agent-wiki",
+      "category": "Productivity"
+    },
+    {
+      "name": "design-kit",
+      "source": "./design-kit",
+      "category": "Design"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "agent-wiki",
+  "version": "0.1.0",
+  "description": "작업 기록·판단 근거·자료 요약을 연결해 과거 해결 과정과 지식을 재사용합니다.",
+  "author": {
+    "name": "opnay"
+  },
+  "skills": "./skills/",
+  "displayName": "Agent Wiki"
+}

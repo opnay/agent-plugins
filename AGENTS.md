@@ -8,7 +8,7 @@
 
 ## 저장소 역할
 
-이 저장소는 사용자가 직접 만드는 Codex 플러그인을 관리합니다.
+이 저장소는 사용자가 직접 만드는 에이전트 플러그인을 관리합니다.
 로컬 플러그인 마켓플레이스 루트이자 하네스 엔지니어링 작업 공간입니다.
 제품화 저장소가 아니며, 운영 가이드와 품질 기준을 함께 소유합니다.
 
@@ -29,6 +29,7 @@
 플러그인은 다음을 포함해야 합니다.
 
 - `./<plugin-name>/.codex-plugin/plugin.json`
+- `./<plugin-name>/.claude-plugin/plugin.json`
 - `./<plugin-name>/README.md`
 - 선택: `skills/`, `assets/`, `scripts/`, `.mcp.json`, `.app.json`
 
@@ -53,11 +54,14 @@
 
 ## 마켓플레이스
 
-- 단일 진실 공급원: `./.agents/plugins/marketplace.json`
-- `source.path`는 저장소 루트의 실제 플러그인 폴더를 가리켜야 합니다.
+- 공통 플러그인 목록과 순서의 단일 진실 공급원: `./.agents/plugins/marketplace.json`
+- `./.claude-plugin/marketplace.json`은 같은 이름·순서·대상 폴더를 사용합니다.
+- Codex의 `source.path`와 Claude Code의 문자열 `source`는 저장소 루트의 같은 실제 플러그인 폴더를 가리켜야 합니다.
 - 등록 순서는 `plugins` 배열을 기준으로 유지합니다.
 - 이 저장소 로컬 플러그인을 `./plugins/<plugin-name>`로 등록하지 않습니다.
-- 모든 marketplace 항목은 `policy.installation`, `policy.authentication`, `category`를 포함해야 합니다.
+- Codex marketplace 항목은 `policy.installation`, `policy.authentication`, `category`를 포함해야 합니다. Claude 형식에 Codex 전용 필드를 복사하지 않습니다.
+- 매니페스트의 이름·버전·공통 메타데이터를 일치시키고, `skills/`와 bundled resource는 단일 원본을 사용합니다.
+- 설치 명령과 매니페스트 형식은 [마켓플레이스](docs/marketplace.md)를 따릅니다.
 
 ## 플러그인 변경 Workflow
 
@@ -118,6 +122,7 @@
 - `src/<plugin-name>-dev/specs/plugin.md`: 플러그인 경계, 내장 skill 체계, 각 skill 시작 기준
 - `<plugin-name>/README.md`, `src/<plugin-name>-dev/README.md`: 사용 방법과 개발 안내
 - `<plugin-name>/.codex-plugin/plugin.json`: 설치 후 노출되는 설명과 `defaultPrompt`
+- `<plugin-name>/.claude-plugin/plugin.json`: Claude Code에서 노출되는 메타데이터와 component 경로
 
 사용 표면을 바꾸면 남은 skill spec, README, plugin spec, manifest 설명, 호출 예시, 실제 플러그인 파일을 함께 점검합니다.
 
@@ -148,6 +153,7 @@
 ├── AGENTS.md
 └── docs/
     ├── SDD.md
+    ├── marketplace.md
     ├── release-pattern.md
     └── templates/
         ├── plugin-spec.md

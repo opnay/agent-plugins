@@ -1,0 +1,22 @@
+{
+  "name": "advance-subagent",
+  "version": "0.1.0",
+  "description": "분기 설계부터 완료까지의 공통 fork-and-flush 루프와 근거 중심 조사 계약을 제공합니다.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "codex",
+    "subagent",
+    "research",
+    "evidence",
+    "workstream",
+    "orchestration",
+    "delegation",
+    "parallel",
+    "fork-and-flush"
+  ],
+  "skills": "./skills/",
+  "displayName": "Advance Subagent"
+}

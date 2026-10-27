@@ -1,0 +1,25 @@
+{
+  "name": "toolkit",
+  "version": "0.1.0",
+  "description": "Tool-specific CLI guidance for Apple container and Git workflows, including opt-in git-codex alias and message-file lifecycle automation.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "cli",
+    "developer-tools",
+    "container",
+    "apple-container",
+    "oci",
+    "macos",
+    "kubernetes",
+    "git",
+    "git-codex",
+    "commit",
+    "branch",
+    "push"
+  ],
+  "skills": "./skills/",
+  "displayName": "Toolkit"
+}
