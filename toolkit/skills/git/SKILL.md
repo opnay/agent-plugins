@@ -5,7 +5,7 @@ description: Run task-scoped Git commit, alias.codex maintenance, branch, force-
 
 # Git Workflow
 
-Read repository instructions first. Commit, alias maintenance, branch, push, and recovery are separate requested steps. Do not infer another step, force, destructive cleanup, GitHub work, release, or publishing.
+Read repository instructions first; they take precedence over this skill. Commit, branch, and push can each run alone or chain into one workflow: run only the steps the request needs, in order. Authority for one step does not extend to the next.
 
 ## Commit
 
