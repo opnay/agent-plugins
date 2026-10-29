@@ -5,100 +5,69 @@ description: Extension for the canonical system `skill-creator`. Use whenever yo
 
 # Skill Creator
 
-## Overview
+Read the canonical system `skill-creator` first and apply this extension alongside it. Own skill boundaries, plugin-owned skill guidance, description metadata, and comparative behavioral validation. Keep the base scaffold with the canonical skill and domain work with its owning skill.
 
-This skill is an extension over the canonical system `skill-creator`.
-Whenever the canonical `skill-creator` applies, use this skill alongside it.
-Read the system skill first and treat it as the base workflow, then use this skill to enforce stricter boundaries for reusable skills, especially skills owned by a plugin.
+## Establish Ownership
 
-## Extension Goals
+Define the skill's job and meaningful non-goals before its workflow. Define a plugin's boundary before its bundled skills; keep plugin-wide routing in the manifest, README, and plugin usage guidance.
 
-Use this extension to enforce five things the base workflow does not cover strongly enough:
+Make the runtime contract understandable without development specs, unpublished paths, or hidden sibling context. Sibling links may offer navigation but must not supply missing execution rules. Keep unrelated runtime tool selection, sequencing, and escalation policy with the owning plugin or system guidance.
 
-1. explicit skill ownership and non-goals
-2. removal of hidden sibling-skill context
-3. clean separation between plugin usage guidance and skill-level behavior
-4. separation of runtime-specific tool policy from domain workflow guidance when that boundary affects the skill itself
-5. trigger-oriented frontmatter descriptions, especially for passive skills
+## Write Selection Metadata
 
-## Boundary Rules
+Treat `description` as selection guidance read before the body. Begin with the capability and when it applies.
 
-When creating or revising a skill:
+For passive skills that need selection without a named invocation, append narrow, comma-separated plain tokens drawn from likely user phrases, artifact names, workflows, and synonyms. Use no `#` prefixes or broad unrelated terms. Direct-call skills and already clear, narrow descriptions do not need forced token tails. Write the body for runtime readers and keep plugin usage guidance on its owning surface.
 
-- Define the skill's owned job before writing workflow steps.
-- State what the skill does not own when that boundary could be confused.
-- Keep each skill understandable as a bounded artifact without assuming hidden context from sibling skills.
-- Put cross-skill or plugin-wide usage guidance in the plugin's usage surfaces, not inside a sibling skill unless it directly affects that skill's own behavior.
-- Do not use a skill body to compensate for unclear plugin packaging or manifest guidance.
-- If the main issue is tool selection, tool sequencing, or escalation policy, keep that policy out of unrelated domain skill behavior and route it through the owning plugin or system tool guidance.
+## Compare With And Without The Skill
 
-## Plugin-Owned Skills
+Use comparative validation for new skills, substantive behavior, boundary, trigger, or tool-procedure changes, and requested skill tests. For wording-only changes, assess existing-case impact before choosing coverage. A design or review request authorizes a validation plan, not test execution.
 
-For a skill bundled inside a plugin, design the plugin boundary first and the individual skill boundary second.
-The skill may mention how it fits the plugin only when that helps the reader apply the skill correctly.
-Avoid instructions that require the reader to know sibling skills, development specs, repository-only paths, or unpublished context at runtime.
+1. Prepare ordinary cases and cases where absence of the skill could plausibly cause failure, with at least one of each. Scale coverage and repetitions to changed contracts and risk; the minimum covers categories, not confidence.
+2. Before execution, freeze each case's ID, category, tested contract, request, initial fixture, permitted and forbidden actions, and observable success criteria. For failure-hypothesis cases, record the predicted baseline failure and its rationale separately from observations.
+3. Prepare independent fresh executions with the same model, settings, tools, permissions, request, initial fixture, and execution budget. Use the native loading procedure below. Keep shared instructions and resources unchanged; disclose unmatched conditions or unverified isolation rather than claiming a valid control.
+4. Give executors only the task input, fixture, permitted operations, and evidence format. Hide criteria, failure hypotheses, and the other execution's results. Reset isolated fixtures for each run. Simulate live effects or mark them unrun when additional authority is needed; preserve transmission, cost, and permission boundaries.
+5. Judge actual artifacts and tool evidence against the frozen criteria. Classify each execution before interpreting the pair. Record with-skill violations regardless of baseline performance.
+6. When evidence attributes a violation or regression to instructions, revise the skill and rerun original cases plus affected ordinary cases. Preserve criteria. Version invalid fixture or criterion corrections, explain the change, and rerun both conditions.
 
-Before finalizing a plugin-owned skill, check:
+### Load Through Native Discovery
 
-- why this behavior belongs in this skill rather than another plugin surface
-- whether the skill remains useful when read by itself
-- whether plugin-level guidance has been kept out of the skill body
-- whether sibling-skill references are optional navigation rather than hidden prerequisites
-- whether any runtime-only tool policy should be extracted
+- Use the current skill folder specified by the user. For a skill under revision, use its repository working files rather than an installed cache. Freeze the source path and content hash before execution; keep that source unchanged during runs.
+- For each Codex condition, start a separate fresh process in an isolated workspace with new `HOME` and `CODEX_HOME` directories and empty user configuration. Provide required authentication only within existing authority. Match shared environment, tools, canonical skills, and other required instructions. A fresh subagent context alone does not establish this isolation.
+- In the with-skill workspace, create a temporary `.agents/skills/<skill-folder>` symlink to the frozen target folder, including its dedicated resources. Keep native skill discovery enabled and permit discovery and body reads. Let the executor select and read the skill; do not paste its body into the prompt or read it on the executor's behalf.
+- In the without-skill workspace, omit the target link. Check parent, user, administrator, plugin, and same-name skill routes for target exposure. Preserve shared canonical skills and distinguish them from the target extension by actual path.
+- Record metadata discovery, selection, and reads of the target `SKILL.md` and needed resources separately. A symlink alone does not prove use. Automatic-selection cases use ordinary requests without invocation hints; judge them separately from explicit-call cases. Preserve non-selection as an observation instead of replacing it with manual body injection.
+- After execution, remove only links created for that run; preserve source folders and existing configuration. If symlinks, native loading, or observable body-read evidence are unavailable, report native-loading validation incomplete.
 
-## Description Metadata
+This skill owns the comparison contract. Evaluation tools such as `$jevx:scenario-testing` are optional, not required plugins, hidden prerequisites, or reasons to impose a fixed large case count.
 
-Treat frontmatter `description` as trigger metadata that is read before the skill body.
-The description should first give a short human-readable explanation of what the skill does and when it should be used.
-Write it as selection guidance for the skill reader, not as project history or session context.
+### Interpret Evidence
 
-For passive skills that should apply even when the user does not explicitly request the skill, append a comma-separated list of plain tokens at the end of the `description`.
-These are matching tokens, not literal hashtags, so do not prefix them with `#`.
+| Without skill | With skill | Interpretation |
+|---|---|---|
+| Failure | Success | Improvement evidence for this case |
+| Success | Success | Contract met; added benefit unestablished |
+| Failure | Failure | Remedy unestablished |
+| Success | Failure | Regression candidate; investigate cause |
 
-Use passive trigger tokens for:
+Preserve successful baselines. Do not select cases or alter criteria after execution to manufacture baseline failures.
 
-- inputs where the user is unlikely to name the skill directly
-- workflows that should be selected from artifact names, task phrases, or common synonyms
-- reusable guardrails that must activate from natural user wording
+Separate environment errors, invalid fixtures, insufficient observation, loading contamination, and unrun cases from success or failure. Exclude invalid comparisons from effect claims and state why. When independent execution or isolation is unavailable, report structural review and missing behavioral validation.
 
-Do not force passive trigger tokens onto:
+Test completion and benefit are separate claims. A single run supports only its observed case, not stability or general performance. Never average away a critical authority violation.
 
-- active or direct-call skills the user is expected to request by name
-- skills with already narrow and reliable trigger wording
-- descriptions where extra tokens would broaden selection into unrelated work
+Direct body injection supplies supplementary evidence about behavior after loading; it does not replace native discovery, selection, and loading through the symlink. When changing the description, test automatic selection on ordinary requests and false selection on out-of-scope requests. Neither explicit invocation nor body injection establishes automatic trigger behavior.
 
-Good passive token lists include the expressions that should actually select the skill: likely user phrases, artifact names, workflow names, and common synonyms.
-Keep them narrow.
-For example, use a tail like `skill creation, skill update, passive trigger, description metadata` rather than broad words that would match unrelated tasks.
+## Review And Report
 
-## Review Pass
+Check ownership, meaningful non-goals, plugin boundaries, runtime readability, discoverable resources, and description selection. Check passive-token relevance and absence of `#`; avoid unnecessary tails on direct-call or narrow skills.
 
-Before considering a skill done, check:
+When this extension materially affects the result, report skill boundaries, non-goals, plugin ownership, description trigger behavior, unrelated runtime tool guidance avoided or separated, validation performed, and residual risk.
 
-- whether the `description` can select the skill before the body is loaded
-- whether a passive skill has useful comma-separated plain tokens at the end of the `description`
-- whether those passive tokens omit `#`
-- whether active or already-narrow skills avoid unnecessary token tails
-- whether the skill body is written for a runtime reader rather than for a repository change session
-- whether development-only specs or unpublished paths have been kept out of runtime instructions
-- whether ownership, non-goals, and plugin boundaries are clear
+For comparative validation, include:
 
-## Output Contract
+- Target skill, version, source path and content hash; frozen cases and criteria.
+- Temporary links and isolation settings; discovery, selection, body-read, and baseline non-exposure evidence; cleanup outcome.
+- Both conditions' results and evidence locations; invalid or unrun cases, violations, regressions, revisions, reruns, and limits.
 
-When this extension materially changes the result, include:
-
-- `Skill boundary`
-- `Non-goals`
-- `Plugin ownership`
-- `Description trigger behavior`
-- `Runtime-only guidance removed or avoided`
-- `Validation path`
-- `Residual risk`
-
-## Guardrails
-
-- Do not replace the canonical `skill-creator` workflow; extend it.
-- Do not write skill bodies that depend on hidden sibling context.
-- Do not put plugin usage guidance into a skill unless the skill itself owns that behavior.
-- Do not add `#` before passive description matching tokens.
-- Do not use broad passive tokens to make a skill trigger everywhere.
+Distinguish plans from observed execution. Claim comparison completion only with both case categories, valid paired executions, and observable evidence. State unmet conditions and unverified behavior explicitly.

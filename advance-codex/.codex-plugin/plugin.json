@@ -28,7 +28,7 @@
     ],
     "defaultPrompt": [
       "Use $advance-codex:plugin-creator to package a plugin and define the right bundled surfaces.",
-      "Use $advance-codex:skill-creator to design a reusable Codex skill with the right references, guardrails, and description trigger metadata.",
+      "Use $advance-codex:skill-creator to design a reusable Codex skill with clear boundaries, references, guardrails, and description trigger metadata. Plan ordinary and failure-hypothesis use cases compared with and without the skill; design or review requests produce a validation plan, while execution stays within the authorized scope.",
       "Use $advance-codex:optimize-token to apply a token-efficient style across responses, progress and status notes, reasoning and decision wording, and durable documents while preserving correctness, meaning, verification, authority, required structure, exact literals, language, and safety.",
       "Use $advance-codex:asd-ste100 to write or review technical instructions, agent instructions, skills, and operating procedures. Apply clarity principles in the requested language; use its references for English vocabulary and formal compliance evidence."
     ],

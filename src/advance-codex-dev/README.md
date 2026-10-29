@@ -7,7 +7,7 @@
 이 플러그인은 Codex 활용 방식을 더 명시적이고 유지보수 가능하게 만드는 데 목적이 있습니다.
 반대로 일반적인 실행 workflow나 무관한 공용 유틸리티를 담는 용도로 넓히지 않습니다.
 
-`skill-creator`는 재사용 가능한 Codex skill을 설계하거나 기존 skill의 경계, trigger metadata, runtime 본문을 정리해야 할 때 사용합니다.
+`skill-creator`는 재사용 가능한 Codex skill을 설계하거나 기존 skill의 경계, trigger metadata, runtime 본문을 정리해야 할 때 사용합니다. 신규·실질 변경과 테스트 요청에서는 일반 사례와 스킬 부재 시 실패 가능 사례를 준비해 사용/미사용을 비교하고, 계약 충족과 개선 효과를 구분합니다. 사용 조건은 격리 작업 폴더의 `.agents/skills`에 현재 대상 skill을 임시 심링크해 실제 발견·선택·본문 로딩을 확인합니다. 설계·검토 요청에서는 검증 계획을 작성하며 실행 결과와 구분합니다.
 `plugin-creator`는 설치 가능한 plugin bundle의 경계, manifest, README, plugin spec, bundled skill 관계를 정리해야 할 때 사용합니다.
 `optimize-token`은 에이전트 응답, 진행·상태 문구, reasoning·decision wording, 저장 문서에 token-efficient style을 적용하되 정확성, 의미, 검증, 승인, 필수 형식, exact literal, 언어, 안전 계약을 보존할 때 사용합니다.
 

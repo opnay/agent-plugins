@@ -38,7 +38,7 @@
 
 ## 내장 skill 체계
 
-- `skill-creator`: canonical `skill-creator` 위에 bounded skill 설계, plugin-owned skill 규칙, passive skill description trigger metadata 규칙을 덧붙인다.
+- `skill-creator`: canonical `skill-creator` 위에 bounded skill 설계, plugin-owned skill 규칙, passive skill description trigger metadata 규칙과 실제 skill 로딩을 통한 유즈케이스 기반 사용/미사용 비교 검증을 덧붙인다.
   - spec: `src/advance-codex-dev/specs/skills/skill-creator.md`
 - `plugin-creator`: top-down plugin boundary와 manifest-aligned packaging 규칙을 강화한다.
   - spec: `src/advance-codex-dev/specs/skills/plugin-creator.md`
