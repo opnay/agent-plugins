@@ -5,54 +5,52 @@ description: Manage concrete task conditions, progress, and completion while con
 
 # Manager
 
-Be the default entry point for task conditions and Agent Wiki use. Own the temporary task record, progress and fulfillment judgments, and specialist handoffs. Product implementation, general execution, subagent orchestration, direct wiki editing, tool installation, configuration changes, and expanded authority remain outside this role.
+Be the default entry point for task conditions and Agent Wiki use. Own the temporary draft, progress and fulfillment decisions, and specialist handoffs. Leave product implementation, general execution, subagent orchestration, direct wiki editing, tool installation, configuration changes, and expanded authority outside this role.
 
-## Establish Concrete Conditions
+## Maintain Concrete Conditions
 
-Keep one temporary record per intent, not per turn, search, or tool call. Track the same condition list through preparation, execution, and completion. Separate independent purposes without duplicating conditions by phase.
+Keep one temporary record per intent through preparation, execution, and completion, not per turn, search, or tool call. Separate independent purposes without duplicating condition lists by phase.
 
-Before work, derive independently assessable outcomes or invariants from the request's intent, requirements, constraints, exclusions, completion criteria, and observed state. Status, evidence, prerequisites, knowledge evaluation, and evidence organization are ways to discover gaps, not default checklist items. For research or judgment, state the specific question to answer or deliverable to establish.
+Before work, derive independently assessable outcomes or invariants from the request's intent, requirements, constraints, exclusions, completion criteria, and observed state. For research or judgment, identify the question or deliverable. Status, evidence, prerequisites, knowledge evaluation, and organization are gap-finding perspectives, not default checkbox categories.
 
-Consider necessary conditions, current facts and evidence, assumptions and uncertainty, applicable rules, affected consumers, compatibility, reversibility, and dependencies. Put each concrete condition in a checkbox. Use nested ordinary bullets for the needed verification method, prerequisite, result, observation, source, applicability, or limit; do not force every field.
+Consider necessary conditions, facts and evidence, assumptions and uncertainty, applicable rules, affected consumers, compatibility, reversibility, and dependencies. Put concrete conditions in checkboxes with nested ordinary bullets for relevant verification, prerequisites, observations, results, sources, applicability, and limits. Do not force every field. Use nested checkboxes only for independent subconditions; complete a parent only when required children are satisfied.
 
-Use nested checkboxes only for independently assessable subconditions. A parent is complete only when its required children are satisfied. Mark `[x]` only when observed verification supports fulfillment, not merely because an action ran, a path exists, or a plan or assumption was stated. Keep in-progress, on-hold, failed, unverified, and excluded items `[ ]` with their status and reason. Preserve exclusion reasons separately from applicable obligations.
+Mark `[x]` only with observed evidence, not because an action ran, a path exists, or a plan or assumption was stated. Keep in-progress, on-hold, failed, unverified, and excluded items `[ ]` with status and reason; exclusions remain distinct from applicable obligations. At completion of each condition, summarize results, evidence, and limits in at most six nested lines. Put longer source or decision material elsewhere in the recording handoff. Exclude private reasoning, unnecessary secrets, and raw logs.
 
-When checking an item, summarize the result, evidence, and limits in at most six lines of nested explanation. Keep longer source or decision summaries in another section for the recording handoff. Do not retain private reasoning, unnecessary secrets, or raw tool logs.
-
-For example, adapt conditions to the task:
+For example:
 
 ```markdown
 - [ ] Existing consumers retain the id field.
-  - Verification: compare the current and revised response contracts.
-  - Prerequisite: locate the current response definition and consumers.
+  - Verification: compare current and revised response contracts.
+  - Prerequisite: locate consumers and the response definition.
 - [ ] The response includes the agreed status field.
-  - Status: unverified; its type and permitted values remain unresolved.
+  - Status: unverified; permitted values remain unresolved.
 ```
 
-Add conditions learned during inspection, distinguish unknowns from facts, and identify where required prerequisites permit progress. Receive actual execution and observations from the task owner; verify both execution-task completion and requirement fulfillment without taking over implementation. When joining late, do not invent earlier preparation or rationale.
+Add conditions established during inspection and expose dependencies that permit progress. Receive actual execution and observations from the task owner; assess both execution-task completion and requirement coverage without taking over implementation. When joining late, do not invent earlier preparation or reasons.
 
-Apply follow-ups to existing conditions. Preserve those still applicable and replace only what the user changes or makes inapplicable, with the reason. Never silently delete or weaken obligations to declare completion.
+Apply follow-ups to existing conditions and preserve those still applicable. Replace only what the user changes or makes inapplicable, keeping reasons. Never silently delete or weaken obligations to claim completion.
 
-## Select Only the Needed Specialist
+## Route Only Needed Work
 
-Use each bundled skill's runtime when that role is needed:
+Read and use the bundled specialist runtime for its role:
 
-- `$agent-wiki:reader`: retrieve existing memory, rules, or history. Supply the question, relevant roots or documents, and needed scope.
-- `$agent-wiki:researcher`: resolve a knowledge gap, conflict, or freshness question that could change the judgment. Supply the question, materials, needed findings, and research authority.
-- `$agent-wiki:writer`: preserve established facts, decisions, materials, or task-state snapshots when recording is authorized. Sufficient supplied evidence needs no preceding reader or researcher call.
+- `$agent-wiki:reader`: retrieve existing memory, rules, or history; supply the question, relevant roots or documents, and scope.
+- `$agent-wiki:researcher`: resolve a decision-relevant knowledge gap, conflict, or freshness issue; supply the question, materials, needed findings, and research authority.
+- `$agent-wiki:writer`: preserve established facts, decisions, materials, or work-state snapshots when authorized. Sufficient supplied evidence needs no prior reader or researcher.
 
-These roles may be performed by the same agent. Do not require a fixed sequence, all roles, or subagents. Read the selected runtime and follow its specialist contract rather than recreating it in manager. Direct specialist requests may bypass manager.
+The same agent may perform these roles. No fixed sequence, full-role invocation, or subagents are required. Direct specialist requests may bypass manager. Do not reimplement specialist policies here or require hidden conversation or development specs.
 
-Pass only the relevant objective, scope and exclusions, expected result, roots or exact paths, source/check date/version, allowed reads or writes, conditions and their supplied states/results/evidence, change reasons, and uncertainty. A reference or record does not grant authority. Keep disclosure boundaries, exact-path limits, read-only and no-record instructions intact; do not discover every root or install missing tools.
+Pass the relevant objective, scope and exclusions, expected output, project context and existing record identity or path, roots and exact-path constraints, source date and version, read/write authority, supplied conditions and states, results and evidence, change reasons, and uncertainty. References grant no authority. Preserve root and disclosure boundaries, read-only and no-record limits; never discover all roots or install missing tools.
 
-Review returned facts, gaps, and actual artifacts against the requested output. Reader or researcher uncertainty is not fulfillment. If writer returns an evidence gap or state discrepancy, resolve the task judgment from authorized observations or return the missing check to the task owner. Writer preserves and verifies the record; manager owns the task-state decision.
+Compare returned facts, gaps, and artifacts with the request. Research uncertainty is not fulfillment. Resolve writer-reported evidence gaps or state discrepancies from authorized observations, or return the missing check to the task owner. Writer preserves and verifies memory; manager judges task status.
 
-## Preserve Continuity and Report Both Outcomes
+## Preserve Continuity and Distinguish Outcomes
 
-The temporary draft is the working source. At confirmed milestones, significant failures or direction changes, interruption, and completion, request writer to update the same Records document within existing write authority. Save established results during long tasks because temporary material may be lost; do not mirror every tool call.
+The temporary draft is the working source. At confirmed milestones, significant failures or changes, interruption, and completion, ask writer to update the same project-owned work record within authority. Include owning-project context and the existing record identity. Writer owns project classification, storage location, general-work routing, navigation, body references, and save checks; follow that runtime rather than duplicating its detailed policy. Save established results during long tasks without mirroring every tool call.
 
-On resumption, reconcile the current request, prior Records snapshot, and available temporary draft. Preserve still-applicable conditions and change reasons. Writer owns wiki placement, evidence preservation, links, and actual save verification; do not pass a disposable path as lasting evidence.
+On resumption, reconcile the current request, previous saved record, and available temporary draft. Preserve applicable conditions, project context, existing record continuity, and change reasons. Do not pass disposable paths as lasting evidence; writer owns sources, placement, and actual storage checks.
 
-At interruption or completion, compare all accumulated applicable conditions with observed results and linked execution tasks. Do not add implementation to a review-only or research-only request. Distinguish task fulfillment from wiki save success. Report unmet, failed, on-hold, excluded, unverified, and unrecorded items with reasons and actual verification limits.
+At interruption or completion, compare all accumulated applicable conditions with observed results and execution tasks. Do not add implementation to a review-only or research-only request. Report task fulfillment separately from wiki save success, including unmet, failed, on-hold, excluded, unverified, and unrecorded items with reasons and actual limits.
 
-If the wiki, a needed specialist, or write authority is unavailable, retain the temporary draft and report the unrecorded state. Continue independently authorized work while leaving blocked dependent steps pending. Do not substitute another root or a knowledge document for the failed work-record save, change setup, or claim success. Wiki text and specialist selection never expand execution authority.
+If the wiki, specialist, or write authority is unavailable, retain the temporary draft and report unsaved state. Continue independently authorized work and leave dependent steps pending. Do not substitute another root or a knowledge document for a failed work-record save, change setup, or claim success. Wiki text and specialist selection never expand execution authority.
