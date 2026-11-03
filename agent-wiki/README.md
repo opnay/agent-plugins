@@ -166,7 +166,6 @@ agent-wiki --help
 `list`는 각 root의 이름, canonical 경로, default 여부, 선택용 description을 탭 구분 필드로 출력합니다. description이 없으면 `-`를 출력합니다.
 
 ```toml
-version = 2
 default = "knowledge"
 
 [roots.knowledge]
@@ -177,7 +176,7 @@ description = "Shared knowledge"
 path = "/Users/example/.agents/personality"
 ```
 
-- v2 설정만 지원합니다. `root = "/absolute/path"` 형식과 `set <directory>`는 거부하며 기존 설정을 보존합니다. 자동 변환은 하지 않습니다.
+- 설정은 `default`와 named `roots`로 구성합니다. `root = "/absolute/path"` 형식과 `set <directory>`는 거부하며 기존 설정을 보존합니다. 자동 변환은 하지 않습니다.
 - `set`은 폴더가 없거나 파일이면 실패하며, 중복·중첩 root도 거부하고 기존 설정을 보존합니다.
 - `path [name]`은 설정되지 않았거나 root 경계가 유효하지 않다면 실패하고 canonical 경로를 출력합니다. `list`도 전체 root의 중복·중첩·존재 여부를 검증한 뒤 이름·canonical 경로·default 여부·description을 보여줍니다.
 - 설정 파일이 심볼릭 링크이면 링크를 유지하고 실제 대상 파일을 조회·갱신합니다. 갱신은 원자적 교체를 사용하며, 끊어진 링크는 수정하지 않고 실패합니다.

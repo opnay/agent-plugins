@@ -42,26 +42,19 @@ fn valid_root_name(name: &str) -> bool {
 
 fn read_config(config: &Path) -> Result<WikiConfig> {
     let data = fs::read_to_string(config)?.parse::<toml::Table>()?;
-    if data.len() != 3
-        || !data.contains_key("version")
-        || !data.contains_key("default")
-        || !data.contains_key("roots")
-    {
+    if data.len() != 2 || !data.contains_key("default") || !data.contains_key("roots") {
         return Err("지원하지 않는 설정 형식입니다.".into());
-    }
-    if data.get("version").and_then(toml::Value::as_integer) != Some(2) {
-        return Err("지원하지 않는 설정 버전입니다.".into());
     }
     let default = data
         .get("default")
         .and_then(toml::Value::as_str)
-        .ok_or("v2 설정에는 default root 이름이 필요합니다.")?;
+        .ok_or("설정에는 default root 이름이 필요합니다.")?;
     let root_table = data
         .get("roots")
         .and_then(toml::Value::as_table)
-        .ok_or("v2 설정에는 roots table이 필요합니다.")?;
+        .ok_or("설정에는 roots table이 필요합니다.")?;
     if root_table.is_empty() {
-        return Err("v2 설정에는 하나 이상의 root가 필요합니다.".into());
+        return Err("설정에는 하나 이상의 root가 필요합니다.".into());
     }
 
     let mut roots = BTreeMap::new();
@@ -197,7 +190,6 @@ fn write_config(config: &Path, value: &WikiConfig) -> Result<()> {
     };
     let canonical_roots = validated_roots(&value.roots)?;
     let mut data = toml::Table::new();
-    data.insert("version".into(), toml::Value::Integer(2));
     data.insert("default".into(), toml::Value::String(value.default.clone()));
     let mut roots = toml::Table::new();
     for (name, root) in &value.roots {

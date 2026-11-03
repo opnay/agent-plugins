@@ -94,7 +94,7 @@ fn named_roots_support_path_and_default_selection() {
 }
 
 #[test]
-fn v2_config_preserves_optional_description() {
+fn named_config_preserves_optional_description() {
     let home = tempfile::tempdir().unwrap();
     let knowledge = home.path().join("knowledge");
     let work = home.path().join("work");
@@ -108,7 +108,7 @@ fn v2_config_preserves_optional_description() {
     fs::write(
         &target,
         format!(
-            "version = 2\ndefault = \"knowledge\"\n\n[roots.knowledge]\npath = {:?}\ndescription = \"shared\"\n\n[roots.work]\npath = {:?}\n",
+            "default = \"knowledge\"\n\n[roots.knowledge]\npath = {:?}\ndescription = \"shared\"\n\n[roots.work]\npath = {:?}\n",
             knowledge, configured_work
         ),
     )
@@ -138,7 +138,7 @@ fn v2_config_preserves_optional_description() {
 }
 
 #[test]
-fn query_commands_reject_duplicate_v2_roots_without_overwriting_config() {
+fn query_commands_reject_duplicate_named_roots_without_overwriting_config() {
     let home = tempfile::tempdir().unwrap();
     let root = home.path().join("wiki");
     fs::create_dir(&root).unwrap();
@@ -147,7 +147,7 @@ fn query_commands_reject_duplicate_v2_roots_without_overwriting_config() {
     fs::write(
         &target,
         format!(
-            "version = 2\ndefault = \"knowledge\"\n\n[roots.knowledge]\npath = {:?}\n\n[roots.personality]\npath = {:?}\n",
+            "default = \"knowledge\"\n\n[roots.knowledge]\npath = {:?}\n\n[roots.personality]\npath = {:?}\n",
             root, root
         ),
     )
@@ -186,8 +186,8 @@ fn invalid_config_and_invalid_target_preserve_prior_bytes() {
     fs::create_dir(target.parent().unwrap()).unwrap();
     for content in [
         "root = \"unterminated",
-        "version = 3\ndefault = \"default\"\n[roots.default]\npath = \"/tmp\"\n",
-        "version = 2\ndefault = \"default\"\n[roots.default]\npath = \"relative\"\n",
+        "unexpected = true\ndefault = \"default\"\n[roots.default]\npath = \"/tmp\"\n",
+        "default = \"default\"\n[roots.default]\npath = \"relative\"\n",
         "root = \"/tmp\"\nother = true\n",
     ] {
         fs::write(&target, content).unwrap();

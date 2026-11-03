@@ -62,7 +62,7 @@ CLI는 named root 저장 위치와 설치를, manager는 조건·진행·완료�
 
 ## 공통 위키 계약
 
-- `agent-wiki list`, `agent-wiki path [name]`로 필요한 root를 확인합니다. `list`는 전체 root 경계를 검증하고 이름·canonical 경로·default 여부·선택용 description을 반환하며, `path`는 검증된 canonical 경로를 반환합니다. CLI가 없으면 TOML parser로 v2 named roots만 읽을 수 있습니다. 미지원 설정을 발견하면 해당 위키 작업을 중단하고 설정 갱신 필요를 알립니다. 경로 설정·설치를 암묵적으로 변경하지 않습니다.
+- `agent-wiki list`, `agent-wiki path [name]`로 필요한 root를 확인합니다. `list`는 전체 root 경계를 검증하고 이름·canonical 경로·default 여부·선택용 description을 반환하며, `path`는 검증된 canonical 경로를 반환합니다. CLI가 없으면 TOML parser로 named roots 설정을 읽을 수 있습니다. 미지원 설정을 발견하면 해당 위키 작업을 중단하고 설정 갱신 필요를 알립니다. 경로 설정·설치를 암묵적으로 변경하지 않습니다.
 - root는 사용자 정의 이름과 최종 절대 경로를 가진 물리적 백업·공개·동기화 경계입니다. root 내부 폴더는 지식·조사·프로젝트 같은 의미 분류를 소유합니다. 공통 basedir는 배치 편의일 뿐 보안 경계가 아닙니다.
 - root 경로는 서로 같거나 상하로 중첩될 수 없으며 형제 root는 허용합니다. 각 root는 독립적인 `index.md`, 파일 수·깊이 제한, 루트에서 문서로 내려가는 연결성을 가집니다. 어떤 Markdown 링크도 root를 가로지르지 않습니다.
 - reader·researcher는 요청·현재 작업·root 이름과 설명에 관련된 root만 읽으며 모든 root를 자동 탐색하지 않습니다. 읽은 문서는 root 이름과 상대 경로를 함께 유지합니다.
@@ -100,7 +100,7 @@ CLI는 named root 저장 위치와 설치를, manager는 조건·진행·완료�
 - `list`: 등록된 root 이름·경로와 default 여부를 조회합니다.
 - `set <name> <directory>`: named root를 기존 디렉터리의 canonical 절대 경로로 설정합니다. 위키 폴더·문서는 생성하지 않습니다.
 - `default <name>`: 기존 named root를 default로 지정합니다. `path [name]`은 default 또는 지정 root의 절대 경로를 한 줄로 출력합니다.
-- 설정은 v2만 지원하며 `version = 2`, `default`, `[roots.<name>] path`와 선택 `description`을 사용합니다. 최상위 `root` 설정과 `set <directory>`는 실패하며 기존 설정 바이트를 보존합니다. 자동 변환은 하지 않습니다.
+- 설정은 `default`, `[roots.<name>] path`와 선택 `description`을 사용합니다. 최상위 `root` 설정과 `set <directory>`는 실패하며 기존 설정 바이트를 보존합니다. 자동 변환은 하지 않습니다.
 - 설정 파싱이나 갱신 결과의 root 검증에 실패하면 기존 파일을 보존합니다. 유효한 `set` 호출로 같은 root의 경로를 정정할 수 있습니다. 심볼릭 링크 설정 파일은 조회·갱신을 지원합니다. 갱신은 링크의 실제 대상 파일을 원자적으로 교체하고 링크 자체는 보존합니다. 끊어진 링크는 대상·링크를 만들거나 교체하지 않고 실패합니다.
 - 설정 갱신은 임시 파일 완성 후 원자적으로 교체하며 주석·서식은 정규화됩니다.
 - 실패는 stderr와 0이 아닌 종료 코드로 보고합니다. 도움말·조회는 파일을 만들지 않습니다.
