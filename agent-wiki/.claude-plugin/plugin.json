@@ -1,7 +1,7 @@
 {
   "name": "agent-wiki",
   "version": "0.1.0",
-  "description": "작업 기록·판단 근거·자료 요약을 연결해 과거 해결 과정과 지식을 재사용합니다.",
+  "description": "구체 조건 체크리스트와 결과·근거를 Records에 축적하고 지식·과거 작업을 재사용합니다.",
   "author": {
     "name": "opnay"
   },

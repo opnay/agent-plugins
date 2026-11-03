@@ -1,7 +1,7 @@
 {
   "name": "agent-wiki",
   "version": "0.1.0",
-  "description": "작업 기록·판단 근거·자료 요약을 연결해 과거 해결 과정과 지식을 재사용합니다.",
+  "description": "구체 조건 체크리스트와 결과·근거를 Records에 축적하고 지식·과거 작업을 재사용합니다.",
   "skills": "./skills/",
   "author": {
     "name": "opnay"
@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "Agent Wiki",
     "shortDescription": "위키 탐색·조사·기록과 경로 설정을 제공합니다.",
-    "longDescription": "reader는 관련 root의 기존 지식과 과거 판단을 복원하고, researcher는 질문별 근거를 확보하며, writer는 하나의 named root에 작업 사건·판단 근거·자료 요약을 연결해 기록합니다. Rust CLI는 root 경로 설정·조회와 설치를 담당합니다.",
+    "longDescription": "reader는 관련 root의 지식과 과거 조건·판단·미충족 결과를 복원하고, researcher는 질문별 근거를 확보합니다. writer는 준비·진행·완료의 조건 체크리스트를 같은 Records 기록에 갱신하며 소유 지식·사용자 정보 문서를 연결합니다. Rust CLI는 root 경로 설정·조회와 설치를 담당합니다.",
     "developerName": "opnay",
     "category": "Productivity",
     "capabilities": [
@@ -17,9 +17,9 @@
       "Write"
     ],
     "defaultPrompt": [
-      "기존 지식이나 과거 작업의 문제·선택 이유·시행착오·검증을 복원하려면 $agent-wiki:reader로 작업 기록과 연결된 근거를 읽으세요. 기록 공백은 추측하지 마세요.",
+      "기존 지식이나 과거 작업의 조건·변경 이유·선택·검증·미충족 결과를 복원하려면 $agent-wiki:reader로 기록과 근거를 읽으세요. 체크 표시만으로 충족을 확정하거나 기록 공백을 추측하지 마세요.",
       "현재 질문의 지식 공백·상충·최신성을 확인해야 하면 $agent-wiki:researcher를 사용하세요. 충분한 기존 근거는 재사용하세요.",
-      "기록이 허용되면 $agent-wiki:writer로 root를 먼저 하나 선택한 뒤 원인 확인·대안 선택·실패·방향 전환·검증 결과를 작업 기록 > 판단별 근거 목록 > 자료 출처·요약으로 연결하세요. 민감하거나 모호한 대상은 root를 추측하지 마세요.",
+      "기록이 허용되면 $agent-wiki:writer로 root 하나를 선택하세요. 작업별 구체 충족 조건을 먼저 체크리스트로 정의하고 하위 목록에 결과·근거·검증·선행 관계를 연결하세요. 준비·진행·중단·완료에서 같은 조건을 갱신하고 확정 중간 결과와 종료 결과를 같은 Records 기록에 반영하세요. 지식·사용자 정보는 소유 문서에 연결하며 민감하거나 모호한 root는 추측하지 마세요.",
       "세 스킬의 필수 호출 순서나 서브에이전트 실행은 없습니다. 경로 설정·CLI 설치는 README.md의 scripts/agent-wiki 안내를 따르세요.",
       "웹 조사 후 위키 반영 필요성을 항상 평가하세요. 기록·갱신·생략은 $agent-wiki:writer의 기준을 따르며, 다른 도구의 조사 결과도 재사용하세요.",
       "URL 조사를 위임할 때 질문·목적·URL·필요 정보·기존 위키 경로·허용 쓰기 범위·스킬 경로를 전달하세요. researcher로 조사하고 승인된 writer 역할로 저장한 뒤 문서 경로·핵심 발견·공백·저장 상태를 반환받으세요. 같은 문서 쓰기는 직렬화하고 실제 채택 이유는 작업 담당자가 기록하세요."

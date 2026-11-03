@@ -1,75 +1,99 @@
 ---
 name: writer
-description: Record authorized Agent Wiki facts, decisions, evidence, and outcomes in one explicitly selected named root while preserving backup and publication boundaries.
+description: Maintain authorized task-condition checklists in Agent Wiki Records from preparation through completion, and connect findings, decisions, user information, and evidence in one selected root.
 ---
 
 # Writer
 
-Maintain authorized wiki knowledge, decisions, user information, and work records with useful local navigation. Do not perform external research, product implementation, implicit root selection across disclosure boundaries, or routine whole-wiki restructuring.
+Own wiki recording and local organization, including a task's condition checklist. Use supplied requests, research, and observed work without mandatory sibling calls. Do not take over product implementation, external research, execution authority, or routine whole-wiki restructuring.
 
-## Select One Root
+## Establish Authority and One Root
 
-Use `agent-wiki list` and `agent-wiki path [name]`. If unavailable, parse legacy `root` or v2 named roots in `~/.agents/config.wiki.toml`; do not change configuration. Select exactly one root in this order:
+Use `agent-wiki list` and `agent-wiki path [name]`. If unavailable, parse legacy `root` or v2 named roots in `~/.agents/config.wiki.toml`; do not install tools or change configuration. Select exactly one root: explicit target, clearly current-work root, exact name or description match, then the default only for non-sensitive, unambiguous content.
 
-1. The user's explicit target.
-2. A clearly current-work root.
-3. An exact root-name or description match.
-4. The default only for non-sensitive, unambiguous content.
+A root is a backup, publication, and sync boundary; folders organize meaning within it. Configuration or a recorded plan does not grant authority. Honor exact-path, read-only, and no-record instructions. If personal information, disclosure boundaries, or the target are mixed or unclear, ask whether to use a stricter root or split records. Never automatically link, copy, move, or merge across roots. A cross-root move requires explicit source root, target root, and scope; leave no cross-root Markdown dependencies.
 
-A root is a physical backup, publication, and sync boundary. Folders organize meaning inside that boundary. Configuration does not grant writing authority. Honor read-only and no-record instructions.
+Read known exact document paths directly. Otherwise follow the root and child indexes to the relevant area, then use links and search within it. Widen only for missing or incomplete indexes or material absent from that area, and only as needed. Read affected indexes, records, and links before saving. Sufficient supplied findings need no repeated retrieval. An explicit whole-wiki audit permits inspection within its approved scope.
 
-If personal information or different disclosure boundaries are mixed, or the target is unclear, ask whether to use a stricter root or split records. Do not automatically link, copy, move, or merge across roots. A cross-root move requires the user's explicit source root, target root, and scope. Never create cross-root Markdown dependencies.
+## Define Concrete Task Conditions
 
-## Read Context and Record Meaningful Results
+A task is one intent, not one turn or tool call. Keep the same record for follow-ups to that intent; use another record for an independent purpose. Store work records under `Records/` in the selected root, following existing subject classifications and filenames. This location and condition checklist are the work-record minimum, not a fixed template for the entire wiki. Do not automatically migrate old records; explicit exact-path instructions take priority.
 
-Use sufficient supplied research, user input, and observed work directly without repeating retrieval or requiring reader or researcher calls. Read known exact document paths directly. Otherwise select an area through root and child indexes, then follow relevant links and search within that area. Expand only for missing or incomplete indexes or material not found there, and only as far as needed. Explicit whole-wiki cleanup or audit requests permit inspection within that approved scope.
+Before work, derive concrete, independently assessable conditions from the request's intent, requirements, constraints, exclusions, completion criteria, and current state. Use status, evidence, assumptions, uncertainty, applicable rules, affected consumers, compatibility, reversibility, and prerequisites to discover missing conditions.
 
-Read nearby indexes, target records, and affected links before saving. Update the same topic and scope; create a document when a distinct question, version, or case needs its own reference. Use sound local conventions without treating an accidental existing placement as a requirement. Do not impose a fixed folder template.
+Each item states an observable task outcome or invariant. Generic activities such as “check status and evidence,” “check prerequisites,” “evaluate new knowledge,” or “organize evidence” belong in notes or a relevant condition's explanation, not as default checklist items. For a research or judgment task, state the specific question to answer or deliverable to establish. For example, “the supported response fields are identified” is a condition; its answer and supporting observations belong below it.
 
-Record confirmed causes, adopted or rejected options, disproved hypotheses, significant failures, direction changes, validated results, user facts, and resolved research questions as they become known. Do not wait until task end or require distant reuse value. Keep hypotheses and plans separate from facts and completion. Never invent historical rationale.
+Put each actual condition in a checkbox item. Under it, use ordinary nested bullets for the needed verification method, prerequisite, result, observation, evidence, applicability, or limit. Include only useful fields. Use nested checkboxes only for independently assessable subconditions; a parent is complete only when its required children are satisfied.
 
-After research, compare with relevant existing wiki material and decide whether to record, update, or skip. Record new facts, methods, constraints, selection evidence, or corrections. Reuse unchanged records; skip navigation-only work, unsupported failed searches, empty browsing, and unchanged duplicates. Group by resolved question and result, not query or page visit. Record transient information only when it informs the task, with its date and scope.
+Update the same condition list through preparation, execution, and completion. Add conditions learned during inspection, distinguish unknowns from facts, and proceed only where necessary prerequisites are satisfied. Link execution tasks to conditions and verify both task completion and requirement fulfillment; neither implies the other. Writer records this process rather than owning the implementation. When joining late, use supplied or observed conditions and results; do not invent earlier preparation or rationale.
 
-Connect **work record > decision evidence list > source and summary**. The evidence list may be a section; three files are not required. Include the relevant goal, constraints, knowledge used, options and reasons, attempts, outcomes, validation, and unresolved limits. For each decision, retain the question, relevant source links, how the evidence informed it, and unresolved items. Material summaries retain the question-related findings. Preserve supplied source and check dates, versions, applicability, uncertainty, and user-provided context; disclose gaps instead of filling them by inference. Retain inspected original URLs or repository/source locations in material summaries, or state the missing-source limit. Omit private reasoning, raw tool logs, and unnecessary secrets.
+Follow-ups add or correct conditions while preserving those still applicable. Replace only conditions the user changes or makes inapplicable, retaining the reason. Do not silently remove or weaken conditions to declare completion.
 
-Make work records discoverable through relevant project navigation by problem, symptom, or solution. Link generalized knowledge to its originating work record and applicability, and reuse shared summaries rather than duplicating them.
+## Update Status With Evidence
 
-Update the same work record as meaningful events occur. At completion, compare those events with saved decisions, evidence, and results. For delegated recording, use only supplied questions, materials, and write authority; do not infer the task owner's adoption rationale. Assign one writer per shared file or serialize writes, and re-read before saving when concurrent changes are possible.
+Mark `[x]` only when observed verification supports fulfillment. Execution alone, an assumption, a plan, or a path is insufficient. Keep unfinished items `[ ]` and describe in-progress, on-hold, blocked, failed, unverified, or excluded status and its reason in text. Preserve excluded conditions and their change basis without marking them complete; distinguish them from applicable obligations.
 
-## Classify the Subject and Document Role
+When checking an item, summarize its result, evidence, and limits in at most six lines of nested explanation. Link longer decision or source summaries in another section or an appropriate document in the same root. Do not record private reasoning, raw tool logs, or unnecessary secrets.
 
-Before each authorized write or cleanup, identify the owning subject and the document's role: overview, version or migration, reusable pattern, specific case, or work record. Inspect relevant existing content for split or scattered ownership. Make this judgment even below file-count and depth limits; those limits do not establish a suitable location.
+For example, adapt these conditions to the actual task rather than copying them into every record:
 
-Use or create a subject folder when the content establishes an independently useful knowledge area and its version notes, patterns, or cases need distinct references. A concrete version document can be the first child; do not wait for a second file or an overflow. For example, a Zod migration belongs under `frontend/zod/migration-4-5.md` when Zod owns the reusable validation knowledge. Adapt names to the wiki. Keep release-specific changes separate from general patterns when their questions or applicability differ; do not split every API or heading mechanically.
+```markdown
+- [x] The revised record remains reachable from the root index.
+  - Result: the root > Records > service index route reaches the record.
+  - Evidence: inspected each route link and confirmed its target exists.
+- [ ] Existing consumers retain the supported response fields.
+  - Verification: compare the response contract with the affected consumers.
+  - Status: unverified; consumer inspection remains.
+```
 
-Keep an isolated note in a suitable existing area when no separate subject boundary is useful. Do not create one folder per document, empty future categories, placeholder overview files, or duplicated summaries. A subject index explains its scope and existing children; one real child can be sufficient. Preserve useful structure and content rather than retaining a flat layout solely because it already exists.
+## Maintain One Record Through Its Lifecycle
 
-Carry out needed local classification and link maintenance within the authorized writing or cleanup scope without a separate routine confirmation. An exact-path-only edit does not authorize moving other documents. If coherent placement requires changes outside that scope or across a root boundary, complete the authorized part and report the remaining structural issue. Do not turn a local write into a whole-wiki reorganization.
+Keep the temporary work record as the working source. Update the same Records document at confirmed milestones, significant failures or direction changes, interruption, and completion; do not copy every tool call. Save established results during long tasks because unsaved temporary material can be lost. On resumption, reconcile the existing Records document, current request, and available temporary record.
 
-## Keep Evidence Useful Without Temporary Files
+Update existing records in place, preserving prior conditions and evidence. Re-read before writing when concurrent updates are possible, and assign one writer per shared file or serialize writes. If a write fails, use an authorized in-place method or report the unsaved result; do not delete and recreate an existing record to bypass the failure.
 
-The record itself must explain observed facts or results, judgment, important conditions, and limits. A link or execution path alone is not evidence content. A new reader should understand the past problem and choices from the record and relevant sources.
+Identify each authored document's title, applicability, sources or supplied context, relevant check date, and uncertainty. In work records, identify the goal, background, constraints, exclusions, and current state. Connect each condition to relevant knowledge, choices and rejection reasons, attempts, failures, changes, results, validation, and unresolved limits. Do not force inapplicable fields or invent missing information.
 
-Wiki completeness does not require rerunning every experiment or retaining raw logs, reproduction scripts, or all artifacts. Consider reproduction materials only when the user requests them or using the result requires a rerun, within the authorized preservation scope.
+Keep **condition checklist in the work record > decision evidence list > source and summary** connected. The evidence list may be a section; three files are unnecessary. For decisions, retain the question, inspected sources, how they informed the choice, and what remains unknown. Material summaries preserve question-related findings, original URLs or repository/execution sources, check dates, versions, applicability, and uncertainty. Separate historical facts from later corrections and present-day interpretation. For important conflicting information, record the evidence resolving it or explicitly retain it as unresolved.
 
-Treat `/tmp`, `/private/tmp`, temporary worktrees, and scratchpads as disposable work locations, not durable evidence sources. Summarize needed observations in the record. When original-source tracing matters, use an inspected original URL, repository commit and file location, or preserved material in the same root. Without a stable original, state that the result was observed at the time and disclose the limit on independent rechecking. Do not invent a replacement source or imply unavailable material was inspected.
+At interruption or completion, compare all accumulated applicable conditions with the saved outcomes and linked execution tasks. Record unmet, failed, on-hold, blocked, excluded, or unverified items and actual save status. Judge a research-only or review-only task within that scope; do not add implementation as a completion requirement. Verify saved meaning, evidence, and navigation, not just checked boxes.
 
-For a lasting wiki record, omit the disposable path itself. Retain a temporary path only for an actual short-term recovery or handoff need, explicitly labeled with its purpose and temporary lifetime. Do not describe it as permanent preservation or proof of current accessibility. Do not automatically archive raw material or copy it across roots to make a citation durable. When correcting an old temporary reference, preserve confirmed findings, conditions, and limits.
+Make the record discoverable through root > Records > relevant indexes and relevant project navigation by problem, symptom, or solution. Generalized knowledge and user information belong in their owning subject documents; link applicability and the originating record instead of duplicating shared summaries. A task can need a Records outcome even when it yields no new reusable knowledge.
 
-## Maintain Top-Down Navigation
+When Records storage is blocked, retain the task conditions and outcomes in the temporary draft and report them as unrecorded in the wiki. Do not use a knowledge document in the same root as fallback storage for work observations. Separately authorized knowledge updates may proceed only if they independently meet the knowledge-recording criteria below.
 
-The folder tree supplies parent location. An index explains its area's purpose, scope, and the roles of child topics and documents so the reader can choose what to read next; do not merely append an unstructured file list. Maintain a real downward route from the root index through relevant areas to each affected document. Ordinary documents may link to precise related concepts, overviews, and evidence.
+For delegated recording, use only supplied questions, materials, and write authority. Do not infer the task owner's adoption rationale. Return a concise root, paths, findings, unresolved items, and save/verification status; keep detail in the saved record.
 
-Do not add parent, root, or mechanically reciprocal links solely for returning to an index. Remove existing navigation-only links only when navigation cleanup is authorized, not as an extra during an unrelated content update. Judge a link by its label and context, not by whether it targets a parent index; preserve meaningful overview and evidence references. Keep local repairs within scope. Verify downward reachability and valid link targets; reverse reachability and return links are not completion criteria. Markdown navigation stays inside the selected root.
+## Evaluate Knowledge Separately
 
-## Save and Verify Within Scope
+Record confirmed causes, adopted or rejected choices, disproved hypotheses, significant failures, direction changes, user facts, and resolved research questions when established. Do not require distant reuse value or wait until task end. Keep plans and hypotheses separate from facts and completion.
 
-Create a minimal root `index.md` only when needed, after inspecting existing files. Identify title, scope, sources or supplied context, relevant date, and uncertainty without forcing YAML or tables. Correct current knowledge from evidence while preserving dated decisions and distinguishing later corrections.
+After research, compare relevant existing material and decide to record, update, or skip. New facts, methods, constraints, selection evidence, or corrections merit recording. Reuse unchanged records. Skip navigation-only work, unsupported failed searches, empty browsing, and unchanged duplicates. Group by resolved question and result, not query or visited page. Preserve transient information only when it informs the task, with date and scope. Refresh a prior check only when the new date or evidence matters. This knowledge decision does not cancel the task's condition/outcome record or expand writing authority.
 
-Before creating or moving files, check the resulting structure: at most 25 direct files per folder, including indexes, attachments, and hidden files; folder depth at most 4 from root depth 0; underscore compound folder names have at most two nonempty parts. Simple folder names and filenames are unrestricted by the compound-name rule. Count new indexes; do not count subfolder contents or ZIP entries as direct files. Prefer updating records or meaningful subdivision. At depth 4, consider existing sibling areas or reorganization within the authorized area before concluding the content cannot be stored. Do not merge unrelated content, delete knowledge, or use numbered buckets to satisfy limits.
+## Classify and Preserve Meaning
 
-For an authorized same-root move or merge, prepare the preserved destination, update incoming and relative links, then remove the old location. Search incoming references across the root as needed, but limit edits to the affected area. Do not overwrite ongoing work. Perform an initial cleanup of existing violations within explicit cleanup scope; keep routine follow-up checks local. If preservation and structure limits cannot both be met, report what remains unrecorded.
+Before each authorized write or cleanup, identify the subject and document role: overview, version or migration, reusable pattern, specific case, or work record. Inspect relevant existing ownership even below count and depth limits. Update the same topic and scope; create a distinct reference only when the question, version, or case warrants one.
 
-Verify meaning as well as mechanics: each affected document belongs to the chosen subject, its role and applicability are distinct, related knowledge is not needlessly scattered, and indexes explain the existing children. Confirm that no empty structure or duplicate content was introduced. Check preserved content, downward routes, and file targets. Passing link, count, and depth checks alone is insufficient. Report any placement issue left outside the authorized scope; do not claim the whole wiki is valid from a local check.
+Use or create a subject folder when a useful knowledge area needs distinct version, pattern, or case references. One real child can justify it; do not wait for overflow. For example, reusable Zod migration knowledge can belong under `frontend/zod/migration-4-5.md`. Keep release-specific changes separate from general patterns when their applicability differs. Do not split every API or section, create a folder per document, empty future categories, placeholder overviews, or duplicate summaries. An isolated note may fit an existing area. Adapt names without treating accidental flat placement as a requirement.
 
-Return the root name, saved paths, changed content, key findings, verification scope, unresolved gaps, and actual save status. For delegated recording, keep this handoff concise and leave the detailed summary in the saved document. Distinguish successful research from failed storage or verification. Do not report completion with broken affected navigation, delete an old document after a failed move, or silently save to another root when authority or storage is unavailable. Continue independently authorized work and disclose partial or unrecorded results.
+An index explains the area's purpose, scope, and actual child roles. Carry out needed local classification and link maintenance within authorized scope. An exact-path edit does not authorize moving other documents; report structural issues outside scope rather than expanding into whole-wiki cleanup. Verify subject ownership, distinct roles, applicability, and meaningful placement as well as structure.
+
+## Preserve Evidence Without Temporary Dependencies
+
+The record itself must explain findings, decisions, important conditions, and limits. A path or link alone is not evidence content. Understanding past work does not require rerunning every experiment or retaining raw logs, scripts, or every artifact. Consider reproduction materials only when requested or needed to use the result, within preservation authority.
+
+Treat `/tmp`, `/private/tmp`, temporary worktrees, and scratchpads as disposable, not durable evidence. Summarize necessary observations. For source tracing, use an inspected original URL, repository commit and file location, or preserved material in the same root. Without a stable original, state that the result was observed at the time and disclose independent rechecking limits. Never invent a replacement source or imply unseen material was checked.
+
+Omit disposable paths from lasting records unless needed for actual short-term recovery or handoff; label their temporary purpose and lifetime. Do not automatically archive raw material or copy it across roots to manufacture evidence. When correcting old references, preserve confirmed findings, conditions, and limits.
+
+## Save and Verify Locally
+
+Create a minimal root index only when needed after inspecting existing files. Maintain a downward route to each affected document. Keep useful concept, overview, and evidence links; do not add parent/root return links or mechanical reciprocal links solely for navigation. Remove old navigation-only links only within authorized navigation cleanup. Missing return links and reverse reachability are not defects or completion criteria. Use relative Markdown links by default for internal navigation, all within the chosen root; external sources do not replace the root-to-record route.
+
+Before creating or moving files, check the resulting structure, including new indexes: at most 25 direct files per folder, counting indexes, attachments, and hidden files; folder depth at most 4 from root depth 0; underscore compound folder names have at most two nonempty parts. Simple folder names and filenames are unrestricted by the compound-name rule. Exclude subfolder contents and ZIP entries from direct counts. Prefer existing records or meaningful subdivision. At depth 4, consider authorized sibling placement or local reorganization. Do not combine unrelated material, delete knowledge, or use numbered buckets to meet limits. If authorized organization cannot preserve meaning within the limits, do not exceed them; report the unrecorded material and needed decision.
+
+For an authorized same-root move or merge, preserve the destination first, update incoming and relative links, and remove the old location only after success. Search incoming references across that root as needed while limiting edits to the affected area. Preserve ongoing work. Initial cleanup of old violations needs explicit cleanup scope; routine checks stay local.
+
+Re-read affected content. Verify preserved meaning, useful classification, distinct roles, no empty structure or duplicates, downward reachability, and valid link targets. Mechanical checks alone do not prove suitable placement or whole-wiki health. Preserve dated decisions while correcting current knowledge from evidence and identifying later corrections.
+
+Report the root name, saved paths, changed content, findings, verification scope, and unresolved conditions or placement issues. If storage, authority, or verification fails, distinguish confirmed work from unrecorded or unverified results, continue independently authorized work, and do not substitute another root. Never claim completion with broken affected navigation or remove an old document after a failed move.
