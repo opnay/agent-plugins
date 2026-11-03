@@ -1,7 +1,7 @@
 {
   "name": "agent-wiki",
   "version": "0.1.0",
-  "description": "구체 조건 체크리스트와 결과·근거를 Records에 축적하고 지식·과거 작업을 재사용합니다.",
+  "description": "manager가 작업 조건과 역할을 연결하고 reader·researcher·writer가 기억 조회·조사·보존을 담당합니다.",
   "author": {
     "name": "opnay"
   },
