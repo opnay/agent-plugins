@@ -16,7 +16,6 @@ const HELP: &str = "agent-wiki: 위키 저장 위치를 설정·조회합니다.
 사용법:
   agent-wiki install [--force]  ~/.local/bin/agent-wiki에 설치합니다.
   agent-wiki list               설정된 root를 조회합니다.
-  agent-wiki set <directory>    default root 경로를 설정합니다.
   agent-wiki set <name> <dir>   named root 경로를 설정합니다.
   agent-wiki default <name>     default root를 지정합니다.
   agent-wiki path [name]        default 또는 named root 경로를 출력합니다.
@@ -41,36 +40,8 @@ fn valid_root_name(name: &str) -> bool {
         })
 }
 
-fn parse_legacy(data: &toml::Table) -> Result<Option<WikiConfig>> {
-    let Some(root) = data.get("root") else {
-        return Ok(None);
-    };
-    if data.len() != 1 {
-        return Err("legacy 설정에는 root만 포함할 수 있습니다.".into());
-    }
-    let root = root.as_str().ok_or("legacy root는 문자열이어야 합니다.")?;
-    let path = PathBuf::from(root);
-    if !path.is_absolute() {
-        return Err("legacy root는 절대 경로여야 합니다.".into());
-    }
-    Ok(Some(WikiConfig {
-        roots: [(
-            "default".into(),
-            RootConfig {
-                path,
-                description: None,
-            },
-        )]
-        .into(),
-        default: "default".into(),
-    }))
-}
-
 fn read_config(config: &Path) -> Result<WikiConfig> {
     let data = fs::read_to_string(config)?.parse::<toml::Table>()?;
-    if let Some(value) = parse_legacy(&data)? {
-        return Ok(value);
-    }
     if data.len() != 3
         || !data.contains_key("version")
         || !data.contains_key("default")
@@ -219,9 +190,11 @@ fn format_root_list(value: &WikiConfig) -> Result<String> {
 }
 
 fn write_config(config: &Path, value: &WikiConfig) -> Result<()> {
-    if config.is_symlink() {
-        return Err(format!("설정 심볼릭 링크를 변경하지 않습니다: {}", config.display()).into());
-    }
+    let target = if config.is_symlink() {
+        config.canonicalize()?
+    } else {
+        config.to_path_buf()
+    };
     let canonical_roots = validated_roots(&value.roots)?;
     let mut data = toml::Table::new();
     data.insert("version".into(), toml::Value::Integer(2));
@@ -247,7 +220,7 @@ fn write_config(config: &Path, value: &WikiConfig) -> Result<()> {
         roots.insert(name.clone(), toml::Value::Table(item));
     }
     data.insert("roots".into(), toml::Value::Table(roots));
-    atomic_write(config, toml::to_string(&data)?.as_bytes(), 0o600, true)
+    atomic_write(&target, toml::to_string(&data)?.as_bytes(), 0o600, true)
 }
 
 fn set_root(name: &str, directory: &Path, home: &Path, config: &Path) -> Result<PathBuf> {
@@ -310,7 +283,7 @@ fn install(source: &Path, target: &Path, force: bool) -> Result<PathBuf> {
 
 fn configured_root(config: &Path, name: Option<&OsString>) -> Result<PathBuf> {
     if !config.try_exists()? {
-        return Err("저장 위치가 없습니다. agent-wiki set <directory>를 실행하세요.".into());
+        return Err("저장 위치가 없습니다. agent-wiki set <name> <directory>를 실행하세요.".into());
     }
     let value = read_config(config)?;
     let canonical_roots = validated_roots(&value.roots)?;
@@ -337,14 +310,6 @@ fn run(args: &[OsString], home: &Path) -> Result<PathBuf> {
             &home.join(".local/bin/agent-wiki"),
             true,
         ),
-        [command, directory] if command == "set" => {
-            let name = if config.try_exists()? {
-                read_config(&config)?.default
-            } else {
-                "default".into()
-            };
-            set_root(&name, Path::new(directory), home, &config)
-        }
         [command, name, directory] if command == "set" => {
             set_root(&name.to_string_lossy(), Path::new(directory), home, &config)
         }

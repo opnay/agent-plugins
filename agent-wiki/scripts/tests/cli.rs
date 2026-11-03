@@ -17,30 +17,44 @@ fn unset_path_does_not_create_config() {
 }
 
 #[test]
-fn legacy_config_is_read_and_normalized_on_successful_set() {
+fn legacy_config_is_rejected_without_overwriting_bytes() {
     let home = tempfile::tempdir().unwrap();
-    let root = home.path().join("legacy");
+    let root = home.path().join("wiki");
     fs::create_dir(&root).unwrap();
     let target = config(home.path());
     fs::create_dir(target.parent().unwrap()).unwrap();
-    fs::write(&target, format!("root = {:?}\n", root)).unwrap();
+    let content = format!("root = {:?}\n", root);
+    fs::write(&target, &content).unwrap();
 
-    assert_eq!(read_config(&target).unwrap().roots["default"].path, root);
-    let replacement = home.path().join("replacement");
-    fs::create_dir(&replacement).unwrap();
-    assert_eq!(
-        run(&args(&["set", replacement.to_str().unwrap()]), home.path()).unwrap(),
-        replacement.canonicalize().unwrap()
-    );
+    for input in [
+        args(&["list"]),
+        args(&["path"]),
+        args(&["path", "default"]),
+        args(&["default", "default"]),
+        args(&["set", "knowledge", root.to_str().unwrap()]),
+    ] {
+        assert!(run(&input, home.path()).is_err());
+        assert_eq!(fs::read_to_string(&target).unwrap(), content);
+    }
+}
 
-    let parsed = read_config(&target).unwrap();
-    assert_eq!(parsed.default, "default");
-    assert_eq!(parsed.roots.len(), 1);
-    assert_eq!(
-        parsed.roots["default"].path,
-        replacement.canonicalize().unwrap()
-    );
-    assert!(fs::read_to_string(target).unwrap().contains("version = 2"));
+#[test]
+fn unnamed_set_is_rejected_without_creating_or_changing_config() {
+    let home = tempfile::tempdir().unwrap();
+    let root = home.path().join("wiki");
+    fs::create_dir(&root).unwrap();
+    let command = args(&["set", root.to_str().unwrap()]);
+    assert!(run(&command, home.path()).is_err());
+    assert!(!config(home.path()).exists());
+
+    run(
+        &args(&["set", "knowledge", root.to_str().unwrap()]),
+        home.path(),
+    )
+    .unwrap();
+    let before = fs::read(config(home.path())).unwrap();
+    assert!(run(&command, home.path()).is_err());
+    assert_eq!(fs::read(config(home.path())).unwrap(), before);
 }
 
 #[test]
@@ -199,22 +213,72 @@ fn deleted_root_and_unknown_name_are_reported() {
     let home = tempfile::tempdir().unwrap();
     let root = home.path().join("wiki");
     fs::create_dir(&root).unwrap();
-    run(&args(&["set", root.to_str().unwrap()]), home.path()).unwrap();
+    run(
+        &args(&["set", "knowledge", root.to_str().unwrap()]),
+        home.path(),
+    )
+    .unwrap();
     assert!(run(&args(&["path", "missing"]), home.path()).is_err());
     fs::remove_dir(&root).unwrap();
     assert!(run(&args(&["path"]), home.path()).is_err());
 }
 
 #[test]
-fn symlinked_config_is_not_overwritten() {
+fn symlinked_config_updates_target_and_preserves_links() {
     let home = tempfile::tempdir().unwrap();
     let original = home.path().join("original.toml");
+    let intermediate = home.path().join("config-link.toml");
     let target = config(home.path());
+    let root = home.path().join("wiki");
+    let work = home.path().join("work");
+    fs::create_dir(&root).unwrap();
+    fs::create_dir(&work).unwrap();
+    set_root("knowledge", &root, home.path(), &target).unwrap();
+    fs::rename(&target, &original).unwrap();
+    symlink("original.toml", &intermediate).unwrap();
+    symlink("../config-link.toml", &target).unwrap();
+
+    assert_eq!(
+        run(&args(&["path"]), home.path()).unwrap(),
+        root.canonicalize().unwrap()
+    );
+    assert!(run(&args(&["list"]), home.path()).is_ok());
+    run(&args(&["set", "work", work.to_str().unwrap()]), home.path()).unwrap();
+    run(&args(&["default", "work"]), home.path()).unwrap();
+    assert_eq!(read_config(&original).unwrap().default, "work");
+    assert_eq!(read_config(&original).unwrap().roots.len(), 2);
+    assert_eq!(
+        run(&args(&["path"]), home.path()).unwrap(),
+        work.canonicalize().unwrap()
+    );
+    assert_eq!(
+        fs::read_link(&target).unwrap(),
+        Path::new("../config-link.toml")
+    );
+    assert_eq!(
+        fs::read_link(&intermediate).unwrap(),
+        Path::new("original.toml")
+    );
+}
+
+#[test]
+fn broken_config_symlink_is_not_replaced_or_created() {
+    let home = tempfile::tempdir().unwrap();
+    let target = config(home.path());
+    let missing = home.path().join("missing.toml");
     fs::create_dir(target.parent().unwrap()).unwrap();
-    fs::write(&original, "root = \"/tmp\"\n").unwrap();
-    symlink(&original, &target).unwrap();
-    assert!(set_root("default", home.path(), home.path(), &target).is_err());
-    assert_eq!(fs::read_to_string(&original).unwrap(), "root = \"/tmp\"\n");
+    symlink(&missing, &target).unwrap();
+    assert!(
+        run(
+            &args(&["set", "knowledge", home.path().to_str().unwrap()]),
+            home.path()
+        )
+        .is_err()
+    );
+    assert!(run(&args(&["path"]), home.path()).is_err());
+    assert!(target.is_symlink());
+    assert_eq!(fs::read_link(&target).unwrap(), missing);
+    assert!(!missing.exists());
 }
 
 #[test]
