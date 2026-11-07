@@ -1,7 +1,7 @@
 {
   "name": "agent-wiki",
   "version": "0.1.0",
-  "description": "manager가 작업 조건과 역할을 연결하고 reader·researcher·writer가 기억 조회·조사·보존을 담당합니다.",
+  "description": "manager가 작업 조건을 연결하고 reader·researcher·writer가 기억 조회·조사·보존과 등록된 Obsidian CLI 활용을 담당합니다.",
   "author": {
     "name": "opnay"
   },

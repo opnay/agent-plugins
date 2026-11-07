@@ -60,6 +60,64 @@ manager는 작업 전에 요청·제약·현재 상태에서 충족 여부를 �
 
 writer를 직접 호출할 때 manager나 체크리스트는 필수가 아닙니다. 서술형 조사·사용자 정보·과거 결과도 제공 근거 범위에서 기억하며 작업 조건을 새로 도출하거나 완료를 재판정하지 않습니다. 작업 기록 저장이 막히면 미저장 이유를 반환하고 지식 문서에 작업 관찰을 대신 쓰지 않습니다. manager 또는 작업 담당자는 임시 초안과 미반영 상태를 유지합니다.
 
+## Obsidian CLI 활용
+
+등록된 Obsidian vault가 선택한 위키 root와 일치하면 CLI로 유형·태그 검색과 속성·본문 확인을 수행합니다. `agent-wiki`는 root 설정·조회, `obsidian`은 해당 vault 조회를 담당합니다.
+
+```sh
+obsidian vault="<vault>" vault info=path
+obsidian vault="<vault>" search path="<area>" query='[type:benchmark] [tags:llm]' format=json limit=10
+obsidian vault="<vault>" properties path="<note.md>" format=json
+obsidian vault="<vault>" read path="<note.md>"
+```
+
+`<vault>`, `<area>`, `<note.md>`는 확인한 이름·영역·vault 기준 상대 경로로 바꿉니다. 매번 vault를 첫 매개변수로 지정하고 실제 경로를 선택 root와 대조합니다. root와 vault 이름을 같다고 가정하지 않습니다. CLI가 앱을 시작할 수 있으므로 현재 실행 제한을 따릅니다.
+
+| 역할 | CLI 활용 |
+| --- | --- |
+| manager | 허용 root·영역·필요 유형·주제/태그와 이미 확인한 vault 정보를 전달합니다. |
+| reader | 인덱스로 고른 영역에서 유형·태그로 후보를 찾고 본문·근거를 확인합니다. |
+| researcher | 관련 기존 조사·비교·진단을 찾아 시점·적용 조건을 확인하고 재사용합니다. |
+| writer | 관련 문서의 어휘를 확인하고 파일 저장 후 properties·read를 실제 저장 내용과 대조합니다. |
+
+`[tags:...]`는 속성 검색이며 `tag:...`·태그 목록에는 본문 토큰도 섞입니다. 어휘와 사실은 속성·본문을 함께 확인합니다. 메타데이터가 없는 기존 문서는 선택 영역의 인덱스·본문 검색으로 찾습니다. 검색 제한이 있는 결과를 전체 목록으로 단정하지 않습니다.
+
+exit 0이나 `format=json`만으로 성공을 판단하지 않습니다. `No matches found.`·`No frontmatter found.`·속성 부재 오류와 실제 JSON 자료형을 구분하며 예상 밖 출력은 미확인으로 보고합니다. CLI·매핑이 불가하면 같은 승인 root의 파일·YAML 조회를 사용합니다. 설정·설치·다른 vault 탐색은 자동 수행하지 않습니다.
+
+이 CLI 연계는 읽기 경로입니다. writer의 쓰기는 승인된 파일·YAML 병합 계약을 유지하며 CLI 확인 실패와 실제 저장 상태를 구분합니다. CLI 캐시에 맞추려고 원문을 덮어쓰거나 자동 reload·property:set·eval을 호출하지 않습니다.
+
+## 문서 속성과 태그
+
+writer는 일반 지식 문서·작업 기록을 작성하거나 갱신할 때 YAML frontmatter에 문서 유형과 검색 키워드를 관리합니다.
+
+```yaml
+---
+type: benchmark
+tags:
+  - llm
+  - uzu
+  - performance
+---
+```
+
+- `type`: 문서의 주된 성격 하나입니다. `reference`, `comparison`, `design`, `record`, `diagnosis`, `benchmark`, `guide` 같은 기존 어휘를 내용에 맞게 재사용합니다.
+- `tags`: 주제·기술의 평면 키워드 목록입니다. 관련 영역의 기존 표기를 재사용하고 새 영문은 소문자·하이픈으로 작성합니다. 목록 값은 `#`·공백·슬래시 없는 키워드입니다. 적합한 키워드가 없으면 `tags: []`로 둡니다.
+- 폴더는 소유 위치, 본문 링크는 개념·근거·판단 관계를 담당합니다. 유형과 태그만으로 작업 완료를 판단하지 않습니다.
+
+writer는 기존 속성과 본문을 보존하며 승인된 문서 범위에서 병합·검증합니다. `index.md`와 첨부 파일에는 이 속성을 일괄 요구하지 않습니다. 전체 위키 태깅·기존 관례 변환은 별도 범위이며, 손상된 YAML이나 자료형 충돌은 미반영 부분을 알립니다. reader·researcher는 기존 읽기 전용 역할을 유지합니다.
+
+### PR 참조 표기
+
+PR 식별자는 종류와 번호를 붙인 `PR#150` 형식으로 쓰고 전체를 인라인 코드로 감쌉니다. 조사는 코드 밖에 둡니다. 실제 PR URL이 있으면 같은 표기를 링크 표시명으로 사용합니다.
+
+```md
+`PR#150`은 참고로 남깁니다.
+[`PR#150`](https://github.com/opnay/blog-server/pull/150)에서 확인했습니다.
+`blog-server PR#150`과 `다른저장소 PR#150`을 구분합니다.
+```
+
+writer는 승인된 설명문에서 표기를 관리하며 원문 인용·코드·URL·속성 데이터는 보존합니다. 참조 종류·번호·URL은 확인된 정보로만 작성합니다.
+
 ## 과거 작업과 판단 복원
 
 작업 기록의 본문에서 조건·판단·근거·출처를 읽고 필요한 자료를 참조합니다. 근거 목록·자료 요약은 같은 문서의 절이어도 됩니다. 고정된 링크 사슬이나 세 개의 문서를 요구하지 않으며 본문·출처 식별 정보로 충분하면 추가 위키 링크는 필요하지 않습니다.

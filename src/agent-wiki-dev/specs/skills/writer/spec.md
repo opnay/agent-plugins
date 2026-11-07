@@ -16,8 +16,9 @@
 | 소유 문서 | 계약 |
 | --- | --- |
 | [memory.md](memory.md) | 기록·갱신·생략, 주제 소속과 문서 역할, 근거·재현 범위 |
+| [metadata.md](metadata.md) | 문서 유형·평면 태그·기존 속성 보존·검증 |
 | [records.md](records.md) | 제공 상태 보존, 프로젝트 소유, 월별 경로·순번·재개 |
-| [storage.md](storage.md) | root 선택·쓰기 절차·구조·링크·이동·검증·실패 보고 |
+| [storage.md](storage.md) | root 선택·CLI 확인·쓰기 절차·본문 표기·구조·링크·이동·검증·실패 보고 |
 
 공통 root·탐색·구조 기준은 [공통 위키 계약](../../wiki.md)을 따릅니다. 설치 runtime은 이 계약들을 자체 포함하며 작성용 spec에 의존하지 않습니다.
 
