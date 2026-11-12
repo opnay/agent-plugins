@@ -8,25 +8,23 @@
 
 ## 플러그인 목적
 
-`advance-codex`는 Codex 활용 방식을 더 명시적이고 재사용 가능하게 설계하는 플러그인입니다.
-핵심 책임은 skill, plugin bundle, agent token optimization, 명확한 기술 지시 작성 같은 Codex 활용 산출물을 각각의 좁은 skill 표면으로 제공하는 것입니다.
+`advance-codex`는 에이전트 문체와 기술 지시의 명확성을 개선하는 플러그인입니다.
+핵심 책임은 token-efficient style과 명확한 기술 지시 작성 기준을 제공하는 것입니다.
 `.agents/sessions/{YYYYMMDD}` session folder convention은 호출 가능한 skill이 아니라 문서 수준의 참고 규칙으로만 유지합니다.
 
 ## 플러그인 경계와 비목표
 
 - 포함:
-  - skill 설계와 개편을 위한 creator-oriented guidance
-  - installable plugin boundary와 bundled skill coherence 설계
   - 응답, 진행·상태 문구, reasoning·decision wording, 저장 문서에 정확성, 의미, 검증, 승인, 안전을 보존하는 token-efficient style 적용
   - Codex 지침·skill·기술 문서·운영 절차에 ASD-STE100 기반 작성·검토 원칙 적용
 - 제외:
+  - plugin·skill 제작 계약: `codex-creator`가 소유합니다.
   - 일반 제품 구현 workflow
   - 특정 도메인 기능 구현 가이드
   - `advance-codex` 목적과 무관한 generic utility accumulation
 
 ## 처리하려는 작업 형태
 
-- 새 skill이나 plugin을 만들거나 기존 것을 재설계하는 작업
 - agent-authored language 전반에 token-efficient style을 적용하되 판단 논리, workflow, 검증 범위는 바꾸지 않는 작업
 - 기술 지시의 대상·행동·조건·순서를 명확히 하고 영어 어휘·용법을 별도 reference로 검토하는 작업
 
@@ -34,14 +32,10 @@
 
 - 대표 스펙: `src/advance-codex-dev/specs/plugin.md`
 - skill 상세 스펙 위치: `src/advance-codex-dev/specs/skills/*.md` 또는 `src/advance-codex-dev/specs/skills/<skill-name>/spec.md`
-- 핵심 선택 기준: 지금 개선하려는 주된 reusable artifact가 무엇인가
+- 핵심 선택 기준: 표현 길이·반복과 기술 지시 명확성 중 무엇을 개선하는가
 
 ## 내장 skill 체계
 
-- `skill-creator`: canonical `skill-creator` 위에 bounded skill 설계, plugin-owned skill 규칙, passive skill description trigger metadata 규칙과 실제 skill 로딩을 통한 유즈케이스 기반 사용/미사용 비교 검증을 덧붙인다.
-  - spec: `src/advance-codex-dev/specs/skills/skill-creator.md`
-- `plugin-creator`: top-down plugin boundary와 manifest-aligned packaging 규칙을 강화한다.
-  - spec: `src/advance-codex-dev/specs/skills/plugin-creator.md`
 - `optimize-token`: 응답, 진행·상태 문구, reasoning·decision wording, 저장 문서에 token-efficient style과 제한된 symbol grammar를 적용하되 판단 논리, workflow, 검증, 승인, exact literal, 안전 계약을 보존한다.
   - spec: `src/advance-codex-dev/specs/skills/optimize-token/spec.md`
 - `asd-ste100`: 기술 지시와 agent instruction의 명확성을 개선하고, 영어 어휘·용법은 references에서 다룹니다. 일반 원칙 적용과 공식 규격 준수 검토를 구분합니다.
@@ -58,7 +52,7 @@
 - plugin spec은 bundle 목적, 경계, usage surface, skill composition만 소유한다.
 - 각 skill의 목적, 처리 계약, 독립성 원칙은 반드시 별도 `specs/skills/<skill-name>.md` 또는 folder-based `specs/skills/<skill-name>/spec.md`에 둔다.
 - skill 책임이 바뀌면 해당 skill spec과 `plugin.md`를 같은 변경 단위로 갱신한다.
-- skill 선택 기준이 바뀌면 `plugin.md`, manifest prompt, 관련 creator skill spec을 함께 점검한다.
+- skill 선택 기준이 바뀌면 `plugin.md`, manifest prompt, 관련 skill spec을 함께 점검한다.
 
 ## 현재 구조 메모
 

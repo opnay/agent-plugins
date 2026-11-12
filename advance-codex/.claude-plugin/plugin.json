@@ -1,18 +1,17 @@
 {
   "name": "advance-codex",
   "version": "0.1.1",
-  "description": "Capability plugin for strengthening Codex skills, plugins, token-efficient writing, and technical instruction clarity.",
+  "description": "Apply token-efficient writing and improve technical instruction clarity for Codex.",
   "author": {
     "name": "opnay"
   },
   "license": "UNLICENSED",
   "keywords": [
     "codex",
-    "skills",
-    "plugins",
-    "tools",
-    "prompts",
-    "analysis"
+    "writing",
+    "instructions",
+    "token-efficiency",
+    "asd-ste100"
   ],
   "skills": "./skills/",
   "displayName": "Advance Codex"

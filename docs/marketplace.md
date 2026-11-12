@@ -24,7 +24,7 @@ Codex 전용 `interface`와 marketplace `policy`는 Claude JSON에 넣지 않습
 ## 등록과 설치
 
 마켓 등록은 설치 가능한 플러그인 목록을 Claude에 알려줍니다.
-각 플러그인은 별도 설치로 선택합니다. 마켓을 등록해도 8개 플러그인이 모두 설치되지는 않습니다.
+각 플러그인은 별도 설치로 선택합니다. 마켓을 등록해도 등록된 플러그인이 모두 설치되지는 않습니다.
 같은 이름의 다른 마켓이 등록되어 있다면 먼저 source를 확인합니다.
 
 저장소 루트에서 사용하는 CLI로 로컬 마켓을 등록합니다.
@@ -68,7 +68,7 @@ claude plugin marketplace add opnay/agent-plugins
 - Claude의 사용자 호출은 `/<plugin>:<skill>`입니다. 예: `/advance-codex:optimize-token`.
 - 공유 본문의 `$<plugin>:<skill>`은 스킬 식별자이며 Claude의 슬래시 명령 표기와 구분합니다. 에이전트는 사용 가능한 Skill 도구의 해당 이름으로 호출합니다.
 - `$<plugin>:<skill>/<resource>`는 실제 절대 파일 경로가 아닙니다. 소유 스킬을 로드해 확인한 설치 디렉터리를 기준으로 리소스를 읽습니다. Codex 캐시 경로를 Claude에서 사용하지 않습니다.
-- `advance-codex`의 `skill-creator`와 `plugin-creator`는 canonical 기본 스킬을 확장합니다. 이 마켓은 기본 스킬을 제공하거나 설치하지 않습니다. 기본 스킬이 없으면 해당 creator 계약의 선행 조건이 충족되지 않습니다. `optimize-token`과 `asd-ste100`은 이 의존성을 갖지 않습니다.
+- `codex-creator`의 `skill-creator`와 `plugin-creator`는 canonical 기본 스킬을 확장합니다. 이 마켓은 기본 스킬을 제공하거나 설치하지 않습니다. 기본 스킬이 없으면 해당 creator 계약의 선행 조건이 충족되지 않습니다. `optimize-token`과 `asd-ste100`은 이 의존성을 갖지 않습니다.
 - `advance-subagent`의 모델 선택은 적용 중인 지침이 소유합니다. Claude에서는 현재 Agent 도구와 모델 프로필을 따르고 Codex 전용 도구 인자를 그대로 전달하지 않습니다.
 - `app-extensions`는 Figma 연결을 제공하지 않습니다. 호스트에서 사용 가능한 Figma 기능이 필요합니다.
 - `toolkit`과 `agent-wiki`의 실행 파일은 각 스킬의 설치·권한 계약을 따릅니다. 플러그인 설치는 CLI 설치나 Git alias 변경을 자동 실행하지 않습니다.

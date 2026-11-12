@@ -26,10 +26,18 @@ GitHub 등록·갱신과 매니페스트 형식은 [마켓플레이스](docs/mar
 ### Advance Codex
 
 `advance-codex`는 Codex 활용 체계를 더 깊게 관리하기 위한 플러그인입니다.
-skill·plugin 작성과 토큰 효율적인 문체, 기술 지시의 명확성을 다룹니다.
+토큰 효율적인 문체와 기술 지시의 명확성을 다룹니다.
 
 - 경로: `advance-codex/`
-- 주요 실행 표면: `plugin-creator`, `skill-creator`, `optimize-token`, `asd-ste100`
+- 주요 실행 표면: `optimize-token`, `asd-ste100`
+
+### Codex Creator
+
+`codex-creator`는 canonical system creator를 확장하여 plugin·skill 제작을 다룹니다.
+
+- 경로: `codex-creator/`
+- 주요 실행 표면: `plugin-creator`, `skill-creator`
+- 호출: `$codex-creator:plugin-creator`, `$codex-creator:skill-creator`
 
 ### Judgment Kit
 
@@ -68,6 +76,7 @@ skill·plugin 작성과 토큰 효율적인 문체, 기술 지시의 명확성�
 ├── .agents/plugins/marketplace.json
 ├── .claude-plugin/marketplace.json
 ├── advance-codex/
+├── codex-creator/
 ├── advance-subagent/
 ├── agent-wiki/
 ├── app-extensions/

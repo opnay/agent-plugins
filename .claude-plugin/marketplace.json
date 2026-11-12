@@ -44,6 +44,11 @@
       "name": "design-kit",
       "source": "./design-kit",
       "category": "Design"
+    },
+    {
+      "name": "codex-creator",
+      "source": "./codex-creator",
+      "category": "Developer Tools"
     }
   ]
 }

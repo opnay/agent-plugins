@@ -79,8 +79,9 @@
 ## 플러그인 설계 기준
 
 - 플러그인은 하나의 일관된 번들로 독립적으로 이해 가능해야 합니다.
-- `advance-codex`는 사용자가 직접 만들고 유지할 수 있는 Codex 기능을 깊게 관리하기 위한 플러그인입니다.
-- `advance-codex`의 대표 표면은 skill, tool-use guidance, plugin, subagent입니다.
+- `advance-codex`는 에이전트 문체와 기술 지시의 명확성을 개선하는 플러그인입니다.
+- `advance-codex`의 대표 표면은 `optimize-token`, `asd-ste100`입니다.
+- `codex-creator`는 plugin·skill 제작 확장 가이드를 소유하며 대표 표면은 `plugin-creator`, `skill-creator`입니다.
 - 명시적 의도 없이 `advance-codex`를 무관한 워크플로나 cross-plugin 유틸리티 범위로 넓히지 않습니다.
 - 여러 사용자 지향 skill이 있으면 `plugin.json`, `defaultPrompt`, `README.md`, `specs/plugin.md`에서 각 skill의 역할과 시작점을 분명히 드러냅니다.
 - 플러그인 경계를 먼저 정의하고, 그 안의 skill을 정의합니다.
@@ -95,7 +96,7 @@
 - plugin-scoped skill 변경은 개별 skill 수정이면서 plugin surface 수정일 수 있습니다.
 - 플러그인 소속 skill을 수정할 때는 plugin 안의 역할, sibling 관계, 관련 spec을 함께 확인합니다.
 - 플러그인 관점의 영향이 있으면 skill 단독 수정으로 축소하지 않습니다.
-- Plugin을 통해 설치된 skill은 `$<plugin>:<skill>` 식별자를 사용합니다. 예: `$advance-codex:skill-creator`
+- Plugin을 통해 설치된 skill은 `$<plugin>:<skill>` 식별자를 사용합니다. 예: `$codex-creator:skill-creator`
 - 다른 skill의 리소스는 설치 절대 경로나 형제 디렉터리 상대 경로 대신 `$<plugin>:<skill>/<resource-path>` 형식으로 참조합니다. 예: `$design-kit:design-base/references/color.md`
 - skill이 에이전트 행동을 보정할 때는 금지 조건을 계속 늘리기보다 허용되는 행동, 판단 기준, 실패 조건을 먼저 정의합니다.
 - blocklist 방식의 차단 조건은 허용 계약을 보완하는 좁은 방어선으로만 둡니다.
