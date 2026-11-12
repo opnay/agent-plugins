@@ -8,7 +8,7 @@
       "name": "codex-optimize",
       "source": {
         "source": "local",
-        "path": "./codex-optimize"
+        "path": "./codex/codex-optimize"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -20,7 +20,7 @@
       "name": "judgment-kit",
       "source": {
         "source": "local",
-        "path": "./judgment-kit"
+        "path": "./agent/judgment-kit"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -32,7 +32,7 @@
       "name": "advance-subagent",
       "source": {
         "source": "local",
-        "path": "./advance-subagent"
+        "path": "./agent/advance-subagent"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -44,7 +44,7 @@
       "name": "sw-kit",
       "source": {
         "source": "local",
-        "path": "./sw-kit"
+        "path": "./engineer/sw-kit"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -56,7 +56,7 @@
       "name": "toolkit",
       "source": {
         "source": "local",
-        "path": "./toolkit"
+        "path": "./toolkit/toolkit"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -68,7 +68,7 @@
       "name": "app-extensions",
       "source": {
         "source": "local",
-        "path": "./app-extensions"
+        "path": "./toolkit/app-extensions"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -80,7 +80,7 @@
       "name": "agent-wiki",
       "source": {
         "source": "local",
-        "path": "./agent-wiki"
+        "path": "./agent/agent-wiki"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -92,7 +92,7 @@
       "name": "design-kit",
       "source": {
         "source": "local",
-        "path": "./design-kit"
+        "path": "./designer/design-kit"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -104,7 +104,7 @@
       "name": "codex-creator",
       "source": {
         "source": "local",
-        "path": "./codex-creator"
+        "path": "./codex/codex-creator"
       },
       "category": "Developer Tools",
       "policy": {

@@ -24,7 +24,8 @@ Read AGENTS.md for repository paths and operating rules, docs/SDD.md for spec an
    - For repository-local standalone skills without a spec folder, put the durable contract directly in SKILL.md.
 3. Write runtime from the current contract.
    - The main agent owns runtime writing and rewriting.
-   - When a skill spec changes, rewrite the runtime body from that spec rather than preserving or patching old wording.
+   - When a skill execution contract changes, rewrite the runtime body from that spec rather than preserving or patching old wording.
+   - For relocation, link corrections, or intent extraction without an execution-contract change, preserve runtime and verify content, permissions, references, and alignment.
    - Old runtime may be reference material, not the source of truth.
    - Do not use prior worker output, suspected findings, deleted specs, conversation memory, or git diff as the writing contract.
    - Treat historical comparisons and recovery checks as separate read-only verification.

@@ -2,7 +2,7 @@
 
 ## Target Instruction
 
-- 대상 skill: `sw-kit/skills/code/SKILL.md`
+- 대상 skill: `engineer/sw-kit/skills/code/SKILL.md`
 - 목적: `code`가 production code 구현, 수정, 리팩터링, 테스트, 의존성 판단, 코드 리뷰에서 의도대로 작동하는지 검증한다.
 
 ## Checklist Design

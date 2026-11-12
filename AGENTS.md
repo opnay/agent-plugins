@@ -14,49 +14,43 @@
 
 ## 저장소 레이아웃
 
-- 실제 플러그인·기본 편집 대상: 저장소 루트 `./<plugin-name>`
-- 스펙·변경 기록·개발 문서: 기존 `./src/<plugin-name>-dev`의 `specs/`, `changes/`, `README.md`
-- 개발·릴리즈는 브랜치로 구분하며 별도 플러그인 복사본이나 복사 빌드를 두지 않습니다.
-- `./plugins/<plugin-name>` 경로는 만들거나 사용하지 않습니다.
+- 분류: `agent`, `codex`, `toolkit`, `engineer`, `designer`.
+- 실제 플러그인·기본 편집 대상: `./<group>/<plugin-name>`.
+- 작성·검증 계약: `./<group>/_specs/<plugin-name>/plugin.md`, `skills/<skill-name>/spec.md`.
+- skill 사용자 의도는 같은 skill 폴더의 `intent.md`가 소유합니다. 하위 계약·시나리오는 해당 폴더에 둡니다.
+- 개발 README·변경 기록·plugin 공통 계약은 `./<group>/_specs/<plugin-name>/`에 둡니다.
+- 개발·릴리즈는 브랜치로 구분하며 플러그인 원본은 하나만 유지합니다. `src/`, 별도 `plugins/`, 복사 빌드를 사용하지 않습니다.
+- `_specs`는 개발 문서이며 marketplace에 등록하거나 runtime에 포함하지 않습니다.
 
 ## 브랜치 운영
 
-- `next`: 개발 브랜치
-- 일반 플러그인 수정은 `next`의 `./<plugin-name>`에 적용합니다.
+- `next`: 개발 브랜치.
+- 일반 플러그인 수정은 `next`의 `./<group>/<plugin-name>`에 적용합니다.
 
 ## 필수 플러그인 구조
 
-플러그인은 다음을 포함해야 합니다.
-
-- `./<plugin-name>/.codex-plugin/plugin.json`
-- `./<plugin-name>/.claude-plugin/plugin.json`
-- `./<plugin-name>/README.md`
-- 선택: `skills/`, `assets/`, `scripts/`, `.mcp.json`, `.app.json`
-
-개발 문서는 기존 위치를 유지합니다.
-
-- `./src/<plugin-name>-dev/README.md`
-- `./src/<plugin-name>-dev/specs/plugin.md`
-- 선택: `specs/skills/`, `changes/`
-
-플러그인 폴더 이름과 `plugin.json`의 `"name"` 값은 일치해야 합니다.
+- `./<group>/<plugin-name>/.codex-plugin/plugin.json`
+- `./<group>/<plugin-name>/.claude-plugin/plugin.json`
+- `./<group>/<plugin-name>/README.md`
+- 선택: `skills/`, `assets/`, `scripts/`, `.mcp.json`, `.app.json`.
+- 플러그인 폴더 이름과 `plugin.json`의 `name`은 일치해야 합니다. 분류명은 plugin 식별자에 포함하지 않습니다.
 
 ## SDD 규칙
 
 - SDD 상세 규칙은 `docs/SDD.md`가 소유합니다.
 - 플러그인 작업은 spec을 먼저 확인하거나 갱신한 뒤 구현 표면을 맞춥니다.
-- 플러그인 표면이 바뀌면 `README.md`, `specs/plugin.md`, 관련 skill spec, `plugin.json`을 함께 점검합니다.
+- 플러그인 표면이 바뀌면 `README.md`, `plugin.md`, 관련 skill spec, `plugin.json`을 함께 점검합니다.
 - change spec을 정식 규칙으로 승격하라는 요청은 repo-level 규칙, `docs/SDD.md`, 또는 소유 spec에 반영합니다.
-- folder-based skill spec의 사용자 스펙 의도는 `intent.md`가 소유합니다. `spec.md`와 child spec에는 반복하지 않습니다.
+- skill spec의 사용자 스펙 의도는 `intent.md`가 소유합니다. `spec.md`와 child spec에는 반복하지 않습니다.
 - 스펙 문서는 `$codex-optimize:optimize-token` 규격으로 작성합니다.
-- skill spec이 바뀌면 기존 runtime skill 본문을 부분 패치하지 않고, 현재 spec 기준으로 `SKILL.md`를 처음부터 재작성합니다.
+- skill 실행 계약이 바뀌면 현재 spec 기준으로 runtime `SKILL.md`를 처음부터 재작성합니다. 경로 이동·링크 정정·의도 분리만으로 계약이 달라지지 않으면 기존 runtime을 보존하고 이동·정합성을 검증합니다.
 - clean-context subagent는 runtime skill 작성 대행자가 아닙니다. spec/runtime 정합성의 독립 read-only 검증에 사용합니다.
 
 ## 마켓플레이스
 
 - 공통 플러그인 목록과 순서의 단일 진실 공급원: `./.agents/plugins/marketplace.json`
 - `./.claude-plugin/marketplace.json`은 같은 이름·순서·대상 폴더를 사용합니다.
-- Codex의 `source.path`와 Claude Code의 문자열 `source`는 저장소 루트의 같은 실제 플러그인 폴더를 가리켜야 합니다.
+- Codex의 `source.path`와 Claude Code의 문자열 `source`는 같은 `./<group>/<plugin-name>` 실제 플러그인 폴더를 가리켜야 합니다.
 - 등록 순서는 `plugins` 배열을 기준으로 유지합니다.
 - 이 저장소 로컬 플러그인을 `./plugins/<plugin-name>`로 등록하지 않습니다.
 - Codex marketplace 항목은 `policy.installation`, `policy.authentication`, `category`를 포함해야 합니다. Claude 형식에 Codex 전용 필드를 복사하지 않습니다.
@@ -67,7 +61,7 @@
 
 1. 저장소 레이아웃에 따라 플러그인과 개발 문서를 준비합니다.
 2. 소유 spec을 먼저 확인하거나 갱신한 뒤 README, skills, manifest를 맞춥니다.
-3. skill spec을 수정했다면 runtime skill을 현재 spec 기준으로 처음부터 재작성합니다.
+3. skill 실행 계약을 수정했다면 runtime skill을 현재 spec 기준으로 처음부터 재작성합니다. 경로·형식 전환만 있으면 계약 보존을 검증합니다.
 4. 변경 기록은 `docs/SDD.md`의 Change Spec 기준을 따릅니다.
 5. 관련 skill spec, plugin spec, upstream/downstream plugin surface를 함께 점검합니다.
 6. 실제 플러그인의 파일·참조·동작과 marketplace 경로를 검증합니다. JSON 변경은 파싱 검증합니다.
@@ -83,7 +77,7 @@
 - `codex-optimize`의 대표 표면은 `optimize-token`, `asd-ste100`입니다.
 - `codex-creator`는 plugin·skill 제작 확장 가이드를 소유하며 대표 표면은 `plugin-creator`, `skill-creator`입니다.
 - 명시적 의도 없이 `codex-optimize`를 무관한 워크플로나 cross-plugin 유틸리티 범위로 넓히지 않습니다.
-- 여러 사용자 지향 skill이 있으면 `plugin.json`, `defaultPrompt`, `README.md`, `specs/plugin.md`에서 각 skill의 역할과 시작점을 분명히 드러냅니다.
+- 여러 사용자 지향 skill이 있으면 `plugin.json`, `defaultPrompt`, `README.md`, `plugin.md`에서 각 skill의 역할과 시작점을 분명히 드러냅니다.
 - 플러그인 경계를 먼저 정의하고, 그 안의 skill을 정의합니다.
 - 느슨한 skill 묶음에서 출발해 나중에 플러그인 모양을 억지로 맞추지 않습니다.
 - 플러그인은 자기 목적을 설명하기 위해 무관한 외부 플러그인 구조에 기대지 않습니다.
@@ -104,12 +98,12 @@
 ## Runtime Skill과 Spec 분리
 
 - Runtime `SKILL.md`는 영문으로 작성합니다. 의미·실행 조건·검증·권한·정확한 식별자를 유지하면서 짧고 명확한 문장을 사용합니다.
-- `src/<plugin-name>-dev/specs/`는 작성·검증 계약이며 설치되는 runtime 표면이 아닙니다.
+- `<group>/_specs/<plugin-name>/`는 작성·검증 계약이며 설치되는 runtime 표면이 아닙니다.
 - runtime skill의 실행 계약은 작성용 spec을 별도로 읽지 않아도 이해·실행 가능해야 합니다.
 - skill을 작성하거나 재작성할 때 spec은 작성 기준으로만 사용합니다.
 - 결과물인 `SKILL.md`에는 runtime에서 접근 가능한 본문, `references/`, `templates/`만 남깁니다.
 - 상세 계약이 runtime에도 필요하면 본문에 간결히 포함하거나 `skills/<skill-name>/references/`로 승격합니다.
-- spec 변경 후 runtime skill은 clean-context subagent에게 재생성을 맡기지 않고, 현재 spec 기준으로 처음부터 재작성합니다.
+- 실행 계약 변경 후 runtime skill은 clean-context subagent에게 재생성을 맡기지 않고, 현재 spec 기준으로 처음부터 재작성합니다.
 
 ## 웹 조사와 위키 기록
 
@@ -120,10 +114,10 @@
 
 다음 표면이 plugin usage guidance를 소유합니다.
 
-- `src/<plugin-name>-dev/specs/plugin.md`: 플러그인 경계, 내장 skill 체계, 각 skill 시작 기준
-- `<plugin-name>/README.md`, `src/<plugin-name>-dev/README.md`: 사용 방법과 개발 안내
-- `<plugin-name>/.codex-plugin/plugin.json`: 설치 후 노출되는 설명과 `defaultPrompt`
-- `<plugin-name>/.claude-plugin/plugin.json`: Claude Code에서 노출되는 메타데이터와 component 경로
+- `<group>/_specs/<plugin-name>/plugin.md`: 플러그인 경계, 내장 skill 체계, 각 skill 시작 기준
+- `<group>/<plugin-name>/README.md`, `<group>/_specs/<plugin-name>/README.md`: 사용 방법과 개발 안내
+- `<group>/<plugin-name>/.codex-plugin/plugin.json`: 설치 후 노출되는 설명과 `defaultPrompt`
+- `<group>/<plugin-name>/.claude-plugin/plugin.json`: Claude Code에서 노출되는 메타데이터와 component 경로
 
 사용 표면을 바꾸면 남은 skill spec, README, plugin spec, manifest 설명, 호출 예시, 실제 플러그인 파일을 함께 점검합니다.
 
@@ -133,7 +127,7 @@
 - 명시적 재정렬 요청이 없으면 marketplace 순서를 유지합니다.
 - 메타데이터나 경로만 손보면 스캐폴드 재생성보다 작고 직접적인 수정을 선호합니다.
 - 플러그인을 이동하면 같은 변경 안에서 marketplace 경로도 갱신합니다.
-- 스캐폴드 도구가 `./plugins/<plugin-name>`를 만들었다면 마무리 전에 `./<plugin-name>`로 옮깁니다.
+- 스캐폴드 결과는 마무리 전에 `./<group>/<plugin-name>`로 옮기고 소유 spec과 marketplace 경로를 맞춥니다.
 
 ## Clean Context
 
@@ -159,5 +153,6 @@
     └── templates/
         ├── plugin-spec.md
         ├── skill-spec.md
+        ├── skill-intent.md
         └── change-spec.md
 ```

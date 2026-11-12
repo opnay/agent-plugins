@@ -7,47 +7,47 @@
   "plugins": [
     {
       "name": "codex-optimize",
-      "source": "./codex-optimize",
+      "source": "./codex/codex-optimize",
       "category": "Developer Tools"
     },
     {
       "name": "judgment-kit",
-      "source": "./judgment-kit",
+      "source": "./agent/judgment-kit",
       "category": "Developer Tools"
     },
     {
       "name": "advance-subagent",
-      "source": "./advance-subagent",
+      "source": "./agent/advance-subagent",
       "category": "Developer Tools"
     },
     {
       "name": "sw-kit",
-      "source": "./sw-kit",
+      "source": "./engineer/sw-kit",
       "category": "Developer Tools"
     },
     {
       "name": "toolkit",
-      "source": "./toolkit",
+      "source": "./toolkit/toolkit",
       "category": "Developer Tools"
     },
     {
       "name": "app-extensions",
-      "source": "./app-extensions",
+      "source": "./toolkit/app-extensions",
       "category": "Developer Tools"
     },
     {
       "name": "agent-wiki",
-      "source": "./agent-wiki",
+      "source": "./agent/agent-wiki",
       "category": "Productivity"
     },
     {
       "name": "design-kit",
-      "source": "./design-kit",
+      "source": "./designer/design-kit",
       "category": "Design"
     },
     {
       "name": "codex-creator",
-      "source": "./codex-creator",
+      "source": "./codex/codex-creator",
       "category": "Developer Tools"
     }
   ]

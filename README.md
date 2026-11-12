@@ -27,14 +27,14 @@ GitHub 등록·갱신과 매니페스트 형식은 [마켓플레이스](docs/mar
 
 `codex-optimize`는 토큰 효율적인 문체와 기술 지시의 명확성을 개선하는 플러그인입니다.
 
-- 경로: `codex-optimize/`
+- 경로: `codex/codex-optimize/`
 - 주요 실행 표면: `optimize-token`, `asd-ste100`
 
 ### Codex Creator
 
 `codex-creator`는 canonical system creator를 확장하여 plugin·skill 제작을 다룹니다.
 
-- 경로: `codex-creator/`
+- 경로: `codex/codex-creator/`
 - 주요 실행 표면: `plugin-creator`, `skill-creator`
 - 호출: `$codex-creator:plugin-creator`, `$codex-creator:skill-creator`
 
@@ -42,30 +42,30 @@ GitHub 등록·갱신과 매니페스트 형식은 [마켓플레이스](docs/mar
 
 `judgment-kit`은 리서치, 제품 기획, 품질 관리 판단 기준을 제공하는 플러그인입니다.
 
-- 경로: `judgment-kit/`
+- 경로: `agent/judgment-kit/`
 - 주요 실행 표면: `pro-researcher`, `pro-planner`, `pro-quality-manager`
 
 ### Design Kit
 
 `design-kit`은 디자인 기반, 웹·프로덕트·시각 콘텐츠 설계, 아트·크리에이티브 디렉션, 프로젝트별 디자인 규칙을 제공합니다.
 
-- 플러그인: `design-kit/`
-- 개발 문서: `src/design-kit-dev/`
+- 플러그인: `designer/design-kit/`
+- 개발 문서: `designer/_specs/design-kit/`
 - 주요 실행 표면: `design-base`, `web-designer`, `product-designer`, `visual-content-designer`, `art-director`, `creative-director`, `project-design-rules`
-- marketplace: `.agents/plugins/marketplace.json`의 `design-kit` 항목이 `./design-kit`을 가리킵니다.
+- marketplace: `.agents/plugins/marketplace.json`의 `design-kit` 항목이 `./designer/design-kit`을 가리킵니다.
 
 ### Advance Subagent
 
 `advance-subagent`는 분기 설계부터 검증·완료·새 맥락 인계까지의 공통 fork-and-flush 루프와 근거 중심 조사 계약을 제공합니다.
 
-- 경로: `advance-subagent/`
+- 경로: `agent/advance-subagent/`
 - 주요 실행 표면: `deep-research`, `orchestrate-workstreams`
 
 ### SW Kit
 
 `sw-kit`는 요구 행동 계약, 기술 방향, production code 품질, 코드베이스 유지보수를 제공합니다.
 
-- 경로: `sw-kit/`
+- 경로: `engineer/sw-kit/`
 - 주요 실행 표면: `spec`, `engineering`, `code`, `maintenance`
 
 ## 저장소 구조
@@ -74,39 +74,38 @@ GitHub 등록·갱신과 매니페스트 형식은 [마켓플레이스](docs/mar
 .
 ├── .agents/plugins/marketplace.json
 ├── .claude-plugin/marketplace.json
-├── codex-optimize/
-├── codex-creator/
-├── advance-subagent/
-├── agent-wiki/
-├── app-extensions/
-├── sw-kit/
-├── design-kit/
-├── judgment-kit/
-├── toolkit/
-├── src/<plugin-name>-dev/  # 스펙·변경 기록·개발 README
+├── agent/       # advance-subagent, agent-wiki, judgment-kit
+├── codex/       # codex-creator, codex-optimize
+├── toolkit/     # toolkit, app-extensions
+├── engineer/    # sw-kit
+├── designer/    # design-kit
 └── docs/
 ```
 
-실행 플러그인과 개발 문서는 다음 위치에서 관리합니다.
+각 분류는 실제 플러그인과 개발 문서를 다음처럼 관리합니다. 분류는 저장 위치이며 설치 이름·skill 호출 식별자는 바뀌지 않습니다.
 
 ```text
-<plugin-name>/
-  .codex-plugin/plugin.json
-  .claude-plugin/plugin.json
-  README.md
-  skills/
-
-src/<plugin-name>-dev/
-  README.md
-  specs/plugin.md
-  specs/skills/
-  changes/
+<group>/
+  <plugin-name>/
+    .codex-plugin/plugin.json
+    .claude-plugin/plugin.json
+    README.md
+    skills/
+  _specs/<plugin-name>/
+    README.md
+    plugin.md
+    skills/<skill-name>/
+      intent.md
+      spec.md
+    changes/
 ```
+
+`_specs`는 작성·검증 문서이며 설치 대상이 아닙니다. 플러그인 복사본이나 별도 복사 빌드를 두지 않습니다.
 
 ## 개발 원칙
 
 - 플러그인 변경은 spec-driven으로 다룹니다.
-- plugin surface가 바뀌면 `src/<plugin-name>-dev/README.md`, `src/<plugin-name>-dev/specs/plugin.md`, 관련 skill spec, `plugin.json`, marketplace entry를 함께 점검합니다.
+- plugin surface가 바뀌면 `<group>/_specs/<plugin-name>/README.md`, `<group>/_specs/<plugin-name>/plugin.md`, 관련 skill spec, `plugin.json`, marketplace entry를 함께 점검합니다.
 - 플러그인별 release version은 각 `.codex-plugin/plugin.json`의 `version`이 소유합니다.
 - 매니페스트 간 `version`을 일치시키고 목록 이름·순서·경로도 공통 목록과 맞춥니다.
 - 새 skill을 추가할 때는 먼저 plugin boundary와 sibling skill 관계를 확인합니다.

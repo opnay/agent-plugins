@@ -1,0 +1,24 @@
+## 사용자 스펙 의도
+
+- Git commit 규칙에 branch와 remote 규칙을 더할 수 있는 `$toolkit:git` skill을 사용하고 싶다.
+- commit, branch, push는 완전히 분리된 skill이나 배타적 mode가 아니라 각각 선택할 수 있고 하나의 workflow로 이어지는 기능이어야 한다.
+- `SKILL.md`에는 commit, branch 생성, push와 `git push origin wip:main` 같은 refspec push 치트시트를 둔다.
+- 작업 도중 발생한 예외 처리와 `codex/`, `jira/prja-000` 같은 조건부 branch prefix 규칙은 runtime reference로 라우팅한다.
+- 기존 `git-committer`를 이전하거나 변경하지 않고, 먼저 독립적인 신규 skill로 만들어 동작 구조를 확인한다.
+- branch를 생성하거나 기존 branch ref를 재설정한 뒤 전환하는 `git switch -C <branch> <start-point>`도 치트시트에 포함한다.
+- commit subject는 120자 미만으로 제한하고, 변경 성격에 맞는 commit type을 선택한다.
+- staged diff만으로 부족하면 변경 리스크에 맞는 가장 좁은 supporting check를 실행하고, failure·unavailable·skip을 구분한다.
+- commit message는 skipped verification과 residual risk를 숨기지 않고 literal escape·delimiter·불필요한 blank line을 포함하지 않는다.
+- commit 하나에는 하나의 related change unit만 포함하고 독립적으로 검토할 변경은 분리한다.
+- Toolkit에 `git codex` external command를 두고 message file 생성·기계 검증·commit 성공 뒤 cleanup을 묶고 싶다.
+- `git codex`는 관리되는 global `alias.codex`를 통해 실행하고, alias install·uninstall·doctor는 별도 reference로 둔다.
+- 일반 commit workflow는 `git codex message create`로 lifecycle availability를 판단한다.
+- 사용자가 설치를 요청하면 installer를 실행하고, `git codex message create`가 unavailable로 실패하면 설치 필요와 다음 권한 또는 수동 workflow 선택을 알린다.
+- 메시지는 파일 수정 도구보다 생성 시 quoted heredoc으로 입력하고 자동 검증하는 경로를 우선한다.
+- 메시지 파일은 Git 메타데이터 디렉터리의 `MSG-…`에 저장하고 하위 디렉터리·linked worktree에서도 Git 경로 해석을 따른다.
+- 사용자가 지정한 push 형식과 위치는 preflight로 다시 찾지 않고 바로 실행하며, 잘못된 호출이나 불확실한 결과에 필요한 상태만 확인한다.
+- 기존 OS-temp 메시지의 하위 호환 처리를 두지 않는다.
+- `alias.codex`의 설치·제거·진단은 명시적으로 요청된 maintenance workflow에서만 수행한다.
+- CLI가 명확한 성공 결과를 반환하면 같은 결과를 다시 조회해 검증하지 않는다.
+- runtime `SKILL.md`는 정상 실행에 필요한 짧은 지침만 두고, 조건부 lifecycle·recovery 세부는 reference로 라우팅한다.
+- branch convention과 recovery reference도 현재 조건에 필요한 상태·다음 행동만 안내하고, 정상 push의 연결정보 재탐색을 요구하지 않는다.

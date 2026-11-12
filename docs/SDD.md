@@ -13,15 +13,16 @@
 
 파일 위치와 편집 대상은 [AGENTS.md의 저장소 레이아웃](../AGENTS.md#저장소-레이아웃)을 따릅니다. 각 spec의 역할은 다음과 같습니다.
 
-- `src/<plugin-name>-dev/specs/plugin.md`: 플러그인 목적, 경계, 사용 표면, 내장 skill 체계를 소유합니다.
-- `src/<plugin-name>-dev/specs/skills/<skill-name>.md`: flat skill spec입니다. 하나의 파일이 해당 skill의 처리 계약을 소유합니다.
-- `src/<plugin-name>-dev/specs/skills/<skill-name>/spec.md`: folder-based skill spec의 index입니다.
-- `src/<plugin-name>-dev/specs/skills/<skill-name>/intent.md`: folder-based skill spec의 사용자 스펙 의도 기록입니다.
-- `src/<plugin-name>-dev/changes/<version>.md`: version-scoped release/change 기록입니다.
+- `<group>/_specs/<plugin>/plugin.md`: plugin 목적·경계·사용 표면·내장 skill 체계.
+- `<group>/_specs/<plugin>/skills/<skill>/spec.md`: skill 처리 계약 또는 하위 계약의 index.
+- `<group>/_specs/<plugin>/skills/<skill>/intent.md`: 사용자 스펙 의도 원문.
+- `<group>/_specs/<plugin>/skills/<skill>/<responsibility>.md`: 필요한 하위 계약.
+- `<group>/_specs/<plugin>/changes/<version-or-change>.md`: release·migration 변경 기록.
+- `<group>/_specs/<plugin>/README.md`와 공통 계약 문서: 개발 안내와 plugin 공통 작성 기준.
 
 ## Plugin Spec
 
-`specs/plugin.md`는 최소한 다음을 현재 기준으로 고정합니다.
+`plugin.md`는 최소한 다음을 현재 기준으로 고정합니다.
 
 - 플러그인 목적
 - 플러그인 경계와 비목표
@@ -35,11 +36,10 @@ plugin spec은 bundle 목적, 경계, 사용 표면, skill composition을 소유
 
 ## Skill Spec
 
-개별 skill의 처리 계약이 중요해지면 `specs/skills/<skill-name>.md`로 분리하는 방식을 우선 검토합니다.
+모든 skill은 `skills/<skill-name>/spec.md`를 진입점으로 사용합니다. 사용자 의도는 같은 폴더의 `intent.md`가 소유합니다. 단순한 skill은 spec.md에 처리 계약을 두며, 하위 계약이 필요하면 index와 child spec으로 나눕니다.
 
-flat skill spec은 다음을 소유합니다.
+처리 계약은 다음을 소유합니다.
 
-- `사용자 스펙 의도`
 - 목적
 - 경계
 - 처리하려는 작업 형태
@@ -55,8 +55,9 @@ skill spec에는 해당 skill이 실제로 무엇을 판단하고 어떤 계약�
 
 ## Runtime Skill 재작성
 
-skill spec이 바뀌면 해당 runtime `SKILL.md`는 현재 spec을 기준으로 처음부터 재작성합니다.
-기존 runtime 본문은 참고 자료가 될 수 있지만, 보존해야 할 원본이나 부분 패치 대상으로 취급하지 않습니다.
+skill 실행 계약이 바뀌면 해당 runtime `SKILL.md`는 현재 spec을 기준으로 처음부터 재작성합니다.
+경로 이동·링크 정정·사용자 의도 분리처럼 실행 계약이 바뀌지 않는 구조 전환은 기존 runtime을 보존하고 파일·권한·참조·spec/runtime 정합성을 검증합니다.
+실행 계약 재작성 시 기존 runtime 본문은 참고 자료이며, 보존해야 할 원본이나 부분 패치 대상으로 취급하지 않습니다.
 
 재작성 시 지킬 기준:
 
@@ -71,18 +72,18 @@ clean-context는 독립적인 read-only 검증에 사용하고, 재작성 책임
 
 ## Folder-Based Skill Spec
 
-skill spec이 커져 하나의 파일 안에서 index와 세부 계약이 반복되면 folder-based spec으로 전환할 수 있습니다.
+모든 skill spec은 폴더 형식을 사용합니다. 계약이 커져 index와 세부 계약이 반복되면 책임별 child spec으로 나눕니다.
 
 기본 구조:
 
-- `specs/skills/<skill-name>/intent.md`
-- `specs/skills/<skill-name>/spec.md`
-- `specs/skills/<skill-name>/<responsibility>.md`
+- `skills/<skill-name>/intent.md`
+- `skills/<skill-name>/spec.md`
+- `skills/<skill-name>/<responsibility>.md`
 
 `intent.md`는 해당 folder-based skill spec의 사용자 스펙 의도 기록을 소유합니다.
 `사용자 스펙 의도`를 `spec.md`와 child spec에 반복하지 않습니다.
 
-`spec.md`는 index로서 다음만 소유합니다.
+하위 계약이 있는 `spec.md`는 index로서 다음을 소유합니다. 하위 계약이 없으면 처리 계약을 직접 소유합니다.
 
 - skill 목적
 - 경계
@@ -98,8 +99,8 @@ child spec은 상위 의도 기록을 반복하지 않습니다.
 
 ## 사용자 스펙 의도
 
-plugin spec과 flat skill spec의 `사용자 스펙 의도`는 파일 맨 위에 둡니다.
-folder-based skill spec은 같은 폴더의 `intent.md`에 `사용자 스펙 의도`를 둡니다.
+plugin spec의 `사용자 스펙 의도`는 파일 맨 위에 둡니다.
+skill spec은 같은 폴더의 `intent.md`에 `사용자 스펙 의도`를 두며 spec.md와 child spec에 반복하지 않습니다.
 
 `사용자 스펙 의도`는 정규 스펙 본문으로 옮기기 전의 입력 기록입니다.
 이 입력 기록은 사용자가 plugin, skill, runtime behavior, 또는 지속 설계가 어떻게 되길 원하는지를 남기는 표면입니다.
@@ -130,7 +131,7 @@ authoring operation이나 migration 이력은 change spec 또는 session record�
 
 ## Change Spec
 
-version-scoped release나 migration 범위는 `src/<plugin-name>-dev/changes/<version>.md` change spec으로 고정할 수 있습니다.
+version-scoped release나 migration 범위는 `<group>/_specs/<plugin-name>/changes/<version-or-change>.md` change spec으로 고정할 수 있습니다.
 
 change spec은 해당 플러그인의 기능·계약·호환성 변경을 담는 릴리즈노트입니다.
 저장소 공통 운영 규칙은 소유 문서에서 관리하며 플러그인별 change spec에 일괄 복제하지 않습니다.
@@ -149,7 +150,7 @@ change spec은 다음을 기록합니다.
 change spec은 먼저 짧은 `변경사항 요약` 리스트를 보여주고, 각 변경의 목적, 범위, 관련 표면, 검증 같은 상세 내용은 별도 `변경 상세` 섹션에 둡니다.
 
 change spec은 영구 normative plugin/skill contract를 대체하지 않습니다.
-change spec에서 확정된 지속 규칙은 `specs/plugin.md`, 관련 `specs/skills/*.md`, `specs/skills/<skill-name>/spec.md`, README 같은 소유 표면으로 승격합니다.
+change spec에서 확정된 지속 규칙은 `plugin.md`, 관련 `skills/<skill-name>/spec.md`, README 같은 소유 표면으로 승격합니다.
 일회성 release history, migration 배경, 제거 범위, 검증 결과는 change spec에 남기고 일반 skill spec으로 옮기지 않습니다.
 
 ## 템플릿
@@ -158,16 +159,17 @@ change spec에서 확정된 지속 규칙은 `specs/plugin.md`, 관련 `specs/sk
 
 - plugin spec starter: `docs/templates/plugin-spec.md`
 - skill spec starter: `docs/templates/skill-spec.md`
+- skill intent starter: `docs/templates/skill-intent.md`
 - change spec starter: `docs/templates/change-spec.md`
 
 템플릿은 현재 저장소에 남아 있는 유지 기준 spec과 동일한 방향으로 갱신합니다.
-folder-based skill spec을 만들 때는 `skill-spec.md`를 그대로 모든 child spec에 복제하지 말고, `intent.md`, `spec.md`, child spec의 책임을 나눕니다.
+skill spec을 만들 때는 `skill-spec.md`를 그대로 모든 child spec에 복제하지 말고, `intent.md`, `spec.md`, child spec의 책임을 나눕니다.
 
 ## 변경 Workflow
 
 - 플러그인 수정 요청은 먼저 소유 spec을 확인하고 필요한 spec 변경을 반영합니다.
 - 실제 skill 본문 변경은 spec 변경 또는 spec 확인 이후에 진행합니다.
-- skill spec을 수정했다면 해당 runtime skill을 현재 spec 기준으로 처음부터 재작성합니다.
+- skill 실행 계약을 수정했다면 해당 runtime skill을 현재 spec 기준으로 처음부터 재작성합니다. 구조 전환만 있으면 runtime과 계약 보존을 검증합니다.
 - skill 책임, 사용 기준, plugin boundary가 바뀌면 관련 skill spec, plugin spec, upstream/downstream plugin surface를 같은 변경 단위에서 함께 점검합니다.
 - spec 없는 skill 추가를 기본 경로로 두지 않습니다.
 - 반복되는 검토 질문, 예시, decision rule이 생기면 skill spec 안에서 소유할지 별도 reference 문서로 뺄지 의도적으로 결정합니다.

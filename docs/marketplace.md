@@ -2,16 +2,16 @@
 
 ## 배포 계약
 
-마켓플레이스는 저장소 루트의 플러그인 폴더를 참조합니다.
+마켓플레이스는 저장소 루트 기준 `./<group>/<plugin>`의 실제 플러그인 폴더를 참조합니다. `_specs`는 등록하지 않습니다.
 플러그인 복사본이나 별도 빌드를 만들지 않습니다.
 
 | 소유 표면 | 책임 |
 | --- | --- |
 | `.agents/plugins/marketplace.json` | 공통 플러그인 목록·순서와 Codex 설치 정책 |
 | `.claude-plugin/marketplace.json` | Claude용 목록·소유자와 저장소 기준 상대 경로 |
-| `<plugin>/.codex-plugin/plugin.json` | 공통 이름·버전·메타데이터와 Codex interface |
-| `<plugin>/.claude-plugin/plugin.json` | Claude용 메타데이터와 같은 `skills/` 경로 |
-| `<plugin>/skills/` | 두 환경이 공유하는 실행 지침·스크립트·리소스 |
+| `<group>/<plugin>/.codex-plugin/plugin.json` | 공통 이름·버전·메타데이터와 Codex interface |
+| `<group>/<plugin>/.claude-plugin/plugin.json` | Claude용 메타데이터와 같은 `skills/` 경로 |
+| `<group>/<plugin>/skills/` | 두 환경이 공유하는 실행 지침·스크립트·리소스 |
 
 Claude 목록은 공통 목록의 이름·순서·대상 폴더를 유지합니다.
 이름·버전·author·license·keywords·공통 description은 원본 매니페스트와 맞춥니다.
@@ -81,7 +81,7 @@ JSON 검증은 패키징 형식과 경로를 확인합니다. 실제 모델의 �
 
 ```sh
 claude plugin validate . --strict
-claude plugin validate ./sw-kit --strict
+claude plugin validate ./engineer/sw-kit --strict
 ```
 
 공통 목록의 모든 플러그인에 두 번째 검증을 적용합니다.
