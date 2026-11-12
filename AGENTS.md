@@ -48,7 +48,7 @@
 - 플러그인 표면이 바뀌면 `README.md`, `specs/plugin.md`, 관련 skill spec, `plugin.json`을 함께 점검합니다.
 - change spec을 정식 규칙으로 승격하라는 요청은 repo-level 규칙, `docs/SDD.md`, 또는 소유 spec에 반영합니다.
 - folder-based skill spec의 사용자 스펙 의도는 `intent.md`가 소유합니다. `spec.md`와 child spec에는 반복하지 않습니다.
-- 스펙 문서는 `$advance-codex:optimize-token` 규격으로 작성합니다.
+- 스펙 문서는 `$codex-optimize:optimize-token` 규격으로 작성합니다.
 - skill spec이 바뀌면 기존 runtime skill 본문을 부분 패치하지 않고, 현재 spec 기준으로 `SKILL.md`를 처음부터 재작성합니다.
 - clean-context subagent는 runtime skill 작성 대행자가 아닙니다. spec/runtime 정합성의 독립 read-only 검증에 사용합니다.
 
@@ -79,10 +79,10 @@
 ## 플러그인 설계 기준
 
 - 플러그인은 하나의 일관된 번들로 독립적으로 이해 가능해야 합니다.
-- `advance-codex`는 에이전트 문체와 기술 지시의 명확성을 개선하는 플러그인입니다.
-- `advance-codex`의 대표 표면은 `optimize-token`, `asd-ste100`입니다.
+- `codex-optimize`는 에이전트 문체와 기술 지시의 명확성을 개선하는 플러그인입니다.
+- `codex-optimize`의 대표 표면은 `optimize-token`, `asd-ste100`입니다.
 - `codex-creator`는 plugin·skill 제작 확장 가이드를 소유하며 대표 표면은 `plugin-creator`, `skill-creator`입니다.
-- 명시적 의도 없이 `advance-codex`를 무관한 워크플로나 cross-plugin 유틸리티 범위로 넓히지 않습니다.
+- 명시적 의도 없이 `codex-optimize`를 무관한 워크플로나 cross-plugin 유틸리티 범위로 넓히지 않습니다.
 - 여러 사용자 지향 skill이 있으면 `plugin.json`, `defaultPrompt`, `README.md`, `specs/plugin.md`에서 각 skill의 역할과 시작점을 분명히 드러냅니다.
 - 플러그인 경계를 먼저 정의하고, 그 안의 skill을 정의합니다.
 - 느슨한 skill 묶음에서 출발해 나중에 플러그인 모양을 억지로 맞추지 않습니다.

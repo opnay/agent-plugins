@@ -6,8 +6,8 @@
   },
   "plugins": [
     {
-      "name": "advance-codex",
-      "source": "./advance-codex",
+      "name": "codex-optimize",
+      "source": "./codex-optimize",
       "category": "Developer Tools"
     },
     {

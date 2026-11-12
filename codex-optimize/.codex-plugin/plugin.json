@@ -1,5 +1,5 @@
 {
-  "name": "advance-codex",
+  "name": "codex-optimize",
   "version": "0.1.1",
   "description": "Apply token-efficient writing and improve technical instruction clarity for Codex.",
   "author": {
@@ -15,7 +15,7 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Advance Codex",
+    "displayName": "Codex Optimize",
     "shortDescription": "Improve writing efficiency and instruction clarity.",
     "longDescription": "Apply token-efficient writing across agent responses and durable documents, and improve technical instructions with ASD-STE100 clarity principles. English vocabulary guidance is separate from general principles; formal compliance requires the applicable standard. Preserve correctness, meaning, verification, authority, and safety.",
     "developerName": "opnay",
@@ -26,8 +26,8 @@
       "Write"
     ],
     "defaultPrompt": [
-      "Use $advance-codex:optimize-token to apply a token-efficient style across responses, progress and status notes, reasoning and decision wording, and durable documents while preserving correctness, meaning, verification, authority, required structure, exact literals, language, and safety.",
-      "Use $advance-codex:asd-ste100 to write or review technical instructions, agent instructions, skills, and operating procedures. Apply clarity principles in the requested language; use its references for English vocabulary and formal compliance evidence."
+      "Use $codex-optimize:optimize-token to apply a token-efficient style across responses, progress and status notes, reasoning and decision wording, and durable documents while preserving correctness, meaning, verification, authority, required structure, exact literals, language, and safety.",
+      "Use $codex-optimize:asd-ste100 to write or review technical instructions, agent instructions, skills, and operating procedures. Apply clarity principles in the requested language; use its references for English vocabulary and formal compliance evidence."
     ],
     "brandColor": "#1F4B99"
   }

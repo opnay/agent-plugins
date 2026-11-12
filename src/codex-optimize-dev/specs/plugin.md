@@ -4,11 +4,11 @@
 
 ---
 
-# Advance Codex 플러그인 스펙
+# Codex Optimize 플러그인 스펙
 
 ## 플러그인 목적
 
-`advance-codex`는 에이전트 문체와 기술 지시의 명확성을 개선하는 플러그인입니다.
+`codex-optimize`는 에이전트 문체와 기술 지시의 명확성을 개선하는 플러그인입니다.
 핵심 책임은 token-efficient style과 명확한 기술 지시 작성 기준을 제공하는 것입니다.
 `.agents/sessions/{YYYYMMDD}` session folder convention은 호출 가능한 skill이 아니라 문서 수준의 참고 규칙으로만 유지합니다.
 
@@ -21,7 +21,7 @@
   - plugin·skill 제작 계약: `codex-creator`가 소유합니다.
   - 일반 제품 구현 workflow
   - 특정 도메인 기능 구현 가이드
-  - `advance-codex` 목적과 무관한 generic utility accumulation
+  - `codex-optimize` 목적과 무관한 generic utility accumulation
 
 ## 처리하려는 작업 형태
 
@@ -30,21 +30,21 @@
 
 ## 대표 표면
 
-- 대표 스펙: `src/advance-codex-dev/specs/plugin.md`
-- skill 상세 스펙 위치: `src/advance-codex-dev/specs/skills/*.md` 또는 `src/advance-codex-dev/specs/skills/<skill-name>/spec.md`
+- 대표 스펙: `src/codex-optimize-dev/specs/plugin.md`
+- skill 상세 스펙 위치: `src/codex-optimize-dev/specs/skills/*.md` 또는 `src/codex-optimize-dev/specs/skills/<skill-name>/spec.md`
 - 핵심 선택 기준: 표현 길이·반복과 기술 지시 명확성 중 무엇을 개선하는가
 
 ## 내장 skill 체계
 
 - `optimize-token`: 응답, 진행·상태 문구, reasoning·decision wording, 저장 문서에 token-efficient style과 제한된 symbol grammar를 적용하되 판단 논리, workflow, 검증, 승인, exact literal, 안전 계약을 보존한다.
-  - spec: `src/advance-codex-dev/specs/skills/optimize-token/spec.md`
+  - spec: `src/codex-optimize-dev/specs/skills/optimize-token/spec.md`
 - `asd-ste100`: 기술 지시와 agent instruction의 명확성을 개선하고, 영어 어휘·용법은 references에서 다룹니다. 일반 원칙 적용과 공식 규격 준수 검토를 구분합니다.
-  - spec: `src/advance-codex-dev/specs/skills/asd-ste100.md`
+  - spec: `src/codex-optimize-dev/specs/skills/asd-ste100.md`
 
 ## 문체 Skill 선택 기준
 
-- `$advance-codex:optimize-token`: 의미와 계약을 보존하면서 표현 길이·반복을 줄일 때 사용합니다.
-- `$advance-codex:asd-ste100`: 기술 지시·skill 본문·운영 절차의 대상·행동·조건·순서를 명확히 하거나 STE 작성·검토를 요청할 때 사용합니다.
+- `$codex-optimize:optimize-token`: 의미와 계약을 보존하면서 표현 길이·반복을 줄일 때 사용합니다.
+- `$codex-optimize:asd-ste100`: 기술 지시·skill 본문·운영 절차의 대상·행동·조건·순서를 명확히 하거나 STE 작성·검토를 요청할 때 사용합니다.
 - 함께 적용할 수 있으며 명확성·의미·필수 조건을 표현 압축보다 우선합니다. 영어 전용 규칙은 영어 산문에만 적용합니다.
 
 ## SDD 운영 원칙

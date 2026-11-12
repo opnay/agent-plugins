@@ -5,10 +5,10 @@
   },
   "plugins": [
     {
-      "name": "advance-codex",
+      "name": "codex-optimize",
       "source": {
         "source": "local",
-        "path": "./advance-codex"
+        "path": "./codex-optimize"
       },
       "policy": {
         "installation": "AVAILABLE",

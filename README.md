@@ -23,12 +23,11 @@ GitHub 등록·갱신과 매니페스트 형식은 [마켓플레이스](docs/mar
 
 ## 플러그인
 
-### Advance Codex
+### Codex Optimize
 
-`advance-codex`는 Codex 활용 체계를 더 깊게 관리하기 위한 플러그인입니다.
-토큰 효율적인 문체와 기술 지시의 명확성을 다룹니다.
+`codex-optimize`는 토큰 효율적인 문체와 기술 지시의 명확성을 개선하는 플러그인입니다.
 
-- 경로: `advance-codex/`
+- 경로: `codex-optimize/`
 - 주요 실행 표면: `optimize-token`, `asd-ste100`
 
 ### Codex Creator
@@ -75,7 +74,7 @@ GitHub 등록·갱신과 매니페스트 형식은 [마켓플레이스](docs/mar
 .
 ├── .agents/plugins/marketplace.json
 ├── .claude-plugin/marketplace.json
-├── advance-codex/
+├── codex-optimize/
 ├── codex-creator/
 ├── advance-subagent/
 ├── agent-wiki/

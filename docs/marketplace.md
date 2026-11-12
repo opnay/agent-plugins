@@ -65,7 +65,7 @@ claude plugin marketplace add opnay/agent-plugins
 
 ## 스킬 사용과 호환성
 
-- Claude의 사용자 호출은 `/<plugin>:<skill>`입니다. 예: `/advance-codex:optimize-token`.
+- Claude의 사용자 호출은 `/<plugin>:<skill>`입니다. 예: `/codex-optimize:optimize-token`.
 - 공유 본문의 `$<plugin>:<skill>`은 스킬 식별자이며 Claude의 슬래시 명령 표기와 구분합니다. 에이전트는 사용 가능한 Skill 도구의 해당 이름으로 호출합니다.
 - `$<plugin>:<skill>/<resource>`는 실제 절대 파일 경로가 아닙니다. 소유 스킬을 로드해 확인한 설치 디렉터리를 기준으로 리소스를 읽습니다. Codex 캐시 경로를 Claude에서 사용하지 않습니다.
 - `codex-creator`의 `skill-creator`와 `plugin-creator`는 canonical 기본 스킬을 확장합니다. 이 마켓은 기본 스킬을 제공하거나 설치하지 않습니다. 기본 스킬이 없으면 해당 creator 계약의 선행 조건이 충족되지 않습니다. `optimize-token`과 `asd-ste100`은 이 의존성을 갖지 않습니다.

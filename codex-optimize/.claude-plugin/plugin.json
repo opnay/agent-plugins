@@ -1,5 +1,5 @@
 {
-  "name": "advance-codex",
+  "name": "codex-optimize",
   "version": "0.1.1",
   "description": "Apply token-efficient writing and improve technical instruction clarity for Codex.",
   "author": {
@@ -14,5 +14,5 @@
     "asd-ste100"
   ],
   "skills": "./skills/",
-  "displayName": "Advance Codex"
+  "displayName": "Codex Optimize"
 }

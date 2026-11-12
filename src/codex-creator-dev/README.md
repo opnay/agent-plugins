@@ -14,6 +14,6 @@
 - `$codex-creator:plugin-creator 두 skill의 역할과 사용 안내가 일치하는 플러그인을 설계해 주세요.`
 - `$codex-creator:skill-creator 이 skill의 책임과 description 선택 조건을 검토해 주세요.`
 
-기존 `$advance-codex:plugin-creator`, `$advance-codex:skill-creator` 호출은 위 식별자로 바꿔 주세요. `optimize-token`과 `asd-ste100`은 `advance-codex`가 제공합니다.
+기존 `$advance-codex:plugin-creator`, `$advance-codex:skill-creator` 호출은 위 식별자로 바꿔 주세요. `optimize-token`과 `asd-ste100`은 `codex-optimize`가 제공합니다.
 
 개발 기준은 [plugin spec](specs/plugin.md), [plugin-creator spec](specs/skills/plugin-creator.md), [skill-creator spec](specs/skills/skill-creator.md)을 따릅니다. 실행 파일은 저장소 루트의 `codex-creator/`에서 관리합니다.

@@ -32,10 +32,10 @@
 
 ## 엔트리포인트 / 대표 표면
 
-- runtime: `advance-codex/skills/asd-ste100/SKILL.md`
-- 영어 전용 어휘·용법: `advance-codex/skills/asd-ste100/references/english-vocabulary.md`
-- 출처·판본·준수 검토: `advance-codex/skills/asd-ste100/references/standard-scope.md`
-- 호출: `$advance-codex:asd-ste100`
+- runtime: `codex-optimize/skills/asd-ste100/SKILL.md`
+- 영어 전용 어휘·용법: `codex-optimize/skills/asd-ste100/references/english-vocabulary.md`
+- 출처·판본·준수 검토: `codex-optimize/skills/asd-ste100/references/standard-scope.md`
+- 호출: `$codex-optimize:asd-ste100`
 - description은 작성·검토 대상과 발동 조건을 설명하고 좁은 passive matching token을 포함합니다.
 
 ## 핵심 처리 계약
