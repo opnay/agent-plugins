@@ -40,10 +40,10 @@ GitHub 등록·갱신과 매니페스트 형식은 [마켓플레이스](docs/mar
 
 ### Judgment Kit
 
-`judgment-kit`은 리서치, 제품 기획, 품질 관리 판단 기준을 제공하는 플러그인입니다.
+`judgment-kit`은 리서치, 제품 기획 판단 기준을 제공하는 플러그인입니다.
 
 - 경로: `agent/judgment-kit/`
-- 주요 실행 표면: `pro-researcher`, `pro-planner`, `pro-quality-manager`
+- 주요 실행 표면: `pro-researcher`, `pro-planner`
 
 ### Design Kit
 

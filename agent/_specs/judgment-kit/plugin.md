@@ -12,16 +12,16 @@
 
 ## 플러그인 목적
 
-`judgment-kit`는 Codex가 제품 기획, 리서치, 품질 관리 작업에서 각 분야 전문가의 professional judgment flow를 적용하게 하는 플러그인입니다.
-핵심 책임은 research judgment, product planning judgment, quality management judgment를 독립 skill로 제공하는 것입니다.
+`judgment-kit`는 Codex가 제품 기획, 리서치 작업에서 각 분야 전문가의 professional judgment flow를 적용하게 하는 플러그인입니다.
+핵심 책임은 research judgment, product planning judgment를 독립 skill로 제공하는 것입니다.
 
 ## 플러그인 경계와 비목표
 
 - 포함:
   - 판단 전 불확실성을 줄이는 research judgment
   - 제품, 서비스, 기능을 정의하고 좁히는 product planning judgment
-  - 산출물의 coverage, quality gate, release confidence, residual risk를 판단하는 quality management judgment
 - 제외:
+  - 산출물 검증 절차와 품질 관리 전담 역할
   - 디자인 기반·전문 설계·아트/크리에이티브 디렉션·프로젝트 디자인 규칙 관리
   - skill/plugin 제작 guidance
   - scenario testing workflow
@@ -35,13 +35,12 @@
 
 - 판단에 앞서 사실, 가정, 불확실성, source quality, decision input을 분리하는 작업
 - 제품, 서비스, 기능 요청에서 넓은 요청을 사용자 문제, 제품 방식 후보, 기능 영역, 디자인 시스템 브리프 같은 부가 기획 표면, 가치, 범위, 요구사항, 우선순위, acceptance criteria, handoff 계약으로 분해하는 작업
-- 제품, 디자인, 구현 산출물의 품질 목표, coverage gap, acceptance evidence, release readiness를 관리하는 작업
 
 ## 대표 표면
 
 - 대표 스펙: `agent/_specs/judgment-kit/plugin.md`
 - skill 상세 스펙 위치: `agent/_specs/judgment-kit/skills/<skill-name>/spec.md`
-- 핵심 선택 기준: 지금 필요한 professional judgment flow가 research, product planning, quality management 중 무엇인가
+- 핵심 선택 기준: 지금 필요한 professional judgment flow가 research, product planning 중 무엇인가
 
 ## 내장 skill 체계
 
@@ -49,8 +48,7 @@
   - spec: `agent/_specs/judgment-kit/skills/pro-researcher/spec.md`
 - `pro-planner`: 제품, 서비스, 기능 정의에서 넓은 요청을 사용자 문제, 제품 방식 후보, 기능 영역, 디자인 시스템 브리프 같은 부가 기획 표면, 가치, 범위, 요구사항, 우선순위, acceptance criteria, handoff 계약으로 분해한다.
   - spec: `agent/_specs/judgment-kit/skills/pro-planner/spec.md`
-- `pro-quality-manager`: 제품, 디자인, 구현 산출물에서 품질 목표, coverage, quality gate, release confidence, residual risk를 관리한다.
-  - spec: `agent/_specs/judgment-kit/skills/pro-quality-manager/spec.md`
+산출물의 검증 계획·실행·근거 판정은 `$quality:verify`를 선택합니다. 이 플러그인의 필수 의존성은 아니며 리서치·기획 skill은 자체 계약으로 실행합니다.
 
 ## SDD 운영 원칙
 

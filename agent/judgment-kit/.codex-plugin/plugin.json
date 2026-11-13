@@ -1,7 +1,7 @@
 {
   "name": "judgment-kit",
-  "version": "0.1.0",
-  "description": "Professional research, product planning, and quality management judgment for Codex.",
+  "version": "0.2.0",
+  "description": "Professional research and product planning judgment for Codex.",
   "author": {
     "name": "opnay"
   },
@@ -15,15 +15,13 @@
     "product",
     "requirements",
     "product-decomposition",
-    "design-system",
-    "quality",
-    "quality-management"
+    "design-system"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Judgment Kit",
-    "shortDescription": "Apply professional research, product planning, and quality management judgment in Codex work.",
-    "longDescription": "Provides professional judgment skills for Codex: research judgment for evidence gathering, source quality, uncertainty, and decision input; product planning judgment for broad request decomposition, user problems, product modes, feature maps, supplemental planning surfaces, design system briefs, scope, requirements, acceptance criteria, priorities, tradeoffs, and handoffs; and quality management judgment for quality targets, coverage gaps, acceptance evidence, release confidence, and residual risk.",
+    "shortDescription": "Apply professional research and product planning judgment in Codex work.",
+    "longDescription": "Provides professional judgment skills for Codex: research judgment for evidence gathering, source quality, uncertainty, and decision input; product planning judgment for broad request decomposition, user problems, product modes, feature maps, supplemental planning surfaces, design system briefs, scope, requirements, acceptance criteria, priorities, tradeoffs, and handoffs.",
     "developerName": "opnay",
     "category": "Developer Tools",
     "capabilities": [
@@ -33,8 +31,7 @@
     ],
     "defaultPrompt": [
       "Use $judgment-kit:pro-researcher to apply research judgment before product, design, engineering, or quality management decisions by framing research questions, gathering evidence, separating facts from assumptions, weighing source quality, mapping uncertainty, and preparing decision-ready findings.",
-      "Use $judgment-kit:pro-planner to apply product and service planning judgment to broad request decomposition, user problems, product modes, feature maps, supplemental planning surfaces, design system briefs, target users, product value, MVP scope, requirements, priorities, acceptance criteria, tradeoffs, release slices, and designer/engineer handoff contracts.",
-      "Use $judgment-kit:pro-quality-manager to apply quality management judgment to product, design, and engineering work by defining quality targets, coverage gaps, acceptance evidence, state coverage, risk severity, release confidence, and residual risk."
+      "Use $judgment-kit:pro-planner to apply product and service planning judgment to broad request decomposition, user problems, product modes, feature maps, supplemental planning surfaces, design system briefs, target users, product value, MVP scope, requirements, priorities, acceptance criteria, tradeoffs, release slices, and designer/engineer handoff contracts."
     ],
     "brandColor": "#2F6B4F"
   }

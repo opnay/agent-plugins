@@ -8,4 +8,4 @@
 - [검증 계획](validation-plan.md): 설계·패키징·native 로딩·사용/미사용 비교의 기준과 대표 사례.
 - [검증 결과](validation-results.md): 실제 로딩·행동 비교의 관찰과 효과·환경 한계.
 
-실행 파일은 `agent/quality/`에서 관리하며 사용 방법은 [plugin README](../../quality/README.md)를 확인합니다. 호출 식별자는 `$quality:verify`입니다. 이 폴더는 작성·검증 계약이며 설치 대상이 아닙니다. 기존 `pro-quality-manager`의 개편은 별도 범위입니다.
+실행 파일은 `agent/quality/`에서 관리하며 사용 방법은 [plugin README](../../quality/README.md)를 확인합니다. 호출 식별자는 `$quality:verify`입니다. 이 폴더는 작성·검증 계약이며 설치 대상이 아닙니다.

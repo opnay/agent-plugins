@@ -1,7 +1,7 @@
 {
   "name": "judgment-kit",
-  "version": "0.1.0",
-  "description": "Professional research, product planning, and quality management judgment for Codex.",
+  "version": "0.2.0",
+  "description": "Professional research and product planning judgment for Codex.",
   "author": {
     "name": "opnay"
   },
@@ -15,9 +15,7 @@
     "product",
     "requirements",
     "product-decomposition",
-    "design-system",
-    "quality",
-    "quality-management"
+    "design-system"
   ],
   "skills": "./skills/",
   "displayName": "Judgment Kit"
