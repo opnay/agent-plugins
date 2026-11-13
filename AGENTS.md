@@ -14,7 +14,7 @@
 
 ## 저장소 레이아웃
 
-- 분류: `agent`, `codex`, `toolkit`, `engineer`, `designer`.
+- 분류: `agents`(직업), `specialists`(공통 작업 초점), `codex`(하네스 지침), `toolkit`(공통 도구·지식).
 - 실제 플러그인·기본 편집 대상: `./<group>/<plugin-name>`.
 - 작성·검증 계약: `./<group>/_specs/<plugin-name>/plugin.md`, `skills/<skill-name>/spec.md`.
 - skill 사용자 의도는 같은 skill 폴더의 `intent.md`가 소유합니다. 하위 계약·시나리오는 해당 폴더에 둡니다.
@@ -72,6 +72,8 @@
 
 ## 플러그인 설계 기준
 
+- 직업 plugin은 직업 공통 작업과 분야 skill을 함께 소유합니다. 초점 plugin은 조사·검증·실행 조정 절차를 소유하며 분야별 복사본을 만들지 않습니다.
+- 직업·분야·초점·숙련도와 실행 환경의 경계는 [에이전트 구성](docs/agent-composition.md)이 소유합니다. orcat 외부 역할 실행을 앱 native subagent 내역과 동일시하지 않습니다.
 - 플러그인은 하나의 일관된 번들로 독립적으로 이해 가능해야 합니다.
 - `codex-optimize`는 에이전트 문체와 기술 지시의 명확성을 개선하는 플러그인입니다.
 - `codex-optimize`의 대표 표면은 `optimize-token`, `asd-ste100`입니다.
@@ -91,7 +93,7 @@
 - 플러그인 소속 skill을 수정할 때는 plugin 안의 역할, sibling 관계, 관련 spec을 함께 확인합니다.
 - 플러그인 관점의 영향이 있으면 skill 단독 수정으로 축소하지 않습니다.
 - Plugin을 통해 설치된 skill은 `$<plugin>:<skill>` 식별자를 사용합니다. 예: `$codex-creator:skill-creator`
-- 다른 skill의 리소스는 설치 절대 경로나 형제 디렉터리 상대 경로 대신 `$<plugin>:<skill>/<resource-path>` 형식으로 참조합니다. 예: `$design-kit:design-base/references/color.md`
+- 다른 skill의 리소스는 설치 절대 경로나 형제 디렉터리 상대 경로 대신 `$<plugin>:<skill>/<resource-path>` 형식으로 참조합니다. 예: `$designer:design-base/references/color.md`
 - skill이 에이전트 행동을 보정할 때는 금지 조건을 계속 늘리기보다 허용되는 행동, 판단 기준, 실패 조건을 먼저 정의합니다.
 - blocklist 방식의 차단 조건은 허용 계약을 보완하는 좁은 방어선으로만 둡니다.
 
@@ -148,6 +150,7 @@
 ├── AGENTS.md
 └── docs/
     ├── SDD.md
+    ├── agent-composition.md
     ├── marketplace.md
     ├── release-pattern.md
     └── templates/

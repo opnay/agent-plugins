@@ -45,10 +45,10 @@ claude plugin marketplace add .
 필요한 플러그인만 설치합니다. 예를 들어 SW Kit은 다음과 같습니다.
 
 ```sh
-claude plugin install sw-kit@opnay-plugins
+claude plugin install engineer@opnay-plugins
 ```
 
-새 세션에서 `/sw-kit:spec` 또는 `/sw-kit:code`를 호출합니다.
+새 세션에서 `/engineer:spec` 또는 `/engineer:code`를 호출합니다.
 설치 상태는 `claude plugin marketplace list --json`과 `claude plugin list --json`으로 확인합니다.
 
 로컬 경로에서 등록한 마켓의 상대 경로 플러그인은 원본 파일을 사용합니다.
@@ -69,7 +69,7 @@ claude plugin marketplace add opnay/agent-plugins
 - 공유 본문의 `$<plugin>:<skill>`은 스킬 식별자이며 Claude의 슬래시 명령 표기와 구분합니다. 에이전트는 사용 가능한 Skill 도구의 해당 이름으로 호출합니다.
 - `$<plugin>:<skill>/<resource>`는 실제 절대 파일 경로가 아닙니다. 소유 스킬을 로드해 확인한 설치 디렉터리를 기준으로 리소스를 읽습니다. Codex 캐시 경로를 Claude에서 사용하지 않습니다.
 - `codex-creator`의 `skill-creator`와 `plugin-creator`는 canonical 기본 스킬을 확장합니다. 이 마켓은 기본 스킬을 제공하거나 설치하지 않습니다. 기본 스킬이 없으면 해당 creator 계약의 선행 조건이 충족되지 않습니다. `optimize-token`과 `asd-ste100`은 이 의존성을 갖지 않습니다.
-- `advance-subagent`의 모델 선택은 적용 중인 지침이 소유합니다. Claude에서는 현재 Agent 도구와 모델 프로필을 따르고 Codex 전용 도구 인자를 그대로 전달하지 않습니다.
+- `orchestrator`의 모델 선택은 적용 중인 지침이 소유합니다. Claude에서는 현재 Agent 도구와 모델 프로필을 따르고 Codex 전용 도구 인자를 그대로 전달하지 않습니다.
 - `app-extensions`는 Figma 연결을 제공하지 않습니다. 호스트에서 사용 가능한 Figma 기능이 필요합니다.
 - `toolkit`과 `agent-wiki`의 실행 파일은 각 스킬의 설치·권한 계약을 따릅니다. 플러그인 설치는 CLI 설치나 Git alias 변경을 자동 실행하지 않습니다.
 
@@ -81,7 +81,7 @@ JSON 검증은 패키징 형식과 경로를 확인합니다. 실제 모델의 �
 
 ```sh
 claude plugin validate . --strict
-claude plugin validate ./engineer/sw-kit --strict
+claude plugin validate ./agents/engineer --strict
 ```
 
 공통 목록의 모든 플러그인에 두 번째 검증을 적용합니다.

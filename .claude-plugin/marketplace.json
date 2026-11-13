@@ -11,18 +11,23 @@
       "category": "Developer Tools"
     },
     {
-      "name": "judgment-kit",
-      "source": "./agent/judgment-kit",
+      "name": "planner",
+      "source": "./agents/planner",
       "category": "Developer Tools"
     },
     {
-      "name": "advance-subagent",
-      "source": "./agent/advance-subagent",
+      "name": "researcher",
+      "source": "./specialists/researcher",
       "category": "Developer Tools"
     },
     {
-      "name": "sw-kit",
-      "source": "./engineer/sw-kit",
+      "name": "orchestrator",
+      "source": "./specialists/orchestrator",
+      "category": "Developer Tools"
+    },
+    {
+      "name": "engineer",
+      "source": "./agents/engineer",
       "category": "Developer Tools"
     },
     {
@@ -37,12 +42,12 @@
     },
     {
       "name": "agent-wiki",
-      "source": "./agent/agent-wiki",
+      "source": "./toolkit/agent-wiki",
       "category": "Productivity"
     },
     {
-      "name": "design-kit",
-      "source": "./designer/design-kit",
+      "name": "designer",
+      "source": "./agents/designer",
       "category": "Design"
     },
     {
@@ -52,7 +57,7 @@
     },
     {
       "name": "quality",
-      "source": "./agent/quality",
+      "source": "./specialists/quality",
       "category": "Developer Tools"
     }
   ]

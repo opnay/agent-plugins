@@ -1,0 +1,17 @@
+{
+  "name": "engineer",
+  "version": "0.1.0",
+  "description": "소프트웨어 행동 계약·기술 설계·코드 구현·테스트·유지보수를 제공합니다.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "engineering",
+    "software",
+    "code",
+    "maintenance"
+  ],
+  "skills": "./skills/",
+  "displayName": "Engineer"
+}

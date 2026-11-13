@@ -1,0 +1,16 @@
+{
+  "name": "planner",
+  "version": "0.1.0",
+  "description": "제품 문제·범위·우선순위·요구사항과 인계를 구체화합니다.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "planning",
+    "product",
+    "requirements"
+  ],
+  "skills": "./skills/",
+  "displayName": "Planner"
+}

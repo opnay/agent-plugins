@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research"
+  short_description: "Investigate questions with proportionate evidence and uncertainty."
+  default_prompt: "Use $researcher:research to derive suitable research criteria and methods, inspect evidence, and report findings and limits."

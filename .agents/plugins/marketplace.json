@@ -17,10 +17,10 @@
       "category": "Developer Tools"
     },
     {
-      "name": "judgment-kit",
+      "name": "planner",
       "source": {
         "source": "local",
-        "path": "./agent/judgment-kit"
+        "path": "./agents/planner"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -29,10 +29,22 @@
       "category": "Developer Tools"
     },
     {
-      "name": "advance-subagent",
+      "name": "researcher",
       "source": {
         "source": "local",
-        "path": "./agent/advance-subagent"
+        "path": "./specialists/researcher"
+      },
+      "category": "Developer Tools",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      }
+    },
+    {
+      "name": "orchestrator",
+      "source": {
+        "source": "local",
+        "path": "./specialists/orchestrator"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -41,10 +53,10 @@
       "category": "Developer Tools"
     },
     {
-      "name": "sw-kit",
+      "name": "engineer",
       "source": {
         "source": "local",
-        "path": "./engineer/sw-kit"
+        "path": "./agents/engineer"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -80,7 +92,7 @@
       "name": "agent-wiki",
       "source": {
         "source": "local",
-        "path": "./agent/agent-wiki"
+        "path": "./toolkit/agent-wiki"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -89,10 +101,10 @@
       "category": "Productivity"
     },
     {
-      "name": "design-kit",
+      "name": "designer",
       "source": {
         "source": "local",
-        "path": "./designer/design-kit"
+        "path": "./agents/designer"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -116,7 +128,7 @@
       "name": "quality",
       "source": {
         "source": "local",
-        "path": "./agent/quality"
+        "path": "./specialists/quality"
       },
       "category": "Developer Tools",
       "policy": {

@@ -1,0 +1,37 @@
+{
+  "name": "designer",
+  "version": "0.1.0",
+  "description": "디자인 원리·제품 경험·웹·시각 콘텐츠·디렉션·프로젝트 규칙을 제공합니다.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "design",
+    "product-design",
+    "web-design",
+    "visual-content"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Designer",
+    "shortDescription": "디자인 원리·제품 경험·웹·시각 콘텐츠·디렉션·프로젝트 규칙을 제공합니다.",
+    "longDescription": "디자인 원리·제품 경험·웹·시각 콘텐츠·디렉션·프로젝트 규칙을 제공합니다. design-base: 디자인의 원리와 공통 지식; product-designer: 과업·흐름·상태·상호작용; web-designer: 페이지 전달·탐색·반응형 표현; visual-content-designer: 배너·카드뉴스·시각 콘텐츠; art-director: 시각 콘셉트와 표현 언어; creative-director: 메시지·핵심 아이디어·매체 간 전개; project-design-rules: 프로젝트 디자인 방향·규칙의 기록과 적용.",
+    "developerName": "opnay",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Analyze",
+      "Plan",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use $designer:design-base for 디자인의 원리와 공통 지식.",
+      "Use $designer:product-designer for 과업·흐름·상태·상호작용.",
+      "Use $designer:web-designer for 페이지 전달·탐색·반응형 표현.",
+      "Use $designer:visual-content-designer for 배너·카드뉴스·시각 콘텐츠.",
+      "Use $designer:art-director for 시각 콘셉트와 표현 언어.",
+      "Use $designer:creative-director for 메시지·핵심 아이디어·매체 간 전개.",
+      "Use $designer:project-design-rules for 프로젝트 디자인 방향·규칙의 기록과 적용."
+    ]
+  }
+}

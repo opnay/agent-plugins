@@ -1,0 +1,30 @@
+{
+  "name": "planner",
+  "version": "0.1.0",
+  "description": "제품 문제·범위·우선순위·요구사항과 인계를 구체화합니다.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "planning",
+    "product",
+    "requirements"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Planner",
+    "shortDescription": "제품 문제·범위·우선순위·요구사항과 인계를 구체화합니다.",
+    "longDescription": "제품 문제·범위·우선순위·요구사항과 인계를 구체화합니다. plan: 제품 문제·범위·우선순위·요구사항·수용 기준과 인계.",
+    "developerName": "opnay",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Analyze",
+      "Plan",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use $planner:plan for 제품 문제·범위·우선순위·요구사항·수용 기준과 인계."
+    ]
+  }
+}

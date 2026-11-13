@@ -1,0 +1,34 @@
+{
+  "name": "engineer",
+  "version": "0.1.0",
+  "description": "소프트웨어 행동 계약·기술 설계·코드 구현·테스트·유지보수를 제공합니다.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "engineering",
+    "software",
+    "code",
+    "maintenance"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Engineer",
+    "shortDescription": "소프트웨어 행동 계약·기술 설계·코드 구현·테스트·유지보수를 제공합니다.",
+    "longDescription": "소프트웨어 행동 계약·기술 설계·코드 구현·테스트·유지보수를 제공합니다. spec: 구현 가능한 소프트웨어 행동 계약; engineering: 기술·구조·데이터 모델·통합·운영 방향; code: 코드 구현·테스트·리뷰와 수정; maintenance: 의존성·노후화·기술/테스트 부채의 유지보수.",
+    "developerName": "opnay",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Analyze",
+      "Plan",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use $engineer:spec for 구현 가능한 소프트웨어 행동 계약.",
+      "Use $engineer:engineering for 기술·구조·데이터 모델·통합·운영 방향.",
+      "Use $engineer:code for 코드 구현·테스트·리뷰와 수정.",
+      "Use $engineer:maintenance for 의존성·노후화·기술/테스트 부채의 유지보수."
+    ]
+  }
+}

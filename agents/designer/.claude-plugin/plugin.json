@@ -1,0 +1,17 @@
+{
+  "name": "designer",
+  "version": "0.1.0",
+  "description": "디자인 원리·제품 경험·웹·시각 콘텐츠·디렉션·프로젝트 규칙을 제공합니다.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "design",
+    "product-design",
+    "web-design",
+    "visual-content"
+  ],
+  "skills": "./skills/",
+  "displayName": "Designer"
+}

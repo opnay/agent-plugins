@@ -1,0 +1,17 @@
+{
+  "name": "orchestrator",
+  "version": "0.1.0",
+  "description": "분기 설계부터 실행·검증·통합·완료 판단·보존·새 맥락 계획까지 공통 루프를 제공합니다.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "orchestration",
+    "workstreams",
+    "delegation",
+    "fork-and-flush"
+  ],
+  "skills": "./skills/",
+  "displayName": "Orchestrator"
+}
