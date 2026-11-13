@@ -7,7 +7,7 @@
 
 ## 목적과 경계
 
-`orchestrator`는 직업 간 공통 실행 조정 초점입니다. 작업 분해·분담/대안·의존성·실행 소유권·실제 결과 검증·통합·완료 판단·보존/새 맥락 계획을 소유합니다. 제품·디자인·엔지니어링·조사 고유 기준을 대신하지 않습니다.
+`orchestrator`는 독립 실행 역할로서 직업 간 작업을 조정하는 agent plugin입니다. 작업 분해·분담/대안·의존성·실행 소유권·실제 결과 검증·통합·완료 판단·보존/새 맥락 계획을 소유합니다. 제품·디자인·엔지니어링·조사 고유 기준을 대신하지 않습니다.
 
 ## 내장 skill과 사용 기준
 
@@ -19,4 +19,4 @@
 
 ## 사용 표면과 확장
 
-실제 plugin은 `specialists/orchestrator`, spec은 `specialists/_specs/orchestrator`입니다. 두 manifest/README/prompt는 단일 loop와 실제 references를 안내합니다. 모델·원격 실행·호스트의 설치 정책을 plugin 이름으로 추정하지 않습니다. 회차/위임/상태 계약은 기존 루프를 보존하며 분야별 루프를 복제하지 않습니다.
+실제 plugin은 `agents/orchestrator`, spec은 `agents/_specs/orchestrator`입니다. 두 manifest/README/prompt는 단일 loop와 실제 references를 안내합니다. 모델·원격 실행·호스트의 설치 정책을 plugin 이름으로 추정하지 않습니다. 회차/위임/상태 계약은 기존 루프를 보존하며 분야별 루프를 복제하지 않습니다.

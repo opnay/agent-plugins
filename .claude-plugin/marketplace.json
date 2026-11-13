@@ -17,12 +17,12 @@
     },
     {
       "name": "researcher",
-      "source": "./specialists/researcher",
+      "source": "./capabilities/researcher",
       "category": "Developer Tools"
     },
     {
       "name": "orchestrator",
-      "source": "./specialists/orchestrator",
+      "source": "./agents/orchestrator",
       "category": "Developer Tools"
     },
     {
@@ -57,7 +57,7 @@
     },
     {
       "name": "quality",
-      "source": "./specialists/quality",
+      "source": "./capabilities/quality",
       "category": "Developer Tools"
     }
   ]

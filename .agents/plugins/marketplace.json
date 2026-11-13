@@ -32,7 +32,7 @@
       "name": "researcher",
       "source": {
         "source": "local",
-        "path": "./specialists/researcher"
+        "path": "./capabilities/researcher"
       },
       "category": "Developer Tools",
       "policy": {
@@ -44,7 +44,7 @@
       "name": "orchestrator",
       "source": {
         "source": "local",
-        "path": "./specialists/orchestrator"
+        "path": "./agents/orchestrator"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -128,7 +128,7 @@
       "name": "quality",
       "source": {
         "source": "local",
-        "path": "./specialists/quality"
+        "path": "./capabilities/quality"
       },
       "category": "Developer Tools",
       "policy": {

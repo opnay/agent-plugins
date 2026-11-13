@@ -1,12 +1,18 @@
 # 에이전트 구성과 플러그인 소유권
 
+## 실행 주체와 조합 기능
+
+`agents/<역할>`은 독립 실행할 에이전트의 책임을 정의합니다. 직업 역할인 planner·engineer·designer와 실행 조정 역할인 orchestrator를 포함합니다. 역할별 orcat 카탈로그의 기본 plugin으로 사용합니다.
+
+`capabilities/<기능>`은 실행 역할에 조합할 공통 기능입니다. Researcher는 조사, Quality는 검증 절차를 제공합니다. 이 분류는 배포 구성에서의 책임을 나타냅니다. Skill 자체는 충분한 질문·자료·기준을 받으면 직접 실행할 수 있으며 특정 직업 plugin이나 별도 agent의 선행 실행을 요구하지 않습니다.
+
 ## 구성 축
 
 | 축 | 소유 책임 | 저장·적용 |
 | --- | --- | --- |
-| 직업 | 업무·결정·산출물·인계 | `agents/<직업>` plugin |
+| 직업 | 업무·결정·산출물·인계 | `agents/<역할>`의 직업 plugin |
 | 분야 | 직업 안의 전문 기준·제약·기법 | 직업 plugin의 분야 skill |
-| 초점 | 조사·검증·실행 조정의 절차 | `specialists/<초점>` plugin |
+| 초점 | 현재 집중할 조사·제작·검증 활동 | 공통 조사·검증은 `capabilities`, 제작은 직업 skill에서 적용 |
 | 숙련도 | 판단 범위·대안·예외·근거의 기대 수준 | 직업 plugin의 `assets/proficiency.md`를 역할 지침에 적용 |
 
 `skills/`는 분야만 담는 폴더가 아닙니다. Engineer의 spec·engineering·code·maintenance처럼 직업 공통 작업도 소유합니다. 분야 skill은 고유 기준이 있을 때 추가하며 공통 작업 계약을 복제하지 않습니다. Designer의 공통 원리·프로젝트 규칙 관리도 유지합니다.

@@ -14,7 +14,7 @@
 
 ## 저장소 레이아웃
 
-- 분류: `agents`(직업), `specialists`(공통 작업 초점), `codex`(하네스 지침), `toolkit`(공통 도구·지식).
+- 분류: `agents`(독립 실행 역할), `capabilities`(역할에 조합하는 기능), `codex`(하네스 지침), `toolkit`(공통 도구·지식).
 - 실제 플러그인·기본 편집 대상: `./<group>/<plugin-name>`.
 - 작성·검증 계약: `./<group>/_specs/<plugin-name>/plugin.md`, `skills/<skill-name>/spec.md`.
 - skill 사용자 의도는 같은 skill 폴더의 `intent.md`가 소유합니다. 하위 계약·시나리오는 해당 폴더에 둡니다.
@@ -72,7 +72,7 @@
 
 ## 플러그인 설계 기준
 
-- 직업 plugin은 직업 공통 작업과 분야 skill을 함께 소유합니다. 초점 plugin은 조사·검증·실행 조정 절차를 소유하며 분야별 복사본을 만들지 않습니다.
+- `agents`는 직업 역할과 실행 조정 역할을 포함합니다. 직업 plugin은 직업 공통 작업과 분야 skill을, orchestrator는 분업·실행·통합을 소유합니다. `capabilities`는 역할에 조합하는 조사·검증 기능을 소유하며 분야별 복사본을 만들지 않습니다.
 - 직업·분야·초점·숙련도와 실행 환경의 경계는 [에이전트 구성](docs/agent-composition.md)이 소유합니다. orcat 외부 역할 실행을 앱 native subagent 내역과 동일시하지 않습니다.
 - 플러그인은 하나의 일관된 번들로 독립적으로 이해 가능해야 합니다.
 - `codex-optimize`는 에이전트 문체와 기술 지시의 명확성을 개선하는 플러그인입니다.

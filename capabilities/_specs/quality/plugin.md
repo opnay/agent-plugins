@@ -14,7 +14,7 @@
 ## 이름과 경계
 
 - plugin 이름: `quality`, 표시 이름: `Quality`.
-- 그룹: `specialists`. 역할군별 실행 환경에 함께 설치해 사용하는 공통 행동 패턴입니다.
+- 그룹: `capabilities`. 역할군별 실행 환경에 함께 설치해 사용하는 공통 행동 패턴입니다.
 - 핵심 skill: `verify`. 호출 식별자: `$quality:verify`.
 - 포함: 산출물 이해, 검증 축·기준 도출, 근거의 적합성 판단, 검증 방법 선택·실행, 결함·미검증·남은 위험 보고, 필요한 재검증 범위 결정.
 - 제외: 전문 지식·도구·원본 근거가 없는 상태의 품질 보증, 기능 제작·수정·배포 권한 부여, 제품 목표·사업 정책 변경, 범용 작업 배치·모델 프로필·subagent 생성 정책, 독립 인증이나 출시 승인 대체.
@@ -30,9 +30,9 @@
 
 ## 대표 표면
 
-- 작성 계약: `specialists/_specs/quality/plugin.md`, [verify spec](skills/verify/spec.md).
+- 작성 계약: `capabilities/_specs/quality/plugin.md`, [verify spec](skills/verify/spec.md).
 - 사용자 의도: [verify intent](skills/verify/intent.md).
-- 구현 대상: `specialists/quality/README.md`, 두 호스트 `plugin.json`, `skills/verify/SKILL.md`.
+- 구현 대상: `capabilities/quality/README.md`, 두 호스트 `plugin.json`, `skills/verify/SKILL.md`.
 - 사용 안내 문구: “산출물의 목적과 특성에 맞는 검증 기준·절차를 도출하고, 허용된 검증을 수행해 근거·판정·미검증을 반환합니다.”
 - manifest 설명·prompt는 실제 제공 skill과 실행 조건만 안내합니다. 설치가 전문성·실행 권한·검증 성공을 보증한다고 설명하지 않습니다.
 

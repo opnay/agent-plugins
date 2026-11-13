@@ -20,16 +20,16 @@ Claude Code는 `claude plugin marketplace add .`, `claude plugin install enginee
 | 직업 | [planner](agents/planner/README.md) | plan |
 | 직업 | [engineer](agents/engineer/README.md) | spec, engineering, code, maintenance |
 | 직업 | [designer](agents/designer/README.md) | design-base, product-designer, web-designer, visual-content-designer, art-director, creative-director, project-design-rules |
-| 초점 | [researcher](specialists/researcher/README.md) | research |
-| 초점 | [quality](specialists/quality/README.md) | verify |
-| 초점·실행 조정 | [orchestrator](specialists/orchestrator/README.md) | orchestrate-workstreams |
+| 실행 역할·조정 | [orchestrator](agents/orchestrator/README.md) | orchestrate-workstreams |
+| 공통 기능·조사 | [researcher](capabilities/researcher/README.md) | research |
+| 공통 기능·검증 | [quality](capabilities/quality/README.md) | verify |
 | 공통 기반 | [agent-wiki](toolkit/agent-wiki/README.md) | manager, reader, researcher, writer |
 | 도구 | [toolkit](toolkit/toolkit/README.md) | git, apple-container |
 | 외부 앱 확장 | [app-extensions](toolkit/app-extensions/README.md) | figma-ext |
 | Codex 제작 | [codex-creator](codex/codex-creator/README.md) | plugin-creator, skill-creator |
 | Codex 문체 | [codex-optimize](codex/codex-optimize/README.md) | optimize-token, asd-ste100 |
 
-직업 plugin은 공통 작업과 분야의 기준을, 초점 plugin은 조사·검증·실행 조정 절차를 제공합니다. 숙련도는 직업 plugin의 설치된 `assets/proficiency.md`에서 선택해 역할 지침에 적용합니다. 단순 설치가 수준을 자동 적용하거나 전문성·권한을 보장하지 않습니다. [에이전트 구성](docs/agent-composition.md)에서 조합·실행 환경·이전 호출 migration을 확인합니다.
+`agents`는 직업과 실행 조정을 포함한 독립 실행 역할을, `capabilities`는 역할에 조합할 조사·검증 기능을 제공합니다. 직업 plugin은 공통 작업과 분야 기준을 함께 소유합니다. 숙련도는 직업 plugin의 설치된 `assets/proficiency.md`에서 선택해 역할 지침에 적용합니다. 단순 설치가 수준을 자동 적용하거나 전문성·권한을 보장하지 않습니다. [에이전트 구성](docs/agent-composition.md)에서 조합·실행 환경·이전 호출 migration을 확인합니다.
 
 역할별 Codex 홈에는 필요한 plugin과 지침을 준비합니다. orcat 외부 역할 실행을 서브에이전트로 취급하되 이 저장소가 호출 adapter·자동 셋업·앱 native 내역 연결을 제공하지는 않습니다.
 
@@ -39,8 +39,8 @@ Claude Code는 `claude plugin marketplace add .`, `claude plugin install enginee
 .
 ├── .agents/plugins/marketplace.json
 ├── .claude-plugin/marketplace.json
-├── agents/       # planner, engineer, designer
-├── specialists/  # researcher, quality, orchestrator
+├── agents/       # planner, engineer, designer, orchestrator
+├── capabilities/ # researcher, quality
 ├── toolkit/      # toolkit, app-extensions, agent-wiki
 ├── codex/        # codex-creator, codex-optimize
 └── docs/
