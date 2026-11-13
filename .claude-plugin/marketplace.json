@@ -49,6 +49,11 @@
       "name": "codex-creator",
       "source": "./codex/codex-creator",
       "category": "Developer Tools"
+    },
+    {
+      "name": "quality",
+      "source": "./agent/quality",
+      "category": "Developer Tools"
     }
   ]
 }

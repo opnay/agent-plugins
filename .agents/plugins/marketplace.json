@@ -111,6 +111,18 @@
         "installation": "AVAILABLE",
         "authentication": "ON_INSTALL"
       }
+    },
+    {
+      "name": "quality",
+      "source": {
+        "source": "local",
+        "path": "./agent/quality"
+      },
+      "category": "Developer Tools",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      }
     }
   ]
 }

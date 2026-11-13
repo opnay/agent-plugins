@@ -61,6 +61,14 @@ GitHub 등록·갱신과 매니페스트 형식은 [마켓플레이스](docs/mar
 - 경로: `agent/advance-subagent/`
 - 주요 실행 표면: `deep-research`, `orchestrate-workstreams`
 
+### Quality
+
+`quality`는 모든 분야의 산출물에서 특성에 맞는 검증 기준과 절차를 도출하고, 실제 근거로 판정하는 공통 행동 패턴입니다.
+
+- 플러그인: [agent/quality](agent/quality/README.md)
+- 개발 문서: [agent/_specs/quality](agent/_specs/quality/README.md)
+- 주요 실행 표면: `$quality:verify`
+
 ### SW Kit
 
 `sw-kit`는 요구 행동 계약, 기술 방향, production code 품질, 코드베이스 유지보수를 제공합니다.
@@ -74,7 +82,7 @@ GitHub 등록·갱신과 매니페스트 형식은 [마켓플레이스](docs/mar
 .
 ├── .agents/plugins/marketplace.json
 ├── .claude-plugin/marketplace.json
-├── agent/       # advance-subagent, agent-wiki, judgment-kit
+├── agent/       # advance-subagent, agent-wiki, judgment-kit, quality
 ├── codex/       # codex-creator, codex-optimize
 ├── toolkit/     # toolkit, app-extensions
 ├── engineer/    # sw-kit

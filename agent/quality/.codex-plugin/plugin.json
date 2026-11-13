@@ -1,0 +1,33 @@
+{
+  "name": "quality",
+  "version": "0.1.0",
+  "description": "Verify artifacts using criteria, methods, and actual evidence matched to their purpose, characteristics, and risks.",
+  "author": {
+    "name": "opnay"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "quality",
+    "verification",
+    "artifacts",
+    "evidence",
+    "validation"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Quality",
+    "shortDescription": "Verify artifacts with relevant criteria and evidence.",
+    "longDescription": "Provides one reusable verification behavior across domains. Derive quality dimensions, establish criteria, choose proportional checks, examine actual evidence, and distinguish defects, uncertainty, unperformed checks, and residual risk. Works directly or alongside role skills and authorized subagents without requiring an orchestrator.",
+    "developerName": "opnay",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Analyze",
+      "Plan",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use $quality:verify to examine this artifact and its original requirements, derive relevant quality criteria and methods, perform authorized verification, and return the evidence, judgments, unverified scope, and residual risks. A plan-only request should produce a plan without claiming execution."
+    ],
+    "brandColor": "#245A45"
+  }
+}
