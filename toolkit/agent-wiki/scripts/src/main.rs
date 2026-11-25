@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::env;
 use std::error::Error;
-use std::ffi::OsString;
+use std::ffi::{OsStr, OsString};
 use std::fmt::Write as _;
 use std::fs;
 use std::io::{self, Write};
@@ -11,15 +11,19 @@ use std::process::ExitCode;
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
-const HELP: &str = "agent-wiki: 위키 저장 위치를 설정·조회합니다.
+const COMMAND: &str = "wdown";
+
+const HELP: &str = "wdown: 위키 저장 위치를 설정·조회합니다.
 
 사용법:
-  agent-wiki install [--force]  ~/.local/bin/agent-wiki에 설치합니다.
-  agent-wiki list               설정된 root를 조회합니다.
-  agent-wiki set <name> <dir>   named root 경로를 설정합니다.
-  agent-wiki default <name>     default root를 지정합니다.
-  agent-wiki path [name]        default 또는 named root 경로를 출력합니다.
-  agent-wiki --help";
+  wdown install [--force] [--dir <dir>]   <dir>/wdown에 현재 실행 파일을 복사합니다.
+  wdown uninstall [--dir <dir>]           <dir>/wdown 실행 파일을 제거합니다.
+  wdown doctor [--dir <dir>]              설치·PATH·설정 상태를 점검합니다.
+  wdown list                              설정된 root를 조회합니다.
+  wdown set <name> <dir>                  named root 경로를 설정합니다.
+  wdown default <name>                    default root를 지정합니다.
+  wdown path [name]                       default 또는 named root 경로를 출력합니다.
+  wdown --help";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct RootConfig {
@@ -115,18 +119,21 @@ fn atomic_write(target: &Path, content: &[u8], mode: u32, overwrite: bool) -> Re
     Ok(())
 }
 
-fn canonical_directory(directory: &Path, home: &Path) -> Result<PathBuf> {
-    if directory.as_os_str().is_empty() {
-        return Err("저장 폴더를 지정하세요.".into());
-    }
-    let expanded = if directory == Path::new("~") {
+fn expand_home(directory: &Path, home: &Path) -> PathBuf {
+    if directory == Path::new("~") {
         home.to_path_buf()
     } else if let Ok(relative) = directory.strip_prefix("~/") {
         home.join(relative)
     } else {
         directory.to_path_buf()
-    };
-    let root = expanded.canonicalize()?;
+    }
+}
+
+fn canonical_directory(directory: &Path, home: &Path) -> Result<PathBuf> {
+    if directory.as_os_str().is_empty() {
+        return Err("저장 폴더를 지정하세요.".into());
+    }
+    let root = expand_home(directory, home).canonicalize()?;
     if !root.is_dir() {
         return Err(format!("디렉터리가 아닙니다: {}", root.display()).into());
     }
@@ -273,9 +280,257 @@ fn install(source: &Path, target: &Path, force: bool) -> Result<PathBuf> {
     Ok(target.into())
 }
 
+struct MaintenanceOptions {
+    force: bool,
+    directory: PathBuf,
+}
+
+fn parse_maintenance_options(
+    args: &[OsString],
+    home: &Path,
+    force_allowed: bool,
+) -> Result<MaintenanceOptions> {
+    let mut force = false;
+    let mut directory: Option<PathBuf> = None;
+    let mut index = 0;
+    while index < args.len() {
+        match args[index].to_string_lossy().as_ref() {
+            "--force" => {
+                if !force_allowed {
+                    return Err("--force는 install 명령에서만 사용할 수 있습니다.".into());
+                }
+                if force {
+                    return Err("--force는 한 번만 지정할 수 있습니다.".into());
+                }
+                force = true;
+                index += 1;
+            }
+            "--dir" => {
+                if directory.is_some() {
+                    return Err("--dir는 한 번만 지정할 수 있습니다.".into());
+                }
+                let value = args.get(index + 1).ok_or("--dir에는 폴더를 지정하세요.")?;
+                if value.is_empty() {
+                    return Err("--dir에는 폴더를 지정하세요.".into());
+                }
+                directory = Some(expand_home(Path::new(value), home));
+                index += 2;
+            }
+            value => return Err(format!("옵션이 잘못되었습니다: {value}").into()),
+        }
+    }
+    Ok(MaintenanceOptions {
+        force,
+        directory: directory.unwrap_or_else(|| home.join(".local/bin")),
+    })
+}
+
+fn uninstall(target: &Path) -> Result<Option<PathBuf>> {
+    match fs::symlink_metadata(target) {
+        Ok(metadata) => {
+            if !metadata.file_type().is_file() {
+                return Err(format!(
+                    "일반 파일 이외의 대상은 제거하지 않습니다: {}",
+                    target.display()
+                )
+                .into());
+            }
+            if metadata.permissions().mode() & 0o111 == 0 {
+                return Err(format!(
+                    "실행 권한이 없는 파일은 제거하지 않습니다: {}",
+                    target.display()
+                )
+                .into());
+            }
+            fs::remove_file(target)?;
+            Ok(Some(target.into()))
+        }
+        Err(error) if error.kind() == io::ErrorKind::NotFound => Ok(None),
+        Err(error) => Err(error.into()),
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Status {
+    Ok,
+    Fail,
+    Skip,
+}
+
+fn record(
+    report: &mut String,
+    counts: &mut [usize; 3],
+    status: Status,
+    name: &str,
+    detail: String,
+) {
+    let label = match status {
+        Status::Ok => "OK",
+        Status::Fail => "FAIL",
+        Status::Skip => "SKIP",
+    };
+    counts[status as usize] += 1;
+    let _ = writeln!(report, "{label:<4} {name:<6} {detail}");
+}
+
+fn doctor_report(directory: &Path, home: &Path, path: Option<&OsStr>) -> Result<(String, usize)> {
+    let target = directory.join(COMMAND);
+    let mut report = String::new();
+    let mut counts = [0; 3];
+
+    match fs::symlink_metadata(&target) {
+        Ok(metadata) if metadata.file_type().is_file() => {
+            let mode = metadata.permissions().mode() & 0o777;
+            if fs::read(&target)? != fs::read(env::current_exe()?)? {
+                record(
+                    &mut report,
+                    &mut counts,
+                    Status::Fail,
+                    "install",
+                    format!(
+                        "현재 실행 파일과 다릅니다. wdown install --force --dir {}: {}",
+                        directory.display(),
+                        target.display()
+                    ),
+                );
+            } else if mode & 0o111 == 0 {
+                record(
+                    &mut report,
+                    &mut counts,
+                    Status::Fail,
+                    "install",
+                    format!("실행 권한이 없습니다: {}", target.display()),
+                );
+            } else {
+                record(
+                    &mut report,
+                    &mut counts,
+                    Status::Ok,
+                    "install",
+                    format!("{} ({mode:o})", target.display()),
+                );
+            }
+        }
+        Ok(_) => record(
+            &mut report,
+            &mut counts,
+            Status::Fail,
+            "install",
+            format!("일반 파일이 아닙니다: {}", target.display()),
+        ),
+        Err(error) if error.kind() == io::ErrorKind::NotFound => record(
+            &mut report,
+            &mut counts,
+            Status::Skip,
+            "install",
+            format!(
+                "설치 파일이 없습니다. wdown install --dir {}",
+                directory.display()
+            ),
+        ),
+        Err(error) => return Err(error.into()),
+    }
+
+    let selected = path.and_then(|value| {
+        env::split_paths(value)
+            .map(|entry| entry.join(COMMAND))
+            .find(|candidate| candidate.is_file())
+    });
+    match selected {
+        Some(selected) => {
+            let same = fs::canonicalize(&selected)
+                .ok()
+                .zip(fs::canonicalize(&target).ok())
+                .is_some_and(|(selected, target)| selected == target);
+            if target.is_file() && !same {
+                record(
+                    &mut report,
+                    &mut counts,
+                    Status::Fail,
+                    "path",
+                    format!(
+                        "PATH에서 다른 실행 파일이 먼저 선택됩니다: {}",
+                        selected.display()
+                    ),
+                );
+            } else {
+                record(
+                    &mut report,
+                    &mut counts,
+                    Status::Ok,
+                    "path",
+                    selected.display().to_string(),
+                );
+            }
+        }
+        None => record(
+            &mut report,
+            &mut counts,
+            Status::Fail,
+            "path",
+            format!(
+                "PATH에 {COMMAND}이 없습니다. export PATH=\"{}:$PATH\"",
+                directory.display()
+            ),
+        ),
+    }
+
+    let config = home.join(".agents/config.wiki.toml");
+    match fs::symlink_metadata(&config) {
+        Err(error) if error.kind() == io::ErrorKind::NotFound => record(
+            &mut report,
+            &mut counts,
+            Status::Skip,
+            "config",
+            format!("저장 위치가 없습니다. {COMMAND} set <name> <directory>"),
+        ),
+        Err(error) => return Err(error.into()),
+        Ok(_) => {
+            let mode = fs::metadata(&config)
+                .or_else(|_| fs::symlink_metadata(&config))
+                .map(|metadata| format!(" ({:o})", metadata.permissions().mode() & 0o777))
+                .unwrap_or_default();
+            match read_config(&config).and_then(|value| validated_roots(&value.roots).map(|_| ())) {
+                Ok(()) => record(
+                    &mut report,
+                    &mut counts,
+                    Status::Ok,
+                    "config",
+                    format!("{}{mode}", config.display()),
+                ),
+                Err(error) => record(
+                    &mut report,
+                    &mut counts,
+                    Status::Fail,
+                    "config",
+                    format!("{}{mode}: {error}", config.display()),
+                ),
+            }
+        }
+    }
+
+    let _ = writeln!(
+        report,
+        "합계: OK={} FAIL={} SKIP={}",
+        counts[Status::Ok as usize],
+        counts[Status::Fail as usize],
+        counts[Status::Skip as usize]
+    );
+    Ok((report, counts[Status::Fail as usize]))
+}
+
+fn doctor(directory: &Path, home: &Path) -> Result<()> {
+    let (report, failures) = doctor_report(directory, home, env::var_os("PATH").as_deref())?;
+    io::stdout().write_all(report.as_bytes())?;
+    if failures > 0 {
+        return Err(format!("점검 실패: FAIL {failures}건").into());
+    }
+    Ok(())
+}
+
 fn configured_root(config: &Path, name: Option<&OsString>) -> Result<PathBuf> {
     if !config.try_exists()? {
-        return Err("저장 위치가 없습니다. agent-wiki set <name> <directory>를 실행하세요.".into());
+        return Err("저장 위치가 없습니다. wdown set <name> <directory>를 실행하세요.".into());
     }
     let value = read_config(config)?;
     let canonical_roots = validated_roots(&value.roots)?;
@@ -292,16 +547,23 @@ fn configured_root(config: &Path, name: Option<&OsString>) -> Result<PathBuf> {
 fn run(args: &[OsString], home: &Path) -> Result<PathBuf> {
     let config = home.join(".agents/config.wiki.toml");
     match args {
-        [command] if command == "install" => install(
-            &env::current_exe()?,
-            &home.join(".local/bin/agent-wiki"),
-            false,
-        ),
-        [command, option] if command == "install" && option == "--force" => install(
-            &env::current_exe()?,
-            &home.join(".local/bin/agent-wiki"),
-            true,
-        ),
+        [command, options @ ..] if command == "install" => {
+            let options = parse_maintenance_options(options, home, true)?;
+            install(
+                &env::current_exe()?,
+                &options.directory.join(COMMAND),
+                options.force,
+            )
+        }
+        [command, options @ ..] if command == "uninstall" => {
+            let options = parse_maintenance_options(options, home, false)?;
+            Ok(uninstall(&options.directory.join(COMMAND))?.unwrap_or_default())
+        }
+        [command, options @ ..] if command == "doctor" => {
+            let options = parse_maintenance_options(options, home, false)?;
+            doctor(&options.directory, home)?;
+            Ok(PathBuf::new())
+        }
         [command, name, directory] if command == "set" => {
             set_root(&name.to_string_lossy(), Path::new(directory), home, &config)
         }
@@ -328,11 +590,31 @@ fn run(args: &[OsString], home: &Path) -> Result<PathBuf> {
     }
 }
 
+fn help_requested(args: &[OsString]) -> bool {
+    let is_help = |value: &OsString| value == "--help" || value == "-h";
+    match args {
+        [first] => is_help(first),
+        [command, second, ..] => {
+            is_help(second)
+                && [
+                    COMMAND,
+                    "install",
+                    "uninstall",
+                    "doctor",
+                    "list",
+                    "set",
+                    "default",
+                    "path",
+                ]
+                .contains(&command.to_string_lossy().as_ref())
+        }
+        _ => false,
+    }
+}
+
 fn main() -> ExitCode {
     let args: Vec<_> = env::args_os().skip(1).collect();
-    if matches!(args.as_slice(), [arg] if arg == "--help" || arg == "-h")
-        || matches!(args.as_slice(), [command, option] if (command == "install" || command == "set" || command == "path" || command == "list" || command == "default") && (option == "--help" || option == "-h"))
-    {
+    if help_requested(&args) {
         println!("{HELP}");
         return ExitCode::SUCCESS;
     }
@@ -347,7 +629,7 @@ fn main() -> ExitCode {
             ExitCode::SUCCESS
         }
         Err(error) => {
-            eprintln!("agent-wiki: {error}");
+            eprintln!("{COMMAND}: {error}");
             ExitCode::FAILURE
         }
     }

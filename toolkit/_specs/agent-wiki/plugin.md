@@ -2,7 +2,7 @@
 
 - Agent Wiki는 작업 중 얻은 조사 자료와 작업 기록을 지정 폴더에 축적하는 위키입니다.
 - 폴더 구조는 사용하는 에이전트가 정하고, 문서는 루트 index.md와 관련 지식에 연결합니다.
-- 이번 범위는 기본 구조와 저장 위치 설정 CLI입니다. 설정은 `~/.agents/config.wiki.toml`에 저장하고, CLI는 `~/.local/bin/agent-wiki`에 설치할 수 있어야 합니다.
+- 이번 범위는 기본 구조와 저장 위치 설정 CLI입니다. 설정은 `~/.agents/config.wiki.toml`에 저장하고, CLI는 `~/.local/bin/wdown`에 설치·제거·점검할 수 있어야 합니다.
 - 실행 시 Python이 필요하지 않은 Rust 단일 바이너리로 설치합니다.
 - reader, researcher, writer로 기존 지식 활용·근거 확보·문서 반영 책임을 분리합니다.
 - 폴더 트리는 상위 위치를, index.md는 top-down 하위 주제·문서 안내를, 일반 문서는 본문과 의미 있는 관련 참조를 담당합니다. 복귀 링크나 문서→루트 왕복은 요구하지 않습니다.
@@ -25,6 +25,8 @@
 - 근데, 프로젝트와 기록은  상하관계아냐? general 프로젝트 같은걸로 기타 일반 작업에 대한 기록을 남긴다던가 그런식이어야 할거 같은데?
 
 - 플러그인에서 하위호환 제거해줘. 이거 나만사용해서 의미없어
+- 에이전트 위키의 스크립트에 있는 실행파일 이름을 wdown으로 바꾸자.
+  - jevx install 처럼 스크립트 설치, 제거, 닥터가 가능하게 바꿔줘.
 
 ---
 
@@ -33,7 +35,7 @@
 ## 목적과 현재 범위
 
 작업 중 얻은 지식과 경험을 지정된 위키에 연결된 문서로 축적하고 다음 작업에 재사용합니다.
-CLI는 named root 저장 위치와 설치를, manager는 조건·진행·완료와 역할 연결을, reader·researcher·writer는 탐색·조사·기억 반영을 소유합니다.
+CLI는 named root 저장 위치와 설치·제거·점검을, manager는 조건·진행·완료와 역할 연결을, reader·researcher·writer는 탐색·조사·기억 반영을 소유합니다.
 제품 구현, 위키 외부의 임의 기록, 작업 기록의 프로젝트 소유·조건 체크리스트 계약 외 고정 폴더 템플릿, 상시 백그라운드 실행, 백업·공개·동기화 명령, 개인정보 자동 분류, cross-root resolver는 소유하지 않습니다.
 
 ## 내장 skill과 사용 기준
@@ -60,7 +62,7 @@ CLI는 named root 저장 위치와 설치를, manager는 조건·진행·완료�
 | 소유 문서 | 계약 |
 | --- | --- |
 | [공통 위키](wiki.md) | root 경계·접근·탐색·구조·연결·권한 |
-| [CLI](cli.md) | agent-wiki 설치·설정·조회·실패·빌드·검증 |
+| [CLI](cli.md) | wdown 설치·제거·점검·설정·조회·실패·빌드·검증 |
 | [Obsidian 조회](obsidian.md) | vault/root 매핑·type/tags 검색·출력 판정·역할별 활용 |
 | [manager](skills/manager/spec.md) | 구체 조건·진행·완료·임시 기록·역할 전달 |
 | [reader](skills/reader/spec.md) | 기존 지식·과거 작업 탐색과 해석 |
@@ -73,8 +75,8 @@ CLI는 named root 저장 위치와 설치를, manager는 조건·진행·완료�
 
 아래 파일 경로는 저장소 루트 기준이며 CLI 명령은 `toolkit/agent-wiki/`에서 실행합니다.
 
-- `toolkit/agent-wiki/scripts/src/main.rs`: 설치·저장 위치 설정·조회 CLI 원본입니다.
-- `toolkit/agent-wiki/scripts/build.sh`: Cargo.lock 기준으로 네이티브 바이너리 `toolkit/agent-wiki/scripts/agent-wiki`를 빌드합니다.
+- `toolkit/agent-wiki/scripts/src/main.rs`: 설치·제거·점검·저장 위치 설정·조회 CLI 원본입니다. 실행 파일 이름은 `wdown`입니다.
+- `toolkit/agent-wiki/scripts/build.sh`: Cargo.lock 기준으로 네이티브 바이너리 `toolkit/agent-wiki/scripts/wdown`을 빌드합니다.
 - `toolkit/agent-wiki/README.md`: 설치 방법, 명령, 설정 형식을 설명합니다.
 - `toolkit/agent-wiki/skills/<manager|reader|researcher|writer>/SKILL.md`: 각 역할의 실행 지침입니다.
 - `toolkit/agent-wiki/.codex-plugin/plugin.json`: CLI와 네 스킬의 선택 기준을 설명합니다.

@@ -2,7 +2,7 @@
 
 ## root와 접근 권한
 
-- `agent-wiki list`, `agent-wiki path [name]`로 필요한 root를 확인합니다. `list`는 전체 root 경계를 검증하고 이름·canonical 경로·default 여부·선택용 description을 반환하며, `path`는 검증된 canonical 경로를 반환합니다. CLI가 없으면 TOML parser로 named roots 설정을 읽을 수 있습니다. 미지원 설정을 발견하면 해당 위키 작업을 중단하고 설정 갱신 필요를 알립니다. 경로 설정·설치를 암묵적으로 변경하지 않습니다.
+- `wdown list`, `wdown path [name]`로 필요한 root를 확인합니다. `list`는 전체 root 경계를 검증하고 이름·canonical 경로·default 여부·선택용 description을 반환하며, `path`는 검증된 canonical 경로를 반환합니다. CLI가 없으면 TOML parser로 named roots 설정을 읽을 수 있습니다. 미지원 설정을 발견하면 해당 위키 작업을 중단하고 설정 갱신 필요를 알립니다. 경로 설정·설치를 암묵적으로 변경하지 않습니다.
 - root는 사용자 정의 이름과 최종 절대 경로를 가진 물리적 백업·공개·동기화 경계입니다. root 내부 폴더는 지식·조사·프로젝트 같은 의미 분류를 소유합니다. 공통 basedir는 배치 편의일 뿐 보안 경계가 아닙니다.
 - root 경로는 서로 같거나 상하로 중첩될 수 없으며 형제 root는 허용합니다. 각 root는 독립적인 `index.md`, 깊이 제한, 루트에서 문서로 내려가는 연결성을 가집니다. 어떤 Markdown 링크도 root를 가로지르지 않습니다.
 - reader·researcher는 요청·현재 작업·root 이름과 설명에 관련된 root만 읽으며 모든 root를 자동 탐색하지 않습니다. 읽은 문서는 root 이름과 상대 경로를 함께 유지합니다.

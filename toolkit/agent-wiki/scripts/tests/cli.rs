@@ -285,7 +285,7 @@ fn broken_config_symlink_is_not_replaced_or_created() {
 fn install_copies_a_standalone_executable_and_preserves_collisions() {
     let home = tempfile::tempdir().unwrap();
     let source = env::current_exe().unwrap();
-    let target = home.path().join(".local/bin/agent-wiki");
+    let target = home.path().join(".local/bin/wdown");
     install(&source, &target, false).unwrap();
     assert_eq!(fs::read(&source).unwrap(), fs::read(&target).unwrap());
     assert_eq!(
@@ -306,6 +306,226 @@ fn install_copies_a_standalone_executable_and_preserves_collisions() {
     assert_eq!(
         fs::metadata(&collision).unwrap().permissions().mode() & 0o777,
         0o755
+    );
+}
+
+#[test]
+fn install_and_uninstall_accept_dir_and_force_options() {
+    let home = tempfile::tempdir().unwrap();
+    let directory = home.path().join("bin");
+    let directory_text = directory.to_str().unwrap();
+    let target = directory.join("wdown");
+
+    run(&args(&["install", "--dir", directory_text]), home.path()).unwrap();
+    assert_eq!(
+        fs::read(&target).unwrap(),
+        fs::read(env::current_exe().unwrap()).unwrap()
+    );
+    assert_eq!(
+        fs::metadata(&target).unwrap().permissions().mode() & 0o777,
+        0o755
+    );
+
+    fs::write(&target, "different").unwrap();
+    assert!(run(&args(&["install", "--dir", directory_text]), home.path()).is_err());
+    assert_eq!(fs::read_to_string(&target).unwrap(), "different");
+    run(
+        &args(&["install", "--force", "--dir", directory_text]),
+        home.path(),
+    )
+    .unwrap();
+    assert_eq!(
+        fs::read(&target).unwrap(),
+        fs::read(env::current_exe().unwrap()).unwrap()
+    );
+
+    run(&args(&["uninstall", "--dir", directory_text]), home.path()).unwrap();
+    assert!(!target.exists());
+    run(&args(&["uninstall", "--dir", directory_text]), home.path()).unwrap();
+    assert!(!home.path().join(".agents").exists());
+}
+
+#[test]
+fn install_requires_the_executable_bit_before_reusing_identical_bytes() {
+    let home = tempfile::tempdir().unwrap();
+    let source = env::current_exe().unwrap();
+    let target = home.path().join("same-bytes");
+    fs::write(&target, fs::read(&source).unwrap()).unwrap();
+    assert!(install(&source, &target, false).is_err());
+    assert_eq!(
+        fs::metadata(&target).unwrap().permissions().mode() & 0o777,
+        0o644
+    );
+    install(&source, &target, true).unwrap();
+    assert_eq!(
+        fs::metadata(&target).unwrap().permissions().mode() & 0o777,
+        0o755
+    );
+}
+
+#[test]
+fn dir_option_expands_home_alias_and_default_directory_is_used() {
+    let home = tempfile::tempdir().unwrap();
+    run(&args(&["install", "--dir", "~"]), home.path()).unwrap();
+    let alias_target = home.path().join("wdown");
+    assert!(alias_target.is_file());
+    run(&args(&["uninstall", "--dir", "~"]), home.path()).unwrap();
+    assert!(!alias_target.exists());
+
+    run(&args(&["install"]), home.path()).unwrap();
+    let default_directory = home.path().join(".local/bin");
+    let default_target = default_directory.join("wdown");
+    assert_eq!(
+        fs::read(&default_target).unwrap(),
+        fs::read(env::current_exe().unwrap()).unwrap()
+    );
+    let (report, failures) = doctor_report(
+        default_directory.as_path(),
+        home.path(),
+        Some(default_directory.as_os_str()),
+    )
+    .unwrap();
+    assert_eq!(failures, 0, "{report}");
+    run(&args(&["uninstall"]), home.path()).unwrap();
+    assert!(!default_target.exists());
+}
+
+#[test]
+fn paths_with_spaces_and_unicode_are_accepted() {
+    let home = tempfile::tempdir().unwrap();
+    let root = home.path().join("위키 notes'q");
+    fs::create_dir_all(&root).unwrap();
+    let stored = run(
+        &args(&["set", "knowledge", root.to_str().unwrap()]),
+        home.path(),
+    )
+    .unwrap();
+    assert_eq!(stored, root.canonicalize().unwrap());
+    assert_eq!(
+        run(&args(&["path", "knowledge"]), home.path()).unwrap(),
+        root.canonicalize().unwrap()
+    );
+
+    let directory = home.path().join("local bin");
+    let directory_text = directory.to_str().unwrap();
+    run(&args(&["install", "--dir", directory_text]), home.path()).unwrap();
+    assert!(directory.join("wdown").is_file());
+    run(&args(&["uninstall", "--dir", directory_text]), home.path()).unwrap();
+    assert!(!directory.join("wdown").exists());
+}
+
+#[test]
+fn maintenance_options_reject_unknown_and_repeated_flags() {
+    let home = tempfile::tempdir().unwrap();
+    let directory = home.path().join("bin");
+    let directory_text = directory.to_str().unwrap();
+    for input in [
+        args(&["install", "--dir"]),
+        args(&["install", "--dir", ""]),
+        args(&["install", "--dir", directory_text, "--dir", directory_text]),
+        args(&["install", "--force", "--force"]),
+        args(&["install", "--yes"]),
+        args(&["uninstall", "--force"]),
+        args(&["doctor", "--force"]),
+        args(&["doctor", "--yes"]),
+    ] {
+        assert!(run(&input, home.path()).is_err());
+    }
+    assert!(!directory.exists());
+    assert!(!home.path().join(".agents").exists());
+}
+
+#[test]
+fn uninstall_preserves_symlinks_directories_and_non_executable_files() {
+    let home = tempfile::tempdir().unwrap();
+    let directory = home.path().join("bin");
+    fs::create_dir_all(&directory).unwrap();
+    let target = directory.join("wdown");
+
+    run(
+        &args(&["install", "--dir", directory.to_str().unwrap()]),
+        home.path(),
+    )
+    .unwrap();
+    fs::set_permissions(&target, fs::Permissions::from_mode(0o644)).unwrap();
+    assert!(uninstall(&target).is_err());
+    assert!(target.exists());
+
+    fs::remove_file(&target).unwrap();
+    fs::create_dir(&target).unwrap();
+    assert!(uninstall(&target).is_err());
+    assert!(target.is_dir());
+    fs::remove_dir(&target).unwrap();
+
+    let outside = home.path().join("outside");
+    fs::write(&outside, "keep").unwrap();
+    symlink("outside", &target).unwrap();
+    assert!(uninstall(&target).is_err());
+    assert!(target.is_symlink());
+    assert_eq!(fs::read_to_string(&outside).unwrap(), "keep");
+}
+
+#[test]
+fn doctor_reports_missing_setup_without_creating_files() {
+    let home = tempfile::tempdir().unwrap();
+    let directory = home.path().join("bin");
+
+    let (report, failures) = doctor_report(&directory, home.path(), None).unwrap();
+    assert_eq!(failures, 1, "{report}");
+    assert!(report.contains("SKIP install"));
+    assert!(report.contains("FAIL path"));
+    assert!(report.contains("SKIP config"));
+    assert!(!directory.exists());
+    assert!(!home.path().join(".agents").exists());
+}
+
+#[test]
+fn doctor_accepts_installed_binary_and_valid_config() {
+    let home = tempfile::tempdir().unwrap();
+    let directory = home.path().join("bin");
+    let root = home.path().join("wiki");
+    fs::create_dir(&root).unwrap();
+    run(
+        &args(&["install", "--dir", directory.to_str().unwrap()]),
+        home.path(),
+    )
+    .unwrap();
+    run(
+        &args(&["set", "knowledge", root.to_str().unwrap()]),
+        home.path(),
+    )
+    .unwrap();
+
+    let path = env::join_paths([&directory]).unwrap();
+    let (report, failures) = doctor_report(&directory, home.path(), Some(&path)).unwrap();
+    assert_eq!(failures, 0, "{report}");
+    assert!(report.contains("합계: OK=3 FAIL=0 SKIP=0"));
+    assert!(report.contains(&directory.join("wdown").display().to_string()));
+    assert!(report.contains(&config(home.path()).display().to_string()));
+}
+
+#[test]
+fn doctor_flags_stale_install_and_invalid_config_without_writing() {
+    let home = tempfile::tempdir().unwrap();
+    let directory = home.path().join("bin");
+    fs::create_dir_all(&directory).unwrap();
+    let target = directory.join("wdown");
+    fs::write(&target, "stale").unwrap();
+    fs::set_permissions(&target, fs::Permissions::from_mode(0o755)).unwrap();
+
+    let target_config = config(home.path());
+    fs::create_dir(target_config.parent().unwrap()).unwrap();
+    fs::write(&target_config, "root = \"/tmp\"\n").unwrap();
+
+    let path = env::join_paths([&directory]).unwrap();
+    let (report, failures) = doctor_report(&directory, home.path(), Some(&path)).unwrap();
+    assert_eq!(failures, 2, "{report}");
+    assert!(report.contains("FAIL install"));
+    assert!(report.contains("FAIL config"));
+    assert_eq!(fs::read_to_string(&target).unwrap(), "stale");
+    assert_eq!(
+        fs::read_to_string(&target_config).unwrap(),
+        "root = \"/tmp\"\n"
     );
 }
 

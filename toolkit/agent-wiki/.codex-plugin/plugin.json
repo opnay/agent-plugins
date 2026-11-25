@@ -9,7 +9,7 @@
   "interface": {
     "displayName": "Agent Wiki",
     "shortDescription": "작업 조건 관리와 위키 기억의 조회·조사·저장을 연결합니다.",
-    "longDescription": "manager는 작업 조건·진행·완료와 필요한 전문 역할을 연결합니다. reader와 researcher는 등록된 Obsidian vault의 유형·태그 검색으로 후보를 찾고 본문 근거를 확인하며, writer는 type·tags와 본문을 보존하고 CLI로 어휘·저장 결과를 확인합니다. root/vault 경계·읽기 전용·같은 root의 파일 대체 조회를 유지하며 Rust CLI는 root 설정·설치를 담당합니다.",
+    "longDescription": "manager는 작업 조건·진행·완료와 필요한 전문 역할을 연결합니다. reader와 researcher는 등록된 Obsidian vault의 유형·태그 검색으로 후보를 찾고 본문 근거를 확인하며, writer는 type·tags와 본문을 보존하고 CLI로 어휘·저장 결과를 확인합니다. root/vault 경계·읽기 전용·같은 root의 파일 대체 조회를 유지하며 Rust CLI `wdown`은 root 설정과 설치·제거·점검을 담당합니다.",
     "developerName": "opnay",
     "category": "Productivity",
     "capabilities": [

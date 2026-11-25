@@ -2,7 +2,7 @@
 
 ## 경계와 대상
 
-- Obsidian CLI는 등록된 위키의 조회·메타데이터 확인 수단입니다. root 등록·선택은 `agent-wiki` 설정 계약이 소유하며 두 CLI를 구분합니다.
+- Obsidian CLI는 등록된 위키의 조회·메타데이터 확인 수단입니다. root 등록·선택은 `wdown` 설정 계약이 소유하며 두 CLI를 구분합니다.
 - CLI가 사용 가능하고 현재 요청·허용된 맥락에서 vault 이름이나 ID를 알고 있으면 `obsidian vault=<vault> vault info=path`를 실행하고 결과의 canonical 경로를 선택한 agent-wiki root와 대조합니다. 이름이 같다는 이유만으로 root를 연결하지 않습니다.
 - 명령마다 첫 번째 매개변수로 `vault=<vault>`를 지정합니다. 파일은 vault 기준의 정확한 `path=<relative-path>`를 사용하고, 검색 결과 경로도 선택 root와 영역 안인지 확인합니다. CLI 기본 활성 vault·파일에 의존하지 않습니다.
 - CLI 조회가 앱을 시작할 수 있음을 고려해 현재 실행 제한을 따릅니다. 미설치·미등록·매핑 미확정·경로 불일치·명령 불가이면 설정·앱 설치·플러그인 활성화를 시도하지 않고 같은 승인 root의 파일·YAML 조회로 진행합니다. 매핑을 얻으려고 다른 vault 내용을 탐색하지 않습니다.

@@ -1,7 +1,7 @@
 # Agent Wiki
 
 작업에서 얻은 지식과 경험을 연결된 위키로 축적하고 다음 작업에 재사용합니다.
-Rust CLI는 저장 위치·설치를, manager는 작업 관리와 역할 연결을, reader·researcher·writer는 탐색·조사·기억 반영을 담당합니다.
+Rust CLI `wdown`은 저장 위치 설정·설치·제거·점검을, manager는 작업 관리와 역할 연결을, reader·researcher·writer는 탐색·조사·기억 반영을 담당합니다.
 
 
 ## 스킬 선택
@@ -61,7 +61,7 @@ writer를 직접 호출할 때 manager나 체크리스트는 필수가 아닙니
 
 ## Obsidian CLI 활용
 
-등록된 Obsidian vault가 선택한 위키 root와 일치하면 CLI로 유형·태그 검색과 속성·본문 확인을 수행합니다. `agent-wiki`는 root 설정·조회, `obsidian`은 해당 vault 조회를 담당합니다.
+등록된 Obsidian vault가 선택한 위키 root와 일치하면 CLI로 유형·태그 검색과 속성·본문 확인을 수행합니다. `wdown`은 root 설정·조회, `obsidian`은 해당 vault 조회를 담당합니다.
 
 ```sh
 obsidian vault="<vault>" vault info=path
@@ -188,26 +188,37 @@ macOS·Linux용 Rust 단일 실행 파일입니다. 설치와 실행에는 Pytho
 이 README가 있는 플러그인 폴더에서 실행합니다.
 
 ```sh
-./scripts/agent-wiki install
+./scripts/wdown install
 ```
 
-`~/.local/bin/agent-wiki`에 현재 실행 파일 하나를 복사합니다. 원본 플러그인 폴더나 별도 라이브러리 파일에 의존하지 않습니다. 바이너리는 빌드한 OS·아키텍처에 맞춰 사용합니다.
+`~/.local/bin/wdown`에 현재 실행 파일 하나를 복사합니다. 원본 플러그인 폴더나 별도 라이브러리 파일에 의존하지 않습니다. 바이너리는 빌드한 OS·아키텍처에 맞춰 사용합니다.
 동일한 파일은 그대로 유지하며, 다른 기존 파일을 교체하려면 내용을 확인한 뒤 `install --force`를 사용합니다. 심볼릭 링크와 디렉터리는 교체하지 않습니다.
+설치 폴더는 기본 `~/.local/bin`이고 `--dir <dir>`으로 바꿉니다.
 
 소스 체크아웃에는 바이너리를 저장하지 않습니다. 바이너리가 없다면 Rust/Cargo를 준비하고 먼저 빌드합니다.
 
 ```sh
 sh scripts/build.sh
-./scripts/agent-wiki install
+./scripts/wdown install
 ```
 
-빌드 시 Cargo.lock에 고정된 의존성을 가져옵니다. 완성된 `scripts/agent-wiki` 파일만 복사해 다른 동일 플랫폼 환경에서도 설치할 수 있습니다.
+빌드 시 Cargo.lock에 고정된 의존성을 가져옵니다. 완성된 `scripts/wdown` 파일만 복사해 다른 동일 플랫폼 환경에서도 설치할 수 있습니다.
 
 `~/.local/bin`이 PATH에 없다면 셸 설정에 다음 내용을 추가합니다.
 
 ```sh
 export PATH="$HOME/.local/bin:$PATH"
 ```
+
+## 설치 점검·제거
+
+```sh
+wdown doctor      # 설치 파일·PATH·설정 점검 (기본 ~/.local/bin, --dir로 변경)
+wdown uninstall   # ~/.local/bin/wdown 제거 (--dir로 변경)
+```
+
+`doctor`은 설치 파일, PATH, 설정 파일 상태를 점검하고 항목마다 `OK`·`FAIL`·`SKIP`과 합계를 출력합니다. PATH 밖 설치, 심볼릭 링크나 실행 권한이 아닌 설치 파일, 잘못된 설정은 `FAIL`로 보고하고 종료 코드로 1을 반환합니다. 설치 파일이 없어도 현재 실행 파일로 명령을 실행하는 상태는 `SKIP`입니다.
+`uninstall`은 `<dir>/wdown` 실행 파일만 제거합니다. 심볼릭 링크·디렉터리·실행 권한이 없는 파일은 제거하지 않고 경로를 알린 뒤 실패로 끝납니다. 설치 파일이 없으면 성공으로 봅니다.
 
 ## 저장 위치 설정·조회
 
@@ -216,13 +227,13 @@ root는 백업·공개·동기화의 물리 경계이고, root 안의 폴더는 
 서로 같은 경로나 상하로 중첩된 root는 등록할 수 없고 형제 root는 허용합니다. root 사이 상대 Markdown 링크는 만들지 않습니다.
 
 ```sh
-agent-wiki set knowledge ~/Documents/Wiki
-agent-wiki set personality ~/.agents/personality
-agent-wiki default knowledge
-agent-wiki list
-agent-wiki path knowledge
-agent-wiki path
-agent-wiki --help
+wdown set knowledge ~/Documents/Wiki
+wdown set personality ~/.agents/personality
+wdown default knowledge
+wdown list
+wdown path knowledge
+wdown path
+wdown --help
 ```
 
 `set <name> <directory>`로 root 이름과 경로를 명시합니다. 설치는 저장 위치를 정하지 않습니다. `set` 또는 `default`는 `~/.agents/config.wiki.toml`을 원자적으로 갱신합니다.

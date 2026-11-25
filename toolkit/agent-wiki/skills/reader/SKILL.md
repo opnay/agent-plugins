@@ -9,7 +9,7 @@ Retrieve existing knowledge, rules, and history for the current question. Work i
 
 ## Locate Relevant Sources
 
-Resolve roots with `agent-wiki list` and `agent-wiki path [name]`. If unavailable, parse `~/.agents/config.wiki.toml` with a TOML parser. Require a registered `default` and named `roots`, each with an absolute existing-directory `path` and optional string `description`. Validate field types and root names, canonicalize paths, and reject equal or nested roots. Configuration symlinks are supported; CLI updates preserve the link while atomically replacing its resolved target. Unsupported configuration requires an update: stop wiki retrieval without conversion, installation, settings changes, or a substitute root. Report inaccessible sources and continue independent work.
+Resolve roots with `wdown list` and `wdown path [name]`. If unavailable, parse `~/.agents/config.wiki.toml` with a TOML parser. Require a registered `default` and named `roots`, each with an absolute existing-directory `path` and optional string `description`. Validate field types and root names, canonicalize paths, and reject equal or nested roots. Configuration symlinks are supported; CLI updates preserve the link while atomically replacing its resolved target. Unsupported configuration requires an update: stop wiki retrieval without conversion, installation, settings changes, or a substitute root. Report inaccessible sources and continue independent work.
 
 Select roots by the request, current work, or an unambiguous name or description match. Do not inspect every root merely because it is accessible. Keep root names and relative document paths with findings.
 
