@@ -19,6 +19,7 @@
 
 ## 기록 근거
 
+- 관련 커밋: `da2f2c3` (`feat(agent-wiki): wdown inspect Markdown 구조 트리 출력`).
 - 관련 세션 기록: `/tmp/.fx/251125-inspect/` (픽스처), 이전 세션 대화
 
 ## 변경 상세
