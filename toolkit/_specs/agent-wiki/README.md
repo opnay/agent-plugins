@@ -1,7 +1,7 @@
 # Agent Wiki
 
 작업에서 얻은 지식과 경험을 연결된 위키로 축적하고 다음 작업에 재사용합니다.
-Rust CLI `wdown`은 저장 위치 설정·설치·제거·점검과 Markdown 구조 점검을, manager는 작업 관리와 역할 연결을, reader·researcher·writer는 탐색·조사·기억 반영을 담당합니다.
+Rust CLI `wdown`은 저장 위치 설정·설치·제거·점검과 Markdown 구조 점검·노드 편집을, manager는 작업 관리와 역할 연결을, reader·researcher·writer는 탐색·조사·기억 반영을 담당합니다.
 
 개발 진입점은 [플러그인 스펙](plugin.md)입니다. [공통 위키 계약](wiki.md)·[CLI 계약](cli.md)과 각 skill의 책임을 분리하며, [writer 스펙](skills/writer/spec.md)은 의도·기억·기록·저장 계약으로 구성합니다.
 
@@ -255,7 +255,7 @@ path = "/Users/example/.agents/personality"
 - `path [name]`은 설정되지 않았거나 root 경계가 유효하지 않다면 실패하고 canonical 경로를 출력합니다. `list`도 전체 root의 중복·중첩·존재 여부를 검증한 뒤 이름·canonical 경로·default 여부·description을 보여줍니다.
 - 설정 파일이 심볼릭 링크이면 링크를 유지하고 실제 대상 파일을 조회·갱신합니다. 갱신은 원자적 교체를 사용하며, 끊어진 링크는 수정하지 않고 실패합니다.
 - 설정 파싱이나 갱신 결과의 root 검증에 실패하면 기존 파일을 보존합니다. `set <name> <directory>`로 같은 root의 경로를 정정할 수 있습니다. 주석과 서식은 갱신 시 정규화합니다.
-- 도움말과 조회는 파일을 생성하지 않습니다. 셸 설정과 위키 내용도 변경하지 않습니다.
+- 도움말과 조회·점검은 파일을 생성하지 않습니다. 셸 설정과 위키 내용도 변경하지 않습니다. 위키 Markdown을 바꾸는 명령은 `edit --write`뿐입니다.
 
 ## Markdown 구조 점검
 
@@ -264,3 +264,11 @@ wdown inspect <file> [--id <id>]   # Markdown 구조 트리와 지정한 노드�
 ```
 
 `inspect`는 읽기 전용으로 Markdown 한 파일을 문법 블록 기준 구조 트리로 출력합니다. 출력·flag·실패 계약은 [CLI spec](cli.md)이 소유합니다. 구현은 `scripts/src/inspect.rs`, 검증은 `scripts/tests/inspect.rs`가 소유합니다.
+
+## Markdown 노드 편집
+
+```sh
+wdown edit <file> --id <id> [--write]   # 표준 입력으로 해당 노드 대체, 기본은 dry-run
+```
+
+`edit`은 `inspect`의 id로 고른 노드 하나만 표준 입력 본문으로 대체합니다. 편집 가능한 kind는 `heading`·`paragraph`·`item`·`code`이고, 대체 범위·diff 출력·쓰기 실패 계약은 [CLI spec](cli.md)이 소유합니다. 구현은 `scripts/src/edit.rs`, 계획 검증은 `scripts/tests/edit.rs`, 파일 단위 검증은 `scripts/tests/cli.rs`가 소유합니다. 노드 줄 범위는 `inspect.rs`의 parser가 원본 줄 번호로 기록합니다.

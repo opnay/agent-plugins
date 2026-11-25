@@ -4,18 +4,19 @@ use std::error::Error;
 use std::ffi::{OsStr, OsString};
 use std::fmt::Write as _;
 use std::fs;
-use std::io::{self, Write};
+use std::io::{self, Read, Write};
 use std::os::unix::fs::PermissionsExt;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
+mod edit;
 mod inspect;
 
 const COMMAND: &str = "wdown";
 
-const HELP: &str = "wdown: 위키 저장 위치를 설정·조회하고 Markdown 구조를 점검합니다.
+const HELP: &str = "wdown: 위키 저장 위치를 설정·조회하고 Markdown 구조를 점검·편집합니다.
 
 사용법:
   wdown install [--force] [--dir <dir>]   <dir>/wdown에 현재 실행 파일을 복사합니다.
@@ -26,6 +27,7 @@ const HELP: &str = "wdown: 위키 저장 위치를 설정·조회하고 Markdown
   wdown default <name>                    default root를 지정합니다.
   wdown path [name]                       default 또는 named root 경로를 출력합니다.
   wdown inspect <file> [--id <id>]        Markdown 구조 트리를 출력합니다.
+  wdown edit <file> --id <id> [--write]   표준 입력으로 해당 노드를 대체합니다. 기본은 dry-run입니다.
   wdown --help";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -602,8 +604,46 @@ fn run(args: &[OsString], home: &Path) -> Result<PathBuf> {
             io::stdout().write_all(output.as_bytes())?;
             Ok(PathBuf::new())
         }
+        [command, options @ ..] if command == "edit" => {
+            let (target, id, write) = edit::parse_options(options)?;
+            let mut input = String::new();
+            io::stdin().read_to_string(&mut input)?;
+            let output = edit_target(&target, &id, write, &input)?;
+            io::stdout().write_all(output.as_bytes())?;
+            Ok(PathBuf::new())
+        }
         _ => Err(format!("명령 또는 인자가 잘못되었습니다.\n{HELP}").into()),
     }
+}
+
+/// `--id`로 고른 노드를 stdin 본문으로 대체한다. `write`가 아니고 변경이 있을 때만 저장한다.
+fn edit_target(target: &Path, id: &str, write: bool, input: &str) -> Result<String> {
+    let source = fs::read_to_string(target).map_err(|error| {
+        format!(
+            "Markdown을 읽을 수 없습니다: {} ({error})",
+            target.display()
+        )
+    })?;
+    let plan = edit::plan(&source, target, id, input)?;
+    let saved = if write && plan.changed() {
+        let metadata = fs::symlink_metadata(target).map_err(|error| {
+            format!(
+                "Markdown 상태를 확인할 수 없습니다: {} ({error})",
+                target.display()
+            )
+        })?;
+        if metadata.file_type().is_symlink() {
+            return Err(
+                format!("심볼릭 링크 파일은 편집하지 않습니다: {}", target.display()).into(),
+            );
+        }
+        let mode = metadata.permissions().mode() & 0o777;
+        atomic_write(target, edit::apply(&source, &plan).as_bytes(), mode, true)?;
+        true
+    } else {
+        false
+    };
+    Ok(edit::render_plan(&plan, target, saved))
 }
 
 fn help_requested(args: &[OsString]) -> bool {
@@ -622,6 +662,7 @@ fn help_requested(args: &[OsString]) -> bool {
                     "default",
                     "path",
                     "inspect",
+                    "edit",
                 ]
                 .contains(&command.to_string_lossy().as_ref())
         }
@@ -659,3 +700,7 @@ mod tests;
 #[cfg(test)]
 #[path = "../tests/inspect.rs"]
 mod inspect_tests;
+
+#[cfg(test)]
+#[path = "../tests/edit.rs"]
+mod edit_tests;

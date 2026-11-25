@@ -31,6 +31,8 @@ pub struct Node {
     pub flags: Vec<String>,
     pub children: Vec<Node>,
     pub id: String,
+    /// 원본 문서의 0-based 시작·끝 줄 번호(양쪽 포함). 인라인 노드는 None.
+    pub span: Option<(usize, usize)>,
 }
 
 fn node(kind: Kind) -> Node {
@@ -42,6 +44,7 @@ fn node(kind: Kind) -> Node {
         flags: Vec::new(),
         children: Vec::new(),
         id: String::new(),
+        span: None,
     }
 }
 
@@ -112,9 +115,11 @@ pub fn parse_options(args: &[OsString]) -> Result<(PathBuf, Option<String>), Str
 struct Parser<'a> {
     lines: Vec<&'a str>,
     index: usize,
+    /// `lines[0]`이 원본 문서의 몇 번째 줄인지 가리키는 오프셋.
+    offset: usize,
 }
 
-fn fence_marker(line: &str) -> Option<(char, usize, String)> {
+pub(crate) fn fence_marker(line: &str) -> Option<(char, usize, String)> {
     let trimmed = line.trim_start();
     let fence = trimmed.chars().next()?;
     if fence != '`' && fence != '~' {
@@ -160,7 +165,7 @@ fn is_thematic_break(line: &str) -> bool {
         && trimmed.chars().all(|c| c == first || c == ' ')
 }
 
-fn list_marker(line: &str) -> Option<(usize, usize, bool, char)> {
+pub(crate) fn list_marker(line: &str) -> Option<(usize, usize, bool, char)> {
     let indent = line.len() - line.trim_start().len();
     if indent >= 4 {
         return None;
@@ -272,8 +277,12 @@ fn task_checkbox(text: &mut String) -> Option<bool> {
 }
 
 impl<'a> Parser<'a> {
-    fn new(lines: Vec<&'a str>) -> Self {
-        Self { lines, index: 0 }
+    fn new(lines: Vec<&'a str>, offset: usize) -> Self {
+        Self {
+            lines,
+            index: 0,
+            offset,
+        }
     }
 
     fn parse(&mut self) -> Vec<Node> {
@@ -289,6 +298,16 @@ impl<'a> Parser<'a> {
     }
 
     fn block(&mut self) -> Node {
+        let start = self.index;
+        let mut block = self.block_raw();
+        block.span = Some((
+            start + self.offset,
+            self.index.saturating_sub(1) + self.offset,
+        ));
+        block
+    }
+
+    fn block_raw(&mut self) -> Node {
         let line = self.lines[self.index];
         if let Some((fence, run, info)) = fence_marker(line) {
             return self.code_block(fence, run, info);
@@ -352,6 +371,7 @@ impl<'a> Parser<'a> {
     }
 
     fn blockquote(&mut self) -> Node {
+        let start = self.index;
         let mut inner: Vec<&str> = Vec::new();
         while self.index < self.lines.len() {
             let line = self.lines[self.index];
@@ -361,7 +381,7 @@ impl<'a> Parser<'a> {
             inner.push(rest.strip_prefix([' ', '\t']).unwrap_or(rest));
             self.index += 1;
         }
-        let blocks = Parser::new(inner).parse();
+        let blocks = Parser::new(inner, self.offset + start).parse();
         let mut quote = node(Kind::Blockquote);
         quote.details = format!("blocks={}", blocks.len());
         quote.text = blocks
@@ -437,6 +457,7 @@ impl<'a> Parser<'a> {
                 break;
             }
             let mut item = node(Kind::Item);
+            let item_start = self.index;
             let mut text = line[offset..].to_string();
             if let Some(done) = task_checkbox(&mut text) {
                 item.details = if done { "task=done" } else { "task=open" }.into();
@@ -446,6 +467,7 @@ impl<'a> Parser<'a> {
             item.children = inline;
             append_code(&mut item.details, code_spans);
             self.index += 1;
+            let inner_start = self.index;
             let mut inner: Vec<&str> = Vec::new();
             while self.index < self.lines.len() {
                 let next = self.lines[self.index];
@@ -459,12 +481,17 @@ impl<'a> Parser<'a> {
                     break;
                 }
             }
+            item.span = Some((
+                item_start + self.offset,
+                self.index.saturating_sub(1) + self.offset,
+            ));
             if !inner.is_empty() {
                 let dedented: Vec<&str> = inner
                     .iter()
                     .map(|line| &line[content_offset.min(line.len() - line.trim_start().len())..])
                     .collect();
-                item.children.extend(Parser::new(dedented).parse());
+                item.children
+                    .extend(Parser::new(dedented, self.offset + inner_start).parse());
             }
             list.children.push(item);
         }
@@ -740,11 +767,12 @@ pub fn parse_markdown(source: &str) -> Node {
         if let Some(closing) = closing {
             let mut front = node(Kind::FrontMatter);
             front.details = format!("keys={keys}");
+            front.span = Some((0, closing));
             blocks.push(front);
             start = closing + 1;
         }
     }
-    blocks.extend(Parser::new(lines[start..].to_vec()).parse());
+    blocks.extend(Parser::new(lines[start..].to_vec(), start).parse());
     let mut document = node(Kind::Document);
     document.children = nest_sections(blocks);
     assign_ids(&mut document, "");
@@ -785,8 +813,8 @@ fn count_flags(node: &Node) -> usize {
     node.flags.len() + node.children.iter().map(count_flags).sum::<usize>()
 }
 
-fn node_line(node: &Node) -> String {
-    let kind = match &node.kind {
+pub fn kind_name(kind: &Kind) -> String {
+    match kind {
         Kind::Document => "document".to_string(),
         Kind::FrontMatter => "front matter".into(),
         Kind::Heading(level) => format!("heading {level}"),
@@ -802,7 +830,11 @@ fn node_line(node: &Node) -> String {
         Kind::Html => "html".into(),
         Kind::Link => "link".into(),
         Kind::Image => "image".into(),
-    };
+    }
+}
+
+pub fn node_line(node: &Node) -> String {
+    let kind = kind_name(&node.kind);
     let mut line = format!("{} {kind}", node.id);
     if !node.details.is_empty() {
         let _ = write!(line, " {}", node.details);
@@ -826,27 +858,29 @@ fn write_tree(node: &Node, depth: usize, output: &mut String) {
     }
 }
 
+pub fn find_node<'a>(document: &'a Node, id: &str) -> Result<&'a Node, String> {
+    let mut found = Vec::new();
+    collect_matches(document, id, &mut found);
+    match found.len() {
+        0 => Err(format!("id를 찾을 수 없습니다: {id}")),
+        1 => Ok(found[0]),
+        matches => {
+            let ids = found
+                .iter()
+                .map(|node| node.id.as_str())
+                .collect::<Vec<_>>()
+                .join(" ");
+            Err(format!(
+                "id가 {matches}개 노드와 일치합니다. 자리 번호를 사용하세요: {ids}"
+            ))
+        }
+    }
+}
+
 pub fn render(document: &Node, path: &Path, id: Option<&str>) -> Result<String, String> {
     let root = match id {
         None => document,
-        Some(value) => {
-            let mut found = Vec::new();
-            collect_matches(document, value, &mut found);
-            match found.len() {
-                0 => return Err(format!("id를 찾을 수 없습니다: {value}")),
-                1 => found[0],
-                matches => {
-                    let ids = found
-                        .iter()
-                        .map(|node| node.id.as_str())
-                        .collect::<Vec<_>>()
-                        .join(" ");
-                    return Err(format!(
-                        "id가 {matches}개 노드와 일치합니다. 자리 번호를 사용하세요: {ids}"
-                    ));
-                }
-            }
-        }
+        Some(value) => find_node(document, value)?,
     };
     let mut output = String::new();
     if id.is_some() {

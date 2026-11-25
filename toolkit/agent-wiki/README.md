@@ -1,7 +1,7 @@
 # Agent Wiki
 
 작업에서 얻은 지식과 경험을 연결된 위키로 축적하고 다음 작업에 재사용합니다.
-Rust CLI `wdown`은 저장 위치 설정·설치·제거·점검과 Markdown 구조 점검을, manager는 작업 관리와 역할 연결을, reader·researcher·writer는 탐색·조사·기억 반영을 담당합니다.
+Rust CLI `wdown`은 저장 위치 설정·설치·제거·점검과 Markdown 구조 점검·노드 편집을, manager는 작업 관리와 역할 연결을, reader·researcher·writer는 탐색·조사·기억 반영을 담당합니다.
 
 
 ## 스킬 선택
@@ -256,7 +256,7 @@ path = "/Users/example/.agents/personality"
 - `path [name]`은 설정되지 않았거나 root 경계가 유효하지 않다면 실패하고 canonical 경로를 출력합니다. `list`도 전체 root의 중복·중첩·존재 여부를 검증한 뒤 이름·canonical 경로·default 여부·description을 보여줍니다.
 - 설정 파일이 심볼릭 링크이면 링크를 유지하고 실제 대상 파일을 조회·갱신합니다. 갱신은 원자적 교체를 사용하며, 끊어진 링크는 수정하지 않고 실패합니다.
 - 설정 파싱이나 갱신 결과의 root 검증에 실패하면 기존 파일을 보존합니다. `set <name> <directory>`로 같은 root의 경로를 정정할 수 있습니다. 주석과 서식은 갱신 시 정규화합니다.
-- 도움말과 조회는 파일을 생성하지 않습니다. 셸 설정과 위키 내용도 변경하지 않습니다.
+- 도움말과 조회·점검은 파일을 생성하지 않습니다. 셸 설정과 위키 내용도 변경하지 않습니다. 위키 Markdown을 바꾸는 명령은 `edit --write`뿐입니다.
 
 ## Markdown 구조 점검
 
@@ -284,3 +284,34 @@ document note.md nodes=8 flags=1
 ```
 
 `--id`가 두 개 이상 heading slug와 일치하면 실패하고 후보 자리 번호를 알려줍니다. 없는 파일, UTF-8이 아닌 파일, 찾을 수 없는 id도 실패입니다. 첫 줄의 `<path>`는 지정받은 문자열을 그대로 표시합니다. 들여쓰기 4칸 code block은 code로 인식하지 않고 본문으로 취급하며, 블록 시작 판정은 들여쓰기를 보지 않으므로 4칸 들여쓰기 줄도 heading·fence·table로 인식합니다.
+
+## Markdown 노드 편집
+
+```sh
+wdown edit note.md --id 2.1 <<'EOF'        # dry-run: 파일은 그대로
+바꾼 본문
+둘째 줄도 바꿈
+EOF
+wdown edit note.md --id 2.1 --write <<'EOF'  # 실제로 저장
+바꾼 본문
+둘째 줄도 바꿈
+EOF
+```
+
+```text
+edit note.md
+2.1 paragraph "첫 본문 줄 둘째 줄"
+- 첫 본문 줄
+- 둘째 줄
++ 바꾼 본문
++ 둘째 줄도 바꿈
+dry-run: 파일을 변경하지 않았습니다. 저장하려면 --write 를 사용하세요.
+```
+
+`edit`은 `inspect`가 매긴 id로 노드 하나를 골라 그 노드만 표준 입력 본문으로 대체합니다. `--id`는 필수이고 기본은 dry-run이며 `--write`가 있어야 파일을 교체합니다. 교체 범위는 노드 자기 자신만입니다. heading은 제목 줄, paragraph는 본문 줄, item은 항목 첫 줄(하위 항목·중첩 블록은 보존), code는 fence 안의 본문만 바뀝니다.
+
+- 편집 가능한 kind: `heading`·`paragraph`·`item`·`code`. 다른 kind와 link·image 인라인 노드는 실패합니다.
+- heading과 item에는 한 줄만 넣습니다. paragraph에는 빈 줄을 넣을 수 없고, code 본문에는 빈 줄을 넣을 수 있습니다. 빈 입력으로는 삭제할 수 없습니다.
+- 들여쓰기와 blockquote 마커, heading marker, item의 list marker와 task checkbox, code의 fence와 fence info는 원본을 유지합니다. setext heading은 `#` marker로 바뀝니다.
+- 원본과 대체가 같으면 선택 노드 줄 뒤에 `변경 없음: 이미 같은 내용입니다.`를 출력하고 쓰지 않습니다. `--write`로 실제 변경이 있을 때만 원본 파일 권한을 유지한 채 원자적으로 교체합니다.
+- 심볼릭 링크 파일은 `--write`에서 거부하고 링크와 대상 파일은 그대로 둡니다. CRLF 줄 바꿈 파일과 닫지 않은 code block은 dry-run에서도 실패합니다.

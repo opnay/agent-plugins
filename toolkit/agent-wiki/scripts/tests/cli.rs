@@ -549,3 +549,41 @@ fn atomic_write_and_invalid_arguments_do_not_damage_files() {
     }
     assert_eq!(fs::read_dir(home.path()).unwrap().count(), 0);
 }
+
+#[test]
+fn edit_write_keeps_mode_and_final_newline() {
+    let directory = tempfile::tempdir().unwrap();
+    let target = directory.path().join("note.md");
+    fs::write(&target, "# 제목\n\n본문\n").unwrap();
+    fs::set_permissions(&target, fs::Permissions::from_mode(0o640)).unwrap();
+
+    let dry = edit_target(&target, "1", false, "새 제목\n").unwrap();
+    assert!(dry.contains("dry-run:"));
+    assert_eq!(fs::read_to_string(&target).unwrap(), "# 제목\n\n본문\n");
+
+    let saved = edit_target(&target, "1", true, "새 제목\n").unwrap();
+    assert!(saved.contains("저장했습니다"));
+    assert_eq!(fs::read_to_string(&target).unwrap(), "# 새 제목\n\n본문\n");
+    assert_eq!(
+        fs::metadata(&target).unwrap().permissions().mode() & 0o777,
+        0o640
+    );
+
+    fs::write(&target, "# 제목").unwrap();
+    edit_target(&target, "1", true, "새 제목\n").unwrap();
+    assert_eq!(fs::read_to_string(&target).unwrap(), "# 새 제목");
+}
+
+#[test]
+fn edit_refuses_symlink_only_when_writing() {
+    let directory = tempfile::tempdir().unwrap();
+    let real = directory.path().join("real.md");
+    fs::write(&real, "# 제목\n").unwrap();
+    let link = directory.path().join("link.md");
+    symlink(&real, &link).unwrap();
+
+    assert!(edit_target(&link, "1", false, "새 제목\n").is_ok());
+    assert!(edit_target(&link, "1", true, "새 제목\n").is_err());
+    assert_eq!(fs::read_link(&link).unwrap(), real);
+    assert_eq!(fs::read_to_string(&real).unwrap(), "# 제목\n");
+}

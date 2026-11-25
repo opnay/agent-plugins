@@ -20,17 +20,24 @@
   - flag는 heading 수준 건너뛰기(`heading-skip`)·중복 slug(`duplicate-slug`)·alt 없는 image(`missing-alt`)·텍스트 없는 link(`empty-link-text`)·table 열 개수 불일치(`table-column-mismatch`)입니다. 노드 줄에 `flag=<name>`으로 붙이고 첫 줄의 `flags`에 합산합니다.
   - `code`는 fenced block(``` · ~~~)만 대상으로 합니다. 들여쓰기 4칸 code block은 code로 인식하지 않고 본문으로 취급합니다. 블록 시작 판정에는 들여쓰기를 쓰지 않으므로 4칸 들여쓰기 줄도 heading·thematic break·fence·table·html·blockquote로 인식합니다. front matter는 파일 첫 줄이 `---`일 때만 인식하며 `---` 또는 `...`로 끝냅니다.
   - 파일이 없거나 읽을 수 없거나 UTF-8이 아니거나 `--id`를 찾지 못하면 stderr와 0이 아닌 종료 코드로 실패합니다.
+- `edit <file> --id <id> [--write]`: 표준 입력 텍스트로 `--id`가 고른 노드 하나를 대체합니다. 파일은 하나만 받고 `--id`는 필수이며 한 번만 지정합니다. `--write`가 없으면 dry-run으로 파일은 변경하지 않습니다. 옵션은 `--` 접두어만 인식하고 알 수 없는 옵션은 실패합니다.
+  - 편집할 수 있는 kind는 `heading`·`paragraph`·`item`·`code`입니다. 다른 kind는 kind 이름을 stderr에 알리고 실패합니다. link·image 인라인 노드는 줄 범위를 가지지 않아 편집하지 않습니다.
+  - 대체 범위는 노드 자기 자신만입니다. heading은 제목 줄, paragraph는 본문 줄 전체, item은 항목 첫 줄(하위 항목과 중첩 블록은 보존), code는 fence 안의 본문만 바꿉니다. heading과 item에는 한 줄만 넣을 수 있고 paragraph에는 빈 줄을 넣을 수 없습니다. code 본문에는 빈 줄을 넣을 수 있습니다. 표준 입력이 비어 있으면 실패하며 노드 삭제는 지원하지 않습니다. 표준 입력은 dry-run에서도 읽으므로 heredoc이나 파이프·리다이렉션으로 본문을 넘깁니다.
+  - 줄 앞쪽 들여쓰기와 blockquote 마커는 노드의 첫 원본 줄에서 이어받습니다. heading은 원본 ATX marker를 유지하고 setext heading은 `#` marker로 바꿉니다. item은 원본 list marker와 task checkbox를 유지합니다. code는 여는 fence(marker와 info)와 닫는 fence를 유지하고 본문만 교체하며, 닫지 않은 code block은 실패합니다.
+  - stdout은 `edit <path>`, 선택 노드 줄, `-` 원본 줄, `+` 대체 줄 순서로 출력하고 마지막 줄에 dry-run 안내 또는 `저장했습니다: <path>`를 붙입니다. 원본과 대체가 같으면 앞의 두 줄 뒤에 `변경 없음: 이미 같은 내용입니다.`를 출력하고 파일을 쓰지 않습니다.
+  - `--write`로 실제 변경이 있을 때만 원본 파일 권한을 유지한 채 임시 파일로 완성한 뒤 원자적으로 교체합니다. 심볼릭 링크 파일은 저장하지 않고 실패하며 링크와 대상 파일은 그대로 둡니다. dry-run은 심볼릭 링크 파일도 읽어서 계획을 출력합니다. CRLF 줄 바꿈 파일은 dry-run에서도 실패합니다. 파일이 없거나 읽을 수 없거나 UTF-8이 아니거나 `--id`를 찾지 못하거나 모호하면 실패합니다.
 - 설정은 `default`, `[roots.<name>] path`와 선택 `description`을 사용합니다. 최상위 `root` 설정과 `set <directory>`는 실패하며 기존 설정 바이트를 보존합니다. 자동 변환은 하지 않습니다.
 - 설정 파싱이나 갱신 결과의 root 검증에 실패하면 기존 파일을 보존합니다. 유효한 `set` 호출로 같은 root의 경로를 정정할 수 있습니다. 심볼릭 링크 설정 파일은 조회·갱신을 지원합니다. 갱신은 링크의 실제 대상 파일을 원자적으로 교체하고 링크 자체는 보존합니다. 끊어진 링크는 대상·링크를 만들거나 교체하지 않고 실패합니다.
 - 설정 갱신은 임시 파일 완성 후 원자적으로 교체하며 주석·서식은 정규화됩니다. 새로 만드는 설정 파일 권한은 0600입니다.
 - 실패는 stderr와 0이 아닌 종료 코드로 보고합니다. 도움말·조회·점검은 파일을 만들지 않습니다.
-- `--help`와 `-h`는 사용법을 stdout에 출력하고 0으로 끝냅니다. 명령 뒤에 붙은 도움말 옵션도 같은 처리를 합니다.
+- `--help`와 `-h`는 사용법을 stdout에 출력하고 0으로 끝냅니다. 명령 바로 뒤에 붙은 도움말 옵션(`wdown edit --help`)도 같은 처리를 하며, 그 외 위치의 `--help`는 옵션 해석에서 알 수 없는 옵션으로 실패합니다.
 - 셸 설정이나 PATH는 수정하지 않습니다. PATH 설정 방법은 `doctor`의 `FAIL` 메시지와 README가 안내합니다.
 
 ## 구조와 검증
 
-- `toolkit/agent-wiki/scripts/tests/`는 CLI 검증을 소유합니다. `scripts/src/inspect.rs`는 Markdown 구조 파싱과 트리 출력을 소유하고 `scripts/src/main.rs`는 명령 해석과 stdout·stderr 연결을 담당합니다.
+- `toolkit/agent-wiki/scripts/tests/`는 CLI 검증을 소유합니다. `scripts/src/inspect.rs`는 Markdown 구조 파싱과 트리 출력·노드 줄 범위를 소유하고 `scripts/src/edit.rs`는 노드 대체 계획과 diff·대체 본문 생성을 소유하며 `scripts/src/main.rs`는 명령 해석과 파일 읽기·쓰기·stdout·stderr 연결을 담당합니다.
 - 설치·재설치·제거·점검, 옵션 해석, 기본 설치 폴더와 `~` 별칭, 설정·조회, 경로의 공백·유니코드, 잘못된 입력과 기존 파일 보존을 임시 홈에서 검증합니다. 점검 검증은 PATH 입력을 인자로 받아 실제 프로세스 환경에 의존하지 않게 합니다.
 - `inspect` 검증은 front matter, heading 중첩과 수준 건너뛰기, list 중첩과 task checkbox, table 열 판정, code fence와 blockquote 중첩, link·image·Obsidian wikilink, `--id`의 자리 번호와 slug 선택, 형제·중첩 중복 slug 모호 실패, 4칸 들여쓰기 블록 시작과 code 미인식, 없는 파일과 없는 id 실패를 임시 파일에서 확인합니다.
+- `edit` 검증은 heading·paragraph·item·code 대체, setext heading의 ATX 전환, blockquote와 중첩 item의 줄 범위·접두어 유지, task checkbox와 fence 보존, 나머지 kind와 인라인 노드 거부, 빈 입력·빈 줄·여러 줄·닫지 않은 fence·CRLF 거부, 없는 id와 모호 id 실패, dry-run과 `--write` 출력, 원본과 같을 때 변경 없음, 옵션 해석을 문자열 계획으로 확인합니다. 파일 수준 검증은 `edit_target`으로 임시 파일에서 하며 dry-run 파일 불변, `--write` 저장, 원본 권한 유지, 마지막 줄 바꿈 유지·부재, 심볼릭 링크 저장 거부와 dry-run 허용, 링크·대상 보존을 확인합니다.
 - `toolkit/agent-wiki/`에서 `cargo test --locked --manifest-path scripts/Cargo.toml`을 실행합니다.
 - CLI 바이너리는 `toolkit/agent-wiki/`에서 `sh scripts/build.sh`로 빌드합니다. 생성 바이너리 `scripts/wdown`과 Cargo target은 Git에 포함하지 않으며 실행 파일의 권한은 유지합니다.
