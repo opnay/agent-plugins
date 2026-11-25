@@ -11,9 +11,11 @@ use std::process::ExitCode;
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
+mod inspect;
+
 const COMMAND: &str = "wdown";
 
-const HELP: &str = "wdown: 위키 저장 위치를 설정·조회합니다.
+const HELP: &str = "wdown: 위키 저장 위치를 설정·조회하고 Markdown 구조를 점검합니다.
 
 사용법:
   wdown install [--force] [--dir <dir>]   <dir>/wdown에 현재 실행 파일을 복사합니다.
@@ -23,6 +25,7 @@ const HELP: &str = "wdown: 위키 저장 위치를 설정·조회합니다.
   wdown set <name> <dir>                  named root 경로를 설정합니다.
   wdown default <name>                    default root를 지정합니다.
   wdown path [name]                       default 또는 named root 경로를 출력합니다.
+  wdown inspect <file> [--id <id>]        Markdown 구조 트리를 출력합니다.
   wdown --help";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -586,6 +589,19 @@ fn run(args: &[OsString], home: &Path) -> Result<PathBuf> {
         }
         [command] if command == "path" => configured_root(&config, None),
         [command, name] if command == "path" => configured_root(&config, Some(name)),
+        [command, options @ ..] if command == "inspect" => {
+            let (target, selection) = inspect::parse_options(options)?;
+            let source = fs::read_to_string(&target).map_err(|error| {
+                format!(
+                    "Markdown을 읽을 수 없습니다: {} ({error})",
+                    target.display()
+                )
+            })?;
+            let document = inspect::parse_markdown(&source);
+            let output = inspect::render(&document, &target, selection.as_deref())?;
+            io::stdout().write_all(output.as_bytes())?;
+            Ok(PathBuf::new())
+        }
         _ => Err(format!("명령 또는 인자가 잘못되었습니다.\n{HELP}").into()),
     }
 }
@@ -605,6 +621,7 @@ fn help_requested(args: &[OsString]) -> bool {
                     "set",
                     "default",
                     "path",
+                    "inspect",
                 ]
                 .contains(&command.to_string_lossy().as_ref())
         }
@@ -638,3 +655,7 @@ fn main() -> ExitCode {
 #[cfg(test)]
 #[path = "../tests/cli.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "../tests/inspect.rs"]
+mod inspect_tests;

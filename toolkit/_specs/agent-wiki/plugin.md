@@ -27,6 +27,8 @@
 - 플러그인에서 하위호환 제거해줘. 이거 나만사용해서 의미없어
 - 에이전트 위키의 스크립트에 있는 실행파일 이름을 wdown으로 바꾸자.
   - jevx install 처럼 스크립트 설치, 제거, 닥터가 가능하게 바꿔줘.
+- markdown 문법 기준으로 접근성 트리처럼 구조 트리로 점검하는거 만들어보자.
+  - wdown inspect <some>.md 하면 루트 트리 보여주고, `wdown inspect <some>.md --id aaa` 하면 해당 아이디의 트리보여주고.
 
 ---
 
@@ -35,7 +37,7 @@
 ## 목적과 현재 범위
 
 작업 중 얻은 지식과 경험을 지정된 위키에 연결된 문서로 축적하고 다음 작업에 재사용합니다.
-CLI는 named root 저장 위치와 설치·제거·점검을, manager는 조건·진행·완료와 역할 연결을, reader·researcher·writer는 탐색·조사·기억 반영을 소유합니다.
+CLI는 named root 저장 위치와 설치·제거·점검, Markdown 구조 점검을, manager는 조건·진행·완료와 역할 연결을, reader·researcher·writer는 탐색·조사·기억 반영을 소유합니다.
 제품 구현, 위키 외부의 임의 기록, 작업 기록의 프로젝트 소유·조건 체크리스트 계약 외 고정 폴더 템플릿, 상시 백그라운드 실행, 백업·공개·동기화 명령, 개인정보 자동 분류, cross-root resolver는 소유하지 않습니다.
 
 ## 내장 skill과 사용 기준
@@ -62,7 +64,7 @@ CLI는 named root 저장 위치와 설치·제거·점검을, manager는 조건�
 | 소유 문서 | 계약 |
 | --- | --- |
 | [공통 위키](wiki.md) | root 경계·접근·탐색·구조·연결·권한 |
-| [CLI](cli.md) | wdown 설치·제거·점검·설정·조회·실패·빌드·검증 |
+| [CLI](cli.md) | wdown 설치·제거·점검·설정·조회·Markdown 구조 트리·실패·빌드·검증 |
 | [Obsidian 조회](obsidian.md) | vault/root 매핑·type/tags 검색·출력 판정·역할별 활용 |
 | [manager](skills/manager/spec.md) | 구체 조건·진행·완료·임시 기록·역할 전달 |
 | [reader](skills/reader/spec.md) | 기존 지식·과거 작업 탐색과 해석 |
@@ -75,7 +77,8 @@ CLI는 named root 저장 위치와 설치·제거·점검을, manager는 조건�
 
 아래 파일 경로는 저장소 루트 기준이며 CLI 명령은 `toolkit/agent-wiki/`에서 실행합니다.
 
-- `toolkit/agent-wiki/scripts/src/main.rs`: 설치·제거·점검·저장 위치 설정·조회 CLI 원본입니다. 실행 파일 이름은 `wdown`입니다.
+- `toolkit/agent-wiki/scripts/src/main.rs`: 설치·제거·점검·저장 위치 설정·조회·Markdown 구조 트리 CLI 원본입니다. 실행 파일 이름은 `wdown`입니다.
+- `toolkit/agent-wiki/scripts/src/inspect.rs`: Markdown 구조 파싱과 구조 트리 출력을 소유합니다.
 - `toolkit/agent-wiki/scripts/build.sh`: Cargo.lock 기준으로 네이티브 바이너리 `toolkit/agent-wiki/scripts/wdown`을 빌드합니다.
 - `toolkit/agent-wiki/README.md`: 설치 방법, 명령, 설정 형식을 설명합니다.
 - `toolkit/agent-wiki/skills/<manager|reader|researcher|writer>/SKILL.md`: 각 역할의 실행 지침입니다.

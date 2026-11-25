@@ -1,7 +1,7 @@
 # Agent Wiki
 
 작업에서 얻은 지식과 경험을 연결된 위키로 축적하고 다음 작업에 재사용합니다.
-Rust CLI `wdown`은 저장 위치 설정·설치·제거·점검을, manager는 작업 관리와 역할 연결을, reader·researcher·writer는 탐색·조사·기억 반영을 담당합니다.
+Rust CLI `wdown`은 저장 위치 설정·설치·제거·점검과 Markdown 구조 점검을, manager는 작업 관리와 역할 연결을, reader·researcher·writer는 탐색·조사·기억 반영을 담당합니다.
 
 
 ## 스킬 선택
@@ -257,3 +257,30 @@ path = "/Users/example/.agents/personality"
 - 설정 파일이 심볼릭 링크이면 링크를 유지하고 실제 대상 파일을 조회·갱신합니다. 갱신은 원자적 교체를 사용하며, 끊어진 링크는 수정하지 않고 실패합니다.
 - 설정 파싱이나 갱신 결과의 root 검증에 실패하면 기존 파일을 보존합니다. `set <name> <directory>`로 같은 root의 경로를 정정할 수 있습니다. 주석과 서식은 갱신 시 정규화합니다.
 - 도움말과 조회는 파일을 생성하지 않습니다. 셸 설정과 위키 내용도 변경하지 않습니다.
+
+## Markdown 구조 점검
+
+```sh
+wdown inspect note.md            # 문서 전체 구조 트리
+wdown inspect note.md --id 2.3   # 자리 번호로 고른 노드의 하위 트리
+wdown inspect note.md --id 참고  # heading slug 지정 (`#` 접두어 선택)
+```
+
+`inspect`는 Markdown 한 파일을 읽어서 문법 블록 기준으로 구조 트리를 출력합니다. 읽기 전용이며 파일을 변경하지 않습니다. 첫 줄은 `document <path> nodes=<n> flags=<n>`이고 `--id` 사용 때는 `subtree <id> nodes=<n> flags=<n>` 뒤에 선택 노드 줄을 다시 출력합니다. 각 줄은 `<id> <kind>` 뒤에 details 키·본문·slug·flag 순서로 붙이며 2칸 들여쓰기로 계층을 나타냅니다. id는 직계 자식 자리 번호(`1`·`1.2`)이고 heading에는 slug를 병기합니다.
+
+- 노드 종류: `document`·`front matter`·`heading <level>`·`paragraph`·`list ordered|unordered`·`item`·`blockquote`·`code`·`table`·`thematic break`·`html`·`link`·`image`
+- details: heading 수준, list `items=<n>`, task checkbox `task=done|open`, table `rows=<n> cols=<n>`, front matter `keys=<n>`, blockquote `blocks=<n>`, code·html `lines=<n>`, code fence info `info=<info>`, link·image 대상 `dest=<대상>`, Obsidian wikilink `target=<본문>`, inline code 개수 `code=<n>`, 본문 첫 줄 60자
+- flag: heading 수준 건너뛰기(`heading-skip`)·중복 slug(`duplicate-slug`)·alt 없는 image(`missing-alt`)·텍스트 없는 link(`empty-link-text`)·table 열 개수 불일치(`table-column-mismatch`)
+
+```text
+document note.md nodes=8 flags=1
+1 front matter keys=2
+2 heading 1 "예시 기록" #예시-기록
+  2.1 paragraph code=2 "본문은 `code`와 `token`을 세어 표시합니다."
+  2.2 list unordered items=2
+    2.2.1 item task=done "완료 항목"
+    2.2.2 item task=open "미완료 항목"
+  2.3 heading 3 "수준을 건너뛰었습니다" #수준을-건너뛰었습니다 flag=heading-skip
+```
+
+`--id`가 두 개 이상 heading slug와 일치하면 실패하고 후보 자리 번호를 알려줍니다. 없는 파일, UTF-8이 아닌 파일, 찾을 수 없는 id도 실패입니다. 첫 줄의 `<path>`는 지정받은 문자열을 그대로 표시합니다. 들여쓰기 4칸 code block은 code로 인식하지 않고 본문으로 취급하며, 블록 시작 판정은 들여쓰기를 보지 않으므로 4칸 들여쓰기 줄도 heading·fence·table로 인식합니다.
